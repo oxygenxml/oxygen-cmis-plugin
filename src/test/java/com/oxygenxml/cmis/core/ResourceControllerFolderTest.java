@@ -1,7 +1,6 @@
 package com.oxygenxml.cmis.core;
 
 import static org.junit.Assert.assertEquals;
-
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +10,6 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 /**
  * TODO Cristian More tests for the folder level actions.
@@ -44,12 +41,20 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
   public void testPassCreateFolder(){
     Folder testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolder");
     try {
-      assertEquals("BBFolder", testFolder.getName());
+      assertEquals("testFolder", testFolder.getName());
+      
     } finally {
       ctrl.deleteFolderTree(testFolder);
     }
   }
-
+  
+  /**
+   * IN DEVELOPMENT
+   */
+  @Test
+  public void testDeleteFolderTree() {
+    
+  }
 
   /**
    * Tests renaming a file.

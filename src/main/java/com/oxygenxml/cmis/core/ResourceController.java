@@ -11,16 +11,12 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-
-import com.oxygenxml.cmis.core.model.IFolder;
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 public class ResourceController {
   
@@ -43,7 +39,7 @@ public class ResourceController {
       String content) throws UnsupportedEncodingException {
     
     // TODO Pass a Reader instead of a String as content.
-
+   
     String filename  = changeNameIfNameExists(path,textFileName);
     String mimetype = "text/plain; charset=UTF-8";
 
@@ -99,7 +95,7 @@ public class ResourceController {
   }
  
  public Folder createFolder(Folder path, String name) {
-  name = changeNameIfNameExists(path, name);
+   name = changeNameIfNameExists(path, name);
 
    Map<String, Object> properties = new HashMap<String, Object>();
 

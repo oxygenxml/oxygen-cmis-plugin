@@ -15,8 +15,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-
 /**
  * Tests for operations over resources.
  * 
@@ -53,12 +51,15 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
   @org.junit.Test
   public void testDocumentDelete() throws IOException {
     Document document = ctrl.createDocument(testFolder, "test1.txt", "test content");
-    
+    debugPrint(testFolder);
     // TODO Alexey Assert that the new document exists before deleting it.
     //MAYBE DONE
     if(documentExists(document, testFolder)) {
       ctrl.deleteAllVersionsDocument(document);
     }
+    
+    debugPrint(testFolder);
+    
     Assert.assertFalse(documentExists(document, testFolder));
   }
 
@@ -70,10 +71,11 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 
     Folder sourceFolder = testFolder;
     Folder targetFolder = testFolder.createFolder(properties);
-
+    debugPrint(testFolder);
     Document document = ctrl.createDocument(testFolder, "test1.txt", "test content");
     ctrl.move(sourceFolder, targetFolder, document);
-
+    debugPrint(targetFolder);
+    
     // TODO Alexey Doesn't move.
     //
     //Assert.assertTrue("The folder wasn't moved", documentExists(document, targetFolder));

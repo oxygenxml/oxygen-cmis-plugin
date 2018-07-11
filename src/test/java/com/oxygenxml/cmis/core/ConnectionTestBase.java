@@ -28,6 +28,17 @@ public class ConnectionTestBase {
   }
   
   
+  protected boolean folderExists(Folder folder, Folder rootFolder) {
+    for(CmisObject child : rootFolder.getChildren()) {
+      if(child instanceof Document) {
+        if(folder.getName() == child.getName()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
   /**
    * 
    * @param folder
@@ -61,5 +72,16 @@ public class ConnectionTestBase {
       docContent.close();
     }
     return b.toString();
+  }
+  
+  
+  protected void debugPrint(Folder folder) {
+    for(CmisObject child : folder.getChildren()) {
+      if(child instanceof Document) {
+        System.out.println("(Doc) Name: " + child.getName() + " & Id: " + child.getId());
+      } else if(child instanceof Folder) {
+        System.out.println("(Folder) Name: " + child.getName() + " & Id: " + child.getId());
+      }
+    }
   }
 }
