@@ -30,6 +30,18 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/chemistry-opencmis-server-inmemory-1.1.0.war</systemPath>
 		</dependency>
+		
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.12</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>log4j</groupId>
+		    <artifactId>log4j</artifactId>
+		    <version>1.2.17</version>
+		</dependency>
 	</dependencies>
 
 	<build>
