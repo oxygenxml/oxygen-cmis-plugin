@@ -42,7 +42,7 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
    */
   @Test
   public void testPassCreateFolder(){
-    Folder testFolder = ctrl.createFolder(((FolderImpl) ctrl.getRootFolder()).getFolder(), "testFolder");
+    Folder testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolder");
     try {
       assertEquals("BBFolder", testFolder.getName());
     } finally {
@@ -56,7 +56,7 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
    */
   @Test
   public void testRenameFolder() {
-    Folder testFolder = ctrl.createFolder(((FolderImpl) ctrl.getRootFolder()).getFolder(), "testFolder");
+    Folder testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolder");
     CmisObject renamedFolder = null;
     try {
       renamedFolder = ctrl.renameFolder(testFolder, "MI6");

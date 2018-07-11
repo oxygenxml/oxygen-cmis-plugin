@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -32,8 +33,8 @@ public class ResourceController {
   /**
    * @return The root folder.
    */
-  public IFolder getRootFolder() {
-    return new FolderImpl(session.getRootFolder());
+  public Folder getRootFolder() {
+    return session.getRootFolder();
   }
   
   public Document createDocument(
@@ -98,7 +99,7 @@ public class ResourceController {
   }
  
  public Folder createFolder(Folder path, String name) {
-   name = changeNameIfNameExists(path, name);
+  name = changeNameIfNameExists(path, name);
 
    Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -141,4 +142,5 @@ public class ResourceController {
    // TODO Get the encoding dynamically.
    return new InputStreamReader(stream, "UTF-8");    
  }
+ 
 }
