@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.core.model;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * TODO Alexey Test the implementations that they can actually iterate over the resources structure.
@@ -17,4 +18,7 @@ public interface IResource {
   Iterator<IResource> iterator();
   
   String getDisplayName();
+  
+  String getId();
+
 }

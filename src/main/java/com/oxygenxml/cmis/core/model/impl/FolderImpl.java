@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.core.model.impl;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -65,10 +66,13 @@ public class FolderImpl implements IFolder {
     }
   }
 
-
   @Override
   public String getDisplayName() {
     return folder.getName();
   }
-  
+
+  @Override
+  public String getId() {
+    return folder.getId();
+  }
 }

@@ -1,6 +1,8 @@
 package com.oxygenxml.cmis.core.model.impl;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 
@@ -23,7 +25,7 @@ public class DocumentImpl implements IDocument {
   @Override
   public Iterator<IResource> iterator() {
     // The document is a leaf. 
-    return null;
+    return Collections.emptyIterator();
   }
   
   /**
@@ -37,4 +39,11 @@ public class DocumentImpl implements IDocument {
   public String getDisplayName() {
     return doc.getName();
   }
+
+  @Override
+  public String getId() {
+    // TODO Auto-generated method stub
+    return doc.getId();
+  }
+
 }

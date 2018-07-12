@@ -21,7 +21,11 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 public class ResourceController {
   
   private Session session;
-
+  
+  /**
+   * 
+   * @param session
+   */
   public ResourceController(Session session) {
     this.session = session;
   }
@@ -33,6 +37,14 @@ public class ResourceController {
     return session.getRootFolder();
   }
   
+  /**
+   * CREATE DOCUMENT METHOD
+   * @param path
+   * @param filename
+   * @param content
+   * @return
+   * @throws UnsupportedEncodingException
+   */
   public Document createDocument(
       Folder path, 
       String filename, 
@@ -58,26 +70,56 @@ public class ResourceController {
     return path.createDocument(properties, contentStream, VersioningState.NONE);
   }
   
+  /**
+   * MOVE DOCUMENTE FROM SOURCE FOLDER TO TARGET FOLDER
+   * @param sourceFolder
+   * @param targetFolder
+   * @param doc
+   * @return
+   */
  public  boolean move(Folder sourceFolder, Folder targetFolder, Document doc) {
     return doc.move(sourceFolder, targetFolder) != null;
   }
 
+ /**
+  * ADD DOCUMENT TO FOLDER
+  * @param folder
+  * @param doc
+  */
  public void addToFolder(Folder folder, Document doc) {
     doc.addToFolder(folder, true);
   }
 
+ /**
+  * REMOVE DOCUMENT FROM FOLDER
+  * @param folder
+  * @param doc
+  */
  public void removeFromFolder(Folder folder, Document doc) {
     doc.removeFromFolder(folder);
   }
 
+ /**
+  * 
+  * @param doc
+  */
  public  void deleteAllVersionsDocument(Document doc) {
     doc.delete(true);
   }
 
+ /**
+  * DELETE ONE VERSION
+  */
  public void deleteOneVersionDocument(Document doc) {
     doc.delete(false);
   }
  
+ /**
+  * CREATE FOLDER
+  * @param path
+  * @param name
+  * @return
+  */
  public Folder createFolder(Folder path, String name) {
    Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -91,23 +133,48 @@ public class ResourceController {
    return parent.createFolder(properties);
  }
  
+ /**
+  * DELETE
+  * @param folder
+  * @return
+  */
  public List<String> deleteFolderTree(Folder folder) {
    return folder.deleteTree(true, UnfileObject.DELETE, true);
  }
 
+ /**
+  * RENAME
+  * @param folder
+  * @param newName
+  * @return
+  */
  public CmisObject renameFolder(Folder folder, String newName) {
     return folder.rename(newName);
  }
  
- 
+ /**
+  * GET DOC
+  * @param id
+  * @return
+  */
  public Document getDocument(String id) {
    return (Document) session.getObject(id);
  }
  
+ /**
+  * GET SESSION
+  * @return
+  */
  public Session getSession() {
    return session;
  }
  
+ /**
+  * GET DOCUMENT CONTENT
+  * @param docID
+  * @return
+  * @throws UnsupportedEncodingException
+  */
  public Reader getDocumentContent(String docID) throws UnsupportedEncodingException {
    Document document = (Document) session.getObject(docID);
    ContentStream contentStream = document.getContentStream();
