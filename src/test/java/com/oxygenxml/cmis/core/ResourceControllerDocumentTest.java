@@ -16,6 +16,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for operations over resources.
@@ -50,7 +51,7 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
    * 
    * @throws IOException If it fails.
    */
-  @org.junit.Test
+  @Test(timeout=10000)
   public void testDocumentDelete() throws IOException {
     Document document = ctrl.createDocument(testFolder, "test1.txt", "test content");
     debugPrint(testFolder);
@@ -64,7 +65,7 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
     Assert.assertFalse(documentExists(document, testFolder));
   }
 
-  @org.junit.Test
+  @Test(timeout=10000)
   public void testMoveDocument() throws IOException {
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put(PropertyIds.NAME, "testFolderMove");
@@ -87,7 +88,7 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
     Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
   }
 
-  @org.junit.Test
+  @Test(timeout=10000)
   public void testDocumentContent() throws IOException {
     String docId = "133";
     System.out.println(docId);
