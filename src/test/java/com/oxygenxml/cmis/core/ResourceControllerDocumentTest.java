@@ -86,6 +86,8 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
     
   
     Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
+    
+    ctrl.deleteFolderTree(targetFolder);
   }
 
   @Test(timeout=10000)

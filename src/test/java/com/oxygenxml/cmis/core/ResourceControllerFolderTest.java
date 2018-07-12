@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,5 +79,10 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
         ctrl.deleteFolderTree(testFolder);
       }
     }
+  }
+  
+  @After
+  public void afterMethod(){
+    ctrl.getSession().clear();
   }
 }
