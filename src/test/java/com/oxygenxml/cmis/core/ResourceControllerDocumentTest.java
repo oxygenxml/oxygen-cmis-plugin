@@ -110,7 +110,7 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
   public void afterMethod(){
     if (testFolder != null) {
       ctrl.deleteFolderTree(testFolder);
+      ctrl.getSession().clear();
     }
-    ctrl.getSession().clear();
   }
 }
