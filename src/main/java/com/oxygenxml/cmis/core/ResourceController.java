@@ -104,7 +104,9 @@ public class ResourceController {
    return (Document) session.getObject(id);
  }
  
-
+ public Session getSession() {
+   return session;
+ }
  
  public Reader getDocumentContent(String docID) throws UnsupportedEncodingException {
    Document document = (Document) session.getObject(docID);
