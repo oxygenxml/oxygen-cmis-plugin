@@ -19,7 +19,7 @@ public class ConnectionTestBase {
   protected boolean documentExists(Document document, Folder folder) {
     for(CmisObject child : folder.getChildren()) {
       if(child instanceof Document) {
-        if(document.getName() == child.getName()) {
+        if(document.getName().equals(child.getName())) {
           return true;
         }
       }
@@ -31,7 +31,7 @@ public class ConnectionTestBase {
   protected boolean folderExists(Folder folder, Folder rootFolder) {
     for(CmisObject child : rootFolder.getChildren()) {
       if(child instanceof Document) {
-        if(folder.getName() == child.getName()) {
+        if(folder.getName().equals(child.getName())) {
           return true;
         }
       }
@@ -76,11 +76,12 @@ public class ConnectionTestBase {
   
   
   protected void debugPrint(Folder folder) {
+    System.out.println(folder.getName());
     for(CmisObject child : folder.getChildren()) {
       if(child instanceof Document) {
-        System.out.println("(Doc) Name: " + child.getName() + " & Id: " + child.getId());
+        System.out.println("  (Doc) Name: " + child.getName() + " & Id: " + child.getId());
       } else if(child instanceof Folder) {
-        System.out.println("(Folder) Name: " + child.getName() + " & Id: " + child.getId());
+        System.out.println("  (Folder) Name: " + child.getName() + " & Id: " + child.getId());
       }
     }
   }

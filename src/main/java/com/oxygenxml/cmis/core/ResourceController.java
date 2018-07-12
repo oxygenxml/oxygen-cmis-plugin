@@ -35,12 +35,11 @@ public class ResourceController {
   
   public Document createDocument(
       Folder path, 
-      String textFileName, 
+      String filename, 
       String content) throws UnsupportedEncodingException {
     
     // TODO Pass a Reader instead of a String as content.
    
-    String filename  = changeNameIfNameExists(path,textFileName);
     String mimetype = "text/plain; charset=UTF-8";
 
     byte[] contentBytes = content.getBytes("UTF-8");
@@ -57,21 +56,6 @@ public class ResourceController {
 
     // create the document
     return path.createDocument(properties, contentStream, VersioningState.NONE);
-  }
-  
-  String changeNameIfNameExists(Folder path, String nameToFill) {
-    int counterOfDuplicates = 1;
-    
-    for (CmisObject child : path.getChildren()) {
-
-      if (child.getName().equals(nameToFill)) {
-        nameToFill = nameToFill + Integer.toString(counterOfDuplicates);
-        counterOfDuplicates++;
-      }
-    }
-    
-    System.out.println("The new name:"+nameToFill);
-    return nameToFill;
   }
   
  public  boolean move(Folder sourceFolder, Folder targetFolder, Document doc) {
@@ -95,8 +79,6 @@ public class ResourceController {
   }
  
  public Folder createFolder(Folder path, String name) {
-   name = changeNameIfNameExists(path, name);
-
    Map<String, Object> properties = new HashMap<String, Object>();
 
    properties.put(PropertyIds.NAME, name);

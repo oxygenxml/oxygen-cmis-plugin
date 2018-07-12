@@ -73,12 +73,13 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
     Folder targetFolder = testFolder.createFolder(properties);
     debugPrint(testFolder);
     Document document = ctrl.createDocument(testFolder, "test1.txt", "test content");
+    debugPrint(testFolder);
     ctrl.move(sourceFolder, targetFolder, document);
     debugPrint(targetFolder);
     
     // TODO Alexey Doesn't move.
     //
-    //Assert.assertTrue("The folder wasn't moved", documentExists(document, targetFolder));
+    Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
   }
 
   @org.junit.Test
