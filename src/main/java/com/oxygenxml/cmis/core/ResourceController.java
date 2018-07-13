@@ -21,7 +21,11 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 public class ResourceController {
   
   private Session session;
-
+  
+  /**
+   * 
+   * @param session
+   */
   public ResourceController(Session session) {
     this.session = session;
   }
@@ -33,14 +37,21 @@ public class ResourceController {
     return session.getRootFolder();
   }
   
+  /**
+   * CREATE DOCUMENT METHOD
+   * @param path
+   * @param filename
+   * @param content
+   * @return
+   * @throws UnsupportedEncodingException
+   */
   public Document createDocument(
       Folder path, 
-      String textFileName, 
+      String filename, 
       String content) throws UnsupportedEncodingException {
     
     // TODO Pass a Reader instead of a String as content.
    
-    String filename  = changeNameIfNameExists(path,textFileName);
     String mimetype = "text/plain; charset=UTF-8";
 
     byte[] contentBytes = content.getBytes("UTF-8");
@@ -59,44 +70,57 @@ public class ResourceController {
     return path.createDocument(properties, contentStream, VersioningState.NONE);
   }
   
-  String changeNameIfNameExists(Folder path, String nameToFill) {
-    int counterOfDuplicates = 1;
-    
-    for (CmisObject child : path.getChildren()) {
-
-      if (child.getName().equals(nameToFill)) {
-        nameToFill = nameToFill + Integer.toString(counterOfDuplicates);
-        counterOfDuplicates++;
-      }
-    }
-    
-    System.out.println("The new name:"+nameToFill);
-    return nameToFill;
-  }
-  
+  /**
+   * MOVE DOCUMENTE FROM SOURCE FOLDER TO TARGET FOLDER
+   * @param sourceFolder
+   * @param targetFolder
+   * @param doc
+   * @return
+   */
  public  boolean move(Folder sourceFolder, Folder targetFolder, Document doc) {
     return doc.move(sourceFolder, targetFolder) != null;
   }
 
+ /**
+  * ADD DOCUMENT TO FOLDER
+  * @param folder
+  * @param doc
+  */
  public void addToFolder(Folder folder, Document doc) {
     doc.addToFolder(folder, true);
   }
 
+ /**
+  * REMOVE DOCUMENT FROM FOLDER
+  * @param folder
+  * @param doc
+  */
  public void removeFromFolder(Folder folder, Document doc) {
     doc.removeFromFolder(folder);
   }
 
+ /**
+  * 
+  * @param doc
+  */
  public  void deleteAllVersionsDocument(Document doc) {
     doc.delete(true);
   }
 
+ /**
+  * DELETE ONE VERSION
+  */
  public void deleteOneVersionDocument(Document doc) {
     doc.delete(false);
   }
  
+ /**
+  * CREATE FOLDER
+  * @param path
+  * @param name
+  * @return
+  */
  public Folder createFolder(Folder path, String name) {
-   name = changeNameIfNameExists(path, name);
-
    Map<String, Object> properties = new HashMap<String, Object>();
 
    properties.put(PropertyIds.NAME, name);
@@ -109,21 +133,45 @@ public class ResourceController {
    return parent.createFolder(properties);
  }
  
+ /**
+  * DELETE
+  * @param folder
+  * @return
+  */
  public List<String> deleteFolderTree(Folder folder) {
    return folder.deleteTree(true, UnfileObject.DELETE, true);
  }
 
+ /**
+  * RENAME
+  * @param folder
+  * @param newName
+  * @return
+  */
  public CmisObject renameFolder(Folder folder, String newName) {
     return folder.rename(newName);
  }
  
- 
+ /**
+  * GET DOC
+  * @param id
+  * @return
+  */
  public Document getDocument(String id) {
    return (Document) session.getObject(id);
  }
  
-
  
+ public Session getSession() {
+   return session;
+ }
+ 
+ /**
+  * GET DOCUMENT CONTENT
+  * @param docID
+  * @return
+  * @throws UnsupportedEncodingException
+  */
  public Reader getDocumentContent(String docID) throws UnsupportedEncodingException {
    Document document = (Document) session.getObject(docID);
    ContentStream contentStream = document.getContentStream();
@@ -138,5 +186,4 @@ public class ResourceController {
    // TODO Get the encoding dynamically.
    return new InputStreamReader(stream, "UTF-8");    
  }
- 
 }

@@ -19,17 +19,7 @@
 			<version>1.1.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.chemistry.opencmis/chemistry-opencmis-server-bindings-war -->
-		<dependency>
-			<groupId>org.apache.chemistry.opencmis</groupId>
-			<artifactId>chemistry-opencmis-server-bindings-war</artifactId>
-			<version>1.1.0</version>
-			<type>war</type>
-			<!-- The artifact published on Maven central doesn't appear to be a working 
-				version. -->
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/chemistry-opencmis-server-inmemory-1.1.0.war</systemPath>
-		</dependency>
+		
 		
 		<dependency>
 		    <groupId>junit</groupId>
@@ -42,6 +32,13 @@
 		    <artifactId>log4j</artifactId>
 		    <version>1.2.17</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -52,13 +49,21 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>9.4.11.v20180605</version>
 				<configuration>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<reload>manual</reload>
 					<stopKey>foo</stopKey>
 					<stopPort>9999</stopPort>
 
 					<supportedPackagings>
 						<supportedPackaging>jar</supportedPackaging>
 					</supportedPackagings>
+					
+					<contextHandlers>
+				      <contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+				        <war>${project.basedir}/lib/chemistry-opencmis-server-inmemory-1.1.0.war</war>
+				        <contextPath>/B</contextPath>
+				      </contextHandler>
+				   </contextHandlers>
+    
 				</configuration>
 				<executions>
 					<execution>
