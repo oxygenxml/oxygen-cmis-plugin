@@ -161,10 +161,7 @@ public class ResourceController {
    return (Document) session.getObject(id);
  }
  
- /**
-  * GET SESSION
-  * @return
-  */
+ 
  public Session getSession() {
    return session;
  }
