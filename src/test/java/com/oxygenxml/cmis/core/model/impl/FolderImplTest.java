@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,6 +31,7 @@ public class FolderImplTest {
    */
   @Before
   public void setUp() throws MalformedURLException {
+    //Connect
     CMISAccess.getInstance().connect(new URL("http://localhost:8080/B/atom11"), "A1");
     ctrl = CMISAccess.getInstance().createResourceController();
     root = ctrl.getRootFolder();
@@ -40,6 +42,7 @@ public class FolderImplTest {
    */
   @Test
   public void rootIerarchyTest() {
+    //Set Up
     FolderImpl folderImpl = new FolderImpl(root);
 
     StringBuilder b = new StringBuilder();
@@ -47,7 +50,6 @@ public class FolderImplTest {
     
     System.out.println(b);
   }
-  
   
   /**
    * PRINT IERARCHY OF ELEMENTS IN REPOSITORY
@@ -65,19 +67,51 @@ public class FolderImplTest {
       dump(childResource, b, indent + "  ");
     }
   }
-
+  
   @Test
-  public void gettersTest() {
-    Folder folder = ctrl.createFolder(root, "testGetters");
+  public void testGetDisplayName() {
+    //Set Up
+    Folder folder = ctrl.createFolder(root, "testDisplayName");
     FolderImpl testFolder = new FolderImpl(folder);
     
-    System.out.println(testFolder.getDisplayName() + " " + testFolder.getId());
-    assertEquals("testGetters", testFolder.getDisplayName());
-    assertEquals("136", testFolder.getId());
+    System.out.println("Folder name: " + testFolder.getDisplayName());
+    assertEquals("testDisplayName", testFolder.getDisplayName());
+    
+    //Clean Up
     ctrl.deleteFolderTree(folder);
   }
   
+  @Test
+  public void testGetId() {
+  //Set Up
+    Folder folder = ctrl.createFolder(root, "testId");
+    FolderImpl testFolder = new FolderImpl(folder);
+    
+    System.out.println("Folder ID: " + testFolder.getId());
+    assertEquals("136", testFolder.getId());
+    
+    //Clean Up
+    ctrl.deleteFolderTree(folder);
+  }
   
+  @Test
+  public void testGetFolderPath() {
+    //Set Up
+    Folder folder = ctrl.createFolder(root, "testFolderPath");
+    FolderImpl testFolder = new FolderImpl(folder);
+    
+    System.out.println(testFolder.getDisplayName() + " -path-> " + testFolder.getFolderPath());
+    
+    assertEquals("/testFolderPath", testFolder.getFolderPath());
+    
+    //Clean Up
+    ctrl.deleteFolderTree(folder);
+  }
+  
+  @After
+  public void afterMethod() {
+    ctrl.getSession().clear();
+  }
 }
 
 

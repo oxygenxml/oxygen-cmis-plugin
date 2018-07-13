@@ -1,14 +1,9 @@
 package com.oxygenxml.cmis.core.model.impl;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-
-import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Repository;
 
-import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IRepository;
 import com.oxygenxml.cmis.core.model.IResource;
 
@@ -37,6 +32,4 @@ public class RepositoryImpl implements IRepository {
     // TODO Auto-generated method stub
     return repository.getId();
   }
- 
-  
 }

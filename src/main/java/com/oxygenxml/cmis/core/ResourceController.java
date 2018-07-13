@@ -186,5 +186,4 @@ public class ResourceController {
    // TODO Get the encoding dynamically.
    return new InputStreamReader(stream, "UTF-8");    
  }
- 
 }

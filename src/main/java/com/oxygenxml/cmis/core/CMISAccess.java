@@ -30,7 +30,6 @@ public class CMISAccess {
    */
   private Session session;
 
-
   /**
    * Private constructor.
    */
@@ -96,6 +95,8 @@ public class CMISAccess {
     return new ResourceController(session);
   }
   
- 
+  public Session getSession() {
+    return session;
+  }
 
 }

@@ -84,7 +84,6 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
     
     debugPrint(targetFolder);
     
-  
     Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
     
     ctrl.deleteFolderTree(targetFolder);
@@ -100,12 +99,9 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
     InputStream expectedStream = getClass().getClassLoader().getResourceAsStream("docs/content.txt");
     Reader expectedReader = new InputStreamReader(expectedStream, "UTF-8");
     
-    
     assertEquals(read(expectedReader).replaceAll("\r", ""), read(docContent).replace("\r", ""));
   }
 
-  
-  
   @After
   public void afterMethod(){
     if (testFolder != null) {

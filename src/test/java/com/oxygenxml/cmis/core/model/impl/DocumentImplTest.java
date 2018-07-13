@@ -1,5 +1,7 @@
 package com.oxygenxml.cmis.core.model.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,7 +10,6 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +33,32 @@ public class DocumentImplTest extends ConnectionTestBase {
     root = ctrl.getRootFolder();
   }
   
-  
+  @Test
+  public void testGetDisplayName() throws UnsupportedEncodingException {
+    //Set Up
+    Document doc = ctrl.createDocument(root, "testDoc_name", "some text");
+    DocumentImpl docTest = new DocumentImpl(doc);
+    
+    System.out.println("Doc name: " + docTest.getDisplayName());
+    assertEquals("testDisplayNameDoc", docTest.getDisplayName());
+    
+    //Clean Up
+    ctrl.deleteAllVersionsDocument(doc);
+  }
+
+  @Test
+  public void testGetId() throws UnsupportedEncodingException {
+    //Set Up
+    Document doc = ctrl.createDocument(root, "testDisplayNameDoc", "some text");
+    DocumentImpl docTest = new DocumentImpl(doc);
+    
+    System.out.println("Doc ID: " + docTest.getId());
+    assertEquals("141", docTest.getId());
+    
+    //Clean Up
+    ctrl.deleteAllVersionsDocument(doc);
+  }
+    
   /**
    * GET GUERY OF OBJECT
    * @throws UnsupportedEncodingException
@@ -44,7 +70,6 @@ public class DocumentImplTest extends ConnectionTestBase {
     
     ItemIterable<QueryResult> q = docImpl.getQuery(ctrl);
     
-    int i = 1;
     for(QueryResult qr : q) {
       System.out.println("------------------------------------------\n"
           + qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue()          + " , "
@@ -53,11 +78,19 @@ public class DocumentImplTest extends ConnectionTestBase {
           + qr.getPropertyByQueryName("cmis:contentStreamFileName").getFirstValue() + " , "
           + qr.getPropertyByQueryName("cmis:contentStreamMimeType").getFirstValue() + " , "
           + qr.getPropertyByQueryName("cmis:contentStreamLength").getFirstValue()          );
-      i++;
     }
     
     ctrl.deleteAllVersionsDocument(doc);
-    Assert.assertFalse(documentExists(doc, root));
   }
 
+  @Test
+  public void testGetDocumentPath() throws UnsupportedEncodingException {
+    Document doc = ctrl.createDocument(root, "PathTestFile", "some text");
+    DocumentImpl docImpl = new DocumentImpl(doc);
+    
+    System.out.println(docImpl.getDocumentPath(ctrl));
+    assertEquals("/RootFolder/PathTestFile/", docImpl.getDocumentPath(ctrl));
+    
+    ctrl.deleteAllVersionsDocument(doc);
+  }
 }

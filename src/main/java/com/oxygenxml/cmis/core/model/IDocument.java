@@ -1,6 +1,9 @@
 package com.oxygenxml.cmis.core.model;
 
-public interface IDocument extends IResource {
+import com.oxygenxml.cmis.core.ResourceController;
 
- 
+public interface IDocument extends IResource {
+  
+  String getDocumentPath(ResourceController ctrl);
+
 }

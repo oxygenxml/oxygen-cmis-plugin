@@ -19,5 +19,5 @@ public interface IResource {
   String getDisplayName();
   
   String getId();
-
+  
 }
