@@ -37,14 +37,6 @@ public class RepositoryImpl implements IRepository {
     // TODO Auto-generated method stub
     return repository.getId();
   }
-  /**
-   * GET REPOS
-   * @param url
-   * @return
-   */
-  public static List<Repository> getRepositories(URL url){
-    return CMISAccess.getInstance().getRepositories(url);
-    
-  }
+ 
   
 }
