@@ -23,13 +23,13 @@ public class CMISAccess {
    */
   private SessionFactoryImpl factory;
   /**
-   * A session to the CMIS server. As as far as I can tell, this object can be kept and reused:
+   * A session to the CMIS server. As as far as I can tell, this object can be
+   * kept and reused:
    * 
    * CMIS itself is state-less. OpenCMIS uses the concept of a session to cache
-   * data across calls and to deal with user authentication. 
+   * data across calls and to deal with user authentication.
    */
   private Session session;
-
 
   /**
    * Private constructor.
@@ -50,8 +50,10 @@ public class CMISAccess {
    * 
    * Creates a connection to the given server.
    * 
-   * @param connectionInfo Server location.
-   * @param repositoryID Repository ID.
+   * @param connectionInfo
+   *          Server location.
+   * @param repositoryID
+   *          Repository ID.
    */
   public void connect(URL connectionInfo, String repositoryID) {
     HashMap<String, String> parameters = new HashMap<>();
@@ -71,7 +73,7 @@ public class CMISAccess {
     parameters.put(SessionParameter.ATOMPUB_URL, connectionInfo.toString());
     parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
   }
-  
+
   /**
    * TODO Alexey Make some tests.
    * 
@@ -86,7 +88,7 @@ public class CMISAccess {
 
     return factory.getRepositories(parameters);
   }
-  
+
   /**
    * @return A controller to work with resources.
    */

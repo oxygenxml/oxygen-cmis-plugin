@@ -22,22 +22,23 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-public class ButtonTabComponent extends JPanel {
+public class ButtonTabComponentView extends JPanel {
     private final JTabbedPane pane;
  
-    public ButtonTabComponent(final JTabbedPane pane) {
+    public ButtonTabComponentView(final JTabbedPane pane) {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if (pane == null) {
             throw new NullPointerException("TabbedPane is null");
         }
         this.pane = pane;
+       
         setOpaque(false);
          
         //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel() {
             public String getText() {
-                int i = pane.indexOfTabComponent(ButtonTabComponent.this);
+                int i = pane.indexOfTabComponent(ButtonTabComponentView.this);
                 if (i != -1) {
                     return pane.getTitleAt(i);
                 }
@@ -77,7 +78,7 @@ public class ButtonTabComponent extends JPanel {
         }
  
         public void actionPerformed(ActionEvent e) {
-            int i = pane.indexOfTabComponent(ButtonTabComponent.this);
+            int i = pane.indexOfTabComponent(ButtonTabComponentView.this);
             if (i != -1) {
                 pane.remove(i);
             }
