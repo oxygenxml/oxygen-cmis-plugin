@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
