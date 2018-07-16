@@ -37,7 +37,7 @@ public class ServerView extends JPanel {
     c.gridwidth = 2;
     c.ipadx = 40;
     c.fill = GridBagConstraints.HORIZONTAL;
-    JTextField serverUrlField = new JTextField("http://");
+    JTextField serverUrlField = new JTextField("http://localhost:8080/B/atom11");
 
     // Load JButton constraints constraints
     add(serverUrlField, c);
