@@ -169,5 +169,8 @@ public class DocumentImpl implements IDocument {
     return doc.checkIn(true, null, doc.getContentStream(), "new version");
   }
 
+<<<<<<< HEAD
+>>>>>>> 3ec8e7e0cf58914289385f708b315d118223d494
+=======
 >>>>>>> 3ec8e7e0cf58914289385f708b315d118223d494
 }
