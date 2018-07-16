@@ -46,7 +46,8 @@ public class CMISAccess {
   }
 
   /**
-   * "http://localhost:8080/atom11"
+   * "http://localhost:8080/atom11
+   * http://localhost:8080/B/atom11"
    * 
    * Creates a connection to the given server.
    * 

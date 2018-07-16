@@ -20,24 +20,31 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class RunPlugin extends JFrame {
+  
+  /*
+   * northPanel shall wrap the serverPanel and searchPanel
+   */
   JPanel northPanel;
   ServerView serverPanel;
   SearchView searchPanel;
+  /*
+   * splitPaneBottom is the Tab section from the bottom
+   */
   TabComponentsView splitPaneBottom;
   
   public RunPlugin() {
     super("runPlugin");
 
-    /*
-     * Creation of the centerPanel
-     */
 
-    // Create the bottom of the separator
+    /* 
+     * Create the bottom of the separator
+     */
     TabComponentsView splitPaneBottom = new TabComponentsView();
     
-    // Create the top of the separator
+    /*
+     * Create the top of the separator that includes the itemList and repoList 
+     */
     SplitPaneTop splitPaneDemo = new SplitPaneTop(splitPaneBottom);
-    
     JSplitPane splitPaneTop = splitPaneDemo.getSplitPane();
     splitPaneTop.setBorder(null);
     splitPaneTop.setContinuousLayout(true);
@@ -45,20 +52,17 @@ public class RunPlugin extends JFrame {
 
 
     // Create the splitPanel from center
-    JSplitPane splitPaneCenter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, splitPaneBottom);
-
-    // config for the splitpane
-    splitPaneCenter.setOneTouchExpandable(true);
-    splitPaneCenter.setDividerLocation(180);
-    splitPaneCenter.setContinuousLayout(true);
+    JSplitPane centerPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, splitPaneBottom);
+    centerPanel.setOneTouchExpandable(true);
+    centerPanel.setDividerLocation(180);
+    centerPanel.setContinuousLayout(true);
 
 
     /*
      * Creation of the northPanel
      */
-    // Creation of the northern grid
-
     northPanel = new JPanel();
+    // Set two 2 rows and 1 column
     northPanel.setLayout(new GridLayout(2,1));
     serverPanel = new ServerView(splitPaneDemo.getRepositoriesPresenter());
     searchPanel = new SearchView(splitPaneDemo.getItemsPresenter());
@@ -72,7 +76,7 @@ public class RunPlugin extends JFrame {
     // Add the northpanel to this frame
     getContentPane().add(northPanel, BorderLayout.NORTH);
     // Add the centerPanel to this frame
-    getContentPane().add(splitPaneCenter, BorderLayout.CENTER);
+    getContentPane().add(centerPanel, BorderLayout.CENTER);
 
   }
 

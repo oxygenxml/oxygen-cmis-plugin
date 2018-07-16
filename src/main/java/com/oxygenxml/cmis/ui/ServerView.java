@@ -51,12 +51,13 @@ public class ServerView extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
+        
+        // Try presentRepositories using the URL
         try {
           repoPresenter.presentRepositories(new URL(serverUrlField.getText()));
           System.out.println("Load triggered");
         } catch (MalformedURLException e1) {
-          // TODO Auto-generated catch block
+
           e1.printStackTrace();
         }
       }

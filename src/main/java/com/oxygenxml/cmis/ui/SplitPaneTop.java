@@ -17,11 +17,12 @@ public class SplitPaneTop {
 
 
 	public SplitPaneTop(TabComponentsView tabs) {
-	  /*
-	   * TODO Create TabsComponentsView
-	   */
-	  listItem = new ListItemView(tabs);
+	   // Pane from the right with documents and folders
+    listItem = new ListItemView(tabs);
+    
+	  // Pane from the left with repos
 	  listRepo = new ListRepoView(listItem);
+
 	
 		// Create a split pane with the listRepoScrollPane and itemRepoScrollPane.
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listRepo, listItem);
