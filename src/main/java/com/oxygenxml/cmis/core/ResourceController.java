@@ -69,43 +69,6 @@ public class ResourceController {
     // create the document
     return path.createDocument(properties, contentStream, VersioningState.NONE);
   }
-  /**
-   * CREATE DOCUMENT METHOD
-   * @param path
-   * @param filename
-   * @param content
-   * @param versioningState
-   * @return
-   * @throws UnsupportedEncodingException
-   * Necessary VersionableType in order to get many versions 
-   */
-  public Document createVersionedDocument(
-      Folder path, 
-      String filename, 
-      String content,
-      VersioningState versioningState) throws UnsupportedEncodingException {
-    
-    // TODO Pass a Reader instead of a String as content.
-   
-    String mimetype = "text/plain; charset=UTF-8";
-
-    byte[] contentBytes = content.getBytes("UTF-8");
-    ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
-
-    ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
-        mimetype, stream);
-
-    // prepare properties
-    Map<String, Object> properties = new HashMap<String, Object>();
-    
-    properties.put(PropertyIds.NAME, filename);
-    properties.put(PropertyIds.OBJECT_TYPE_ID, "VersionableType");
-    properties.put(PropertyIds.VERSION_LABEL, null);
-    properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);
-
-    // create the document
-    return path.createDocument(properties, contentStream, versioningState);
-  }
   
   /**
    * MOVE DOCUMENTE FROM SOURCE FOLDER TO TARGET FOLDER

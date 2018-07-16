@@ -3,8 +3,6 @@ package com.oxygenxml.cmis.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -16,13 +14,9 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -84,42 +78,16 @@ public class ListItemView extends JPanel implements ItemsPresenter, ListSelectio
       @Override
       public void mouseClicked(MouseEvent e) {
 
-        if (SwingUtilities.isRightMouseButton(e)) {
-          JPopupMenu menu = new JPopupMenu();
-          JMenuItem item = new JMenuItem("Say hello");
-          JMenuItem editItem = new JMenuItem("Edit");
-          
-          editItem.addActionListener(new ActionListener(){
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              // TODO Auto-generated method stub
-              
-            }
-            
-          });
-          
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              JOptionPane.showMessageDialog(ListItemView.this, "Hello " + listItem.getSelectedValue());
-            }
-
-          });
-          menu.add(item);
-          menu.show(ListItemView.this, 10,
-              listItem.getCellBounds(listItem.getSelectedIndex(), listItem.getSelectedIndex()).y);
-        }
-
         // Check if user clicked two times
-        if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-
+        if (e.getClickCount() == 2) {
+          
           // Get the location of the item using location of the click
           int itemIndex = listItem.locationToIndex(e.getPoint());
 
           // Check whether the item in the list
           if (itemIndex != -1) {
             IResource currentItem = listItem.getModel().getElementAt(itemIndex);
-
+            
             // Get all the children of the item in an iterator
             Iterator<IResource> childrenIterator = currentItem.iterator();
 
@@ -127,8 +95,8 @@ public class ListItemView extends JPanel implements ItemsPresenter, ListSelectio
              * Iterate them till it has a child
              */
             if (childrenIterator != null && childrenIterator.hasNext()) {
-
-              // Define a model for the list in order to render the items
+              
+              //Define a model for the list in order to render the items
               DefaultListModel<IResource> model = new DefaultListModel<>();
 
               // While has a child, add to the model
@@ -143,8 +111,7 @@ public class ListItemView extends JPanel implements ItemsPresenter, ListSelectio
             }
 
             /*
-             * If it's an document show it on a tab instead of iterating the
-             * children
+             *  If it's an document show it on a tab instead of iterating the children
              */
             if (currentItem instanceof DocumentImpl) {
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
@@ -155,22 +122,23 @@ public class ListItemView extends JPanel implements ItemsPresenter, ListSelectio
       }
     });
 
-    // Set layout
+    //Set layout
     setLayout(new BorderLayout());
     add(listItemScrollPane, BorderLayout.CENTER);
   }
-
-  /*
-   * Implemented presentItems using connectionInfo and repoID !! Model shall be
-   * created whenever the list is updated Facade Pattern
-   */
+/*
+ * Implemented presentItems
+ * using connectionInfo and repoID 
+ * !! Model shall be created whenever the list is updated
+ * Facade Pattern
+ */
   @Override
   public void presentItems(URL connectionInfo, String repositoryID) {
     // Get the instance
     CMISAccess instance = CMISAccess.getInstance();
     // Connect
     instance.connect(connectionInfo, repositoryID);
-
+    
     // Get the rootFolder and set the model
     Folder rootFolder = instance.createResourceController().getRootFolder();
     FolderImpl resource = new FolderImpl(rootFolder);
