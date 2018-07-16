@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.oxygenxml.cmis.core.model.IDocument;
-import com.oxygenxml.cmis.core.model.IFolder;
 
 
 

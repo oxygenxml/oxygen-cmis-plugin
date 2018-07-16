@@ -75,8 +75,7 @@ public class DocumentImpl implements IDocument {
 
     return b.toString();
   }
-<<<<<<< HEAD
-=======
+
 
   /*
    * @return The last version of the document
@@ -168,6 +167,4 @@ public class DocumentImpl implements IDocument {
 
     return doc.checkIn(true, null, doc.getContentStream(), "new version");
   }
-
->>>>>>> 3ec8e7e0cf58914289385f708b315d118223d494
 }
