@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -12,12 +13,15 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.SearchController;
+import com.oxygenxml.cmis.core.model.IDocument;
 
 public class DocumentImplTest extends ConnectionTestBase {
 
@@ -43,7 +47,7 @@ public class DocumentImplTest extends ConnectionTestBase {
     DocumentImpl docTest = new DocumentImpl(doc);
 
     System.out.println("Doc name: " + docTest.getDisplayName());
-    assertEquals("testDisplayNameDoc", docTest.getDisplayName());
+    assertEquals("testDoc_name", docTest.getDisplayName());
 
     // Clean Up
     ctrl.deleteAllVersionsDocument(doc);
@@ -51,15 +55,14 @@ public class DocumentImplTest extends ConnectionTestBase {
 
   @Test
   public void testGetId() throws UnsupportedEncodingException {
-    // Set Up
-    Document doc = ctrl.createDocument(root, "testDisplayNameDoc", "some text");
-    DocumentImpl docTest = new DocumentImpl(doc);
+    SearchController search = new SearchController(ctrl);
+    ArrayList<IDocument> list = search.queringDoc("ment-2");
+    
+    IDocument docTest = list.get(0);
 
     System.out.println("Doc ID: " + docTest.getId());
-    assertEquals("141", docTest.getId());
+    assertEquals("111", docTest.getId());
 
-    // Clean Up
-    ctrl.deleteAllVersionsDocument(doc);
   }
 
   /**
@@ -88,14 +91,15 @@ public class DocumentImplTest extends ConnectionTestBase {
   }
 
   @Test
-  public void testGetDocumentPath() throws UnsupportedEncodingException {
-    Document doc = ctrl.createDocument(root, "PathTestFile", "some text");
-    DocumentImpl docImpl = new DocumentImpl(doc);
-
-    System.out.println(docImpl.getDocumentPath(ctrl));
-    assertEquals("/RootFolder/PathTestFile/", docImpl.getDocumentPath(ctrl));
-
-    ctrl.deleteAllVersionsDocument(doc);
+  public void testGetDocumentPath() throws UnsupportedEncodingException {    
+   
+    SearchController search = new SearchController(ctrl);
+    ArrayList<IDocument> list = search.queringDoc("Document-2");
+    
+    IDocument doc = list.get(0);
+    System.out.println(doc.getDocumentPath(ctrl));
+    assertEquals("/RootFolder/My_Folder-0-0/My_Folder-1-1/My_Document-2-0/", doc.getDocumentPath(ctrl));
+    
   }
 
   /*
@@ -117,7 +121,6 @@ public class DocumentImplTest extends ConnectionTestBase {
     System.out.println(latest.getContentStream().toString());
 
     ctrl.deleteAllVersionsDocument(latest);
-    ctrl.deleteAllVersionsDocument(doc);
   }
 
   /*
@@ -151,4 +154,8 @@ public class DocumentImplTest extends ConnectionTestBase {
     //ctrl.deleteAllVersionsDocument(pwc);
   }
 
+  @After
+  public void afterMethod(){
+    ctrl.getSession().clear();
+  }
 }

@@ -6,10 +6,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.oxygenxml.cmis.core.model.IDocument;
+import com.oxygenxml.cmis.core.model.IFolder;
 
 
 
@@ -24,11 +26,36 @@ public class SearchControllerTest extends ConnectionTestBase{
   }
   
   @Test
-  public void testSearhcFiles() {
+  public void testQueringFolders() {
     SearchController search = new SearchController(ctrl);
-    search.searchFiles("My_Document-0-1");
     
-    ArrayList<IDocument> docs = search.resultDocs();
+    ArrayList<IFolder> folds = search.queringFolder("Fold");
+    
+    assertNotNull(folds);
+
+    for(IFolder folder : folds) {
+      System.out.println(folder.getDisplayName());
+    }
+  }
+  
+  @Test
+  public void testQueringDoc() {
+    SearchController search = new SearchController(ctrl);
+    
+    ArrayList<IDocument> docs = search.queringDoc("Document");
+    
+    assertNotNull(docs);
+
+    for(IDocument doc : docs) {
+      System.out.println(doc.getDisplayName());
+    }
+  }
+  
+  @Test
+  public void testQueringDocContent() {
+    SearchController search = new SearchController(ctrl);
+    
+    ArrayList<IDocument> docs = search.queringDocContent("At justo in urna");
     
     assertNotNull(docs);
 
@@ -38,4 +65,8 @@ public class SearchControllerTest extends ConnectionTestBase{
     
   }
 
+  @After
+  public void afterMethod(){
+    ctrl.getSession().clear();
+  }
 }

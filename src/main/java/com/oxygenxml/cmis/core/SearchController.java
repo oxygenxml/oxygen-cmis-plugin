@@ -14,30 +14,15 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 public class SearchController {
   
   private ResourceController ctrl;
-  private ArrayList<IDocument> docList;
-  private ArrayList<IFolder> folderList;
-  
+
   /**
    * CONSTRUCTOR
    * @param RESOURCE CONTROLER ctrl
    */
   public SearchController(ResourceController ctrl) {
     this.ctrl = ctrl;
-    docList = new ArrayList<IDocument>();
-    folderList = new ArrayList<IFolder>();
   }
   
-  /**
-   * SEARCH FUNCTION
-   * @param name
-   */
-  public void searchFiles(String name) {
-    OperationContext oc = ctrl.getSession().createOperationContext();
-    oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
-    
-    queringDoc(name, oc);
-    queringFolder(name, oc);
-  }
   
   /**
    * HELPER FOR DOCUMENTS
@@ -45,13 +30,39 @@ public class SearchController {
    * @param name
    * @param oc
    */
-  private void queringDoc(String name, OperationContext oc) {
-    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:document", "cmis:name LIKE '" + name + "'", false, oc);
+  public ArrayList<IDocument> queringDoc(String name) {
+    ArrayList<IDocument> docList = new ArrayList<IDocument>();
+    
+    OperationContext oc = ctrl.getSession().createOperationContext();
+    oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:document", "cmis:name LIKE '%" + name + "%'", false, oc);
     
     for(CmisObject cmisObject : results) {
       IDocument doc = new DocumentImpl((Document) cmisObject);
       docList.add(doc);
     }
+    
+    return docList;
+  }
+  
+  /**
+   * METHOD TO SEARCH DOCUMENTS WITH SPECIFIC CONTENT!
+   * @param content
+   * @return
+   */
+  public ArrayList<IDocument> queringDocContent(String content){
+   ArrayList<IDocument> docList = new ArrayList<IDocument>();
+    
+    OperationContext oc = ctrl.getSession().createOperationContext();
+    oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:document", "CONTAINS ('" + content + "')", false, oc);
+    
+    for(CmisObject cmisObject : results) {
+      IDocument doc = new DocumentImpl((Document) cmisObject);
+      docList.add(doc);
+    }
+    
+    return docList;
   }
   
   /**
@@ -60,28 +71,19 @@ public class SearchController {
    * @param name
    * @param oc
    */
-  private void queringFolder(String name, OperationContext oc) {
-  ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:folder", "cmis:name LIKE '" + name + "'", false, oc);
+  public ArrayList<IFolder> queringFolder(String name) {
+    ArrayList<IFolder> folderList = new ArrayList<IFolder>();
+    
+    OperationContext oc = ctrl.getSession().createOperationContext();
+    oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:folder", "cmis:name LIKE '%" + name + "%'", false, oc);
   
-  for(CmisObject cmisObject : results) {
-     IFolder doc = new FolderImpl((Folder) cmisObject);
-     folderList.add(doc);
+    for(CmisObject cmisObject : results) {
+     IFolder fold = new FolderImpl((Folder) cmisObject);
+     folderList.add(fold);
     }
-  }
-  
-  /**
-   * RETURN IDocuments RESULTS
-   * @return docList (ArrayList)
-   */
-  public ArrayList<IDocument> resultDocs(){
-    return docList;
-  }
-  
-  /**
-   * RETURN IFolder RESULTS
-   * @return folderList (ArrayList)
-   */
-  public ArrayList<IFolder> resultFolders(){
+    
     return folderList;
   }
+
 }

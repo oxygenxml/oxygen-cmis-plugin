@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.After;
@@ -12,6 +13,8 @@ import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.SearchController;
+import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 
 public class FolderImplTest {
@@ -82,16 +85,15 @@ public class FolderImplTest {
   }
   
   @Test
-  public void testGetId() {
-  //Set Up
-    Folder folder = ctrl.createFolder(root, "testId");
-    FolderImpl testFolder = new FolderImpl(folder);
+  public void testGetId() {  
+    SearchController search = new SearchController(ctrl);
+    ArrayList<IFolder> list = search.queringFolder("Folder-2");
     
-    System.out.println("Folder ID: " + testFolder.getId());
-    assertEquals("136", testFolder.getId());
+    IFolder fold = list.get(0);
     
-    //Clean Up
-    ctrl.deleteFolderTree(folder);
+    System.out.println("Folder ID: " + fold.getId());
+    assertEquals("110", fold.getId());
+    
   }
   
   @Test
