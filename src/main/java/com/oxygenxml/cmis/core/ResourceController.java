@@ -232,4 +232,8 @@ public class ResourceController {
    // TODO Get the encoding dynamically.
    return new InputStreamReader(stream, "UTF-8");    
  }
+
+public CmisObject getCmisObj(String objectID) {
+  return session.getObject(objectID);
+}
 }

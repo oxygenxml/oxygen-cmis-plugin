@@ -151,7 +151,6 @@ public class DocumentImplTest extends ConnectionTestBase {
     System.out.println(pwc.getName());
 
     ctrl.deleteAllVersionsDocument(doc);
-    //ctrl.deleteAllVersionsDocument(pwc);
   }
 
   @After

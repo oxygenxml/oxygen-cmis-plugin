@@ -91,7 +91,6 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
   public void testDocumentContent() throws IOException {
     Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text");
   
-    
     Reader docContent = ctrl.getDocumentContent(doc.getId());
     
     /*InputStream expectedStream = getClass().getClassLoader().getResourceAsStream("docs/content.txt");
