@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Repository;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -40,21 +41,23 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener {
-  
+
   private JList<IResource> resourceList;
   private DefaultListModel<Repository> model;
   private List<Repository> repoList;
   private TabsPresenter tabsPresenter;
-  private Folder parentFolder;
   private Stack<IResource> parentResources;
- 
-  private IResource origin = null;
+  private BreadcrumbPresenter breadcrumbPresenter;
 
-  ItemListView(TabsPresenter tabsPresenter) {
+  ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+    
     // Initialize the tabsPresenter
     this.tabsPresenter = tabsPresenter;
-   
+    
+    // Initialize the tabsPresenter
+    this.tabsPresenter = tabsPresenter;
     parentResources = new Stack<IResource>();
+    
     // Create the listItem
     resourceList = new JList();
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -84,7 +87,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           renderTex = ((IResource) value).getDisplayName();
 
         }
-
         return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
       }
     });
@@ -128,12 +130,13 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           // Get the location of the item using location of the click
           int itemIndex = resourceList.locationToIndex(e.getPoint());
           IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+          
           // Check whether the item in the list
           if (itemIndex != -1) {
-            
-
+            System.out.println("TO present breadcrumb="+currentItem.getDisplayName());
+            breadcrumbPresenter.presentBreadcrumb(currentItem);
             presentResources(currentItem);
-
+   
             /*
              * If it's an document show it on a tab instead of iterating the
              * children
@@ -168,28 +171,32 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     Folder rootFolder = instance.createResourceController().getRootFolder();
 
     final FolderImpl origin = new FolderImpl(rootFolder);
-
-    DefaultListModel<IResource> model = new DefaultListModel<>();
     parentResources.push(new IResource() {
       @Override
       public Iterator<IResource> iterator() {
-        return Arrays.asList(new IResource[] {origin}).iterator();
+        return Arrays.asList(new IResource[] { origin }).iterator();
       }
-      
+
       @Override
       public String getId() {
-        return "";
+        return "-repository-object";
       }
-      
+
       @Override
       public String getDisplayName() {
         return "..";
       }
     });
+    setFolder(origin);
+
+  }
+
+  private void setFolder(final FolderImpl origin) {
+    DefaultListModel<IResource> model = new DefaultListModel<>();
     
+
     model.addElement(origin);
     resourceList.setModel(model);
-
   }
 
   /**
@@ -199,15 +206,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    *          The resource to present its children.
    */
   private void presentResources(IResource resource) {
-    
-    
+
     if (resource instanceof GoUpResource) {
       // Go one level up.
       parentResources.pop();
       System.out.println("Go to=" + parentResources.peek().getDisplayName());
-    } 
-    
-    
+    }
 
     System.out.println("Current item=" + resource.getDisplayName());
     // Get all the children of the item in an iterator
@@ -217,15 +221,15 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
      * Iterate them till it has a child
      */
     if (childrenIterator != null && childrenIterator.hasNext()) {
-      
+
       if (!(resource instanceof GoUpResource)) {
 
         // The case when I go inside a folder.
         System.out.println(resource.getDisplayName());
-        
+
         // Push the parent into the stack.
         parentResources.push(resource);
-      } 
+      }
 
       // Define a model for the list in order to render the items
       DefaultListModel<IResource> model = new DefaultListModel<>();
@@ -250,31 +254,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     // TODO Auto-generated method stub
 
   }
-  
-  
-  private class GoUpResource implements IResource {
-    
-    private Stack<IResource> parentResources;
-    
-    private GoUpResource(Stack<IResource> parentResources) {
-      this.parentResources = parentResources;
-    }
-    
-    @Override
-    public Iterator<IResource> iterator() {
-      IResource wrapped = parentResources.peek();
-      return wrapped .iterator();
-    }
 
-    @Override
-    public String getDisplayName() {
-      return "..";
-    }
-
-    @Override
-    public String getId() {
-      return parentResources.peek().getId();
-    }
+  @Override
+  public void presentFolderItems(String folderID) {
+    // TODO Auto-generated method stub
+    ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    setFolder(new FolderImpl(resourceController.getFolder(folderID)));
   }
 
 }

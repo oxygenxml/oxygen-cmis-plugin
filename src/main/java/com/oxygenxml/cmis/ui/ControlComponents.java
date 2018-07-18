@@ -2,6 +2,8 @@ package com.oxygenxml.cmis.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -13,12 +15,28 @@ public class ControlComponents extends JPanel {
 
   private RepoComboBoxView repoComboBox;
   private ItemListView itemList;
-  private JPanel northPanel, southPanel, serverPanel, searchPanel;
+  private BreadcrumbView breadcrumbList;
+  private JPanel northPanel, southPanel;
+  private ServerView serverPanel;
+  private SearchView searchPanel;
 
   public ControlComponents(TabComponentsView tabs) {
 
     // Configure JPanel
-    itemList = new ItemListView(tabs);
+    breadcrumbList = new BreadcrumbView(new ItemsPresenter() {
+      
+      @Override
+      public void presentItems(URL connectionInfo, String repositoryID) {
+        itemList.presentItems(connectionInfo, repositoryID);
+      }
+      
+      @Override
+      public void presentFolderItems(String folderID) {
+        itemList.presentFolderItems(folderID);
+      }
+    });
+    
+    itemList = new ItemListView(tabs, breadcrumbList);
     searchPanel = new SearchView(itemList);
     repoComboBox = new RepoComboBoxView(itemList);
     serverPanel = new ServerView(repoComboBox);
@@ -37,26 +55,15 @@ public class ControlComponents extends JPanel {
     northPanel.add(repoComboBox);
     northPanel.add(searchPanel);
 
-    // Set 1 row and 1 column
-    southPanel.setLayout(new GridLayout(1, 1));
+    // Set 2 row and 1 column
+    southPanel.setLayout(new GridLayout(2, 1));
     southPanel.add(itemList);
-    //
-    // // Add the northpanel to this frame
-     add(northPanel, BorderLayout.NORTH);
-     add(southPanel,BorderLayout.CENTER);
+    southPanel.add(breadcrumbList);
+
+    // Add the northpanel to this frame
+    add(northPanel, BorderLayout.NORTH);
+    add(southPanel, BorderLayout.CENTER);
 
   }
-
-  public RepositoriesPresenter getRepositoriesPresenter() {
-    return repoComboBox;
-  }
-
-  public ItemsPresenter getItemsPresenter() {
-    return itemList;
-  }
-
-  // public JSplitPane getSplitPane() {
-  // return splitPane;
-  // }
 
 }

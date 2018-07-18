@@ -51,28 +51,9 @@ public class RunPlugin extends JFrame {
     // Create the splitPanel from center
     JSplitPane centerPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPanel, bottomPanel);
     centerPanel.setOneTouchExpandable(true);
-    centerPanel.setDividerLocation(180);
+    centerPanel.setDividerLocation(300);
     centerPanel.setContinuousLayout(true);
 
-
-//    /*
-//     * Creation of the northPanel
-//     */
-//    northPanel = new JPanel();
-//    // Set two 2 rows and 1 column
-//    northPanel.setLayout(new GridLayout(2,1));
-//    serverPanel = new ServerView(topPanel.getRepositoriesPresenter());
-//    searchPanel = new SearchView(topPanel.getItemsPresenter());
-//    repoPanel= new ListRepoView(listItem);
-//    
-//    northPanel.add(serverPanel);
-//    northPanel.add(searchPanel);
-    
-
-
-//    // Add the northpanel to this frame
-//    getContentPane().add(northPanel, BorderLayout.NORTH);
-    // Add the centerPanel to this frame
     getContentPane().add(centerPanel, BorderLayout.CENTER);
 
   }

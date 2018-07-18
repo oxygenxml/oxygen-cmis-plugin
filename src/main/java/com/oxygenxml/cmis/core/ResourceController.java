@@ -198,6 +198,15 @@ public class ResourceController {
    return (Document) session.getObject(id);
  }
  
+ /**
+  * GET DOC
+  * @param id
+  * @return
+  */
+ public Folder getFolder(String id) {
+   return (Folder) session.getObject(id);
+ }
+ 
  
  public Session getSession() {
    return session;

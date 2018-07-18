@@ -39,9 +39,11 @@ public class ServerView extends JPanel {
     c.gridwidth = 2;
     c.ipadx = 40;
     c.fill = GridBagConstraints.HORIZONTAL;
+    
     JComboBox<String>urlComboBox=new JComboBox<String>(servers);    
     urlComboBox.setEditable(true);
     urlComboBox.setEnabled(true);
+    
     // Load JButton constraints constraints
     add(urlComboBox, c);
     c.gridx = 3;

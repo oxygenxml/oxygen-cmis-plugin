@@ -27,10 +27,11 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
    * Initialize the components
    */
   public TabComponentsView() {
+    itemsCounter = 0;
     add(pane);
     // Set one only a column
     setLayout(new GridLayout(0, 1));
-    setMinimumSize(new Dimension(200, 100));
+    setMinimumSize(new Dimension(200, 150));
     setVisible(true);
   }
 
