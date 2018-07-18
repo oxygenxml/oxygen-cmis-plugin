@@ -2,8 +2,6 @@ package com.oxygenxml.cmis.core.model.impl;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-
 import org.apache.chemistry.opencmis.client.api.Repository;
 
 import com.oxygenxml.cmis.core.model.IRepository;

@@ -27,7 +27,6 @@ public class ConnectionTestBase {
     return false;
   }
   
-  
   protected boolean folderExists(Folder folder, Folder rootFolder) {
     for(CmisObject child : rootFolder.getChildren()) {
       if(child instanceof Document) {
@@ -52,8 +51,7 @@ public class ConnectionTestBase {
     }
     return null;
   }
-  
-  
+   
   /**
    * 
    * @param docContent
@@ -73,7 +71,6 @@ public class ConnectionTestBase {
     }
     return b.toString();
   }
-  
   
   protected void debugPrint(Folder folder) {
     System.out.println(folder.getName());

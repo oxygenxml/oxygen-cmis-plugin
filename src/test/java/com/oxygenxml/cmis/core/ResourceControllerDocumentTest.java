@@ -3,8 +3,6 @@ package com.oxygenxml.cmis.core;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
@@ -84,7 +82,6 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
     
     debugPrint(targetFolder);
     
-  
     Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
     
     ctrl.deleteFolderTree(targetFolder);
@@ -92,20 +89,20 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 
   @Test(timeout=10000)
   public void testDocumentContent() throws IOException {
-    String docId = "133";
-    System.out.println(docId);
+    Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text");
+  
     
-    Reader docContent = ctrl.getDocumentContent(docId);
+    Reader docContent = ctrl.getDocumentContent(doc.getId());
     
-    InputStream expectedStream = getClass().getClassLoader().getResourceAsStream("docs/content.txt");
-    Reader expectedReader = new InputStreamReader(expectedStream, "UTF-8");
+    /*InputStream expectedStream = getClass().getClassLoader().getResourceAsStream("docs/content.txt");
+    Reader expectedReader = new InputStreamReader(expectedStream, "UTF-8");*/
     
+   // assertEquals(read(expectedReader).replaceAll("\r", ""), read(docContent).replace("\r", ""));
     
-    assertEquals(read(expectedReader).replaceAll("\r", ""), read(docContent).replace("\r", ""));
+    assertEquals("some test text", read(docContent));
+    ctrl.deleteAllVersionsDocument(doc);
   }
 
-  
-  
   @After
   public void afterMethod(){
     if (testFolder != null) {

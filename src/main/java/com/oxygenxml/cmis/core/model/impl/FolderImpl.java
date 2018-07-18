@@ -37,7 +37,6 @@ public class FolderImpl implements IFolder {
     return new ResourceIterator(folder);
   }
   
-  
   private class ResourceIterator implements Iterator<IResource> {
     private Iterator<CmisObject> children;
 
@@ -72,6 +71,10 @@ public class FolderImpl implements IFolder {
   @Override
   public String getId() {
     return folder.getId();
+  }
+
+  public String getFolderPath() {
+    return folder.getPath();
   }
   
   /**

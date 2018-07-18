@@ -16,6 +16,11 @@ public class AccesServerTest {
     
     List<Repository> repositoryList = CMISAccess.getInstance().getRepositories(new URL("http://localhost:8080/B/atom11"));
     
+    //to understand what i do
+    for(Repository rep : repositoryList) {
+      System.out.println(rep.getName() + " ---- " + rep.getId());
+    }
+    
     Assert.assertNotNull("The repository List should not be null.", repositoryList);
     Assert.assertFalse("The repository list should not be empty", repositoryList.isEmpty());
     Assert.assertEquals("The number of repositories should be 1.", 1, repositoryList.size());
