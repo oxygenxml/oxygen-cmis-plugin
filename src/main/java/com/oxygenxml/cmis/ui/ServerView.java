@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -17,8 +18,9 @@ public class ServerView extends JPanel {
   private RepositoriesPresenter repoPresenter;
 
   public ServerView(RepositoriesPresenter repoPresenter) {
-    // TODO Auto-generated constructor stub
-
+    // TODO Get all the cached servers 
+    String servers[]={"http://localhost:8080/B/atom11","http://lets-talk.com"};
+    
     this.repoPresenter = repoPresenter;
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -27,25 +29,26 @@ public class ServerView extends JPanel {
     c.gridx = 0;
     c.gridy = 0;
     c.weightx = 0.02;
-    JLabel serverUrlLabel = new JLabel("Server URL:");
+    JLabel serverUrlLabel = new JLabel(" Server URL: ");
     add(serverUrlLabel, c);
 
-    // Url http JTextField constraints
+    // Url http JComboBox constraints
     c.gridx = 1;
     c.gridy = 0;
     c.weightx = 0.9;
     c.gridwidth = 2;
     c.ipadx = 40;
     c.fill = GridBagConstraints.HORIZONTAL;
-    JTextField serverUrlField = new JTextField("http://localhost:8080/B/atom11");
-
+    JComboBox<String>urlComboBox=new JComboBox<String>(servers);    
+    urlComboBox.setEditable(true);
+    urlComboBox.setEnabled(true);
     // Load JButton constraints constraints
-    add(serverUrlField, c);
+    add(urlComboBox, c);
     c.gridx = 3;
     c.gridwidth = 1;
     c.gridy = 0;
     c.weightx = 0.08;
-    JButton loadButton = new JButton("Load");
+    JButton loadButton = new JButton("Connect");
 
     loadButton.addActionListener(new ActionListener() {
 
@@ -54,8 +57,8 @@ public class ServerView extends JPanel {
         
         // Try presentRepositories using the URL
         try {
-          repoPresenter.presentRepositories(new URL(serverUrlField.getText()));
-          System.out.println("Load triggered");
+          System.out.println("Load triggered="+urlComboBox.getItemAt(urlComboBox.getSelectedIndex()));
+          repoPresenter.presentRepositories(new URL(urlComboBox.getItemAt(urlComboBox.getSelectedIndex())));
         } catch (MalformedURLException e1) {
 
           e1.printStackTrace();

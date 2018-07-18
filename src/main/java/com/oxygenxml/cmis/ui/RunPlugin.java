@@ -27,6 +27,7 @@ public class RunPlugin extends JFrame {
   JPanel northPanel;
   ServerView serverPanel;
   SearchView searchPanel;
+  RepoComboBoxView repoPanel;
   /*
    * splitPaneBottom is the Tab section from the bottom
    */
@@ -39,42 +40,38 @@ public class RunPlugin extends JFrame {
     /* 
      * Create the bottom of the separator
      */
-    TabComponentsView splitPaneBottom = new TabComponentsView();
+    TabComponentsView bottomPanel = new TabComponentsView();
     
     /*
      * Create the top of the separator that includes the itemList and repoList 
      */
-    SplitPaneTop splitPaneDemo = new SplitPaneTop(splitPaneBottom);
-    JSplitPane splitPaneTop = splitPaneDemo.getSplitPane();
-    splitPaneTop.setBorder(null);
-    splitPaneTop.setContinuousLayout(true);
-    splitPaneTop.setMinimumSize(new Dimension(200, 100));
+    ControlComponents topPanel = new ControlComponents(bottomPanel);
 
 
     // Create the splitPanel from center
-    JSplitPane centerPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, splitPaneBottom);
+    JSplitPane centerPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPanel, bottomPanel);
     centerPanel.setOneTouchExpandable(true);
     centerPanel.setDividerLocation(180);
     centerPanel.setContinuousLayout(true);
 
 
-    /*
-     * Creation of the northPanel
-     */
-    northPanel = new JPanel();
-    // Set two 2 rows and 1 column
-    northPanel.setLayout(new GridLayout(2,1));
-    serverPanel = new ServerView(splitPaneDemo.getRepositoriesPresenter());
-    searchPanel = new SearchView(splitPaneDemo.getItemsPresenter());
-    
-    
-    northPanel.add(serverPanel);
-    northPanel.add(searchPanel);
+//    /*
+//     * Creation of the northPanel
+//     */
+//    northPanel = new JPanel();
+//    // Set two 2 rows and 1 column
+//    northPanel.setLayout(new GridLayout(2,1));
+//    serverPanel = new ServerView(topPanel.getRepositoriesPresenter());
+//    searchPanel = new SearchView(topPanel.getItemsPresenter());
+//    repoPanel= new ListRepoView(listItem);
+//    
+//    northPanel.add(serverPanel);
+//    northPanel.add(searchPanel);
     
 
 
-    // Add the northpanel to this frame
-    getContentPane().add(northPanel, BorderLayout.NORTH);
+//    // Add the northpanel to this frame
+//    getContentPane().add(northPanel, BorderLayout.NORTH);
     // Add the centerPanel to this frame
     getContentPane().add(centerPanel, BorderLayout.CENTER);
 
