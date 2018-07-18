@@ -1,8 +1,7 @@
 package com.oxygenxml.cmis.core.model.impl;
 
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -60,9 +59,8 @@ public class FolderImpl implements IFolder {
         return new FolderImpl((Folder) next);
       } else {
         logger.error("Unhandled type " + next.getClass());
+        return new OtherResource(next);
       }
-      
-      throw new NoSuchElementException();
     }
   }
 
@@ -74,5 +72,39 @@ public class FolderImpl implements IFolder {
   @Override
   public String getId() {
     return folder.getId();
+  }
+  
+  /**
+   * Another type of resource.
+   */
+  private class OtherResource implements IResource {
+    /**
+     * Wrapped CMIS object.
+     */
+    private CmisObject object;
+
+    /**
+     * Constructor.
+     * 
+     * @param object The wrapped CMIS object.
+     */
+    public OtherResource(CmisObject object) {
+      this.object = object;
+    }
+
+    @Override
+    public Iterator<IResource> iterator() {
+      return Collections.emptyIterator();
+    }
+
+    @Override
+    public String getDisplayName() {
+      return object.getName() + " [" + object.getType() + "]";
+    }
+
+    @Override
+    public String getId() {
+      return object.getId();
+    }
   }
 }
