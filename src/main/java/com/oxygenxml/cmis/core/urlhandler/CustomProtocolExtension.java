@@ -16,6 +16,16 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 public class CustomProtocolExtension {
 
   /**
+   * TODO Code review. Let's move this method inside CustomProtocol and make it reuse teh PROTOCOL, REPOSITORY constants.
+   * 
+   * TODO Code reciew. In the URL, let's put the file name as well. Oxygen will presented on the editor tab:
+   * cmis:localhost:8080/atom11/file.xml?......
+   * 
+   * TODO Code review. When building and extracting, we should hanle this case as well. THis is the AtomPub URL for Sharepoint:
+   * 
+   * http://<host>/_vti_bin/cmis/rest?getRepositories
+   * 
+   * It already has something inside GET. We must be able to recreate the URL as it was.
    * 
    * @param object
    * @param _ctrl

@@ -19,6 +19,9 @@ public class CustomProtocol{
   * @throws MalformedURLException
   */
   public CmisObject getObjectFromURL(String url) throws MalformedURLException {
+    // TODO Code review: Let's extract some constants. PROTOCOL, REPOSITORY
+    // TODO Refactoring. This method and getDocumentContent() have duplicate code about tokenizing and interpreting the URL. 
+    // We can extract a method that makes this, and returns an object that Contains: the server URL, the Repository ID and the Object ID.
     String protocol = url
         .substring((url.indexOf("proto=") + "proto=".length()), url.indexOf("#"));
    

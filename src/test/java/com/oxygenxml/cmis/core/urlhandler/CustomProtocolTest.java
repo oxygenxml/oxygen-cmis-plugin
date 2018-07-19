@@ -20,8 +20,16 @@ import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.urlhandler.CustomProtocolExtension;
 
+/**
+ * Tests for accessing CMIS resources through our custom protocol. 
+ */
 public class CustomProtocolTest extends ConnectionTestBase {
 
+  /**
+   * TODO Code review. It makes no sense to keep the document as a member variable since it is used only in each test.
+   * A local variable in each test would suffice. A memeber variable makes sense if we always create it on the setUp() and we 
+   * delete it on the afterMethod().
+   */
   private Document doc;
   private Folder root;
   private ResourceController ctrl;
@@ -59,6 +67,8 @@ public class CustomProtocolTest extends ConnectionTestBase {
     CustomProtocolExtension cpe = new CustomProtocolExtension();
     String url = cpe.generateURLObject(doc, ctrl);
     
+    // TODO Code review. Assert the obtained URL.
+    
     System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
     
     Document docURL = (Document) cpe.getObjectFromURL(url);
@@ -66,6 +76,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
     assertNotNull(docURL);
     assertEquals("urlDocGet", docURL.getName());
     
+    // TODO Code review. Clean up. It is better to put it inside a finally block.
     ctrl.deleteAllVersionsDocument(doc);
   }
   
@@ -76,6 +87,8 @@ public class CustomProtocolTest extends ConnectionTestBase {
     CustomProtocolExtension cpe = new CustomProtocolExtension();
     String url = cpe.generateURLObject(doc, ctrl);
     
+    // TODO Code review. Assert the obtained URL.
+    
     System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
     
     Reader docContent = cpe.getContentURL(url);
@@ -83,6 +96,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
     assertNotNull(docContent);
     assertEquals("some test text", read(docContent));
     
+    // TODO Code review. Clean up. It is better to put it inside a finally block.
     ctrl.deleteAllVersionsDocument(doc);
   }
   
