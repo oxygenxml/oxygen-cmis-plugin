@@ -89,6 +89,7 @@ public class ButtonTabComponentView extends JPanel {
       int i = pane.indexOfTabComponent(ButtonTabComponentView.this);
       if (i != -1) {
         pane.remove(i);
+        TabComponentsView.itemsCounter--;
       }
     }
 

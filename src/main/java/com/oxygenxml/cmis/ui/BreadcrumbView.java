@@ -1,19 +1,27 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.Stack;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 import com.oxygenxml.cmis.core.model.IResource;
 
@@ -30,15 +38,21 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   BreadcrumbView(ItemsPresenter itemsPresenter) {
     this.itemsPresenter = itemsPresenter;
     breadcrumbList = new JList<IResource>();
+    breadcrumbList.setModel(new DefaultListModel<>());
     parentResources = new Stack<IResource>();
-
+    
+    
+    
     // Set the list to be HORIZONTAL
     breadcrumbList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
     breadcrumbList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     breadcrumbList.setVisibleRowCount(-1);
-
+    
     JScrollPane scrollingBreadcrumb = new JScrollPane(breadcrumbList);
-
+    
+    Border emptyBorder = BorderFactory.createEmptyBorder();
+    scrollingBreadcrumb.setBorder(emptyBorder);
+    
     /*
      * Render all the elements of the listItem when necessary
      */
@@ -51,7 +65,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
         if (value != null) {
           // Cast in order to use the methods from IResource interface
 
-          renderTex = ((IResource) value).getDisplayName();
+          renderTex = ((IResource) value).getDisplayName()+">";
 
         }
         return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
@@ -75,26 +89,46 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
           // Check whether the item in the list
           if (targetIndex != -1) {
-            System.out.println(currentItem.getDisplayName());
+            System.out.println("Clicked resource: " + currentItem.getDisplayName());
             // While goes back to the target selected pop elements
             while (!currentItem.getId().equals(parentResources.peek().getId())) {
-              
-              System.out.println(parentResources.peek().getDisplayName());
+
+              System.out.println("Eliminate: " + parentResources.peek().getDisplayName());
               parentResources.pop();
             }
-            //presentBreadcrumb(parentResources.peek());
-            System.out.println(parentResources.peek().getId());
-            itemsPresenter.presentFolderItems(parentResources.peek().getId());
             
+            IResource itemToShow = parentResources.peek();
+            boolean checkStack = parentResources.isEmpty();
             
+            if(!checkStack){
+              System.out.println("To present in breadcrumb=" + parentResources.peek().getDisplayName());
+              itemsPresenter.presentFolderItems(parentResources.peek().getId());
+              
+              parentResources.pop();
+              
+              presentBreadcrumb(itemToShow);
+            }
+            
+
           }
         }
       }
     });
 
     // Set layout
-    setLayout(new BorderLayout());
-    add(scrollingBreadcrumb, BorderLayout.CENTER);
+    setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+
+    //constraints
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 0.9;
+    c.gridwidth = 3;
+    c.gridx = 0;
+    c.gridy = 0;
+    c.ipadx = 50;
+    c.ipady = 20;
+    add(scrollingBreadcrumb, c);
+   
   }
 
   @Override
@@ -102,21 +136,17 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     parentResources.push(resource);
     System.out.println("Go to breadcroumb=" + parentResources.peek().getDisplayName());
+    
 
     System.out.println("Current breadcrumb=" + resource.getDisplayName());
-    // Get all the children of the item in an iterator
-    Iterator<IResource> childrenIterator = resource.iterator();
 
     // Define a model for the list in order to render the items
     DefaultListModel<IResource> model = new DefaultListModel<>();
-
-    //Iterate the stack
-    for (IResource obj : parentResources) {
-
-      model.addElement(obj);
-
+    for (IResource iResource : parentResources) {
+      model.addElement(iResource);
+      
     }
-    // Set the model to the list
+    
     breadcrumbList.setModel(model);
 
   }

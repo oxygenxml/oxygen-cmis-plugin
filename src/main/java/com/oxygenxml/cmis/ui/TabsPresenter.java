@@ -6,4 +6,5 @@ import org.apache.chemistry.opencmis.client.api.Document;
 
 public interface TabsPresenter {
   void presentItem(Document doc);
+
 }

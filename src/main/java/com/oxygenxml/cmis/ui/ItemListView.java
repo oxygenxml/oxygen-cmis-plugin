@@ -3,39 +3,36 @@ package com.oxygenxml.cmis.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Repository;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.core.model.IDocument;
-import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -46,7 +43,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private DefaultListModel<Repository> model;
   private List<Repository> repoList;
   private TabsPresenter tabsPresenter;
-  private Stack<IResource> parentResources;
   private BreadcrumbPresenter breadcrumbPresenter;
 
   ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
@@ -54,9 +50,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     // Initialize the tabsPresenter
     this.tabsPresenter = tabsPresenter;
     
-    // Initialize the tabsPresenter
-    this.tabsPresenter = tabsPresenter;
-    parentResources = new Stack<IResource>();
     
     // Create the listItem
     resourceList = new JList();
@@ -124,11 +117,11 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
               resourceList.getCellBounds(resourceList.getSelectedIndex(), resourceList.getSelectedIndex()).y);
         }
 
+        // Get the location of the item using location of the click
+        int itemIndex = resourceList.locationToIndex(e.getPoint());
         // Check if user clicked two times
-        if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+        if (itemIndex != -1 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 
-          // Get the location of the item using location of the click
-          int itemIndex = resourceList.locationToIndex(e.getPoint());
           IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
           
           // Check whether the item in the list
@@ -151,8 +144,19 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     });
 
     // Set layout
-    setLayout(new BorderLayout());
-    add(listItemScrollPane, BorderLayout.CENTER);
+    setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+
+    //constraints
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 0.9;
+    c.gridwidth = 3;
+    c.gridx = 0;
+    c.gridy = 0;
+    c.ipadx = 40;
+    
+    add(listItemScrollPane, c);
+
   }
 
   /*
@@ -171,22 +175,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     Folder rootFolder = instance.createResourceController().getRootFolder();
 
     final FolderImpl origin = new FolderImpl(rootFolder);
-    parentResources.push(new IResource() {
-      @Override
-      public Iterator<IResource> iterator() {
-        return Arrays.asList(new IResource[] { origin }).iterator();
-      }
-
-      @Override
-      public String getId() {
-        return "-repository-object";
-      }
-
-      @Override
-      public String getDisplayName() {
-        return "..";
-      }
-    });
     setFolder(origin);
 
   }
@@ -206,13 +194,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    *          The resource to present its children.
    */
   private void presentResources(IResource resource) {
-
-    if (resource instanceof GoUpResource) {
-      // Go one level up.
-      parentResources.pop();
-      System.out.println("Go to=" + parentResources.peek().getDisplayName());
-    }
-
     System.out.println("Current item=" + resource.getDisplayName());
     // Get all the children of the item in an iterator
     Iterator<IResource> childrenIterator = resource.iterator();
@@ -220,23 +201,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     /*
      * Iterate them till it has a child
      */
-    if (childrenIterator != null && childrenIterator.hasNext()) {
-
-      if (!(resource instanceof GoUpResource)) {
-
-        // The case when I go inside a folder.
-        System.out.println(resource.getDisplayName());
-
-        // Push the parent into the stack.
-        parentResources.push(resource);
-      }
-
+    if (childrenIterator != null) {
       // Define a model for the list in order to render the items
       DefaultListModel<IResource> model = new DefaultListModel<>();
 
-      if (parentResources.size() > 1) {
-        model.addElement(new GoUpResource(parentResources));
-      }
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
         IResource iResource = (IResource) childrenIterator.next();
@@ -259,7 +227,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   public void presentFolderItems(String folderID) {
     // TODO Auto-generated method stub
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
-    setFolder(new FolderImpl(resourceController.getFolder(folderID)));
+    presentResources(new FolderImpl(resourceController.getFolder(folderID)));
   }
 
 }

@@ -20,18 +20,18 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import com.oxygenxml.cmis.core.CMISAccess;
 
 public class TabComponentsView extends JPanel implements TabsPresenter {
-  private int itemsCounter = 0;
+  protected static int itemsCounter = 0;
   private final JTabbedPane pane = new JTabbedPane();
 
   /*
    * Initialize the components
    */
   public TabComponentsView() {
-    itemsCounter = 0;
+
     add(pane);
     // Set one only a column
     setLayout(new GridLayout(0, 1));
-    setMinimumSize(new Dimension(200, 150));
+    setMinimumSize(new Dimension(200, 100));
     setVisible(true);
   }
 
