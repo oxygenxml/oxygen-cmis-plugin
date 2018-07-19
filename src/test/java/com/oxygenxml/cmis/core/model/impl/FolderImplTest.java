@@ -2,11 +2,15 @@ package com.oxygenxml.cmis.core.model.impl;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -110,40 +114,33 @@ public class FolderImplTest {
     ctrl.deleteFolderTree(folder);
   }
   
+  /**
+   * GET GUERY OF OBJECT
+   * 
+   * @throws UnsupportedEncodingException
+   */
+  @Test
+  public void testGetQuery() throws UnsupportedEncodingException {
+    Folder folder = ctrl.createFolder(root, "query folder");
+    FolderImpl fold = new FolderImpl(folder);
+
+    ItemIterable<QueryResult> q = fold.getQuery(ctrl);
+
+    for (QueryResult qr : q) {
+      System.out.println("------------------------------------------\n"
+          + qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue() + " , "
+          + qr.getPropertyByQueryName("cmis:name").getFirstValue() + " , "
+          + qr.getPropertyByQueryName("cmis:createdBy").getFirstValue());
+    }
+
+    ctrl.deleteFolderTree(folder);
+  }
+  
   @After
   public void afterMethod() {
     ctrl.getSession().clear();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
