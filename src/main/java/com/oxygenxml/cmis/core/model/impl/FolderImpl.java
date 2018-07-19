@@ -6,8 +6,11 @@ import java.util.Iterator;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 
@@ -75,6 +78,11 @@ public class FolderImpl implements IFolder {
 
   public String getFolderPath() {
     return folder.getPath();
+  }
+  
+  public ItemIterable<QueryResult> getQuery(ResourceController ctrl) {
+    String query = "SELECT * FROM cmis:folder WHERE cmis:name LIKE '".concat(getDisplayName()).concat("'");
+    return ctrl.getSession().query(query, false);
   }
   
   /**
