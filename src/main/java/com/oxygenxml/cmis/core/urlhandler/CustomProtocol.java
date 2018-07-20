@@ -1,9 +1,17 @@
 package com.oxygenxml.cmis.core.urlhandler;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +21,8 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -24,8 +34,9 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  * 
  *
  */
-public class CustomProtocol {
+public class CustomProtocol extends URLStreamHandler {
   
+  public static final String CMIS_PROTOCOL = "cmis";
   private static final String REPOSITORY_PARAM = "repo";
   private static final String OBJECT_ID_PARAM = "objID";
   private static final String PROTOCOL_PARAM = "proto";
@@ -47,7 +58,7 @@ public class CustomProtocol {
    * @param _ctrl
    * @return
    */
-  public String generateURLObject(CmisObject object, ResourceController _ctrl) {
+  public static String generateURLObject(CmisObject object, ResourceController _ctrl) {
     ResourceController ctrl = _ctrl;
     
     StringBuilder urlb = new StringBuilder();
@@ -55,7 +66,7 @@ public class CustomProtocol {
     String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
     String protocol = originalProtocol.substring(0, originalProtocol.indexOf("://"));
     
-    originalProtocol = originalProtocol.replace(protocol, "cmis");
+    originalProtocol = originalProtocol.replace(protocol, CMIS_PROTOCOL);
     
     urlb.append(originalProtocol).append("/");
     
@@ -91,7 +102,7 @@ public class CustomProtocol {
         .get(SessionParameter.REPOSITORY_ID));
     urlb.append("&" + OBJECT_ID_PARAM + "=").append(object.getId());
     urlb.append("&" + PROTOCOL_PARAM + "=").append(protocol);
-    urlb.append("#").append(objectTypeId);
+    urlb.append("&" + CMISOBJECT_PARAM + "=").append(objectTypeId);
     
     return urlb.toString();
   }
@@ -145,6 +156,9 @@ public class CustomProtocol {
     Map<String, String> params = getQueryParams(url);
    
     String objectTypeId = params.get(CMISOBJECT_PARAM);
+    
+    System.out.println(objectTypeId);
+    
     String objectID = params.get(OBJECT_ID_PARAM);
     if (objectID == null) {
       throw new MalformedURLException("Mising object ID inside: " + url);
@@ -188,8 +202,8 @@ public class CustomProtocol {
    */
   private Map<String, String> getQueryParams(String customURL) {
     Map<String, String> params = new HashMap<>();
-    
-    String queryPart = customURL.substring(customURL.indexOf("?") + 1, customURL.indexOf("#"));
+    //TODO Isue!
+    String queryPart = customURL.substring(customURL.indexOf("?") + 1, customURL.length());
     String[] pairs = queryPart.split("&");
     
     for (int i = 0; i < pairs.length; i++) {
@@ -197,9 +211,54 @@ public class CustomProtocol {
       params.put(nameVal[0], nameVal.length > 1 ? nameVal[1] : null);
     }
     
-    String cmisType = customURL.substring(customURL.indexOf("#") + 1, customURL.length());
-    params.put(CMISOBJECT_PARAM, cmisType);
-    
     return params;
+  }
+
+  @Override
+  protected URLConnection openConnection(URL u) throws IOException {
+    return new CMISURLConnection(u);
+  }
+  
+  /**
+   * Connection to a CMIS Server.
+   */
+  private class CMISURLConnection extends URLConnection {
+
+    protected CMISURLConnection(URL url) {
+      super(url);
+    }
+
+    @Override
+    public void connect() throws IOException {
+      // Not sure if we should do something.
+    }
+    
+    @Override
+    public InputStream getInputStream() throws IOException {
+      Document document = (Document) getCMISObject(getURL().toExternalForm());
+      
+      return document.getContentStream().getStream();
+    }
+    
+    @Override
+    public OutputStream getOutputStream() throws IOException {
+      return new ByteArrayOutputStream() {
+        @Override
+        public void close() throws IOException {
+          // All bytes have been written.
+          Document document = (Document) getCMISObject(getURL().toExternalForm());
+          byte[] byteArray = toByteArray();
+          ContentStream contentStream = new ContentStreamImpl(
+              document.getName(), 
+              BigInteger.valueOf(byteArray.length), 
+              document.getContentStreamMimeType(), 
+              new ByteArrayInputStream(byteArray));
+          
+          // TODO What to do if the system created a new document.
+          // TODO Maybe refresh the browser....
+          Document setContentStream = document.setContentStream(contentStream, true);
+        }
+      };
+    }
   }
 }

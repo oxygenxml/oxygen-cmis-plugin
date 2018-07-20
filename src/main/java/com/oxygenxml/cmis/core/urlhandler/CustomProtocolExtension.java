@@ -3,11 +3,15 @@ package com.oxygenxml.cmis.core.urlhandler;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLStreamHandler;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+
 import com.oxygenxml.cmis.core.ResourceController;
 
-public class CustomProtocolExtension {
+import ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension;
+
+public class CustomProtocolExtension implements URLStreamHandlerPluginExtension {
 
   /**
    * 
@@ -15,11 +19,11 @@ public class CustomProtocolExtension {
    * @param ctrl
    * @return
    */
-  public String getCustomURL(CmisObject object, ResourceController ctrl) {
+  public static String getCustomURL(CmisObject object, ResourceController ctrl) {
     if(object == null || ctrl == null) {
       throw new NullPointerException();
     }
-    return new CustomProtocol().generateURLObject(object, ctrl);
+    return CustomProtocol.generateURLObject(object, ctrl);
   }
   
   /**
@@ -47,5 +51,14 @@ public class CustomProtocolExtension {
       throw new NullPointerException();
     }
     return new CustomProtocol().getDocumentContent(url, ctrl);
+  }
+
+  @Override
+  public URLStreamHandler getURLStreamHandler(String protocol) {
+    if (CustomProtocol.CMIS_PROTOCOL.equals(protocol)) {
+      return new CustomProtocol();
+    }
+    
+    return null;
   }
 }
