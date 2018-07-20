@@ -102,7 +102,7 @@ public class CustomProtocol extends URLStreamHandler {
         .get(SessionParameter.REPOSITORY_ID));
     urlb.append("&" + OBJECT_ID_PARAM + "=").append(object.getId());
     urlb.append("&" + PROTOCOL_PARAM + "=").append(protocol);
-    urlb.append("#").append(objectTypeId);
+    urlb.append("&" + CMISOBJECT_PARAM + "=").append(objectTypeId);
     
     return urlb.toString();
   }
@@ -156,6 +156,9 @@ public class CustomProtocol extends URLStreamHandler {
     Map<String, String> params = getQueryParams(url);
    
     String objectTypeId = params.get(CMISOBJECT_PARAM);
+    
+    System.out.println(objectTypeId);
+    
     String objectID = params.get(OBJECT_ID_PARAM);
     if (objectID == null) {
       throw new MalformedURLException("Mising object ID inside: " + url);
@@ -199,8 +202,8 @@ public class CustomProtocol extends URLStreamHandler {
    */
   private Map<String, String> getQueryParams(String customURL) {
     Map<String, String> params = new HashMap<>();
-    
-    String queryPart = customURL.substring(customURL.indexOf("?") + 1, customURL.indexOf("#"));
+    //TODO Isue!
+    String queryPart = customURL.substring(customURL.indexOf("?") + 1, customURL.length());
     String[] pairs = queryPart.split("&");
     
     for (int i = 0; i < pairs.length; i++) {
@@ -208,12 +211,8 @@ public class CustomProtocol extends URLStreamHandler {
       params.put(nameVal[0], nameVal.length > 1 ? nameVal[1] : null);
     }
     
-    String cmisType = customURL.substring(customURL.indexOf("#") + 1, customURL.length());
-    params.put(CMISOBJECT_PARAM, cmisType);
-    
     return params;
   }
-
 
   @Override
   protected URLConnection openConnection(URL u) throws IOException {
@@ -261,6 +260,5 @@ public class CustomProtocol extends URLStreamHandler {
         }
       };
     }
-    
   }
 }
