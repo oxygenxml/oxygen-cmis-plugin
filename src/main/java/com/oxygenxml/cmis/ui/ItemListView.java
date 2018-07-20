@@ -1,6 +1,5 @@
 package com.oxygenxml.cmis.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -9,20 +8,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -36,6 +34,10 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.core.urlhandler.CustomProtocolExtension;
+
+import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener {
 
@@ -89,7 +91,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
      */
     resourceList.addMouseListener(new MouseAdapter() {
       @Override
-      public void mouseClicked(MouseEvent e) {
+      public void mouseClicked(final MouseEvent e) {
 
         if (SwingUtilities.isRightMouseButton(e)) {
           JPopupMenu menu = new JPopupMenu();
@@ -99,9 +101,25 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           editItem.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-              // TODO Auto-generated method stub
-
+            public void actionPerformed(ActionEvent ev) {
+              // Get the location of the item using location of the click
+              int itemIndex = resourceList.locationToIndex(e.getPoint());
+              IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+              
+              String urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) currentItem).getDoc(),  CMISAccess.getInstance().createResourceController());
+              
+              System.out.println(urlAsTring);
+              
+              PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+              if (pluginWorkspace != null) {
+                try {
+                  pluginWorkspace.open(
+                      new URL(urlAsTring));
+                } catch (MalformedURLException e1) {
+                  // TODO Auto-generated catch block
+                  e1.printStackTrace();
+                }
+              }
             }
 
           });
@@ -113,6 +131,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
           });
           menu.add(item);
+          menu.add(editItem);
           menu.show(ItemListView.this, 10,
               resourceList.getCellBounds(resourceList.getSelectedIndex(), resourceList.getSelectedIndex()).y);
         }
