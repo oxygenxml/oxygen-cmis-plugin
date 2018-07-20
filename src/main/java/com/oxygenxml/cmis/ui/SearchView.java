@@ -13,7 +13,6 @@ public class SearchView extends JPanel {
   private ItemsPresenter itemsPresenter;
 
   public SearchView(ItemsPresenter itemsPresenter) {
-    // TODO Auto-generated constructor stub
 
     this.itemsPresenter = itemsPresenter;
     setLayout(new GridBagLayout());

@@ -48,7 +48,6 @@ public class DocumentImpl implements IDocument {
 
   @Override
   public String getId() {
-    // TODO Auto-generated method stub
     return doc.getId();
   }
 
@@ -144,7 +143,6 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public void cancelCheckOut(Document doc) {
-    // TODO Auto-generated method stub
     try {
 
       doc.cancelCheckOut();

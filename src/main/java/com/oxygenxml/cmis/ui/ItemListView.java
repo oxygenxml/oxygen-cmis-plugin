@@ -56,14 +56,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     resourceList.setSelectedIndex(0);
     resourceList.addListSelectionListener(this);
-
+    
     
     // Scroller for the listRepo
     JScrollPane listItemScrollPane = new JScrollPane(resourceList);
-
-    // Setting the minum size for the SideList and MainList
-    Dimension minimumSizeSideList = new Dimension(300, 100);
-    listItemScrollPane.setMinimumSize(minimumSizeSideList);
 
     /*
      * Render all the elements of the listItem when necessary
@@ -144,18 +140,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     });
 
     // Set layout
-    setLayout(new GridBagLayout());
-    GridBagConstraints c = new GridBagConstraints();
+    setLayout(new BorderLayout(0, 0));
 
-    //constraints
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 0.9;
-    c.gridwidth = 3;
-    c.gridx = 0;
-    c.gridy = 0;
-    c.ipadx = 40;
-    
-    add(listItemScrollPane, c);
+    add(listItemScrollPane, BorderLayout.CENTER);
 
   }
 
@@ -172,7 +159,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     instance.connect(connectionInfo, repositoryID);
 
     // Get the rootFolder and set the model
-    Folder rootFolder = instance.createResourceController().getRootFolder();
+    ResourceController resourceController = instance.createResourceController();
+    Folder rootFolder = resourceController.getRootFolder();
+    
+//    resourceController.createFolder(rootFolder, "Un nume lung cat o zi de post");
 
     final FolderImpl origin = new FolderImpl(rootFolder);
     setFolder(origin);

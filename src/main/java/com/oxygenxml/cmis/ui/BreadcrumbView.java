@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,8 +28,6 @@ import com.oxygenxml.cmis.core.model.IResource;
 
 public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
-  private ItemsPresenter itemsPresenter;
-
   JList<IResource> breadcrumbList;
   /*
    * The stack that takes care of the order
@@ -36,7 +35,6 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   private Stack<IResource> parentResources;
 
   BreadcrumbView(ItemsPresenter itemsPresenter) {
-    this.itemsPresenter = itemsPresenter;
     breadcrumbList = new JList<IResource>();
     breadcrumbList.setModel(new DefaultListModel<>());
     parentResources = new Stack<IResource>();
@@ -53,6 +51,10 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     Border emptyBorder = BorderFactory.createEmptyBorder();
     scrollingBreadcrumb.setBorder(emptyBorder);
     
+    
+    // Set cell width
+    breadcrumbList.setFixedCellWidth(100);
+    
     /*
      * Render all the elements of the listItem when necessary
      */
@@ -63,10 +65,12 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
         String renderTex = "";
 
         if (value != null) {
+          // ALign text center
+          setHorizontalAlignment(JLabel.CENTER);
+          
           // Cast in order to use the methods from IResource interface
-
           renderTex = ((IResource) value).getDisplayName()+">";
-
+         
         }
         return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
       }
@@ -116,21 +120,14 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     });
 
     // Set layout
-    setLayout(new GridBagLayout());
-    GridBagConstraints c = new GridBagConstraints();
-
-    //constraints
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 0.9;
-    c.gridwidth = 3;
-    c.gridx = 0;
-    c.gridy = 0;
-    c.ipadx = 50;
-    c.ipady = 20;
-    add(scrollingBreadcrumb, c);
+    setLayout(new BorderLayout(0, 0));
    
+    add(scrollingBreadcrumb, BorderLayout.CENTER);
   }
 
+  /*
+   * Present the breadcrumb
+   */
   @Override
   public void presentBreadcrumb(IResource resource) {
 
@@ -148,7 +145,30 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     }
     
     breadcrumbList.setModel(model);
+    
+    // Revalidate to not show an empty component
+    getParent().revalidate();
 
+  }
+
+  /*
+   * Reset the whole breadcrumb and data from it
+   */
+  @Override
+  public void resetBreadcrumb(boolean flag) {
+   if(flag){
+     //Remove old data
+     breadcrumbList.removeAll();
+     parentResources.removeAllElements();
+     
+     //Create an emoty model to show
+     DefaultListModel<IResource> model = new DefaultListModel<>();
+     breadcrumbList.setModel(model);
+     
+     // Revalidate to not show an empty component
+     getParent().revalidate();
+   }
+    
   }
 
 }

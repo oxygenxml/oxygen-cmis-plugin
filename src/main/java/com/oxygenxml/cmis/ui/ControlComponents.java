@@ -14,57 +14,73 @@ import java.util.*;
 public class ControlComponents extends JPanel {
 
   private RepoComboBoxView repoComboBox;
-  private ItemListView itemList;
+  private ItemListView itemsPanel;
   private BreadcrumbView breadcrumbList;
-  private JPanel northPanel, southPanel, centerPanel;
   private ServerView serverPanel;
   private SearchView searchPanel;
 
   public ControlComponents(TabComponentsView tabs) {
 
-    // Configure JPanel
+    // Configure the breadcrumb for initialization
     breadcrumbList = new BreadcrumbView(new ItemsPresenter() {
 
       @Override
       public void presentItems(URL connectionInfo, String repositoryID) {
-        itemList.presentItems(connectionInfo, repositoryID);
+        itemsPanel.presentItems(connectionInfo, repositoryID);
       }
 
       @Override
       public void presentFolderItems(String folderID) {
-        itemList.presentFolderItems(folderID);
+        itemsPanel.presentFolderItems(folderID);
       }
     });
 
-    itemList = new ItemListView(tabs, breadcrumbList);
-    searchPanel = new SearchView(itemList);
-    repoComboBox = new RepoComboBoxView(itemList);
+    itemsPanel = new ItemListView(tabs, breadcrumbList);
+    searchPanel = new SearchView(itemsPanel);
+    repoComboBox = new RepoComboBoxView(itemsPanel, breadcrumbList);
     serverPanel = new ServerView(repoComboBox);
 
-    setMinimumSize(new Dimension(200, 200));
-    setLayout(new GridLayout(2, 1));
+    setMinimumSize(new Dimension(200, 250));
+    setLayout(new GridBagLayout());
+
     /*
      * Creation of the northPanel
      */
-    northPanel = new JPanel();
-    centerPanel = new JPanel();
-    southPanel = new JPanel();
 
-    // Set two 3 rows and 1 column
-    northPanel.setLayout(new GridLayout(3, 1,0,0));
-    northPanel.add(serverPanel);
-    northPanel.add(repoComboBox);
-    northPanel.add(searchPanel);
+    GridBagConstraints c = new GridBagConstraints();
 
-    // Set 2 row and 1 column
-    southPanel.setLayout(new GridLayout(2, 1));
-    southPanel.add(breadcrumbList);
-    southPanel.add(itemList);
+    // serverPanel
+    c.gridx = 0;
+    c.gridy = 0;
+    c.weightx = 1.0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    add(serverPanel, c);
 
+    // repoComboBox
+    c.gridy++;
+    add(repoComboBox, c);
 
-    // Add the northpanel to this frame
-    add(northPanel, BorderLayout.NORTH);
-    add(southPanel,BorderLayout.SOUTH);
+    // searchPanel
+    c.gridy++;
+    add(searchPanel, c);
+
+    /*
+     * Creation of the southPanel
+     */
+
+    // breadcrumbList
+    c.gridy++;
+    c.insets = new Insets(10, 0, 5, 0);
+    // c.weighty = 0.5;
+    add(breadcrumbList, c);
+
+    // itemList
+    c.gridy++;
+    c.weighty = 1.0;
+    c.insets = new Insets(0, 0, 0, 0);
+    // c.weighty and weightx depends on c.fill V or H
+    c.fill = GridBagConstraints.BOTH;
+    add(itemsPanel, c);
 
   }
 

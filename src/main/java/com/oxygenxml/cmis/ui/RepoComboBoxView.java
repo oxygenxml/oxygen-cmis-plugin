@@ -1,8 +1,6 @@
 package com.oxygenxml.cmis.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,20 +8,12 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.List;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
 
@@ -33,12 +23,10 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
   private JComboBox<Repository> repoItems;
   private List<Repository> serverReposList;
-  private ItemsPresenter itemsPresenter;
   private URL serverURL;
 
-  RepoComboBoxView(ItemsPresenter itemsPresenter) {
-    // Initialize the itemsPresenter
-    this.itemsPresenter = itemsPresenter;
+  RepoComboBoxView(ItemsPresenter itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+    
     repoItems = new JComboBox<Repository>();
 
     setLayout(new GridBagLayout());
@@ -62,6 +50,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     repoItems.setEditable(false);
     add(repoItems, c);
 
+    // TODO ItemListener
     repoItems.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -69,8 +58,8 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
         Repository selected = (Repository) comboBox.getSelectedItem();
         System.out.println(selected.getId());
-        itemsPresenter.presentItems(serverURL, selected.getId());
-
+        itemsPresenter.presentItems(serverURL, selected.getId()); 
+        breadcrumbPresenter.resetBreadcrumb(true);
       }
     });
   }

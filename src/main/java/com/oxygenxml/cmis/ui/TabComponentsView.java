@@ -1,6 +1,8 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.Reader;
@@ -28,6 +30,11 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
    */
   public TabComponentsView() {
 
+    // Set layout
+    setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+
+    //constraints
     add(pane);
     // Set one only a column
     setLayout(new GridLayout(0, 1));
