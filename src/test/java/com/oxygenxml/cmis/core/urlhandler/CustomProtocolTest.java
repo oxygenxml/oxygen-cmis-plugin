@@ -54,7 +54,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
       CustomProtocolExtension cpe = new CustomProtocolExtension();
       String url = cpe.getCustomURL(doc, ctrl);
       
-      //assertEquals("cmis://localhost:8080/B/atom11/?repo=A1&objID=" + doc.getId() + "&proto=http#cmis:document", url);
+      assertEquals("cmis://localhost:8080/B/atom11/urlDoc.text?repo=A1&objID=" + doc.getId() + "&proto=http&type=cmis:document", url);
       System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
       
       assertNotNull(url);
@@ -73,7 +73,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
       String url = cpe.getCustomURL(doc, ctrl);
       
       // TODO Code review. Assert the obtained URL.
-      assertEquals("cmis://localhost:8080/B/atom11/urlDocGet.text?repo=A1&objID=" + doc.getId() + "&proto=http#cmis:document", url);
+      assertEquals("cmis://localhost:8080/B/atom11/urlDocGet.text?repo=A1&objID=" + doc.getId() + "&proto=http&type=cmis:document", url);
       System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
       
       Document docURL = (Document) cpe.getObjectFromURL(url);
@@ -95,7 +95,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
       String url = cpe.getCustomURL(doc, ctrl);
       
       // TODO Code review. Assert the obtained URL.
-      assertEquals("cmis://localhost:8080/B/atom11/urlDocCont.text?repo=A1&objID=" + doc.getId() + "&proto=http#cmis:document", url);
+      assertEquals("cmis://localhost:8080/B/atom11/urlDocCont.text?repo=A1&objID=" + doc.getId() + "&proto=http&type=cmis:document", url);
       System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
       
       Reader docContent = cpe.getContentURL(url, ctrl);
@@ -117,7 +117,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
       CustomProtocolExtension cpe = new CustomProtocolExtension();
       String url = cpe.getCustomURL(folder, ctrl);
       
-      assertEquals("cmis://localhost:8080/B/atom11/folderURL?repo=A1&objID=" + folder.getId() + "&proto=http#cmis:folder", url);
+      assertEquals("cmis://localhost:8080/B/atom11/folderURL?repo=A1&objID=" + folder.getId() + "&proto=http&type=cmis:folder", url);
       System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
       Folder foldURL = (Folder) cpe.getObjectFromURL(url);
       

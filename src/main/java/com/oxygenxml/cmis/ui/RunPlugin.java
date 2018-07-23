@@ -1,23 +1,11 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.UIManager;
 
 public class RunPlugin extends JFrame {
   
@@ -75,7 +63,11 @@ public class RunPlugin extends JFrame {
     frame.setVisible(true);
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
+    
+    UIManager.setLookAndFeel(
+        UIManager.getSystemLookAndFeelClassName());
+    
     // Schedule a job for the event-dispatching thread:
     // creating and showing this application's GUI.
     javax.swing.SwingUtilities.invokeLater(new Runnable() {

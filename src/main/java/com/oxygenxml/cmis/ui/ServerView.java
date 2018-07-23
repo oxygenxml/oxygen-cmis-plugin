@@ -19,7 +19,10 @@ public class ServerView extends JPanel {
 
   public ServerView(RepositoriesPresenter repoPresenter) {
     // TODO Get all the cached servers 
-    String servers[]={"http://localhost:8080/B/atom11","http://lets-talk.com"};
+    String servers[]={
+        "http://localhost:8080/B/atom11",
+        "http://lets-talk.com", 
+        "http://localhost:8088/alfresco/api/-default-/cmis/versions/1.1/atom"};
     
     this.repoPresenter = repoPresenter;
     setLayout(new GridBagLayout());
@@ -56,15 +59,18 @@ public class ServerView extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        
         // Try presentRepositories using the URL
-        try {
-          System.out.println("Load triggered="+urlComboBox.getItemAt(urlComboBox.getSelectedIndex()));
-          repoPresenter.presentRepositories(new URL(urlComboBox.getItemAt(urlComboBox.getSelectedIndex())));
-        } catch (MalformedURLException e1) {
-
-          e1.printStackTrace();
+        Object selectedItem = urlComboBox.getSelectedItem();
+        if (selectedItem != null) {
+          try {
+            URL serverURL = new URL(urlComboBox.getSelectedItem().toString());
+            repoPresenter.presentRepositories(serverURL);
+          } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+          }
         }
+      
+      
       }
     });
     add(loadButton, c);
