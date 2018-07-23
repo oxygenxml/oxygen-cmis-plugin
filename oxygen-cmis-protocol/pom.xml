@@ -1,0 +1,120 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>oxygen-cmis-protocol</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+	<parent>
+		<groupId>com.oxygenxml.cmis</groupId>
+		<artifactId>plugin</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<description>The core functionality. Offers an API for accessing documents and browsing. Contains an Oxygen Custom protocol implementation.</description>
+	
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.chemistry.opencmis/chemistry-opencmis-client-api -->
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-impl</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.6</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.4.11.v20180605</version>
+				<configuration>
+					<reload>manual</reload>
+					<stopKey>foo</stopKey>
+					<stopPort>9999</stopPort>
+
+					<supportedPackagings>
+						<supportedPackaging>jar</supportedPackaging>
+					</supportedPackagings>
+
+					<contextHandlers>
+						<contextHandler
+							implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+							<war>${project.basedir}/lib/chemistry-opencmis-server-inmemory-1.1.0.war</war>
+							<contextPath>/B</contextPath>
+						</contextHandler>
+					</contextHandlers>
+
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+						<configuration>
+							<scanIntervalSeconds>0</scanIntervalSeconds>
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Exclude the integration tests from the unit tests. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>com/oxygenxml/cmis/core/**/*Test.java</exclude>
+					</excludes>
+					<argLine>-Xmx1024m ${argLine}</argLine>
+				</configuration>
+			</plugin>
+			<!-- INTEGRATION TESTS -->
+			<!-- Include only the integration tests. -->
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>com/oxygenxml/cmis/core/**/*Test.java</include>
+					</includes>
+					<argLine>-Xmx1024m</argLine>
+					<trimStackTrace>false</trimStackTrace>
+					<systemPropertyVariables>
+						<production>true</production>
+					</systemPropertyVariables>
+					<rerunFailingTestsCount>1</rerunFailingTestsCount>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>verify</goal>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			
+		</plugins>
+	</build>
+</project>
