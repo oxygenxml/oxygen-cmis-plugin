@@ -17,17 +17,12 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
-import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 /**
  * Handles the "cmis" protocol used to identify CMIS resources.
@@ -72,23 +67,10 @@ public class CustomProtocol extends URLStreamHandler {
     
     urlb.append(originalProtocol).append("/");
     
-    ItemIterable<QueryResult> q = null;
+    String objectTypeId = object.getBaseTypeId().toString();
+     
     
-    if(object instanceof Document) {
-      DocumentImpl docImpl = new DocumentImpl((Document) object);
-      q = docImpl.getQuery(ctrl);
-    }
-    
-    if(object instanceof Folder) {
-      FolderImpl foldImpl = new FolderImpl((Folder) object);
-      q = foldImpl.getQuery(ctrl);
-    }
-    
-    String objectTypeId = null;
-    
-    for(QueryResult qr : q) {
-     objectTypeId = (String) qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue();
-     }
+    object.getProperties();
     
     urlb.append(object.getName());
     
@@ -151,13 +133,16 @@ public class CustomProtocol extends URLStreamHandler {
     Map<String, String> params = getQueryParams(url);
    
     String objectTypeId = params.get(CMISOBJECT_PARAM);
+    if (objectTypeId == null) {
+        throw new MalformedURLException("Mising type ID inside: " + url);
+      }
     
     String objectID = params.get(OBJECT_ID_PARAM);
     if (objectID == null) {
       throw new MalformedURLException("Mising object ID inside: " + url);
     }
     
-    if(!objectTypeId.equals("cmis:document")) {
+    if(!objectTypeId.equals("CMIS_DOCUMENT")) {
       return null;
     } 
    
@@ -195,7 +180,7 @@ public class CustomProtocol extends URLStreamHandler {
    */
   private Map<String, String> getQueryParams(String customURL) {
     Map<String, String> params = new HashMap<>();
-    //TODO Isue!
+    
     String queryPart = customURL.substring(customURL.indexOf("?") + 1, customURL.length());
     String[] pairs = queryPart.split("&");
     

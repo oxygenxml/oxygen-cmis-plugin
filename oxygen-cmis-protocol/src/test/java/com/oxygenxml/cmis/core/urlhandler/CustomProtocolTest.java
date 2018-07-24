@@ -46,13 +46,14 @@ public class CustomProtocolTest extends ConnectionTestBase {
   @Test
   public void testGenerateURLObject() throws UnsupportedEncodingException {
     Document doc = null;
+    
     try {
       doc = ctrl.createDocument(root, "urlDoc", "some text");
       
       String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
       
       assertEquals("cmis://localhost:8080/B/atom11/urlDoc?repo=A1&objID=" 
-    		  + doc.getId() + "&proto=http&type=cmis:document", url);
+    		  + doc.getId() + "&proto=http&type=CMIS_DOCUMENT", url);
       
       System.out.println("[cmis:document] id = " 
     		  + doc.getId() + " URL = " + url);
@@ -67,16 +68,17 @@ public class CustomProtocolTest extends ConnectionTestBase {
   @Test
   public void testGetObjectFromURL() throws UnsupportedEncodingException, MalformedURLException {
     Document doc = null;
+    
     try {
       doc = ctrl.createDocument(root, "urlDocGet", "some text");
-  
+ 
       CustomProtocolExtension cpe = new CustomProtocolExtension();
       
       String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
       
       // TODO Code review. Assert the obtained URL.
       assertEquals("cmis://localhost:8080/B/atom11/urlDocGet?repo=A1&objID="
-    		  + doc.getId() + "&proto=http&type=cmis:document", url);
+    		  + doc.getId() + "&proto=http&type=CMIS_DOCUMENT", url);
       
       System.out.println("[cmis:document] id = " 
     		  + doc.getId() + " URL = " + url);
@@ -95,6 +97,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
   @Test
   public void testGetDocumentContent() throws IOException, UnsupportedEncodingException, MalformedURLException {
     Document doc = null;
+    
     try {
       doc = ctrl.createDocument(root, "urlDocCont", "some test text");
       
@@ -104,7 +107,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
       
       // TODO Code review. Assert the obtained URL.
       assertEquals("cmis://localhost:8080/B/atom11/urlDocCont?repo=A1&objID=" 
-    		  + doc.getId() + "&proto=http&type=cmis:document", url);
+    		  + doc.getId() + "&proto=http&type=CMIS_DOCUMENT", url);
       
       System.out.println("[cmis:document] id = " 	
     		  + doc.getId() + " URL = " + url);
@@ -132,7 +135,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
       String url = CustomProtocolExtension.getCustomURL(folder, ctrl);
       
       assertEquals("cmis://localhost:8080/B/atom11/folderURL?repo=A1&objID=" 
-    		  + folder.getId() + "&proto=http&type=cmis:folder", url);
+    		  + folder.getId() + "&proto=http&type=CMIS_FOLDER", url);
       
       System.out.println("[cmis:folder] id = " 
     		  + folder.getId() + " URL = " + url);
