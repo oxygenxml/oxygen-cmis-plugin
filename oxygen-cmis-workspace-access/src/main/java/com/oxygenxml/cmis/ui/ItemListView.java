@@ -145,7 +145,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
               breadcrumbPresenter.presentBreadcrumb(currentItem);
             }
             
-            presentResources(currentItem);
+            
    
             /*
              * If it's an document show it on a tab instead of iterating the
@@ -153,6 +153,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
              */
             if (currentItem instanceof DocumentImpl) {
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
+            }else{
+              presentResources(currentItem);
             }
 
           }

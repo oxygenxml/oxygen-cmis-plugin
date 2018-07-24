@@ -175,7 +175,11 @@ public class ResourceController {
   * @return
   */
  public List<String> deleteFolderTree(Folder folder) {
-   return folder.deleteTree(true, UnfileObject.DELETE, true);
+   if (folder != null) {
+     return folder.deleteTree(true, UnfileObject.DELETE, true);
+   }
+   
+   return null;
  }
 
  /**
