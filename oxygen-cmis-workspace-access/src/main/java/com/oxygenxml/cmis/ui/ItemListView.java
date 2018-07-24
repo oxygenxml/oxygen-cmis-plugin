@@ -140,7 +140,11 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           // Check whether the item in the list
           if (itemIndex != -1) {
             System.out.println("TO present breadcrumb="+currentItem.getDisplayName());
-            breadcrumbPresenter.presentBreadcrumb(currentItem);
+            
+            if (!(currentItem instanceof DocumentImpl)) {
+              breadcrumbPresenter.presentBreadcrumb(currentItem);
+            }
+            
             presentResources(currentItem);
    
             /*
