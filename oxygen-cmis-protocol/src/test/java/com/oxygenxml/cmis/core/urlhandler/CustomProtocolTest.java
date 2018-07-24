@@ -2,13 +2,11 @@ package com.oxygenxml.cmis.core.urlhandler;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.After;
@@ -51,13 +49,16 @@ public class CustomProtocolTest extends ConnectionTestBase {
     try {
       doc = ctrl.createDocument(root, "urlDoc", "some text");
       
-      CustomProtocolExtension cpe = new CustomProtocolExtension();
-      String url = cpe.getCustomURL(doc, ctrl);
+      String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
       
-      assertEquals("cmis://localhost:8080/B/atom11/urlDoc.text?repo=A1&objID=" + doc.getId() + "&proto=http&type=cmis:document", url);
-      System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
+      assertEquals("cmis://localhost:8080/B/atom11/urlDoc?repo=A1&objID=" 
+    		  + doc.getId() + "&proto=http&type=cmis:document", url);
+      
+      System.out.println("[cmis:document] id = " 
+    		  + doc.getId() + " URL = " + url);
       
       assertNotNull(url);
+      
     } finally {
       ctrl.deleteAllVersionsDocument(doc);
     }
@@ -70,16 +71,21 @@ public class CustomProtocolTest extends ConnectionTestBase {
       doc = ctrl.createDocument(root, "urlDocGet", "some text");
   
       CustomProtocolExtension cpe = new CustomProtocolExtension();
-      String url = cpe.getCustomURL(doc, ctrl);
+      
+      String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
       
       // TODO Code review. Assert the obtained URL.
-      assertEquals("cmis://localhost:8080/B/atom11/urlDocGet.text?repo=A1&objID=" + doc.getId() + "&proto=http&type=cmis:document", url);
-      System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
+      assertEquals("cmis://localhost:8080/B/atom11/urlDocGet?repo=A1&objID="
+    		  + doc.getId() + "&proto=http&type=cmis:document", url);
+      
+      System.out.println("[cmis:document] id = " 
+    		  + doc.getId() + " URL = " + url);
       
       Document docURL = (Document) cpe.getObjectFromURL(url);
       
       assertNotNull(docURL);
       assertEquals(doc.getName(), docURL.getName());
+      
     } finally {
       // TODO Code review. Clean up. It is better to put it inside a finally block.
       ctrl.deleteAllVersionsDocument(doc);
@@ -91,17 +97,23 @@ public class CustomProtocolTest extends ConnectionTestBase {
     Document doc = null;
     try {
       doc = ctrl.createDocument(root, "urlDocCont", "some test text");
+      
       CustomProtocolExtension cpe = new CustomProtocolExtension();
-      String url = cpe.getCustomURL(doc, ctrl);
+      
+      String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
       
       // TODO Code review. Assert the obtained URL.
-      assertEquals("cmis://localhost:8080/B/atom11/urlDocCont.text?repo=A1&objID=" + doc.getId() + "&proto=http&type=cmis:document", url);
-      System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
+      assertEquals("cmis://localhost:8080/B/atom11/urlDocCont?repo=A1&objID=" 
+    		  + doc.getId() + "&proto=http&type=cmis:document", url);
+      
+      System.out.println("[cmis:document] id = " 	
+    		  + doc.getId() + " URL = " + url);
       
       Reader docContent = cpe.getContentURL(url, ctrl);
       
       assertNotNull(docContent);
       assertEquals("some test text", read(docContent));
+      
     } finally {
       // TODO Code review. Clean up. It is better to put it inside a finally block.
       ctrl.deleteAllVersionsDocument(doc);
@@ -114,19 +126,27 @@ public class CustomProtocolTest extends ConnectionTestBase {
     
     try {
       folder = ctrl.createFolder(root, "folderURL");
-      CustomProtocolExtension cpe = new CustomProtocolExtension();
-      String url = cpe.getCustomURL(folder, ctrl);
       
-      assertEquals("cmis://localhost:8080/B/atom11/folderURL?repo=A1&objID=" + folder.getId() + "&proto=http&type=cmis:folder", url);
-      System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
+      CustomProtocolExtension cpe = new CustomProtocolExtension();
+      
+      String url = CustomProtocolExtension.getCustomURL(folder, ctrl);
+      
+      assertEquals("cmis://localhost:8080/B/atom11/folderURL?repo=A1&objID=" 
+    		  + folder.getId() + "&proto=http&type=cmis:folder", url);
+      
+      System.out.println("[cmis:folder] id = " 
+    		  + folder.getId() + " URL = " + url);
+      
       Folder foldURL = (Folder) cpe.getObjectFromURL(url);
       
       assertNotNull(foldURL);
       assertEquals("folderURL", foldURL.getName());
+      
     } finally {
       ctrl.deleteFolderTree(folder);
     }
   }
+  
   
   @After
   public void afterMethod(){   

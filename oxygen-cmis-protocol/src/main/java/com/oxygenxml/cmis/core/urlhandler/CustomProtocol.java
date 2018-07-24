@@ -41,6 +41,8 @@ public class CustomProtocol extends URLStreamHandler {
   private static final String OBJECT_ID_PARAM = "objID";
   private static final String PROTOCOL_PARAM = "proto";
   private static final String CMISOBJECT_PARAM = "type";
+
+  private Document updatedDocument = null;
  
   /**
    * TODO Code review. Let's move this method inside CustomProtocol and make it reuse teh PROTOCOL, REPOSITORY constants.
@@ -83,19 +85,12 @@ public class CustomProtocol extends URLStreamHandler {
     }
     
     String objectTypeId = null;
-    String mimeType = null;
     
     for(QueryResult qr : q) {
      objectTypeId = (String) qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue();
-    
-     if(object instanceof Document) {
-       mimeType = (String) qr.getPropertyByQueryName("cmis:contentStreamMimeType").getFirstValue();
-       mimeType = mimeType.substring(0, mimeType.indexOf("/"));
-       urlb.append(object.getName()).append("." + mimeType);
-     } else {
-       urlb.append(object.getName());
      }
-    }
+    
+    urlb.append(object.getName());
     
     urlb.append("?" + REPOSITORY_PARAM + "=").append(ctrl.getSession()
         .getSessionParameters()
@@ -156,8 +151,6 @@ public class CustomProtocol extends URLStreamHandler {
     Map<String, String> params = getQueryParams(url);
    
     String objectTypeId = params.get(CMISOBJECT_PARAM);
-    
-    System.out.println(objectTypeId);
     
     String objectID = params.get(OBJECT_ID_PARAM);
     if (objectID == null) {
@@ -223,7 +216,7 @@ public class CustomProtocol extends URLStreamHandler {
    * Connection to a CMIS Server.
    */
   private class CMISURLConnection extends URLConnection {
-
+	  
     protected CMISURLConnection(URL url) {
       super(url);
     }
@@ -239,6 +232,7 @@ public class CustomProtocol extends URLStreamHandler {
       
       return document.getContentStream().getStream();
     }
+    
     
     @Override
     public OutputStream getOutputStream() throws IOException {
@@ -256,9 +250,18 @@ public class CustomProtocol extends URLStreamHandler {
           
           // TODO What to do if the system created a new document.
           // TODO Maybe refresh the browser....
-          Document setContentStream = document.setContentStream(contentStream, true);
+          updatedDocument = document.setContentStream(contentStream, true);          
         }
       };
     }
+    
   }
+  
+  public Document getUpdatedDocument() throws Exception {
+	  if(updatedDocument == null) {
+		  throw new Exception();
+	  }
+	  return updatedDocument;
+  }
+  
 }

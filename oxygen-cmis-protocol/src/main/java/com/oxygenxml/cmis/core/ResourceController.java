@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -222,11 +221,6 @@ public class ResourceController {
    Document document = (Document) session.getObject(docID);
    ContentStream contentStream = document.getContentStream();
    
-   List<Property<?>> properties = document.getProperties();
-   for (Property<?> property : properties) {
-     System.out.println(property.getDisplayName() + " -> " + property.getValueAsString());
-   }
-   
    java.io.InputStream stream = contentStream.getStream();
    
    // TODO Get the encoding dynamically.
@@ -236,4 +230,5 @@ public class ResourceController {
 public CmisObject getCmisObj(String objectID) {
   return session.getObject(objectID);
 }
+
 }
