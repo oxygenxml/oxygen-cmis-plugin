@@ -3,12 +3,16 @@ package com.oxygenxml.cmis.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Stack;
 
 import javax.swing.AbstractAction;
@@ -33,7 +37,6 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   private JLabel goUpIcon;
   private ItemsPresenter itemsPresenter;
 
-  
   /*
    * The stack that takes care of the order
    */
@@ -63,9 +66,68 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     });
 
-    // Set the icon
+    // Set up the icon
     goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
+    
+    // Add the tooltip
+    goUpIcon.setToolTipText("Go back");
+    
+    // Set cursor
+    goUpIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+    /*
+     * Add listener for going only backwards using the logic from customJButton
+     * component
+     */
+    goUpIcon.addMouseListener(new MouseAdapter() {
+
+      @Override
+      public void mouseClicked(final MouseEvent e) {
+        // While goes back to the target selected pop elements
+        // Remove descendants from the visible toolbar.
+
+        // For leaving the rootFolder in place
+
+        if (!parentResources.isEmpty()) {
+
+          // For leaving the rootFolder in place
+          if (toolBar.getComponentCount() > 1) {
+            
+            System.out.println("Eliminate goUpEvent: " + parentResources.peek().getDisplayName());
+            toolBar.remove(toolBar.getComponentCount() - 1);
+            parentResources.pop();
+            
+          }
+          // If toolBar does not have items
+          if (toolBar.getComponentCount() == 0) {
+
+            // Remove items from stacks till there are hiddenItems
+            if (!hiddenItems.isEmpty()) {
+              while (hiddenItems.peek() != null) {
+
+                // Pop until we reach the target
+                parentResources.pop();
+                hiddenItems.pop();
+
+              }
+            }
+          }
+
+          // Present the resources (children) of the items
+          if (!parentResources.isEmpty()) {
+            itemsPresenter.presentFolderItems(parentResources.peek().getId());
+          }
+
+          // Revalidate toolBar view and refresh
+          toolBar.revalidate();
+          toolBar.repaint();
+          
+          //Refresh  the layout
+          doBreadcrumbsLayout();
+        }
+
+      }
+    });
     // Set layout
     setLayout(new BorderLayout());
     breadcrumbPanel.setLayout(new GridBagLayout());
@@ -89,9 +151,10 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     add(breadcrumbPanel, BorderLayout.CENTER);
   };
 
-  
   /*
    * Custom JButton for JToolbar
+   * 
+   * @param the the info about the button
    */
   public JButton customJButton(final IResource resource) {
 
@@ -152,12 +215,9 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     // Attach the event created
     ToolbarButton currentButton = new ToolbarButton(action, true);
 
-    System.out.println("Button pref size: " + currentButton.getPreferredSize());
-
     return currentButton;
   };
 
-  
   /*
    * popUp JButton for JToolbar
    * 
@@ -197,7 +257,6 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     return popUpButton;
   };
 
-  
   /*
    * Present the breadcrumb
    */
@@ -206,12 +265,12 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     // Push to the parents stack
     parentResources.push(resource);
+
     System.out.println("Go to breadcrumb=" + parentResources.peek().getDisplayName());
 
     // Add to the toolBar the popUp
     // ----------------------------
     JButton customJButton = customJButton(resource);
-    System.out.println("Preferred size toolbar=" + toolBar.getPreferredSize());
 
     toolBar.add(customJButton);
 
@@ -242,7 +301,6 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     System.out.println("Actual size button: " + customJButton.getSize());
   };
 
-  
   /*
    * Check of can fit the toolBar
    * 
@@ -253,7 +311,6 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     return hasWidth;
   };
 
-  
   /*
    * Reset the whole breadcrumb and data from it
    */
@@ -290,26 +347,26 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
    * back to the breadcrumb if they fit the toolBar at that moment
    */
   private void doBreadcrumbsLayout() {
-    //Print the children
-    System.out.println("\nToolbar size: " + toolBar.getSize());
+    // Print the children
+    // System.out.println("\nToolbar size: " + toolBar.getSize());
     Component[] components = toolBar.getComponents();
     for (int i = 0; i < components.length; i++) {
-      System.out.println("Child " + i + "=" + components[i].getSize());
+      // System.out.println("Child " + i + "=" + components[i].getSize());
 
     }
 
     // Check if there is a widget
     boolean existsMoreWidget = false;
     if (toolBar.getComponentCount() > 0) {
-      
+
       JButton first = (JButton) toolBar.getComponent(0);
-      
+
       if (first.getText().equals("..")) {
         existsMoreWidget = true;
       }
     }
 
-    // Push to the hiddenItems stack if the components do not fit the toolBar 
+    // Push to the hiddenItems stack if the components do not fit the toolBar
     // and remove from toolBar
     int counter = existsMoreWidget ? 1 : 0;
     while (getComponentsWidth(toolBar) > toolBar.getWidth()) {
@@ -319,24 +376,23 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     }
 
-    //  Push to the toolBar and remove from hiddenItems stack till they fit the toolBar
+    // Push to the toolBar and remove from hiddenItems stack till they fit the
+    // toolBar
     int componentsWidth = getComponentsWidth(toolBar);
     while (componentsWidth < toolBar.getWidth() && !hiddenItems.isEmpty()) {
-      
+
       JButton item = hiddenItems.peek();
       double childWidth = item.getPreferredSize().getWidth();
-      
+
       // Add the child width
       componentsWidth += childWidth;
-      
+
       if (componentsWidth < toolBar.getWidth()) {
         toolBar.add(item, counter);
 
         hiddenItems.pop();
       }
     }
-    System.out.println("Empty =" + hiddenItems.isEmpty());
-    System.out.println("no widget=" + existsMoreWidget);
 
     // Add the "more items" widget if needed.
     if (!hiddenItems.isEmpty() && !existsMoreWidget) {

@@ -184,7 +184,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     ResourceController resourceController = instance.createResourceController();
     Folder rootFolder = resourceController.getRootFolder();
     
-//    resourceController.createFolder(rootFolder, "Un nume lung cat o zi de post");
+//  resourceController.createFolder(rootFolder, "Un nume lung cat o zi de post");
 
     final FolderImpl origin = new FolderImpl(rootFolder);
     setFolder(origin);
