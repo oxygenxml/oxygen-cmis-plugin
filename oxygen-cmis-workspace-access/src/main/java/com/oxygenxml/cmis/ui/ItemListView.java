@@ -146,7 +146,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             }
             
             
-   
             /*
              * If it's an document show it on a tab instead of iterating the
              * children
