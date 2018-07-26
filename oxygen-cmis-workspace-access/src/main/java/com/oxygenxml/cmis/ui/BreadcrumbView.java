@@ -1,18 +1,15 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Stack;
 
 import javax.swing.AbstractAction;
@@ -20,7 +17,6 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
@@ -28,6 +24,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.oxygenxml.cmis.core.model.IResource;
+import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 import ro.sync.exml.workspace.api.standalone.ui.ToolbarButton;
 
@@ -36,6 +33,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   private JPanel breadcrumbPanel;
   private JLabel goUpIcon;
   private ItemsPresenter itemsPresenter;
+  protected static FolderImpl currentFolder;
 
   /*
    * The stack that takes care of the order
@@ -68,10 +66,10 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     // Set up the icon
     goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
-    
+
     // Add the tooltip
     goUpIcon.setToolTipText("Go back");
-    
+
     // Set cursor
     goUpIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -92,11 +90,11 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
           // For leaving the rootFolder in place
           if (toolBar.getComponentCount() > 1) {
-            
+
             System.out.println("Eliminate goUpEvent: " + parentResources.peek().getDisplayName());
             toolBar.remove(toolBar.getComponentCount() - 1);
             parentResources.pop();
-            
+
           }
           // If toolBar does not have items
           if (toolBar.getComponentCount() == 0) {
@@ -121,8 +119,8 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
           // Revalidate toolBar view and refresh
           toolBar.revalidate();
           toolBar.repaint();
-          
-          //Refresh  the layout
+
+          // Refresh the layout
           doBreadcrumbsLayout();
         }
 
@@ -150,6 +148,10 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     breadcrumbPanel.add(toolBar, c);
     add(breadcrumbPanel, BorderLayout.CENTER);
   };
+
+  public FolderImpl getCurrentFolder() {
+    return currentFolder;
+  }
 
   /*
    * Custom JButton for JToolbar
@@ -262,6 +264,8 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
    */
   @Override
   public void presentBreadcrumb(IResource resource) {
+    // Set currentFolder
+    currentFolder = (FolderImpl) resource;
 
     // Push to the parents stack
     parentResources.push(resource);

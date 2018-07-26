@@ -2,10 +2,19 @@ package com.oxygenxml.cmis.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -24,7 +33,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Repository;
 
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -40,24 +52,16 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener {
 
   private JList<IResource> resourceList;
-  private DefaultListModel<Repository> model;
-  private List<Repository> repoList;
-  private TabsPresenter tabsPresenter;
-  private BreadcrumbPresenter breadcrumbPresenter;
+  private JPopupMenu menu;
 
   ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
-    
-    // Initialize the tabsPresenter
-    this.tabsPresenter = tabsPresenter;
-    
-    
+
     // Create the listItem
-    resourceList = new JList();
+    resourceList = new JList<IResource>();
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     resourceList.setSelectedIndex(0);
     resourceList.addListSelectionListener(this);
-    
-    
+
     // Scroller for the listRepo
     JScrollPane listItemScrollPane = new JScrollPane(resourceList);
 
@@ -88,27 +92,27 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       public void mouseClicked(final MouseEvent e) {
 
         if (SwingUtilities.isRightMouseButton(e)) {
-          JPopupMenu menu = new JPopupMenu();
-          JMenuItem item = new JMenuItem("Say hello");
+          menu = new JPopupMenu();
+          // Get the location of the item using location of the click
+          int itemIndex = resourceList.locationToIndex(e.getPoint());
+          IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+
+          // TODO create a PopUpMenu for a document and for a folder
           JMenuItem editItem = new JMenuItem("Edit");
 
           editItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ev) {
-              // Get the location of the item using location of the click
-              int itemIndex = resourceList.locationToIndex(e.getPoint());
-              IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
-              
-              String urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) currentItem).getDoc(),  CMISAccess.getInstance().createResourceController());
-              
+              String urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) currentItem).getDoc(),
+                  CMISAccess.getInstance().createResourceController());
+
               System.out.println(urlAsTring);
-              
+
               PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
               if (pluginWorkspace != null) {
                 try {
-                  pluginWorkspace.open(
-                      new URL(urlAsTring));
+                  pluginWorkspace.open(new URL(urlAsTring));
                 } catch (MalformedURLException e1) {
                   // TODO Auto-generated catch block
                   e1.printStackTrace();
@@ -118,16 +122,30 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
           });
 
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              JOptionPane.showMessageDialog(ItemListView.this, "Hello " + resourceList.getSelectedValue());
-            }
-
-          });
-          menu.add(item);
           menu.add(editItem);
-          menu.show(ItemListView.this, 10,
-              resourceList.getCellBounds(resourceList.getSelectedIndex(), resourceList.getSelectedIndex()).y);
+          if (currentItem instanceof DocumentImpl) {
+
+            createDocumentJMenu(e);
+
+          } else if (currentItem instanceof FolderImpl) {
+
+            createFolderJMenu(e);
+
+          }
+
+          // UI feedback
+          // Bounds rectangle
+          Rectangle boundsRec = resourceList.getCellBounds(resourceList.getSelectedIndex(),
+              resourceList.getSelectedIndex());
+
+          if (boundsRec == null) {
+
+            JOptionPane.showMessageDialog(ItemListView.this, "Please select an item ");
+          } else {
+
+            menu.show(ItemListView.this, 10, boundsRec.y);
+          }
+
         }
 
         // Get the location of the item using location of the click
@@ -136,23 +154,22 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
         if (itemIndex != -1 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 
           IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
-          
+
           // Check whether the item in the list
           if (itemIndex != -1) {
-            System.out.println("TO present breadcrumb="+currentItem.getDisplayName());
-            
+            System.out.println("TO present breadcrumb=" + currentItem.getDisplayName());
+
             if (!(currentItem instanceof DocumentImpl)) {
               breadcrumbPresenter.presentBreadcrumb(currentItem);
             }
-            
-            
+
             /*
              * If it's an document show it on a tab instead of iterating the
              * children
              */
             if (currentItem instanceof DocumentImpl) {
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
-            }else{
+            } else {
               presentResources(currentItem);
             }
 
@@ -166,6 +183,313 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     add(listItemScrollPane, BorderLayout.CENTER);
 
+  }
+
+  /**
+   * get string from Clipboard
+   */
+  private String getSysClipboardText() {
+    String ret = "";
+    Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+    Transferable clipTf = sysClip.getContents(null);
+
+    if (clipTf != null) {
+
+      if (clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        try {
+          ret = (String) clipTf.getTransferData(DataFlavor.stringFlavor);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  /**
+   * put string into Clipboard
+   */
+  private void setSysClipboardText(String writeMe) {
+    Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+    Transferable tText = new StringSelection(writeMe);
+    clip.setContents(tText, null);
+  }
+
+  /*
+   * JMenu for the Document
+   */
+  private void createDocumentJMenu(final MouseEvent e) {
+
+    // CRUD Document
+    JMenuItem copyDoc = new JMenuItem("Copy");
+    JMenuItem deleteDoc = new JMenuItem("Delete");
+    JMenuItem moveDoc = new JMenuItem("Move to");
+    JMenuItem checkInDoc = new JMenuItem("Check In");
+    JMenuItem checkOutDoc = new JMenuItem("Check Out");
+    JMenuItem cancelCheckOutDoc = new JMenuItem("Cancel check out");
+
+    // CRUD Document listeners
+
+    // Copy doc
+    copyDoc.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent ev) {
+        // Get the location of the item using location of the click
+        int itemIndex = resourceList.locationToIndex(e.getPoint());
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+
+        DocumentImpl doc = ((DocumentImpl) currentItem);
+
+        String textClipboard = "";
+
+        /*
+         * A reader to reader 1024 characters using a ResourceController and
+         * document ID
+         */
+        Reader documentContent = null;
+        try {
+          documentContent = CMISAccess.getInstance().createResourceController().getDocumentContent(doc.getId());
+          char[] ch = new char[1024];
+          int l = -1;
+
+          // While there is text to read
+          while ((l = documentContent.read(ch)) != -1) {
+
+            // Append the text to the clipboard
+            textClipboard += String.valueOf(ch, 0, l);
+
+            // Set the clipboard
+            setSysClipboardText(textClipboard);
+          }
+        } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
+
+        } catch (IOException e) {
+          e.printStackTrace();
+
+        } finally {
+          // No matter what happens close at the end the doc
+
+          // Even if it's not empty
+          if (documentContent != null) {
+
+            try {
+              documentContent.close();
+
+            } catch (IOException e) {
+
+              e.printStackTrace();
+            }
+          }
+        }
+
+      }
+    });
+    
+    //TODO Check if is removed one reference or all maybe use of removeFromFolder
+    
+    // Delete doc
+    deleteDoc.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent ev) {
+        // Get the location of the item using location of the click
+        int itemIndex = resourceList.locationToIndex(e.getPoint());
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+
+        DocumentImpl doc = ((DocumentImpl) currentItem);
+
+        try {
+          CMISAccess.getInstance().createResourceController().deleteOneVersionDocument(doc.getDoc());
+        } catch (Exception e) {
+          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+        }
+      }
+
+    });
+    
+    //TODO Drag and drop
+    // Move to Folder
+//    moveDoc.addActionListener(new ActionListener() {
+//
+//      @Override
+//      public void actionPerformed(ActionEvent ev) {
+//        // Get the location of the item using location of the click
+//        int itemIndex = resourceList.locationToIndex(e.getPoint());
+//        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+//
+//        DocumentImpl doc = ((DocumentImpl) currentItem);
+//        FolderImpl sourceFolder = BreadcrumbView.currentFolder;
+//        String stringTargetFolder = (String)JOptionPane.showInputDialog(
+//            ItemListView.this,
+//            "Complete the sentence:\n"
+//            + "\"Green eggs and...\"",
+//            "Customized Dialog",
+//            JOptionPane.PLAIN_MESSAGE,
+//            null, null, "ham");
+//        
+//        FolderImol targetFolder = CMISAccess.getInstance().createResourceController().get
+//        try {
+//          CMISAccess.getInstance().createResourceController().move(sourceFolder, targetFolder, doc.getDoc());
+//        } catch (Exception e) {
+//          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+//        }
+//      }
+//
+//    });
+    
+    // Check In doc
+    checkInDoc.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent ev) {
+        // Get the location of the item using location of the click
+        int itemIndex = resourceList.locationToIndex(e.getPoint());
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+        ObjectId res = null;
+        DocumentImpl doc = ((DocumentImpl) currentItem);
+
+        try {
+          res = (ObjectId) doc.checkIn(doc.getDoc());
+        } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException e) {
+          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+        }
+
+      }
+    });
+
+    // CheckOutDoc
+    checkOutDoc.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent ev) {
+        // Get the location of the item using location of the click
+        int itemIndex = resourceList.locationToIndex(e.getPoint());
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+
+        Document res = null;
+        DocumentImpl doc = ((DocumentImpl) currentItem);
+        try {
+          res = doc.checkOut(doc.getDoc(), doc.getDocType());
+
+        } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException e) {
+          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+        }
+
+        System.out.println(res);
+      }
+    });
+
+    // cancelCheckOutDoc
+    cancelCheckOutDoc.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent ev) {
+        // Get the location of the item using location of the click
+        int itemIndex = resourceList.locationToIndex(e.getPoint());
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+
+        DocumentImpl doc = ((DocumentImpl) currentItem);
+        try {
+
+          doc.cancelCheckOut(doc.getDoc());
+        } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException e) {
+          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+        }
+
+      }
+    });
+    menu.add(deleteDoc);
+    menu.add(checkInDoc);
+    menu.add(checkOutDoc);
+    menu.add(cancelCheckOutDoc);
+  }
+
+  /*
+   * JMenu for the Folder
+   */
+
+  private void createFolderJMenu(final MouseEvent e) {
+
+    // CRUD Folder
+    JMenuItem copyFolder = new JMenuItem("Copy");
+    JMenuItem deleteFolder = new JMenuItem("Delete");
+    JMenuItem checkOutDoc = new JMenuItem("Check Out");
+    JMenuItem cancelCheckOutDoc = new JMenuItem("Cancel check out");
+
+    // CRUD Folder listeners
+
+    // Delete Folder tree
+    deleteFolder.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent ev) {
+        // Get the location of the item using location of the click
+        int itemIndex = resourceList.locationToIndex(e.getPoint());
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+        ObjectId res = null;
+
+        FolderImpl folder = ((FolderImpl) currentItem);
+
+        try {
+          CMISAccess.getInstance().createResourceController().deleteFolderTree(folder.getFolder());
+        } catch (Exception e) {
+          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+        }
+
+      }
+    });
+    //TODO check out all resources
+    // CheckOutAll
+//    checkOutDoc.addActionListener(new ActionListener() {
+//
+//      @Override
+//      public void actionPerformed(ActionEvent ev) {
+//        // Get the location of the item using location of the click
+//        int itemIndex = resourceList.locationToIndex(e.getPoint());
+//        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+//
+//        Document res = null;
+//        DocumentImpl doc = ((DocumentImpl) currentItem);
+//        try {
+//          res = doc.checkOut(doc.getDoc(), doc.getDocType());
+//
+//        } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException e) {
+//          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+//        }
+//
+//        System.out.println(res);
+//      }
+//    });
+    
+    
+    //TODO cancel check out all resources
+    // cancelCheckOutDoc
+//    cancelCheckOutDoc.addActionListener(new ActionListener() {
+//
+//      @Override
+//      public void actionPerformed(ActionEvent ev) {
+//        // Get the location of the item using location of the click
+//        int itemIndex = resourceList.locationToIndex(e.getPoint());
+//        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+//
+//        DocumentImpl doc = ((DocumentImpl) currentItem);
+//        try {
+//
+//          doc.cancelCheckOut(doc.getDoc());
+//        } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException e) {
+//          JOptionPane.showMessageDialog(ItemListView.this, "Exception " + e.getMessage());
+//        }
+//
+//      }
+//    });
+
+    menu.add(deleteFolder);
+//    menu.add(checkOutDoc);
+//    menu.add(cancelCheckOutDoc);
   }
 
   /*
@@ -183,8 +507,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     // Get the rootFolder and set the model
     ResourceController resourceController = instance.createResourceController();
     Folder rootFolder = resourceController.getRootFolder();
-    
-//  resourceController.createFolder(rootFolder, "Un nume lung cat o zi de post");
+
+    // resourceController.createFolder(rootFolder, "Un nume lung cat o zi de
+    // post");
 
     final FolderImpl origin = new FolderImpl(rootFolder);
     setFolder(origin);
@@ -193,7 +518,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   private void setFolder(final FolderImpl origin) {
     DefaultListModel<IResource> model = new DefaultListModel<>();
-    
 
     model.addElement(origin);
     resourceList.setModel(model);

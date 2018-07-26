@@ -135,7 +135,7 @@ public class DocumentImplTest extends ConnectionTestBase {
 
     System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
 
-    ctrl.deleteAllVersionsDocument(doc);
+    //ctrl.deleteAllVersionsDocument(doc);
   }
 
   /*
@@ -150,7 +150,7 @@ public class DocumentImplTest extends ConnectionTestBase {
     Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
     System.out.println(pwc.getName());
 
-    ctrl.deleteAllVersionsDocument(doc);
+   // ctrl.deleteAllVersionsDocument(doc);
   }
 
   @After

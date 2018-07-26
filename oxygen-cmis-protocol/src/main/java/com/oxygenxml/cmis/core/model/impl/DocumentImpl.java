@@ -51,6 +51,9 @@ public class DocumentImpl implements IDocument {
     return doc.getId();
   }
 
+  public DocumentType getDocType(){
+    return doc.getDocumentType();
+  }
   public ItemIterable<QueryResult> getQuery(ResourceController ctrl) {
     String query = "SELECT * FROM cmis:document WHERE cmis:name LIKE '".concat(getDisplayName()).concat("'");
     return ctrl.getSession().query(query, false);
@@ -142,16 +145,8 @@ public class DocumentImpl implements IDocument {
    * .opencmis.client.api.Document)
    */
   @Override
-  public void cancelCheckOut(Document doc) {
-    try {
-
+  public void cancelCheckOut(Document doc) throws org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException{
       doc.cancelCheckOut();
-
-    } catch (Exception e) {
-
-      e.getMessage();
-    }
-
   }
 
   /*
