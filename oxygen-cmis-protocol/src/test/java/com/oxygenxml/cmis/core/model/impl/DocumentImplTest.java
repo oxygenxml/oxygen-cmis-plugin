@@ -25,136 +25,147 @@ import com.oxygenxml.cmis.core.model.IDocument;
 
 public class DocumentImplTest extends ConnectionTestBase {
 
-  private Folder root;
-  private ResourceController ctrl;
+	private Folder root;
+	private ResourceController ctrl;
 
-  /**
-   * CONECTION TO SERVER REPOSITORY, ACCES ROOT FOLDER
-   * 
-   * @throws MalformedURLException
-   */
-  @Before
-  public void setUp() throws MalformedURLException {
-    CMISAccess.getInstance().connect(new URL("http://localhost:8080/B/atom11"), "A1");
-    ctrl = CMISAccess.getInstance().createResourceController();
-    root = ctrl.getRootFolder();
-  }
+	/**
+	 * CONECTION TO SERVER REPOSITORY, ACCES ROOT FOLDER
+	 * 
+	 * @throws MalformedURLException
+	 */
+	@Before
+	public void setUp() throws MalformedURLException {
+		CMISAccess.getInstance().connect(new URL("http://localhost:8080/B/atom11"), "A1");
+		ctrl = CMISAccess.getInstance().createResourceController();
+		root = ctrl.getRootFolder();
+	}
 
-  @Test
-  public void testGetDisplayName() throws UnsupportedEncodingException {
-    // Set Up
-    Document doc = ctrl.createDocument(root, "testDoc_name", "some text");
-    DocumentImpl docTest = new DocumentImpl(doc);
+	@Test
+	public void testGetDisplayName() throws UnsupportedEncodingException {
+		// Set Up
+		Document doc = ctrl.createDocument(root, "testDoc_name", "some text", "text/plain");
+		DocumentImpl docTest = new DocumentImpl(doc);
 
-    System.out.println("Doc name: " + docTest.getDisplayName());
-    assertEquals("testDoc_name", docTest.getDisplayName());
+		System.out.println("Doc name: " + docTest.getDisplayName());
+		assertEquals("testDoc_name", docTest.getDisplayName());
 
-    // Clean Up
-    ctrl.deleteAllVersionsDocument(doc);
-  }
+		// Clean Up
+		ctrl.deleteAllVersionsDocument(doc);
+	}
 
-  @Test
-  public void testGetId() throws UnsupportedEncodingException {
-    SearchController search = new SearchController(ctrl);
-    ArrayList<IDocument> list = search.queringDoc("ment-2");
-    
-    IDocument docTest = list.get(0);
+	@Test
+	public void testGetId() throws UnsupportedEncodingException {
+		SearchController search = new SearchController(ctrl);
+		ArrayList<IDocument> list = search.queringDoc("ment-2");
 
-    System.out.println("Doc ID: " + docTest.getId());
-    assertEquals("111", docTest.getId());
+		IDocument docTest = list.get(0);
 
-  }
+		System.out.println("Doc ID: " + docTest.getId());
+		assertEquals("111", docTest.getId());
 
-  /**
-   * GET GUERY OF OBJECT
-   * 
-   * @throws UnsupportedEncodingException
-   */
-  @Test
-  public void testGetQuery() throws UnsupportedEncodingException {
-    Document doc = ctrl.createDocument(root, "queryTestFile", "some text");
-    DocumentImpl docImpl = new DocumentImpl(doc);
+	}
 
-    ItemIterable<QueryResult> q = docImpl.getQuery(ctrl);
+	/**
+	 * GET GUERY OF OBJECT
+	 * 
+	 * @throws UnsupportedEncodingException
+	 */
+	@Test
+	public void testGetQuery() throws UnsupportedEncodingException {
+		Document doc = null;
+		try {
+			doc = ctrl.createDocument(root, "queryTest", "some text", "text/plain");
+			DocumentImpl docImpl = new DocumentImpl(doc);
 
-    for (QueryResult qr : q) {
-      System.out.println("------------------------------------------\n"
-          + qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:name").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:createdBy").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:contentStreamFileName").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:contentStreamMimeType").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:contentStreamLength").getFirstValue());
-    }
+			ItemIterable<QueryResult> q = docImpl.getQuery(ctrl);
 
-    ctrl.deleteAllVersionsDocument(doc);
-  }
+			for (QueryResult qr : q) {
+				System.out.println("------------------------------------------\n"
+						+ qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue() + " , "
+						+ qr.getPropertyByQueryName("cmis:name").getFirstValue() + " , "
+						+ qr.getPropertyByQueryName("cmis:createdBy").getFirstValue() + " , "
+						+ qr.getPropertyByQueryName("cmis:contentStreamFileName").getFirstValue() + " , "
+						+ qr.getPropertyByQueryName("cmis:contentStreamMimeType").getFirstValue() + " , "
+						+ qr.getPropertyByQueryName("cmis:contentStreamLength").getFirstValue());
+			}
 
-  @Test
-  public void testGetDocumentPath() throws UnsupportedEncodingException {    
-   
-    SearchController search = new SearchController(ctrl);
-    ArrayList<IDocument> list = search.queringDoc("Document-2");
-    
-    IDocument doc = list.get(0);
-    System.out.println(doc.getDocumentPath(ctrl));
-    assertEquals("/RootFolder/My_Folder-0-0/My_Folder-1-1/My_Document-2-0/", doc.getDocumentPath(ctrl));
-    
-  }
+		} finally {
+			ctrl.deleteAllVersionsDocument(doc);
+		}
+	}
 
-  /*
-   * Get the last version of a document
-   */
-  @Test
-  public void testGetLastVersionDocument() throws UnsupportedEncodingException {
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text",VersioningState.MINOR);
+	@Test
+	public void testGetDocumentPath() throws UnsupportedEncodingException {
 
-    Document latest;
-    if (Boolean.TRUE.equals(doc.isLatestVersion())) {
+		SearchController search = new SearchController(ctrl);
+		ArrayList<IDocument> list = search.queringDoc("Document-2");
 
-      latest = doc;
-    } else {
+		IDocument doc = list.get(0);
+		System.out.println(doc.getDocumentPath(ctrl));
+		assertEquals("/RootFolder/My_Folder-0-0/My_Folder-1-1/My_Document-2-0/", doc.getDocumentPath(ctrl));
 
-      latest = doc.getObjectOfLatestVersion(false);
-    }
-    System.out.println(latest.getName());
-    System.out.println(latest.getContentStream().toString());
+	}
 
-    ctrl.deleteAllVersionsDocument(latest);
-  }
+	/*
+	 * Get the last version of a document
+	 */
+	@Test
+	public void testGetLastVersionDocument() throws UnsupportedEncodingException {
+		Document doc = null;
+		Document latest = null;
+		try {
+			doc = ctrl.createVersionedDocument(root, "queryTest", "some text", VersioningState.MINOR);
+			if (Boolean.TRUE.equals(doc.isLatestVersion())) {
 
-  /*
-   * Check is is checked-out
-   */
-  @Test
-  public void testIsCheckedOut() throws UnsupportedEncodingException {
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text",VersioningState.MINOR);
+				latest = doc;
+			} else {
 
-    boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
-    String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
+				latest = doc.getObjectOfLatestVersion(false);
+			}
+			System.out.println(latest.getName());
+			System.out.println(latest.getContentStream().toString());
+		} finally {
+			ctrl.deleteAllVersionsDocument(latest);
+		}
+	}
 
-    System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
+	/*
+	 * Check is is checked-out
+	 */
+	@Test
+	public void testIsCheckedOut() throws UnsupportedEncodingException {
+		Document doc = null;
+		try {
+			doc = ctrl.createVersionedDocument(root, "queryTest", "some text", VersioningState.MINOR);
+			boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
+			String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
 
-    //ctrl.deleteAllVersionsDocument(doc);
-  }
+			System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
+		} finally {
+			ctrl.deleteAllVersionsDocument(doc);
+		}
+	}
 
-  /*
-   * Check-out the document
-   */
-  @Test
-  public void testCheckOut() throws UnsupportedEncodingException {
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text",VersioningState.MINOR);
-    ObjectId pwcId = doc.checkOut();
-    
-    System.out.println(doc.getName());
-    Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
-    System.out.println(pwc.getName());
+	/*
+	 * Check-out the document
+	 */
+	@Test
+	public void testCheckOut() throws UnsupportedEncodingException {
+		Document doc = null;
+		try {
+			doc = ctrl.createVersionedDocument(root, "queryTest", "some text", VersioningState.MINOR);
+			ObjectId pwcId = doc.checkOut();
 
-   // ctrl.deleteAllVersionsDocument(doc);
-  }
+			System.out.println(doc.getName());
+			Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
+			System.out.println(pwc.getName());
+		} finally {
+			ctrl.deleteAllVersionsDocument(doc);
+		}
+	}
 
-  @After
-  public void afterMethod(){
-    ctrl.getSession().clear();
-  }
+	@After
+	public void afterMethod() {
+		ctrl.getSession().clear();
+	}
 }

@@ -104,8 +104,16 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
             @Override
             public void actionPerformed(ActionEvent ev) {
-              String urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) currentItem).getDoc(),
-                  CMISAccess.getInstance().createResourceController());
+              
+            	String urlAsTring = null;
+            	
+				try {
+					urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) currentItem).getDoc(),
+					  CMISAccess.getInstance().createResourceController());
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
               System.out.println(urlAsTring);
 
