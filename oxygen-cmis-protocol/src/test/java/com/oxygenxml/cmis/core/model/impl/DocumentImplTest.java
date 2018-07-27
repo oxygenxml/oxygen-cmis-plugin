@@ -42,22 +42,22 @@ public class DocumentImplTest extends ConnectionTestBase {
 
   @Test
   public void testGetDisplayName() throws UnsupportedEncodingException {
+    Document doc = null;
+
     // Set Up
-    Document doc = ctrl.createDocument(root, "testDoc_name", "some text");
+    doc = createDocument(root, "testDoc_name", "some text");
     DocumentImpl docTest = new DocumentImpl(doc);
 
     System.out.println("Doc name: " + docTest.getDisplayName());
     assertEquals("testDoc_name", docTest.getDisplayName());
 
-    // Clean Up
-    ctrl.deleteAllVersionsDocument(doc);
   }
 
   @Test
   public void testGetId() throws UnsupportedEncodingException {
     SearchController search = new SearchController(ctrl);
     ArrayList<IDocument> list = search.queringDoc("ment-2");
-    
+
     IDocument docTest = list.get(0);
 
     System.out.println("Doc ID: " + docTest.getId());
@@ -72,7 +72,9 @@ public class DocumentImplTest extends ConnectionTestBase {
    */
   @Test
   public void testGetQuery() throws UnsupportedEncodingException {
-    Document doc = ctrl.createDocument(root, "queryTestFile", "some text");
+    Document doc = null;
+
+    doc = createDocument(root, "queryTestFile1", "some text");
     DocumentImpl docImpl = new DocumentImpl(doc);
 
     ItemIterable<QueryResult> q = docImpl.getQuery(ctrl);
@@ -86,20 +88,18 @@ public class DocumentImplTest extends ConnectionTestBase {
           + qr.getPropertyByQueryName("cmis:contentStreamMimeType").getFirstValue() + " , "
           + qr.getPropertyByQueryName("cmis:contentStreamLength").getFirstValue());
     }
-
-    ctrl.deleteAllVersionsDocument(doc);
   }
 
   @Test
-  public void testGetDocumentPath() throws UnsupportedEncodingException {    
-   
+  public void testGetDocumentPath() throws UnsupportedEncodingException {
+
     SearchController search = new SearchController(ctrl);
     ArrayList<IDocument> list = search.queringDoc("Document-2");
-    
+
     IDocument doc = list.get(0);
     System.out.println(doc.getDocumentPath(ctrl));
     assertEquals("/RootFolder/My_Folder-0-0/My_Folder-1-1/My_Document-2-0/", doc.getDocumentPath(ctrl));
-    
+
   }
 
   /*
@@ -107,20 +107,18 @@ public class DocumentImplTest extends ConnectionTestBase {
    */
   @Test
   public void testGetLastVersionDocument() throws UnsupportedEncodingException {
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text",VersioningState.MINOR);
+    Document latest = null;
+      Document doc = createDocument(root, "queryTestFile2", "some text");
 
-    Document latest;
-    if (Boolean.TRUE.equals(doc.isLatestVersion())) {
+      if (Boolean.TRUE.equals(doc.isLatestVersion())) {
 
-      latest = doc;
-    } else {
+        latest = doc;
+      } else {
 
-      latest = doc.getObjectOfLatestVersion(false);
-    }
-    System.out.println(latest.getName());
-    System.out.println(latest.getContentStream().toString());
-
-    ctrl.deleteAllVersionsDocument(latest);
+        latest = doc.getObjectOfLatestVersion(false);
+      }
+      System.out.println(latest.getName());
+      System.out.println(latest.getContentStream().toString());
   }
 
   /*
@@ -128,14 +126,13 @@ public class DocumentImplTest extends ConnectionTestBase {
    */
   @Test
   public void testIsCheckedOut() throws UnsupportedEncodingException {
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text",VersioningState.MINOR);
-
+    Document doc = null;
+    doc = createDocument(root, "queryTestFile", "some text");
+    doc.checkOut();
     boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
     String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
 
     System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
-
-    //ctrl.deleteAllVersionsDocument(doc);
   }
 
   /*
@@ -143,18 +140,19 @@ public class DocumentImplTest extends ConnectionTestBase {
    */
   @Test
   public void testCheckOut() throws UnsupportedEncodingException {
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text",VersioningState.MINOR);
+    Document doc = null;
+    doc = createDocument(root, "queryTestFile3", "some text");
     ObjectId pwcId = doc.checkOut();
-    
+
     System.out.println(doc.getName());
     Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
     System.out.println(pwc.getName());
 
-   // ctrl.deleteAllVersionsDocument(doc);
   }
 
   @After
-  public void afterMethod(){
+  public void afterMethod() {
+    cleanUpDocuments();
     ctrl.getSession().clear();
   }
 }

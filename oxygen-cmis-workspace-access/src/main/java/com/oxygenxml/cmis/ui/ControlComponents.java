@@ -19,7 +19,7 @@ public class ControlComponents extends JPanel {
   private ServerView serverPanel;
   private SearchView searchPanel;
 
-  public ControlComponents(TabComponentsView tabs) {
+  public ControlComponents(TabsPresenter tabs) {
 
     // Configure the breadcrumb for initialization
     breadcrumbList = new BreadcrumbView(new ItemsPresenter() {

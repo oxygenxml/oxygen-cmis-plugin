@@ -10,13 +10,18 @@
  vendor="SyncRO"
  class="com.oxygenxml.cmis.plugin.CMISPlugin"
  classLoaderType="preferReferencedResources">
+ 
  <runtime>
         <librariesFolder name="lib/"/>
   
-        <library name="target/classes"/>
+        <library name="target/classes"/>T
  </runtime>
  
+ <extension type="WorkspaceAccess" 
+  class="com.oxygenxml.cmis.plugin.CMISWorkspaceAccessPluginExtension"/>
+  
  <extension type="URLHandler" 
   class="com.oxygenxml.cmis.core.urlhandler.CustomProtocolExtension"/>
- 
+  
+ <view id="com.oxygenxml.cmis.plugin.CMISPlugin.View" initialSide="WEST" initialRow="0"/>
 </plugin>

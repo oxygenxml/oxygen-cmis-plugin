@@ -46,9 +46,8 @@ public class CustomProtocolTest extends ConnectionTestBase {
   @Test
   public void testGenerateURLObject() throws UnsupportedEncodingException {
     Document doc = null;
-    
-    try {
-      doc = ctrl.createDocument(root, "urlDoc", "some text");
+
+      doc = createDocument(root, "urlDoc", "some text");
       
       String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
       
@@ -60,17 +59,13 @@ public class CustomProtocolTest extends ConnectionTestBase {
       
       assertNotNull(url);
       
-    } finally {
-      ctrl.deleteAllVersionsDocument(doc);
-    }
   }
 
   @Test
   public void testGetObjectFromURL() throws UnsupportedEncodingException, MalformedURLException {
     Document doc = null;
-    
-    try {
-      doc = ctrl.createDocument(root, "urlDocGet", "some text");
+
+      doc = createDocument(root, "urlDocGet", "some text");
  
       CustomProtocolExtension cpe = new CustomProtocolExtension();
       
@@ -87,19 +82,15 @@ public class CustomProtocolTest extends ConnectionTestBase {
       
       assertNotNull(docURL);
       assertEquals(doc.getName(), docURL.getName());
-      
-    } finally {
-      // TODO Code review. Clean up. It is better to put it inside a finally block.
-      ctrl.deleteAllVersionsDocument(doc);
-    }
+
   }
   
   @Test
   public void testGetDocumentContent() throws IOException, UnsupportedEncodingException, MalformedURLException {
     Document doc = null;
     
-    try {
-      doc = ctrl.createDocument(root, "urlDocCont", "some test text");
+
+      doc = createDocument(root, "urlDocCont", "some test text");
       
       CustomProtocolExtension cpe = new CustomProtocolExtension();
       
@@ -117,18 +108,14 @@ public class CustomProtocolTest extends ConnectionTestBase {
       assertNotNull(docContent);
       assertEquals("some test text", read(docContent));
       
-    } finally {
-      // TODO Code review. Clean up. It is better to put it inside a finally block.
-      ctrl.deleteAllVersionsDocument(doc);
-    }
+
   }
   
   @Test
-  public void testGetFolderFromURL() throws MalformedURLException {
+  public void testGetFolderFromURL() throws MalformedURLException, UnsupportedEncodingException {
     Folder folder = null;
-    
-    try {
-      folder = ctrl.createFolder(root, "folderURL");
+
+      folder = createFolder(root, "folderURL");
       
       CustomProtocolExtension cpe = new CustomProtocolExtension();
       
@@ -144,15 +131,14 @@ public class CustomProtocolTest extends ConnectionTestBase {
       
       assertNotNull(foldURL);
       assertEquals("folderURL", foldURL.getName());
-      
-    } finally {
-      ctrl.deleteFolderTree(folder);
-    }
+
   }
   
   
   @After
   public void afterMethod(){   
+    cleanUpDocuments();
+    cleanUpFolders();
     ctrl.getSession().clear();
   }
 }

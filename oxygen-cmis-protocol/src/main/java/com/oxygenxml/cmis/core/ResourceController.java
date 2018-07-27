@@ -140,7 +140,9 @@ public class ResourceController {
   * @param doc
   */
  public  void deleteAllVersionsDocument(Document doc) {
+   if (doc != null) {
     doc.delete(true);
+   }
   }
 
  /**
@@ -156,14 +158,11 @@ public class ResourceController {
   * @param name
   * @return
   */
- public Folder createFolder(Folder path, String name) {
+ public Folder createFolder(Folder parent, String name) {
    Map<String, Object> properties = new HashMap<String, Object>();
 
    properties.put(PropertyIds.NAME, name);
    properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
-
-   Folder parent = null;
-   parent = path;
    
    // create the folder
    return parent.createFolder(properties);
