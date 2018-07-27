@@ -33,7 +33,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   private JPanel breadcrumbPanel;
   private JLabel goUpIcon;
   private ItemsPresenter itemsPresenter;
-  protected static FolderImpl currentFolder;
+  public static FolderImpl currentFolder;
 
   /*
    * The stack that takes care of the order
