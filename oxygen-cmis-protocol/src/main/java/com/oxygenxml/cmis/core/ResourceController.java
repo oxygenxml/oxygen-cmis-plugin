@@ -47,11 +47,11 @@ public class ResourceController {
   public Document createDocument(
       Folder path, 
       String filename, 
-      String content) throws UnsupportedEncodingException {
+      String content, String mimeType) throws UnsupportedEncodingException {
     
     // TODO Pass a Reader instead of a String as content.
    
-    String mimetype = "text/plain; charset=UTF-8";
+    String mimetype = mimeType.concat("; charset=UTF-8");
 
     byte[] contentBytes = content.getBytes("UTF-8");
     ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
