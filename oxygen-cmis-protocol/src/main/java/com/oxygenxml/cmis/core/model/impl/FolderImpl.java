@@ -28,6 +28,7 @@ public class FolderImpl implements IFolder {
 
   public FolderImpl(Folder folder) {
     this.folder = folder;
+    
   }
   
   public Folder getFolder() {

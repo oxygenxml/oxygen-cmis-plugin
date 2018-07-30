@@ -13,26 +13,26 @@ public interface IDocument extends IResource {
   /*
    * Get the last version of the doc
    */
-  Document getLastVersionDocument(Document doc);
+  Document getLastVersionDocument();
   
   /*
    * Check if the doc was checked-out
    */
-  boolean isCheckedOut(Document doc);
+  boolean isCheckedOut();
   
   /*
    * Check out the document
    */
-  Document checkOut(Document doc,DocumentType docType);
+  Document checkOut(DocumentType docType);
   
   /*
    * Cancel the check-out
    */
-  void cancelCheckOut(Document doc);
+  void cancelCheckOut();
   
   /*
    * Check-in the document
    */
-  ObjectId checkIn(Document doc);
+  ObjectId checkIn();
   
 }

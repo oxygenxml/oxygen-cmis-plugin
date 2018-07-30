@@ -13,8 +13,8 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 public class CheckoutDocumentAction extends AbstractAction {
   IResource resource = null;
 
-  public CheckoutDocumentAction(String name,IResource resource) {
-    super(name);
+  public CheckoutDocumentAction(IResource resource) {
+    super("Check out");
 
     this.resource = resource;
   }
@@ -24,7 +24,9 @@ public class CheckoutDocumentAction extends AbstractAction {
     Document res = null;
     DocumentImpl doc = ((DocumentImpl) resource);
     try {
-      res = doc.checkOut(doc.getDoc(), doc.getDocType());
+      res = doc.checkOut(doc.getDocType());
+      
+      
 
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());

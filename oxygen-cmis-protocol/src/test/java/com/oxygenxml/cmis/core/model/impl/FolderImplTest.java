@@ -106,6 +106,9 @@ public class FolderImplTest extends ConnectionTestBase {
     // Set Up
     Folder folder = createFolder(root, "testFolderPath");
     FolderImpl testFolder = new FolderImpl(folder);
+    
+    System.out.println("id " + testFolder.getFolder().getParentId());
+    System.out.println("pa " + testFolder.getFolder().getParents());
 
     System.out.println(testFolder.getDisplayName() + " -path-> " + testFolder.getFolderPath());
 

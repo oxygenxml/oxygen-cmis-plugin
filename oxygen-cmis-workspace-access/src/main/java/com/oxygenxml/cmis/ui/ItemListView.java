@@ -3,28 +3,14 @@ package com.oxygenxml.cmis.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -33,29 +19,41 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.chemistry.opencmis.client.api.Repository;
 
+import com.oxygenxml.cmis.actions.CancelCheckoutDocumentAction;
+import com.oxygenxml.cmis.actions.CancelCheckoutFolderAction;
+import com.oxygenxml.cmis.actions.CheckinDocumentAction;
+import com.oxygenxml.cmis.actions.CheckinFolderAction;
+import com.oxygenxml.cmis.actions.CheckoutDocumentAction;
+import com.oxygenxml.cmis.actions.CheckoutFolderAction;
+import com.oxygenxml.cmis.actions.CopyDocumentAction;
+import com.oxygenxml.cmis.actions.CopyFolderAction;
+import com.oxygenxml.cmis.actions.CreateDocumentAction;
+import com.oxygenxml.cmis.actions.CreateFolderAction;
+import com.oxygenxml.cmis.actions.DeleteDocumentAction;
+import com.oxygenxml.cmis.actions.DeleteFolderAction;
 import com.oxygenxml.cmis.actions.OpenDocumentAction;
+import com.oxygenxml.cmis.actions.PasteDocumentAction;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.core.urlhandler.CustomProtocolExtension;
-
-import ro.sync.exml.workspace.api.PluginWorkspace;
-import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener {
 
   private JList<IResource> resourceList;
   private JPopupMenu menu;
+  private TabsPresenter tabsPresenter;
+  private BreadcrumbPresenter breadcrumbPresenter;
+
+  private IResource currentParent;
 
   ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+
+    this.tabsPresenter = tabsPresenter;
+    this.breadcrumbPresenter = breadcrumbPresenter;
 
     // Create the listItem
     resourceList = new JList<IResource>();
@@ -93,43 +91,45 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       public void mouseClicked(final MouseEvent e) {
         // Get the location of the item using location of the click
         int itemIndex = resourceList.locationToIndex(e.getPoint());
-        
+
         if (SwingUtilities.isRightMouseButton(e)) {
           menu = new JPopupMenu();
-          
-//          IResource currentResource = getResource(e.getPoint());
-//          
-//          menu.add(new CopyAction(currentResource));
-//          menu.add(new PasteAction(currentResource))
 
-          // TODO CReate a Copy Action that extends AbstractAction
+          System.out.println("Current index=" + itemIndex);
 
-
-          // Get the location of the item using location of the click
           IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
 
-          if (currentItem instanceof DocumentImpl) {
+          Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
 
-            createDocumentJMenu(currentItem);
+          System.out.println(cellBounds);
+          System.out.println(e.getPoint());
+          
+          
+          // Check if the lick was outside the visible list
+          if (!cellBounds.contains(e.getPoint())) {
+            
+            createExternalListJMenu();
+            
+          } else {
 
-          } else if (currentItem instanceof FolderImpl) {
+            // Set selected on right click
+            resourceList.setSelectedIndex(itemIndex);
 
-            createFolderJMenu(e);
+            if (currentItem instanceof DocumentImpl) {
 
+              createDocumentJMenu(currentItem);
+
+            } else if (currentItem instanceof FolderImpl) {
+
+              createFolderJMenu(currentItem);
+
+            }
           }
-//          menu.addSeparator();
-//          menu.add(createDoc);
-//          menu.add(createFolder);
-//          menu.addSeparator();
-//          menu.add(pasteDoc);
-//          menu.add(pasteFolder);
-
           // Bounds of the click
           menu.show(ItemListView.this, e.getX(), e.getY());
 
         }
 
-       
         // Check if user clicked two times
         if (itemIndex != -1 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 
@@ -165,20 +165,29 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   }
 
+  /*
+   * JMenu for outside of the list components
+   */
+  private void createExternalListJMenu() {
+
+    //Create a document in the current folder
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this));
+    //Create a folder in the current folder
+    menu.add(new CreateFolderAction(currentParent, this));
+  }
 
   /*
    * JMenu for the Document
    */
-  private void createDocumentJMenu(final IResource resource) {
-    // CRUD Document
-    menu.add(new OpenDocumentAction("Open document", resource));
-    
-//    menu.add(deleteDoc);
-//    menu.add(checkInDoc);
-//    menu.add(checkOutDoc);
-//    menu.add(cancelCheckOutDoc);
+  private void createDocumentJMenu(final IResource selectedResource) {
 
-    // CRUD Document listeners
+    // CRUD Document
+    menu.add(new OpenDocumentAction(selectedResource));
+    menu.add(new CopyDocumentAction(selectedResource));
+    menu.add(new DeleteDocumentAction(selectedResource, currentParent, this));
+    menu.add(new CheckinDocumentAction(selectedResource));
+    menu.add(new CheckoutDocumentAction(selectedResource));
+    menu.add(new CancelCheckoutDocumentAction(selectedResource));
 
     // TODO Check if is removed one reference or all maybe use of
     // removeFromFolder
@@ -191,30 +200,23 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * JMenu for the Folder
    */
 
-  private void createFolderJMenu(final MouseEvent e) {
+  private void createFolderJMenu(final IResource selectedResource) {
 
     // CRUD Folder
-    JMenuItem copyFolder = new JMenuItem("Copy");
-    JMenuItem deleteFolder = new JMenuItem("Delete");
-    JMenuItem checkOutDoc = new JMenuItem("Check Out");
-    JMenuItem cancelCheckOutDoc = new JMenuItem("Cancel check out");
 
-    // CRUD Folder listeners
+    menu.add(new CreateDocumentAction(selectedResource, currentParent, this));
 
-    // TODO copy all resources
-    // copy all
-    
-    // TODO check out all resources
-    // CheckOutAll
-  
+    // TODO copy all resources postponed
+    menu.add(new CopyFolderAction(selectedResource));
 
-    // TODO cancel check out all resources
-    // cancelCheckOutDoc
-  
+    menu.add(new PasteDocumentAction(selectedResource ,currentParent, this));
+    menu.add(new DeleteFolderAction(selectedResource, currentParent, this));
 
-    menu.add(deleteFolder);
-    // menu.add(checkOutDoc);
-    // menu.add(cancelCheckOutDoc);
+   
+    menu.add(new CheckinFolderAction(selectedResource));
+    menu.add(new CheckoutFolderAction(selectedResource));
+    menu.add(new CancelCheckoutFolderAction(selectedResource));
+
   }
 
   /*
@@ -254,14 +256,15 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param resource
    *          the resource to present its children.
    */
-  private void presentResources(IResource resource) {
-    System.out.println("Current item=" + resource.getDisplayName());
-    // Get all the children of the item in an iterator
-    Iterator<IResource> childrenIterator = resource.iterator();
+  private void presentResources(IResource parentResource) {
+    this.currentParent = parentResource;
 
-    /*
-     * Iterate them till it has a child
-     */
+    System.out.println("Current item=" + parentResource.getDisplayName());
+    // Get all the children of the item in an iterator
+    Iterator<IResource> childrenIterator = parentResource.iterator();
+
+    // Iterate them till it has a child
+
     if (childrenIterator != null) {
       // Define a model for the list in order to render the items
       DefaultListModel<IResource> model = new DefaultListModel<>();
@@ -272,9 +275,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
         model.addElement(iResource);
 
       }
+
       // Set the model to the list
       resourceList.setModel(model);
-
     }
   }
 

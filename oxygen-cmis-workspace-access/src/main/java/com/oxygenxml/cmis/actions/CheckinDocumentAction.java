@@ -11,10 +11,10 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 
 public class CheckinDocumentAction extends AbstractAction {
-  IResource resource = null;
+ private  IResource resource = null;
 
-  public CheckinDocumentAction(String name, IResource resource) {
-    super(name);
+  public CheckinDocumentAction(IResource resource) {
+    super("Check in");
 
     this.resource = resource;
   }
@@ -25,7 +25,7 @@ public class CheckinDocumentAction extends AbstractAction {
     DocumentImpl doc = ((DocumentImpl) resource);
 
     try {
-      res = (ObjectId) doc.checkIn(doc.getDoc());
+      res = (ObjectId) doc.checkIn();
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }

@@ -18,8 +18,8 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 public class OpenDocumentAction extends AbstractAction {
   IResource resource = null;
 
-  public OpenDocumentAction(String name,IResource resource) {
-    super(name);
+  public OpenDocumentAction(IResource resource) {
+    super("Open documernt");
 
     this.resource = resource;
   }

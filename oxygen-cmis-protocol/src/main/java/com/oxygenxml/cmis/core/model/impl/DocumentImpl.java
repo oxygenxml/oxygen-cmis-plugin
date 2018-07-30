@@ -88,7 +88,7 @@ public class DocumentImpl implements IDocument {
    */
 
   @Override
-  public Document getLastVersionDocument(Document doc) {
+  public Document getLastVersionDocument() {
     Document latest = null;
 
     if (Boolean.TRUE.equals(doc.isLatestVersion())) {
@@ -109,7 +109,7 @@ public class DocumentImpl implements IDocument {
    * opencmis.client.api.Document)
    */
   @Override
-  public boolean isCheckedOut(Document doc) {
+  public boolean isCheckedOut() {
 
     boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
     String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
@@ -125,7 +125,7 @@ public class DocumentImpl implements IDocument {
    * opencmis.client.api.Document)
    */
   @Override
-  public Document checkOut(Document doc, DocumentType docType) {
+  public Document checkOut(DocumentType docType) {
     if (Boolean.TRUE.equals(docType.isVersionable())) {
       
       ObjectId pwcId = doc.checkOut();
@@ -145,7 +145,7 @@ public class DocumentImpl implements IDocument {
    * .opencmis.client.api.Document)
    */
   @Override
-  public void cancelCheckOut(Document doc) throws org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException{
+  public void cancelCheckOut() throws org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException{
       doc.cancelCheckOut();
   }
 
@@ -156,7 +156,7 @@ public class DocumentImpl implements IDocument {
    * opencmis.client.api.Document)
    */
   @Override
-  public ObjectId checkIn(Document doc) {
+  public ObjectId checkIn() {
 
     return doc.checkIn(true, null, doc.getContentStream(), "new version");
   }

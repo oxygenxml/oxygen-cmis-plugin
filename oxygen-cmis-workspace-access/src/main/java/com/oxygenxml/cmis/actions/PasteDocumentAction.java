@@ -8,6 +8,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 
@@ -19,13 +20,15 @@ import com.oxygenxml.cmis.ui.BreadcrumbView;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 public class PasteDocumentAction extends AbstractAction {
-  private IResource resource = null;
+  private IResource currentParent;
   private ItemsPresenter itemsPresenter;
+  private IResource resource;
 
-  public PasteDocumentAction(String name ,IResource resource, ItemsPresenter itemsPresenter) {
-    super(name);
-
+  public PasteDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+    
+    super("Paste document");
     this.resource = resource;
+    this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
   }
 
@@ -51,7 +54,8 @@ public class PasteDocumentAction extends AbstractAction {
 
     return ret;
   }
-  // Is called every time  the class is instantiated
+
+  // Is called every time the class is instantiated
   @Override
   public boolean isEnabled() {
     return super.isEnabled() && getSysClipboardText() != null;
@@ -61,12 +65,16 @@ public class PasteDocumentAction extends AbstractAction {
   public void actionPerformed(ActionEvent e) {
 
     if (getSysClipboardText() != null) {
+      try {
+        Document docClipboard = CMISAccess.getInstance().createResourceController().getDocument(getSysClipboardText());
 
-      Document docClipboard = CMISAccess.getInstance().createResourceController().getDocument(getSysClipboardText());
-      FolderImpl currentFolder = BreadcrumbView.currentFolder;
-      CMISAccess.getInstance().createResourceController().addToFolder(currentFolder.getFolder(), docClipboard);
-      
-      itemsPresenter.presentFolderItems(currentFolder.getId());
+        CMISAccess.getInstance().createResourceController().addToFolder(((FolderImpl) resource).getFolder(),
+            docClipboard);
+
+        itemsPresenter.presentFolderItems(currentParent.getId());
+      } catch (Exception ev) {
+        JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+      }
     }
   }
 

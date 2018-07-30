@@ -9,10 +9,11 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 
 public class CancelCheckoutDocumentAction extends AbstractAction {
-  IResource resource = null;
+  
+  private IResource resource = null;
 
-  public CancelCheckoutDocumentAction(String name, IResource resource) {
-    super(name);
+  public CancelCheckoutDocumentAction( IResource resource) {
+    super("Cancel check out");
 
     this.resource = resource;
   }
@@ -22,7 +23,7 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     DocumentImpl doc = ((DocumentImpl) resource);
     try {
 
-      doc.cancelCheckOut(doc.getDoc());
+      doc.cancelCheckOut();
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException ev) {
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }
