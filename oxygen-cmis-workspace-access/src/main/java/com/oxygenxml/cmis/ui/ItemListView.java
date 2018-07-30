@@ -97,7 +97,42 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
           System.out.println("Current index=" + itemIndex);
 
+<<<<<<< HEAD
           IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+=======
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+              
+            	String urlAsTring = null;
+            	
+				try {
+					urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) currentItem).getDoc(),
+					  CMISAccess.getInstance().createResourceController());
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+              System.out.println(urlAsTring);
+
+              PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+              if (pluginWorkspace != null) {
+                try {
+                  pluginWorkspace.open(new URL(urlAsTring));
+                } catch (MalformedURLException e1) {
+                  // TODO Auto-generated catch block
+                  e1.printStackTrace();
+                }
+              }
+            }
+
+          });
+
+          menu.add(editItem);
+          if (currentItem instanceof DocumentImpl) {
+
+            createDocumentJMenu(e);
+>>>>>>> e2dd34411a859534b5b9eb5d10c7c12c52e8a95a
 
           Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
 

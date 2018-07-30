@@ -21,7 +21,7 @@ public class ServerView extends JPanel {
     // TODO Get all the cached servers 
     String servers[]={
         "http://localhost:8080/B/atom11",
-        "http://lets-talk.com", 
+        "http://127.0.0.1:8098/alfresco/api/-default-/cmis/versions/1.1/atom", 
         "http://localhost:8088/alfresco/api/-default-/cmis/versions/1.1/atom"};
     
     this.repoPresenter = repoPresenter;

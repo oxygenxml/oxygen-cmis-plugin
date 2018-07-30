@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The plugin.dtd file is located in the OXYGEN_INSATALL_DIR/plugins directory -->
+<!DOCTYPE plugin SYSTEM "../plugin.dtd">
+
+<plugin
+    class="ro.sync.exml.plugin.Plugin"
+
+    id="web-author-cmis-plugin"
+    name="web-author-cmis-plugin"
+    description="A plugin for oXygen XML Web Author."
+    version="${project.nosnapshot.version}"
+    vendor="com.oxygenxml.cmis">
+
+  <runtime>
+    <librariesFolder name="lib" />
+    <library name="target/classes" />
+    <librariesFolder name="target/lib" />
+  </runtime>
+
+  <!-- Add extensions here-->
+
+  <!-- Example extensions: -->
+  <extension type="WebappServlet" class="com.oxygenxml.cmis.SampleWebappServletPluginExtension"/>
+
+  <!-- You can access static files at XML_WEB_AUTHOR/plugin-resources/PLUGIN_NAME_STATIC
+       (change PLUGIN_NAME_STATIC to whatever you need) -->
+  <extension type="WebappStaticResourcesFolder" path="web/static/" href="PLUGIN_NAME_STATIC"/>
+</plugin>
