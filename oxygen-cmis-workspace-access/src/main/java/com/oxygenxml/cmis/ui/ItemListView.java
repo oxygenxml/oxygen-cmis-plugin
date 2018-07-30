@@ -91,48 +91,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       public void mouseClicked(final MouseEvent e) {
         // Get the location of the item using location of the click
         int itemIndex = resourceList.locationToIndex(e.getPoint());
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
 
         if (SwingUtilities.isRightMouseButton(e)) {
           menu = new JPopupMenu();
-
+          
           System.out.println("Current index=" + itemIndex);
-
-<<<<<<< HEAD
-          IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
-=======
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-              
-            	String urlAsTring = null;
-            	
-				try {
-					urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) currentItem).getDoc(),
-					  CMISAccess.getInstance().createResourceController());
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-              System.out.println(urlAsTring);
-
-              PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
-              if (pluginWorkspace != null) {
-                try {
-                  pluginWorkspace.open(new URL(urlAsTring));
-                } catch (MalformedURLException e1) {
-                  // TODO Auto-generated catch block
-                  e1.printStackTrace();
-                }
-              }
-            }
-
-          });
-
-          menu.add(editItem);
-          if (currentItem instanceof DocumentImpl) {
-
-            createDocumentJMenu(e);
->>>>>>> e2dd34411a859534b5b9eb5d10c7c12c52e8a95a
 
           Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
 
@@ -168,7 +132,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
         // Check if user clicked two times
         if (itemIndex != -1 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 
-          IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+         
 
           // Check whether the item in the list
           if (itemIndex != -1) {
@@ -189,7 +153,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             }
 
           }
-        }
+        };
+        
+        
+        
       }
     });
 

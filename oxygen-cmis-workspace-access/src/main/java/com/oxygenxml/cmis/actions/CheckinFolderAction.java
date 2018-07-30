@@ -43,7 +43,11 @@ public class CheckinFolderAction extends AbstractAction {
           }
 
         } else if (iResource instanceof DocumentImpl) {
-          ((DocumentImpl) iResource).checkIn();
+          try {
+            ((DocumentImpl) iResource).checkIn();
+          } catch (Exception ev) {
+            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+          }
         }
 
       }
@@ -67,13 +71,13 @@ public class CheckinFolderAction extends AbstractAction {
           checkinFolder(iResource);
 
         } else if (iResource instanceof DocumentImpl) {
-          
+
           try {
             ((DocumentImpl) iResource).checkIn();
           } catch (Exception ev) {
             JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
           }
-          
+
         }
       }
     }

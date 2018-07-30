@@ -11,14 +11,14 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 public class CancelCheckoutFolderAction extends AbstractAction {
-  
- private  IResource resource = null;
+
+  private IResource resource = null;
 
   public CancelCheckoutFolderAction(IResource resource) {
-    
+
     super("Cancel check out");
     this.resource = resource;
-    
+
   }
 
   @Override
@@ -35,13 +35,15 @@ public class CancelCheckoutFolderAction extends AbstractAction {
         IResource iResource = childrenIterator.next();
 
         if (iResource instanceof FolderImpl) {
-          try {
+         
             cancelCheckoutFolder(iResource);
+         
+        } else if (iResource instanceof DocumentImpl) {
+          try {
+            ((DocumentImpl) iResource).cancelCheckOut();
           } catch (Exception ev) {
             JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
           }
-        } else if (iResource instanceof DocumentImpl) {
-          ((DocumentImpl) iResource).cancelCheckOut();
         }
 
       }

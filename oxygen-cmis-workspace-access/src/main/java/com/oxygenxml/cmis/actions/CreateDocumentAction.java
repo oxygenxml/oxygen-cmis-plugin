@@ -58,8 +58,14 @@ public class CreateDocumentAction extends AbstractAction {
 
     // Open into Oxygen
 
-    String urlAsTring = CustomProtocolExtension.getCustomURL(documentCreated,
-        CMISAccess.getInstance().createResourceController());
+    String urlAsTring = null;
+    try {
+      urlAsTring = CustomProtocolExtension.getCustomURL(documentCreated,
+          CMISAccess.getInstance().createResourceController());
+    } catch (UnsupportedEncodingException e2) {
+      // TODO Auto-generated catch block
+      e2.printStackTrace();
+    }
 
     System.out.println(urlAsTring);
 

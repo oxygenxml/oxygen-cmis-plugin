@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 
+import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 
@@ -26,8 +27,6 @@ public class CheckoutDocumentAction extends AbstractAction {
     try {
       res = doc.checkOut(doc.getDocType());
       
-      
-
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }

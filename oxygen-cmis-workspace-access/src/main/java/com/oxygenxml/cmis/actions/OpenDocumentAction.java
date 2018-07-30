@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -27,8 +28,14 @@ public class OpenDocumentAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
 
-    String urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) resource).getDoc(),
-        CMISAccess.getInstance().createResourceController());
+    String urlAsTring = null;
+    try {
+      urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) resource).getDoc(),
+          CMISAccess.getInstance().createResourceController());
+    } catch (UnsupportedEncodingException e2) {
+      // TODO Auto-generated catch block
+      e2.printStackTrace();
+    }
 
     System.out.println(urlAsTring);
 
