@@ -66,7 +66,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
   public void testGetObjectFromURL() throws UnsupportedEncodingException, MalformedURLException {
     Document doc = null;
 
-      doc = createDocument(root, "urlDocGet", "some text");
+      doc = createDocument(root, "url", "some text");
  
       CustomProtocolExtension cpe = new CustomProtocolExtension();
       

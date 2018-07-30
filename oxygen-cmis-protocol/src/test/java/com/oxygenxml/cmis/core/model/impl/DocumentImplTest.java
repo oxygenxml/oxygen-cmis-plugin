@@ -12,7 +12,6 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
-import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +88,6 @@ public class DocumentImplTest extends ConnectionTestBase {
           + qr.getPropertyByQueryName("cmis:contentStreamLength").getFirstValue());
     }
   }
-	}
 
   @Test
   public void testGetDocumentPath() throws UnsupportedEncodingException {
@@ -121,7 +119,6 @@ public class DocumentImplTest extends ConnectionTestBase {
       System.out.println(latest.getName());
       System.out.println(latest.getContentStream().toString());
   }
-	}
 
   /*
    * Check is is checked-out
@@ -136,7 +133,6 @@ public class DocumentImplTest extends ConnectionTestBase {
 
     System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
   }
-	}
 
   /*
    * Check-out the document
@@ -152,7 +148,6 @@ public class DocumentImplTest extends ConnectionTestBase {
     System.out.println(pwc.getName());
 
   }
-	}
 
   @After
   public void afterMethod() {
