@@ -1,13 +1,10 @@
 package com.oxygenxml.cmis.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-
-import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import javax.swing.UIManager;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -19,7 +16,7 @@ public class CreateFolderAction extends AbstractAction {
   private IResource currentParent;
 
   public CreateFolderAction(IResource currentParent, ItemsPresenter itemsPresenter) {
-    super("Create Folder");
+    super("Create Folder",UIManager.getIcon("FileView.directoryIcon"));
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
   }

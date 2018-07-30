@@ -43,6 +43,8 @@ public class PasteDocumentAction extends AbstractAction {
 
     if (clipTf != null) {
 
+      
+      //TODO Customize dataflavor
       if (clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
         try {
           ret = (String) clipTf.getTransferData(DataFlavor.stringFlavor);

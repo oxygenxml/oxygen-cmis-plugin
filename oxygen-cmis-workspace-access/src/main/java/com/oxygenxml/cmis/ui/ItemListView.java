@@ -1,7 +1,9 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Label;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,12 +12,14 @@ import java.util.Iterator;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -47,14 +51,14 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private JPopupMenu menu;
   private TabsPresenter tabsPresenter;
   private BreadcrumbPresenter breadcrumbPresenter;
-
+  private JLabel iconLabel;
   private IResource currentParent;
 
   ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
 
     this.tabsPresenter = tabsPresenter;
     this.breadcrumbPresenter = breadcrumbPresenter;
-
+    iconLabel = new JLabel();
     // Create the listItem
     resourceList = new JList<IResource>();
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -71,15 +75,32 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
           boolean cellHasFocus) {
-        String renderTex = "";
 
-        if (value != null) {
-          // Cast in order to use the methods from IResource interface
+        Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-          renderTex = ((IResource) value).getDisplayName();
+        if (component instanceof JLabel) {
 
+          String renderText = "";
+
+          if (value != null) {
+            // Cast in order to use the methods from IResource interface
+
+            renderText = ((IResource) value).getDisplayName();
+            ((JLabel) component).setText(renderText);
+
+            if ((IResource) value instanceof FolderImpl) {
+
+              ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
+
+            } else if ((IResource) value instanceof DocumentImpl) {
+
+              ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
+            }
+
+          }
         }
-        return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
+
+        return component;
       }
     });
 
@@ -95,20 +116,19 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
         if (SwingUtilities.isRightMouseButton(e)) {
           menu = new JPopupMenu();
-          
+
           System.out.println("Current index=" + itemIndex);
 
           Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
 
           System.out.println(cellBounds);
           System.out.println(e.getPoint());
-          
-          
+
           // Check if the lick was outside the visible list
           if (!cellBounds.contains(e.getPoint())) {
-            
+
             createExternalListJMenu();
-            
+
           } else {
 
             // Set selected on right click
@@ -132,8 +152,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
         // Check if user clicked two times
         if (itemIndex != -1 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 
-         
-
           // Check whether the item in the list
           if (itemIndex != -1) {
             System.out.println("TO present breadcrumb=" + currentItem.getDisplayName());
@@ -153,10 +171,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             }
 
           }
-        };
-        
-        
-        
+        }
+        ;
+
       }
     });
 
@@ -172,9 +189,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    */
   private void createExternalListJMenu() {
 
-    //Create a document in the current folder
+    // Create a document in the current folder
     menu.add(new CreateDocumentAction(currentParent, currentParent, this));
-    //Create a folder in the current folder
+    // Create a folder in the current folder
     menu.add(new CreateFolderAction(currentParent, this));
   }
 
@@ -211,10 +228,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     // TODO copy all resources postponed
     menu.add(new CopyFolderAction(selectedResource));
 
-    menu.add(new PasteDocumentAction(selectedResource ,currentParent, this));
+    menu.add(new PasteDocumentAction(selectedResource, currentParent, this));
     menu.add(new DeleteFolderAction(selectedResource, currentParent, this));
 
-   
     menu.add(new CheckinFolderAction(selectedResource));
     menu.add(new CheckoutFolderAction(selectedResource));
     menu.add(new CancelCheckoutFolderAction(selectedResource));

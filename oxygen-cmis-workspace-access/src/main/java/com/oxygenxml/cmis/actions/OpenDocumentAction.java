@@ -7,6 +7,7 @@ import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -20,7 +21,7 @@ public class OpenDocumentAction extends AbstractAction {
   IResource resource = null;
 
   public OpenDocumentAction(IResource resource) {
-    super("Open documernt");
+    super("Open document",UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
   }

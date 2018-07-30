@@ -9,6 +9,7 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -32,7 +33,7 @@ public class CreateDocumentAction extends AbstractAction {
   private Document documentCreated;
 
   public CreateDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
-    super("Create document");
+    super("Create document",UIManager.getIcon("FileView.fileIcon"));
 
     this.resource = resource;
     this.currentParent = currentParent;
