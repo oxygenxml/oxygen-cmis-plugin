@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.plugin;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -42,10 +43,7 @@ import ro.sync.exml.workspace.api.standalone.ui.ToolbarButton;
  * Plugin extension - workspace access extension.
  */
 public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPluginExtension {
-  /**
-   * The custom messages area. A sample component added to your custom view.
-   */
-  private JTextArea customMessagesArea;
+
 
   /**
    * @see ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension#applicationStarted(ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace)
@@ -54,32 +52,31 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
   public void applicationStarted(final StandalonePluginWorkspace pluginWorkspaceAccess) {
 
 
-
     pluginWorkspaceAccess.addViewComponentCustomizer(new ViewComponentCustomizer() {
       /**
        * @see ro.sync.exml.workspace.api.standalone.ViewComponentCustomizer#customizeView(ro.sync.exml.workspace.api.standalone.ViewInfo)
        */
       @Override
       public void customizeView(ViewInfo viewInfo) {
-        if(
-            //The view ID defined in the "plugin.xml"
-            "com.oxygenxml.cmis.plugin.CMISPlugin.View".equals(viewInfo.getViewID())) {
-          
-         
+        if (
+        // The view ID defined in the "plugin.xml"
+        "com.oxygenxml.cmis.plugin.CMISPlugin.View".equals(viewInfo.getViewID())) {
+
           viewInfo.setComponent(new ControlComponents(new TabsPresenter() {
-            
+
             @Override
             public void presentItem(Document doc) {
-              // TODO Auto-generated method stub
+              
               System.err.println("Open " + doc.getName());
             }
           }));
           viewInfo.setTitle("Custom Messages");
-          //You can have images located inside the JAR library and use them...
-//          viewInfo.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/customMessage.png").toString()));
-        } 
+          // You can have images located inside the JAR library and use them...
+          // viewInfo.setIcon(new
+          // ImageIcon(getClass().getClassLoader().getResource("images/customMessage.png").toString()));
+        }
       }
-    }); 
+    });
   }
 
   /**
@@ -87,7 +84,7 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
    */
   @Override
   public boolean applicationClosing() {
-    //You can reject the application closing here
+    // You can reject the application closing here
     return true;
   }
 }

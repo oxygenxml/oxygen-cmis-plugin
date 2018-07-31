@@ -42,7 +42,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     // Url http JComboBox constraints
     c.gridx = 1;
     c.gridy = 0;
-    c.weightx = 0.9;
+    c.weightx = 0.98;
     c.gridwidth = 2;
     c.ipadx = 40;
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -50,14 +50,14 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     repoItems.setEditable(false);
     add(repoItems, c);
 
-    // TODO ItemListener
     repoItems.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        JComboBox comboBox = (JComboBox) e.getSource();
+        JComboBox<?> comboBox = (JComboBox<?>) e.getSource();
 
         Repository selected = (Repository) comboBox.getSelectedItem();
         System.out.println(selected.getId());
+        
         itemsPresenter.presentItems(serverURL, selected.getId()); 
         breadcrumbPresenter.resetBreadcrumb(true);
       }
