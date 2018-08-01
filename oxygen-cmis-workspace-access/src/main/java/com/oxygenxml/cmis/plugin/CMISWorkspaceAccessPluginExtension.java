@@ -18,6 +18,7 @@ import javax.swing.text.BadLocationException;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 
+import com.oxygenxml.cmis.storage.SessionStorage;
 import com.oxygenxml.cmis.ui.ControlComponents;
 import com.oxygenxml.cmis.ui.TabsPresenter;
 
@@ -85,6 +86,9 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
   @Override
   public boolean applicationClosing() {
     // You can reject the application closing here
+    
+
+    
     return true;
   }
 }

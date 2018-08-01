@@ -24,6 +24,7 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
    * Executes operations over the resources.
    */
   private ResourceController ctrl;
+  private Folder testFolder;
 
   @Before
   public void setUp() throws Exception {
@@ -41,13 +42,9 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
    */
   @Test
   public void testPassCreateFolder(){
-    Folder testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderCreate");
-    try {
+     testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderCreate");
       Assert.assertFalse(folderExists(testFolder, ctrl.getRootFolder()));
       
-    } finally {
-      ctrl.deleteFolderTree(testFolder);
-    }
   }
   
   /**
@@ -55,7 +52,7 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
    */
   @Test
   public void testDeleteFolderTree() {
-    Folder testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderDelete");
+     testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderDelete");
     ctrl.deleteFolderTree(testFolder);
     Assert.assertFalse(folderExists(testFolder, ctrl.getRootFolder()));
   }
@@ -65,24 +62,19 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
    */
   @Test
   public void testRenameFolder() {
-    Folder testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderRename");
+    testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderRename");
     CmisObject renamedFolder = null;
-    try {
+   
       renamedFolder = ctrl.renameFolder(testFolder, "MI6");
 
       assertEquals("Renaming the file failed.", "MI6", testFolder.getName());
-    } finally {
-      if (renamedFolder != null) {
-        ctrl.deleteFolderTree((Folder) renamedFolder);  
-      } else {
-        // The renamed probably failed. Delete the original folder.
-        ctrl.deleteFolderTree(testFolder);
-      }
-    }
+    
   }
   
   @After
   public void afterMethod(){
+    if(testFolder != null){
     ctrl.getSession().clear();
+    }
   }
 }

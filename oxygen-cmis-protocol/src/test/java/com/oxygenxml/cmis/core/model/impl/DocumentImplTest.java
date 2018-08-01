@@ -120,34 +120,34 @@ public class DocumentImplTest extends ConnectionTestBase {
       System.out.println(latest.getContentStream().toString());
   }
 
-  /*
-   * Check is is checked-out
-   */
-  @Test
-  public void testIsCheckedOut() throws UnsupportedEncodingException {
-    Document doc = null;
-    doc = createDocument(root, "queryTestFile", "some text");
-    doc.checkOut();
-    boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
-    String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
-
-    System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
-  }
-
-  /*
-   * Check-out the document
-   */
-  @Test
-  public void testCheckOut() throws UnsupportedEncodingException {
-    Document doc = null;
-    doc = createDocument(root, "queryTestFile3", "some text");
-    ObjectId pwcId = doc.checkOut();
-
-    System.out.println(doc.getName());
-    Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
-    System.out.println(pwc.getName());
-
-  }
+//  /*
+//   * Check is is checked-out
+//   */
+//  @Test
+//  public void testIsCheckedOut() throws UnsupportedEncodingException {
+//    Document doc = null;
+//    doc = createDocument(root, "queryTestFile", "some text");
+//    doc.checkOut();
+//    boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
+//    String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
+//
+//    System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
+//  }
+//
+//  /*
+//   * Check-out the document
+//   */
+//  @Test
+//  public void testCheckOut() throws UnsupportedEncodingException {
+//    Document doc = null;
+//    doc = createDocument(root, "queryTestFile3", "some text");
+//    ObjectId pwcId = doc.checkOut();
+//
+//    System.out.println(doc.getName());
+//    Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
+//    System.out.println(pwc.getName());
+//
+//  }
 
   @After
   public void afterMethod() {

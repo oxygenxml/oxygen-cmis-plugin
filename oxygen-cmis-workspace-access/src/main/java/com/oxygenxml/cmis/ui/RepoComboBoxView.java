@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import org.apache.chemistry.opencmis.client.api.Repository;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.UserCredentials;
 
 public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
@@ -26,7 +27,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
   private URL serverURL;
 
   RepoComboBoxView(ItemsPresenter itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
-    
+
     repoItems = new JComboBox<Repository>();
 
     setLayout(new GridBagLayout());
@@ -57,8 +58,8 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
         Repository selected = (Repository) comboBox.getSelectedItem();
         System.out.println(selected.getId());
-        
-        itemsPresenter.presentItems(serverURL, selected.getId()); 
+
+        itemsPresenter.presentItems(serverURL, selected.getId());
         breadcrumbPresenter.resetBreadcrumb(true);
       }
     });
@@ -73,31 +74,45 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
     // Create the listRepo of repos.
     System.out.println(serverURL);
-    serverReposList = CMISAccess.getInstance().getRepositories(serverURL);
 
-    DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();
-    // Iterate all the elements
-    for (Repository element : serverReposList) {
-      model.addElement(element);
+    //
+    UserCredentials userCredentials = null;
+    try {
+      userCredentials = AuthenticatorUtil.getUserCredentials(serverURL);
+    } catch (UserCanceledException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
 
-    repoItems.setModel(model);
+    if (userCredentials != null) {
 
-    /*
-     * Render all the elements of the listRepo
-     */
-    repoItems.setRenderer(new DefaultListCellRenderer() {
-      @Override
-      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-          boolean cellHasFocus) {
-        String renderTex = "";
-        if (value != null) {
-          renderTex = ((Repository) value).getName();
-        }
+      // TODO If the credfentials are wrong an exception is thrown. Retry
+      serverReposList = CMISAccess.getInstance().getRepositories(serverURL, userCredentials);
 
-        return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
+      DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();
+      // Iterate all the elements
+      for (Repository element : serverReposList) {
+        model.addElement(element);
       }
-    });
+
+      repoItems.setModel(model);
+
+      /*
+       * Render all the elements of the listRepo
+       */
+      repoItems.setRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+            boolean cellHasFocus) {
+          String renderTex = "";
+          if (value != null) {
+            renderTex = ((Repository) value).getName();
+          }
+
+          return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
+        }
+      });
+    }
 
   }
 }

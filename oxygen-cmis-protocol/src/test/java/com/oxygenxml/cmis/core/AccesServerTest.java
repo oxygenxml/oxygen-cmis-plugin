@@ -14,7 +14,7 @@ public class AccesServerTest {
   @Test
   public void testGetRepos() throws MalformedURLException {
     
-    List<Repository> repositoryList = CMISAccess.getInstance().getRepositories(new URL("http://localhost:8080/B/atom11"));
+    List<Repository> repositoryList = CMISAccess.getInstance().getRepositories(new URL("http://localhost:8080/B/atom11"), null);
     
     //to understand what i do
     for(Repository rep : repositoryList) {

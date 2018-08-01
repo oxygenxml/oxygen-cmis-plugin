@@ -31,7 +31,7 @@ public class testAlfrescoCustomProtocol {
 		URL url = new URL("http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom");
 
 		List<Repository> serverReposList = 
-				CMISAccess.getInstance().getRepositories(url);
+				CMISAccess.getInstance().getRepositories(url, null);
 
 		Repository repository = serverReposList.get(0);
 

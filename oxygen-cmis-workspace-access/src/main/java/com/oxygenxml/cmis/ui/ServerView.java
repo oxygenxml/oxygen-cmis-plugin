@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -24,24 +25,28 @@ import com.oxygenxml.cmis.storage.SessionStorage;
 
 public class ServerView extends JPanel implements ServerPresenter {
 
-  private List<String> serversList;
+  private LinkedHashSet<String> serversList;
   private JComboBox<String> serverItemsCombo;
 
   public ServerView(RepositoriesPresenter repoPresenter) {
     serverItemsCombo = new JComboBox<String>();
-    this.serversList = new ArrayList<String>();
+    this.serversList = new LinkedHashSet<String>();
     /*
-     * TESTING in comments
-     * Arrays.assList has a fixed range no add allowed
+     * TESTING in comments Arrays.assList has a fixed range no add allowed
      */
     // serversList.add("http://localhost:8080/B/atom11");
     // serversList.add("http://127.0.0.1:8098/alfresco/api/-default-/cmis/versions/1.1/atom");
     // serversList.add("http://localhost:8088/alfresco/api/-default-/cmis/versions/1.1/atom");
     // presentServers(serversList);
+    
 
     // Add all new elements to the arraylist
-    Collections.addAll(serversList, SessionStorage.getInstance().getSevers());
-
+    LinkedHashSet<String> elements = SessionStorage.getInstance().getSevers();
+    
+    if (elements != null) {
+      Collections.addAll(serversList, elements.toArray(new String[0]));
+    }
+    
     // Present them
     presentServers(serversList);
 
@@ -82,18 +87,17 @@ public class ServerView extends JPanel implements ServerPresenter {
 
         // Try presentRepositories using the URL
         Object selectedItem = serverItemsCombo.getSelectedItem();
+
         if (selectedItem != null) {
           try {
             URL serverURL = new URL(serverItemsCombo.getSelectedItem().toString());
-            System.out.println(serverItemsCombo.getEditor().getItem().toString().trim());
+
             serversList.add(serverItemsCombo.getEditor().getItem().toString().trim());
 
             repoPresenter.presentRepositories(serverURL);
 
-            // TODO What is this thing toArray( new String[0] )
-             SessionStorage.getInstance().setServers(serversList.toArray(new
-             String[0]));
-
+            // Set the servers
+            SessionStorage.getInstance().setServers(serversList);
           } catch (MalformedURLException e1) {
             JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
           }
@@ -105,7 +109,7 @@ public class ServerView extends JPanel implements ServerPresenter {
   }
 
   @Override
-  public void presentServers(List<String> serversList) {
+  public void presentServers(LinkedHashSet<String> serversList) {
 
     DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
     // Iterate all the elements
@@ -130,5 +134,7 @@ public class ServerView extends JPanel implements ServerPresenter {
     });
 
   }
+
+ 
 
 }

@@ -1,9 +1,10 @@
 package com.oxygenxml.cmis.ui;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public interface ServerPresenter {
 
-  void presentServers(List<String> serverdList);
+  void presentServers(LinkedHashSet<String> serverdList);
 
 }

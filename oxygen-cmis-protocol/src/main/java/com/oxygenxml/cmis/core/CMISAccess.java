@@ -44,10 +44,13 @@ public class CMISAccess {
     }
     return instance;
   }
+  
+  public void connect(URL connectionInfo, String repositoryID) {
+    connect(connectionInfo, repositoryID, null);
+  }
 
   /**
-   * "http://localhost:8080/atom11
-   * http://localhost:8080/B/atom11"
+   * "http://localhost:8080/atom11 http://localhost:8080/B/atom11"
    * 
    * Creates a connection to the given server.
    * 
@@ -56,26 +59,30 @@ public class CMISAccess {
    * @param repositoryID
    *          Repository ID.
    */
-  public void connect(URL connectionInfo, String repositoryID) {
+  public void connect(URL connectionInfo, String repositoryID, UserCredentials uc) {
     HashMap<String, String> parameters = new HashMap<>();
-    populateParameters(connectionInfo, parameters);
+    populateParameters(connectionInfo, parameters, uc);
     parameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
 
     // create session
     session = factory.createSession(parameters);
   }
 
-  private void populateParameters(URL connectionInfo, HashMap<String, String> parameters) {
+  private void populateParameters(URL connectionInfo, HashMap<String, String> parameters, UserCredentials uc) {
     // TODO Ask for credentials. Different implementations SA/Web
-    parameters.put(SessionParameter.USER, "admin");
-    parameters.put(SessionParameter.PASSWORD, "admin");
+    if (uc != null) {
+      parameters.put(SessionParameter.USER, uc.username);
+      parameters.put(SessionParameter.PASSWORD, String.valueOf(uc.password));
+    }
 
     // connection settings
     parameters.put(SessionParameter.ATOMPUB_URL, connectionInfo.toString());
     parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-    
-    parameters.put(SessionParameter.HTTP_INVOKER_CLASS, "org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker");
+
+    parameters.put(SessionParameter.HTTP_INVOKER_CLASS,
+        "org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker");
   }
+  
 
   /**
    * TODO Alexey Make some tests.
@@ -85,9 +92,9 @@ public class CMISAccess {
    * @param connectionInfo
    * @return
    */
-  public List<Repository> getRepositories(URL connectionInfo) {
+  public List<Repository> getRepositories(URL connectionInfo, UserCredentials uc) {
     HashMap<String, String> parameters = new HashMap<>();
-    populateParameters(connectionInfo, parameters);
+    populateParameters(connectionInfo, parameters, uc);
 
     return factory.getRepositories(parameters);
   }
@@ -98,7 +105,7 @@ public class CMISAccess {
   public ResourceController createResourceController() {
     return new ResourceController(session);
   }
-  
+
   public Session getSession() {
     return session;
   }
