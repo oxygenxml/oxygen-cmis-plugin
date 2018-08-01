@@ -3,8 +3,6 @@ package com.oxygenxml.cmis.ui;
 import java.net.URL;
 
 import javax.swing.JFrame;
-import org.apache.log4j.lf5.viewer.LogFactor5InputDialog;
-
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.storage.SessionStorage;
 
@@ -27,13 +25,19 @@ public class AuthenticatorUtil {
     System.out.println("user credentials " + uc);
 
     while (uc == null) {
+      
+      //Initialize the Login Dialog
       LoginDialog loginDialog = new LoginDialog((JFrame) PluginWorkspaceProvider.getPluginWorkspace().getParentFrame());
 
       loginDialog.setVisible(true);
 
+      //Check whether user pressed ok
       if (loginDialog.getResult() == LoginDialog.RESULT_OK) {
+        
         uc = loginDialog.getUserCredentials();
+        
         SessionStorage.getInstance().addUserCredentials(serverURL, uc);
+        
       } else {
         throw new UserCanceledException();
       }

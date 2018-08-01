@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
@@ -75,13 +77,14 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     // Create the listRepo of repos.
     System.out.println(serverURL);
 
-    //
+    //Check credentials for the URL
     UserCredentials userCredentials = null;
     try {
       userCredentials = AuthenticatorUtil.getUserCredentials(serverURL);
-    } catch (UserCanceledException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      
+    } catch (Exception e1) {
+      
+      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
     if (userCredentials != null) {

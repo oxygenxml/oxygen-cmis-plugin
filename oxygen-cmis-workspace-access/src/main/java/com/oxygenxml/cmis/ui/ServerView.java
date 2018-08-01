@@ -7,10 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -29,6 +27,7 @@ public class ServerView extends JPanel implements ServerPresenter {
   private JComboBox<String> serverItemsCombo;
 
   public ServerView(RepositoriesPresenter repoPresenter) {
+    
     serverItemsCombo = new JComboBox<String>();
     this.serversList = new LinkedHashSet<String>();
     /*
@@ -40,7 +39,7 @@ public class ServerView extends JPanel implements ServerPresenter {
     // presentServers(serversList);
     
 
-    // Add all new elements to the arraylist
+    // Add all new elements to the LinkedHash set (unique and ordered)
     LinkedHashSet<String> elements = SessionStorage.getInstance().getSevers();
     
     if (elements != null) {

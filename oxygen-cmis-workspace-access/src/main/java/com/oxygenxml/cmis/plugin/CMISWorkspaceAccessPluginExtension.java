@@ -87,8 +87,6 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
   public boolean applicationClosing() {
     // You can reject the application closing here
     
-
-    
     return true;
   }
 }
