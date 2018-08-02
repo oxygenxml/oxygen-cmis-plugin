@@ -34,7 +34,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class SessionStorage {
-  
+
   /**
    * Logging.
    */
@@ -57,8 +57,8 @@ public class SessionStorage {
     return instance;
   }
 
-  /*
-   * 
+  /**
+   * Constructor that tries to unwrap the storage
    */
   private SessionStorage() {
 
@@ -74,9 +74,9 @@ public class SessionStorage {
       }
 
     } catch (Exception e1) {
-      
+
       logger.error(e1, e1);
-      
+
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
@@ -95,9 +95,10 @@ public class SessionStorage {
    * 
    * @param serverURL the url
    * 
-   * @param uc usercredentials
+   * @param uc user credentials
    */
   public void addUserCredentials(URL serverURL, UserCredentials uc) {
+    
     options.addUserCredentials(serverURL.toExternalForm(), uc);
     SessionStorage.getInstance().store();
   }
@@ -155,9 +156,9 @@ public class SessionStorage {
 
       pluginWorkspace.getOptionsStorage().setOption(OPTION_TAG, marshal);
     } catch (Exception e1) {
-      
+
       logger.error(e1, e1);
-      
+
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
@@ -165,7 +166,7 @@ public class SessionStorage {
 
   public void addServer(String currentServerURL) {
     options.addServer(currentServerURL);
-    
+
     SessionStorage.getInstance().store();
   }
 }
