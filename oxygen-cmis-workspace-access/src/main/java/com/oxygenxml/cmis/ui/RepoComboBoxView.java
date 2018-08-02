@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.ui;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
@@ -44,14 +45,16 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     // Server Repository JLabel constraints
     c.gridx = 0;
     c.gridy = 0;
-    c.weightx = 0.02;
+    c.weightx = 0.0;
+    c.ipadx = 10;
+    c.insets = new Insets(1,5,1,5);
     JLabel serverUrlLabel = new JLabel("Repository:");
     add(serverUrlLabel, c);
 
     // Url http JComboBox constraints
     c.gridx = 1;
     c.gridy = 0;
-    c.weightx = 0.98;
+    c.weightx = 1;
     c.gridwidth = 2;
     c.ipadx = 40;
     c.fill = GridBagConstraints.HORIZONTAL;

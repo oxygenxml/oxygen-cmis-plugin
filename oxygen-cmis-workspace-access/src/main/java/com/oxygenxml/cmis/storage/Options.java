@@ -32,7 +32,7 @@ public class Options {
    * @return Gets the CMIS servers URLs.
    */
   @XmlElementWrapper(name="servers")
-  public Set<String> getServers() {
+  public LinkedHashSet<String> getServers() {
     return servers;
   }
 

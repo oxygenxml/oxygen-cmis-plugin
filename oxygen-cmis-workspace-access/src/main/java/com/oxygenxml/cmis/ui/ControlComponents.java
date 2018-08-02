@@ -1,15 +1,12 @@
 package com.oxygenxml.cmis.ui;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.net.URL;
 
-import javax.swing.*;
-import javax.swing.event.*;
-
-import com.oxygenxml.cmis.core.CMISAccess;
-
-import java.util.*;
+import javax.swing.JPanel;
 
 public class ControlComponents extends JPanel {
 

@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.ui;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
@@ -53,15 +54,16 @@ public class ServerView extends JPanel {
     // Server Url JLabel constraints
     c.gridx = 0;
     c.gridy = 0;
-    c.weightx = 0.03;
+    c.weightx = 0.0;
     c.ipadx = 10;
-    JLabel serverUrlLabel = new JLabel("Server URL:");
+    c.insets = new Insets(1,5,1,5);
+    JLabel serverUrlLabel = new JLabel(" Server URL:");
     add(serverUrlLabel, c);
 
     // Url http JComboBox constraints
     c.gridx = 1;
     c.gridy = 0;
-    c.weightx = 0.87;
+    c.weightx = 0.97;
     c.gridwidth = 2;
 
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -74,7 +76,7 @@ public class ServerView extends JPanel {
     c.gridx = 3;
     c.gridwidth = 1;
     c.gridy = 0;
-    c.weightx = 0.1;
+    c.weightx = 0.0;
     JButton loadButton = new JButton("Connect");
 
     loadButton.addActionListener(new ActionListener() {
