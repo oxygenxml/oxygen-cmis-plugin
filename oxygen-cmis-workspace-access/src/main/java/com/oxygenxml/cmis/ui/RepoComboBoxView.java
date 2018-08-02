@@ -18,11 +18,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 
 public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
+  
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(RepoComboBoxView.class);
 
   private JComboBox<Repository> repoItems;
   private List<Repository> serverReposList;
@@ -83,6 +89,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
       userCredentials = AuthenticatorUtil.getUserCredentials(serverURL);
       
     } catch (Exception e1) {
+      logger.error(e1, e1);
       
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }

@@ -9,6 +9,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 
 /**
  * Entry point to access a CMIS server.
@@ -45,7 +46,7 @@ public class CMISAccess {
     return instance;
   }
   
-  public void connect(URL connectionInfo, String repositoryID) {
+  public void connect(URL connectionInfo, String repositoryID) throws CmisUnauthorizedException  {
     connect(connectionInfo, repositoryID, null);
   }
 
@@ -59,7 +60,7 @@ public class CMISAccess {
    * @param repositoryID
    *          Repository ID.
    */
-  public void connect(URL connectionInfo, String repositoryID, UserCredentials uc) {
+  public void connect(URL connectionInfo, String repositoryID, UserCredentials uc) throws CmisUnauthorizedException {
     HashMap<String, String> parameters = new HashMap<>();
     populateParameters(connectionInfo, parameters, uc);
     parameters.put(SessionParameter.REPOSITORY_ID, repositoryID);

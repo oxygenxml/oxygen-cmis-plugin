@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -15,7 +16,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.log4j.Logger;
+
 import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.ui.AuthenticatorUtil;
 import com.oxygenxml.cmis.ui.LoginDialog;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -30,6 +34,11 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class SessionStorage {
+  
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(SessionStorage.class);
 
   // Tag of the option
   private static final String OPTION_TAG = "cmisPlugin";
@@ -60,11 +69,14 @@ public class SessionStorage {
     try {
       if (option != null) {
         option = pluginWorkspace.getXMLUtilAccess().unescapeAttributeValue(option);
+        // Unwrap the storage
+        options = unmarshal(option);
       }
-      // Unwrap the storage
-      options = unmarshal(option);
 
     } catch (Exception e1) {
+      
+      logger.error(e1, e1);
+      
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
@@ -74,13 +86,8 @@ public class SessionStorage {
     }
   }
 
-  public LinkedHashSet<String> getSevers() {
+  public Set<String> getSevers() {
     return options.getServers();
-  }
-
-  public void setServers(LinkedHashSet<String> serversList) {
-    options.setServers(serversList);
-    SessionStorage.getInstance().store();
   }
 
   /*
@@ -99,12 +106,7 @@ public class SessionStorage {
    * Get the credentials only if they exist
    */
   public UserCredentials getUserCredentials(URL serverURL) {
-    Map<String, UserCredentials> credentials = options.getCredentials();
-    if (credentials != null) {
-      return credentials.get(serverURL.toExternalForm());
-    }
-
-    return null;
+    return options.getUserCredentials(serverURL);
   }
 
   private Options options;
@@ -153,9 +155,17 @@ public class SessionStorage {
 
       pluginWorkspace.getOptionsStorage().setOption(OPTION_TAG, marshal);
     } catch (Exception e1) {
+      
+      logger.error(e1, e1);
+      
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
   }
 
+  public void addServer(String currentServerURL) {
+    options.addServer(currentServerURL);
+    
+    SessionStorage.getInstance().store();
+  }
 }

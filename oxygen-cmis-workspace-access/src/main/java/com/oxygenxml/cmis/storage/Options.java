@@ -1,37 +1,46 @@
 package com.oxygenxml.cmis.storage;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.oxygenxml.cmis.core.UserCredentials;
 
-// Set the root element
+/**
+ * A collections with everything that needs remembering. 
+ */
 @XmlRootElement(name = "options")
 public class Options {
   
-
+  /**
+   * All the known CMIS servers URLs.  
+   */
   private LinkedHashSet<String> servers;
   
-  //Set the wrapper for credentials
+  /**
+   * All the credentials requested from the user.
+   */
   @XmlElementWrapper(name="credentials")
   Map<String, UserCredentials> credentials;
   
-  //Set the wrapper for servers
+  /**
+   * @return Gets the CMIS servers URLs.
+   */
   @XmlElementWrapper(name="servers")
-  public LinkedHashSet<String> getServers() {
+  public Set<String> getServers() {
     return servers;
   }
 
-  public void setServers(LinkedHashSet<String> serversList) {
-    this.servers = serversList;
-  }
-
-  public Map<String, UserCredentials> getCredentials() {
-    return credentials;
+  public void addServer(String currentServerURL) {
+    if (this.servers == null) {
+      this.servers = new LinkedHashSet<>();
+    }
+    this.servers.add(currentServerURL);
   }
 
   
@@ -40,6 +49,15 @@ public class Options {
     if (credentials == null) {
       credentials = new HashMap<>();
     }
+    // TODO Encrypt before adding.
     credentials.put(serverURL, uc);
+  }
+
+  public UserCredentials getUserCredentials(URL serverURL) {
+    if (credentials != null) {
+      // TODO Decrypt before returning.
+      return credentials.get(serverURL.toExternalForm());
+    }
+    return null;
   }
 }

@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -21,15 +22,12 @@ import javax.swing.JPanel;
 
 import com.oxygenxml.cmis.storage.SessionStorage;
 
-public class ServerView extends JPanel implements ServerPresenter {
+public class ServerView extends JPanel {
 
-  private LinkedHashSet<String> serversList;
-  private JComboBox<String> serverItemsCombo;
+  private Set<String> serversList = new LinkedHashSet<>();
+  private JComboBox<String> serverItemsCombo = new JComboBox<>();
 
   public ServerView(RepositoriesPresenter repoPresenter) {
-    
-    serverItemsCombo = new JComboBox<String>();
-    this.serversList = new LinkedHashSet<String>();
     /*
      * TESTING in comments Arrays.assList has a fixed range no add allowed
      */
@@ -40,7 +38,7 @@ public class ServerView extends JPanel implements ServerPresenter {
     
 
     // Add all new elements to the LinkedHash set (unique and ordered)
-    LinkedHashSet<String> elements = SessionStorage.getInstance().getSevers();
+    Set<String> elements = SessionStorage.getInstance().getSevers();
     
     if (elements != null) {
       Collections.addAll(serversList, elements.toArray(new String[0]));
@@ -91,12 +89,13 @@ public class ServerView extends JPanel implements ServerPresenter {
           try {
             URL serverURL = new URL(serverItemsCombo.getSelectedItem().toString());
 
-            serversList.add(serverItemsCombo.getEditor().getItem().toString().trim());
+            String currentServerURL = serverItemsCombo.getEditor().getItem().toString().trim();
+            serversList.add(currentServerURL);
 
             repoPresenter.presentRepositories(serverURL);
 
             // Set the servers
-            SessionStorage.getInstance().setServers(serversList);
+            SessionStorage.getInstance().addServer(currentServerURL);
           } catch (MalformedURLException e1) {
             JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
           }
@@ -107,8 +106,7 @@ public class ServerView extends JPanel implements ServerPresenter {
     add(loadButton, c);
   }
 
-  @Override
-  public void presentServers(LinkedHashSet<String> serversList) {
+  public void presentServers(Set<String> serversList) {
 
     DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
     // Iterate all the elements
