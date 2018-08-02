@@ -57,13 +57,14 @@ public class ServerView extends JPanel {
     c.weightx = 0.0;
     c.ipadx = 10;
     c.insets = new Insets(1,5,1,5);
-    JLabel serverUrlLabel = new JLabel(" Server URL:");
+    c.fill = GridBagConstraints.NONE;
+    JLabel serverUrlLabel = new JLabel("Server URL:");
     add(serverUrlLabel, c);
 
     // Url http JComboBox constraints
     c.gridx = 1;
     c.gridy = 0;
-    c.weightx = 0.97;
+    c.weightx = 1.0;
     c.gridwidth = 2;
 
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -77,6 +78,7 @@ public class ServerView extends JPanel {
     c.gridwidth = 1;
     c.gridy = 0;
     c.weightx = 0.0;
+    c.fill = GridBagConstraints.NONE;
     JButton loadButton = new JButton("Connect");
 
     loadButton.addActionListener(new ActionListener() {
