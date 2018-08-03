@@ -31,12 +31,12 @@ public class testAlfrescoCustomProtocol {
 		URL url = new URL("http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom");
 
 		List<Repository> serverReposList = 
-				CMISAccess.getInstance().getRepositories(url, null);
+				CMISAccess.getInstance().connectToServerGetRepositories(url, null);
 
 		Repository repository = serverReposList.get(0);
 
 		CMISAccess.getInstance()
-				.connect(url, repository.getId());
+				.connectToRepo(url, repository.getId());
 
 		ctrl = CMISAccess.getInstance()
 				.createResourceController();

@@ -124,33 +124,47 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     }
 
     if (userCredentials != null) {
+      boolean loggedin = false;
 
       // TODO If the credfentials are wrong an exception is thrown. Retry
-      serverReposList = CMISAccess.getInstance().getRepositories(serverURL, userCredentials);
+      do {
+        loggedin = AuthenticatorUtil.isLoggedin(serverURL);
+        serverReposList = CMISAccess.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
 
-      DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();
-      // Iterate all the elements
-      for (Repository element : serverReposList) {
-        model.addElement(element);
-      }
+      } while (serverReposList == null && !loggedin);
+      
+      System.out.println(serverReposList + "repos");
 
-      repoItems.setModel(model);
+      if (serverReposList != null) {
 
-      /*
-       * Render all the elements of the listRepo
-       */
-      repoItems.setRenderer(new DefaultListCellRenderer() {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-          String renderTex = "";
-          if (value != null) {
-            renderTex = ((Repository) value).getName();
-          }
-
-          return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
+        DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();
+        // Iterate all the elements
+        for (Repository element : serverReposList) {
+          model.addElement(element);
         }
-      });
+
+        repoItems.setModel(model);
+
+        /*
+         * Render all the elements of the listRepo
+         */
+        repoItems.setRenderer(new DefaultListCellRenderer() {
+          @Override
+          public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+              boolean cellHasFocus) {
+            String renderTex = "";
+            if (value != null) {
+              renderTex = ((Repository) value).getName();
+            }
+
+            if (renderTex.length() == 0) {
+              renderTex = ((Repository) value).getId();
+            }
+
+            return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
+          }
+        });
+      }
     }
 
   }

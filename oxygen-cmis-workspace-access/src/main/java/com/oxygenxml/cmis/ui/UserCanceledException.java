@@ -1,5 +1,7 @@
 package com.oxygenxml.cmis.ui;
 
+import javax.swing.JOptionPane;
+
 /**
  * Custom exception thrown by cancel button
  * 
@@ -10,6 +12,8 @@ public class UserCanceledException extends Exception {
 
   // Just a message
   public UserCanceledException() {
-    System.out.println("User cancels exception");
+
+    // Show an exception if there is one
+    JOptionPane.showMessageDialog(null, "Exception use canceled");
   }
 }

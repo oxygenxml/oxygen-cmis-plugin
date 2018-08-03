@@ -39,7 +39,7 @@ public class Options {
    * All the credentials requested from the user.
    */
   @XmlElementWrapper(name = "credentials")
-  Map<String, UserCredentials> credentials;
+  private HashMap<String, UserCredentials> credentials;
 
   /**
    * @return Gets the CMIS servers URLs.
@@ -47,6 +47,18 @@ public class Options {
   @XmlElementWrapper(name = "servers")
   public LinkedHashSet<String> getServers() {
     return servers;
+  }
+  
+  /*
+   * JAXB needs setters and getters for marshal and unmarshal
+   */
+  
+  public void setServers(LinkedHashSet<String> servers) {
+    this.servers = servers;
+  }
+  
+  public void setCredentials(HashMap<String, UserCredentials> credentials) {
+    this.credentials = credentials;
   }
 
   /**

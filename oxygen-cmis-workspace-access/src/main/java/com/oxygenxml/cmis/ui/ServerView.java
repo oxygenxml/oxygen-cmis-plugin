@@ -112,9 +112,15 @@ public class ServerView extends JPanel {
 
             // Add to the serves list
             serversList.add(currentServerURL);
-
-            repoPresenter.presentRepositories(serverURL);
-
+            try {
+              
+              repoPresenter.presentRepositories(serverURL);
+              
+            } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException ev) {
+              
+              // Show an exception if there is one
+              JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+            }
             // Add the server
             SessionStorage.getInstance().addServer(currentServerURL);
 

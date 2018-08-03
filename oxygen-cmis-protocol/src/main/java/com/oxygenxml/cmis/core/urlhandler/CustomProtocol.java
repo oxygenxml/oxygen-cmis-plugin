@@ -149,7 +149,7 @@ public class CustomProtocol extends URLStreamHandler implements FileBrowsingConn
 		}
 
 		// Accessing the server using params which we gets
-		CMISAccess.getInstance().connect(serverURL, repoID);
+		CMISAccess.getInstance().connectToRepo(serverURL, repoID);
 		ResourceController ctrl = CMISAccess.getInstance().createResourceController();
 		
 		// Get the object path

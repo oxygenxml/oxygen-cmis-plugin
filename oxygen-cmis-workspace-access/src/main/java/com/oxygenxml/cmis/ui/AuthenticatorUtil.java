@@ -3,9 +3,12 @@ package com.oxygenxml.cmis.ui;
 import java.net.URL;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.storage.SessionStorage;
 
@@ -71,4 +74,52 @@ public class AuthenticatorUtil {
 
     return uc;
   }
+
+  public static boolean isLoggedin(URL serverURL) {
+    UserCredentials uc = null;
+
+    // Get the instance
+    CMISAccess instance = CMISAccess.getInstance();
+
+    boolean succesLogin = false;
+
+    // Connect
+    while (succesLogin == false) {
+      try {
+        try {
+
+          uc = getUserCredentials(serverURL);
+
+        } catch (UserCanceledException e) {
+
+          // Show the exception if there is one
+          JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
+        }
+
+        if (instance.connectToServerGetRepositories(serverURL, uc) != null) {
+          
+          succesLogin = true;
+          
+        }
+      } catch (CmisUnauthorizedException e) {
+
+        try {
+          uc = getUserCredentials(serverURL);
+
+          if (uc != null) {
+            succesLogin = true;
+          }
+
+        } catch (UserCanceledException e1) {
+
+          // Show the exception if there is one
+          JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
+        }
+      }
+    }
+
+    return succesLogin;
+
+  }
+
 }

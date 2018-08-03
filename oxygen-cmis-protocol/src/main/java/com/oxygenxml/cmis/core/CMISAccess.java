@@ -46,8 +46,8 @@ public class CMISAccess {
     return instance;
   }
   
-  public void connect(URL connectionInfo, String repositoryID) throws CmisUnauthorizedException  {
-    connect(connectionInfo, repositoryID, null);
+  public void connectToRepo(URL connectionInfo, String repositoryID) throws CmisUnauthorizedException  {
+    connectToRepo(connectionInfo, repositoryID, null);
   }
 
   /**
@@ -60,7 +60,7 @@ public class CMISAccess {
    * @param repositoryID
    *          Repository ID.
    */
-  public void connect(URL connectionInfo, String repositoryID, UserCredentials uc) throws CmisUnauthorizedException {
+  public void connectToRepo(URL connectionInfo, String repositoryID, UserCredentials uc) throws CmisUnauthorizedException {
     HashMap<String, String> parameters = new HashMap<>();
     populateParameters(connectionInfo, parameters, uc);
     parameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
@@ -86,14 +86,12 @@ public class CMISAccess {
   
 
   /**
-   * TODO Alexey Make some tests.
-   * 
    * Gets the available repositories in the server.
    * 
    * @param connectionInfo
    * @return
    */
-  public List<Repository> getRepositories(URL connectionInfo, UserCredentials uc) {
+  public List<Repository> connectToServerGetRepositories(URL connectionInfo, UserCredentials uc) {
     HashMap<String, String> parameters = new HashMap<>();
     populateParameters(connectionInfo, parameters, uc);
 

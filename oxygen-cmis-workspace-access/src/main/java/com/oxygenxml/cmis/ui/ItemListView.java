@@ -12,6 +12,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -22,6 +23,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 
 import com.oxygenxml.cmis.actions.CancelCheckoutDocumentAction;
 import com.oxygenxml.cmis.actions.CancelCheckoutFolderAction;
@@ -39,6 +41,7 @@ import com.oxygenxml.cmis.actions.OpenDocumentAction;
 import com.oxygenxml.cmis.actions.PasteDocumentAction;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -276,21 +279,38 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    */
   @Override
   public void presentItems(URL connectionInfo, String repositoryID) {
-    // Get the instance
-    CMISAccess instance = CMISAccess.getInstance();
+    try {
+      // Get the instance
+      CMISAccess instance = CMISAccess.getInstance();
 
-    // Connect
-    instance.connect(connectionInfo, repositoryID);
+      boolean connected = false;
+      // Connect
+      UserCredentials uc = null;
+      do {
+        try {
+          instance.connectToRepo(connectionInfo, repositoryID, uc);
 
-    // Get the rootFolder and set the model
-    ResourceController resourceController = instance.createResourceController();
-    Folder rootFolder = resourceController.getRootFolder();
+          // Get the rootFolder and set the model
+          ResourceController resourceController = instance.createResourceController();
+          Folder rootFolder = resourceController.getRootFolder();
 
-    // resourceController.createFolder(rootFolder, "Un nume lung cat o zi de
-    // post");
+          // resourceController.createFolder(rootFolder, "Un nume lung cat o zi de
+          // post");
 
-    final FolderImpl origin = new FolderImpl(rootFolder);
-    setFolder(origin);
+          final FolderImpl origin = new FolderImpl(rootFolder);
+          setFolder(origin);
+        
+          connected = true;
+        } catch (CmisUnauthorizedException e) {
+          uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
+        }
+      } while (!connected);
+
+    } catch (UserCanceledException e1) {
+
+      // Show the exception if there is one
+      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
+    }
 
   }
 

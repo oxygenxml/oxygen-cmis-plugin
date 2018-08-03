@@ -28,7 +28,7 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
 
   @Before
   public void setUp() throws Exception {
-    CMISAccess.getInstance().connect(new URL("http://localhost:8080/B/atom11"), "A1");
+    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1");
 
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put(PropertyIds.NAME, "testFolderResource");

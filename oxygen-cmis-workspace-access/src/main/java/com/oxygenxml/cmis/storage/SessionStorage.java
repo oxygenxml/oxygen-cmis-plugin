@@ -167,6 +167,7 @@ public class SessionStorage {
     Unmarshaller m = context.createUnmarshaller();
 
     // Write to userCredentials
+    System.err.println("content |" + content + "|");
     return (Options) m.unmarshal(new StringReader(content));
   }
 

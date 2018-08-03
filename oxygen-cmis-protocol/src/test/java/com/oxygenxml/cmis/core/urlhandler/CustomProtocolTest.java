@@ -41,7 +41,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
    */
   @Before
   public void setUp() throws MalformedURLException {
-    CMISAccess.getInstance().connect(new URL("http://localhost:8080/B/atom11"), "A1");
+    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1");
     ctrl = CMISAccess.getInstance().createResourceController();
     root = ctrl.getRootFolder();
   }
