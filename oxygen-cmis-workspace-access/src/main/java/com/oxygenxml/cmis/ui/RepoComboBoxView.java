@@ -24,17 +24,35 @@ import org.apache.log4j.Logger;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 
+/**
+ * Describes how the repositories a shown and their behaviors
+ * 
+ * @author bluecc
+ *
+ */
 public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
-  
+
   /**
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(RepoComboBoxView.class);
 
+  // Items to be shown
   private JComboBox<Repository> repoItems;
+  // The list of the servers
   private List<Repository> serverReposList;
+  // Current URL
   private URL serverURL;
 
+  /**
+   * Constructor that receives an items presenter to show the items inside the
+   * server and update the breadcrumb with breadcrumbPresenter
+   * 
+   * Creates the repositories component visually
+   * 
+   * @param itemsPresenter
+   * @param breadcrumbPresenter
+   */
   RepoComboBoxView(ItemsPresenter itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
 
     repoItems = new JComboBox<Repository>();
@@ -47,7 +65,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.gridy = 0;
     c.weightx = 0.0;
     c.ipadx = 10;
-    c.insets = new Insets(1,5,1,5);
+    c.insets = new Insets(1, 5, 1, 5);
     JLabel serverUrlLabel = new JLabel("Repository:");
     add(serverUrlLabel, c);
 
@@ -62,6 +80,9 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     repoItems.setEditable(false);
     add(repoItems, c);
 
+    /**
+     * Gets the current selected url from combo box
+     */
     repoItems.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -70,14 +91,19 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
         Repository selected = (Repository) comboBox.getSelectedItem();
         System.out.println(selected.getId());
 
+        // Present the items with the URL and repository
         itemsPresenter.presentItems(serverURL, selected.getId());
+
+        // Reset the breadcrumb to show new items from repository
         breadcrumbPresenter.resetBreadcrumb(true);
       }
     });
   }
 
-  /*
+  /**
    * Implement presentRepositories using the serverURL
+   * 
+   * @exception Exception
    */
   @Override
   public void presentRepositories(URL serverURL) {
@@ -86,14 +112,14 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     // Create the listRepo of repos.
     System.out.println(serverURL);
 
-    //Check credentials for the URL
+    // Check credentials for the URL
     UserCredentials userCredentials = null;
     try {
       userCredentials = AuthenticatorUtil.getUserCredentials(serverURL);
-      
+
     } catch (Exception e1) {
       logger.error(e1, e1);
-      
+
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 

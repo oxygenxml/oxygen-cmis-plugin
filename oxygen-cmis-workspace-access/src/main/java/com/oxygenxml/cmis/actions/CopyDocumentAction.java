@@ -12,9 +12,24 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 
+/**
+ * Describes the copy action on a document by extending the AbstractAction class
+ * 
+ * @author bluecc
+ *
+ */
 public class CopyDocumentAction extends AbstractAction {
-  IResource resource = null;
 
+  // The resource that will receive
+  private IResource resource = null;
+
+  /**
+   * Constructor that receives the resource to process
+   * 
+   * @param resource
+   * 
+   * @see com.oxygenxml.cmis.core.model.IResource
+   */
   public CopyDocumentAction(IResource resource) {
     super("Copy");
 
@@ -22,24 +37,45 @@ public class CopyDocumentAction extends AbstractAction {
   }
 
   /**
-   * put string into Clipboard
+   * Set the text from the system clipboard
+   * 
+   * @param writeMe
    */
   private void setSysClipboardText(String writeMe) {
 
+    // Initialize the clipboard
     Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+    // Type of interface for transferring text
     Transferable tText = new StringSelection(writeMe);
+
+    // Set the new text
     clip.setContents(tText, null);
 
   }
 
+  /**
+   * When the event was triggered cast the resource to custom interface for
+   * processing the document
+   * 
+   * @param e
+   * @exception org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException
+   * 
+   * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
+
     try {
-      
+      // Cast to the custom interface of a Document
       DocumentImpl doc = ((DocumentImpl) resource);
+
+      // Save the id of the document to the clipboard
       setSysClipboardText(doc.getId());
-      
+
     } catch (Exception ev) {
+
+      // SHow the exception if there is one
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }
   }

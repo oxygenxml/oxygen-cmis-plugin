@@ -8,16 +8,34 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.BreadcrumbView;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
+/**
+ * Describes the delete document action on a document by extending the
+ * AbstractAction class
+ * 
+ * @author bluecc
+ *
+ */
 public class DeleteDocumentAction extends AbstractAction {
-  IResource resource;
-  IResource currentParent;
-  ItemsPresenter itemsPresenter;
 
+  // The resource to be deleted
+  private IResource resource;
+  // Parent of that resource
+  private IResource currentParent;
+  // Presenter to be able to update the content of the parent
+  private ItemsPresenter itemsPresenter;
+
+  /**
+   * Constructor that gets the resource to be deleted , currentParent and the
+   * presenter to be able to show the updated content of it
+   * 
+   * @param resource
+   * @param currentParent
+   * @param itemsPresenter
+   */
   public DeleteDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+    // Set a name
     super("Delete");
 
     this.resource = resource;
@@ -25,16 +43,33 @@ public class DeleteDocumentAction extends AbstractAction {
     this.itemsPresenter = itemsPresenter;
   }
 
+  /**
+   * When the event was triggered cast the resource to custom interface for
+   * processing the document
+   * 
+   * <b>This action will delete one this version of the document</b>
+   * 
+   * @param e
+   * 
+   * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
+    // Cast to the custom type of Document
     DocumentImpl doc = ((DocumentImpl) resource);
 
+    // Try to delete <Code>deleteOneVersionDocument</Code>
     try {
+
+      // Commit the deletion
       CMISAccess.getInstance().createResourceController().deleteOneVersionDocument(doc.getDoc());
-      
+
+      // Present the new content of the parent resource
       itemsPresenter.presentFolderItems(currentParent.getId());
-      
+
     } catch (Exception ev) {
+
+      // Show the exception if there is one
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }
   }

@@ -17,40 +17,79 @@ import com.oxygenxml.cmis.core.urlhandler.CustomProtocolExtension;
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
+/**
+ * Describes the delete folder action on a document by extending the
+ * AbstractAction class
+ * 
+ * @author bluecc
+ *
+ */
 public class OpenDocumentAction extends AbstractAction {
-  IResource resource = null;
+  // The resource to open
+  private IResource resource = null;
 
+  /**
+   * Constructor that gets the resource to open
+   * 
+   * @param resource
+   */
   public OpenDocumentAction(IResource resource) {
-    super("Open document",UIManager.getIcon("Tree.openIcon"));
+
+    // Set a name and a native icon
+    super("Open document", UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
   }
 
+  /**
+   * When the event was triggered cast the resource to custom interface for
+   * processing the document.
+   * 
+   * <b>This action will delete everything inside the folder (folders,
+   * documents)</b>
+   * 
+   * @param e
+   * @exception MalformedURLException
+   *              , UnsupportedEncodingException
+   * 
+   * 
+   * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
+    // -------Oxygen
 
+    // Initialize the URL
     String urlAsTring = null;
+
+    // Try getting the custom URL for the document to open in
     try {
       urlAsTring = CustomProtocolExtension.getCustomURL(((DocumentImpl) resource).getDoc(),
           CMISAccess.getInstance().createResourceController());
     } catch (UnsupportedEncodingException e2) {
-      // TODO Auto-generated catch block
-      e2.printStackTrace();
+
+      // Show the exception if there is one
+      JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
     }
 
     System.out.println(urlAsTring);
-
+    // Get the workspace of the plugin
     PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
+    // Check if it's not null
     if (pluginWorkspace != null) {
 
+      // Try opening in the Oxygen the URL
       try {
         pluginWorkspace.open(new URL(urlAsTring));
+
       } catch (MalformedURLException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
+
+        // Show the exception if there is one
+        JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
       }
 
     }
+    // ------
   }
 }

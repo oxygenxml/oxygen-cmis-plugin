@@ -32,8 +32,10 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  * 
  * @author bluecc
  *
+ * @see com.oxygenxnl.cmis.storage.Options
  */
 public class SessionStorage {
+  private Options options;
 
   /**
    * Logging.
@@ -49,7 +51,7 @@ public class SessionStorage {
   // Get the plugin workspace
   private PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
-  // Get the insgleton instance
+  // Get the singleton instance
   public static SessionStorage getInstance() {
     if (instance == null) {
       instance = new SessionStorage();
@@ -67,8 +69,11 @@ public class SessionStorage {
 
     // If there is no data entered in LoginDialog check the storage
     try {
+
+      // Escape the xml tag
       if (option != null) {
         option = pluginWorkspace.getXMLUtilAccess().unescapeAttributeValue(option);
+
         // Unwrap the storage
         options = unmarshal(option);
       }
@@ -82,91 +87,129 @@ public class SessionStorage {
 
     // Initialize new options
     if (options == null) {
+
       options = new Options();
     }
   }
 
+  /**
+   * Get the servers
+   * 
+   * @return Set<String>
+   */
   public Set<String> getSevers() {
     return options.getServers();
   }
 
-  /*
+  /**
    * Send the new credentials and store them
    * 
-   * @param serverURL the url
+   * @param serverURL
+   * @param uc
    * 
-   * @param uc user credentials
+   * @see com.oxygenxnl.cmis.core.UserCredentials
    */
   public void addUserCredentials(URL serverURL, UserCredentials uc) {
-    
+    // Add the new credentials
     options.addUserCredentials(serverURL.toExternalForm(), uc);
+
+    // Store the new credentials in the storage
     SessionStorage.getInstance().store();
   }
 
-  /*
-   * Get the credentials only if they exist
+  /**
+   * Get the user credentials for the required serverURL
+   * 
+   * @param serverURL
+   * @return
    */
   public UserCredentials getUserCredentials(URL serverURL) {
     return options.getUserCredentials(serverURL);
   }
 
-  private Options options;
-
-  /*
+  /**
    * Serialize the options with JAXB
    * 
    * @param options
+   * @exception Exception
+   * 
+   * @see com.oxygenxnl.cmis.storage.Options
    */
   private static String marshal(Options options) throws Exception {
 
     // Create the instance using the model class Options
     JAXBContext context = JAXBContext.newInstance(Options.class);
+
+    // Create the serializer
     Marshaller m = context.createMarshaller();
     m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
     // Write to userCredentials
     StringWriter strWriter = new StringWriter();
+
+    // Commit serialization
     m.marshal(options, strWriter);
 
     return strWriter.toString();
   }
 
-  /*
+  /**
    * Deserialize using the context from the storage
    * 
+   * @exception Exception
    * @return Options
    */
   private static Options unmarshal(String content) throws Exception {
-
+    // Create the deserializer object
     JAXBContext context = JAXBContext.newInstance(Options.class);
+
+    // Call the deserializer
     Unmarshaller m = context.createUnmarshaller();
 
     // Write to userCredentials
     return (Options) m.unmarshal(new StringReader(content));
   }
 
-  /*
+  /**
    * Store the data after serialization in the storage
+   * 
+   * @exception Exception
+   * 
+   * 
    */
   public void store() {
+
     try {
+      // Serialize the options
       String marshal = marshal(options);
 
+      // Escape the XML tags
       marshal = pluginWorkspace.getXMLUtilAccess().escapeAttributeValue(marshal);
 
+      // Save in the memory of the workspace the option
       pluginWorkspace.getOptionsStorage().setOption(OPTION_TAG, marshal);
     } catch (Exception e1) {
 
       logger.error(e1, e1);
-
+      // Show the exception if there is one
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
   }
 
+  /**
+   * Add the server to the options
+   * 
+   * @param currentServerURL
+   * 
+   * @see com.oxygenxnl.cmis.storage.Options
+   */
   public void addServer(String currentServerURL) {
+
+    // Add server URL to the options
     options.addServer(currentServerURL);
 
+    // Store the new options in the memory
     SessionStorage.getInstance().store();
   }
 }

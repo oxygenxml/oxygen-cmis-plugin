@@ -85,7 +85,7 @@ public class LoginDialog extends OKCancelDialog {
     c.fill = GridBagConstraints.HORIZONTAL;
     cont.add(passwordField, c);
 
-    //Show it in the center of the frame
+    // Show it in the center of the frame
     setLocationRelativeTo(frame);
 
     // This solves the problem where the dialog was not getting
@@ -99,6 +99,11 @@ public class LoginDialog extends OKCancelDialog {
     setModal(true);
   }
 
+  /**
+   * Get the use credentials and set the info from the inputs
+   * 
+   * @return UserCredentials
+   */
   public UserCredentials getUserCredentials() {
 
     // Create the user and set it's credentials

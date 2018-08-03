@@ -6,7 +6,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
-
+/**
+ * Main frame of the desktop version that serves also the TabComponentsView
+ * @author bluecc
+ *
+ */
 public class RunPlugin extends JFrame {
   
   /*

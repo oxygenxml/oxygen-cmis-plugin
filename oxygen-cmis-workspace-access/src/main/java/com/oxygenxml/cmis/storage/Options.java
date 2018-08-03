@@ -15,8 +15,14 @@ import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
- * A collections with everything that needs remembering.
+ * Describes the option that Oxygen needs to store. Uses the JAXB serialization
+ * creating a XML document and deconstruct
+ * 
+ * @author bluecc
+ *
  */
+
+// Annotation for the root element of the XML document
 @XmlRootElement(name = "options")
 public class Options {
 
@@ -24,8 +30,6 @@ public class Options {
    * PluginWorkspace that is used to encrypt and decrypt data
    */
   private PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
-  private String encryptedPass;
-  private String decryptedPass;
   /**
    * All the known CMIS servers URLs.
    */
@@ -45,10 +49,17 @@ public class Options {
     return servers;
   }
 
+  /**
+   * Add server URL to the set
+   * 
+   * @param currentServerURL
+   */
   public void addServer(String currentServerURL) {
     if (this.servers == null) {
       this.servers = new LinkedHashSet<>();
     }
+
+    // Add the URL the servers set
     this.servers.add(currentServerURL);
   }
 
@@ -60,6 +71,8 @@ public class Options {
    * 
    * @param uc
    * 
+   * @see com.oxygenxnl.cmis.core.UserCredentials
+   * 
    * @return void
    */
   public void addUserCredentials(String serverURL, UserCredentials uc) {
@@ -70,11 +83,12 @@ public class Options {
     }
 
     // Encrypt the password
-    encryptedPass = pluginWorkspace.getUtilAccess().encrypt(uc.getPassword());
+    String encryptedPass = pluginWorkspace.getUtilAccess().encrypt(uc.getPassword());
 
     // Set the encrypted password
     uc.setPassword(encryptedPass);
 
+    // Add new credentials to the hashmap
     credentials.put(serverURL, uc);
   }
 
@@ -82,6 +96,8 @@ public class Options {
    * Get the decrypted data using the serverURL
    * 
    * @param serverURL
+   * 
+   * @see com.oxygenxnl.cmis.core.UserCredentials
    * 
    * @return UserCredentials
    */
@@ -92,7 +108,7 @@ public class Options {
       UserCredentials uc = credentials.get(serverURL.toExternalForm());
 
       // Decrypt the password
-      decryptedPass = pluginWorkspace.getUtilAccess().decrypt(uc.getPassword());
+      String decryptedPass = pluginWorkspace.getUtilAccess().decrypt(uc.getPassword());
 
       // Set the real password and return
       uc.setPassword(decryptedPass);

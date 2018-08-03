@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.List;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -21,6 +22,12 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 
+/**
+ * Component used for show the documents in tabs
+ * 
+ * @author bluecc
+ *
+ */
 public class TabComponentsView extends JPanel implements TabsPresenter {
   protected static int itemsCounter = 0;
   private final JTabbedPane pane = new JTabbedPane();
@@ -34,7 +41,7 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
 
-    //constraints
+    // constraints
     add(pane);
     // Set one only a column
     setLayout(new GridLayout(0, 1));
@@ -42,14 +49,24 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
     setVisible(true);
   }
 
-  /*
+  /**
    * Initialize each component using ButtonTabComponent class
+   * 
+   * @param doc
+   * @param i
    */
   private void initTabComponent(Document doc, int i) {
 
     pane.setTabComponentAt(i, new ButtonTabComponentView(pane));
   }
 
+  /**
+   * @exception UnsupportedEncodingException
+   * @exception IOException
+   * @exception IOException
+   * 
+   * @param doc
+   */
   @Override
   public void presentItem(Document doc) {
 
@@ -76,10 +93,12 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
         area.append(String.valueOf(ch, 0, l));
       }
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
+      // Show the exception if there is one
+      JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
 
     } catch (IOException e) {
-      e.printStackTrace();
+      // Show the exception if there is one
+      JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
 
     } finally {
       // No matter what happens close at the end the doc
@@ -92,7 +111,8 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
 
         } catch (IOException e) {
 
-          e.printStackTrace();
+          // Show the exception if there is one
+          JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
         }
       }
     }

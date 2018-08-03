@@ -43,20 +43,32 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
+/**
+ * Describes how the folders and documents are: displayed, rendered, their
+ * actions.
+ * 
+ * 
+ * @author bluecc
+ *
+ */
 public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener {
-
+  // All the resources recieved
   private JList<IResource> resourceList;
+  // Popup menu foe each type of element (folder,document)
   private JPopupMenu menu;
-  private TabsPresenter tabsPresenter;
-  private BreadcrumbPresenter breadcrumbPresenter;
-  private JLabel iconLabel;
+
+  // Current folder inside
   private IResource currentParent;
 
+  /**
+   * Constructor that gets the tabPresenter to show documents in tabs and
+   * breacrumbPrsenter to update the breadcrumb
+   * 
+   * @param tabsPresenter
+   * @param breadcrumbPresenter
+   */
   ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
 
-    this.tabsPresenter = tabsPresenter;
-    this.breadcrumbPresenter = breadcrumbPresenter;
-    iconLabel = new JLabel();
     // Create the listItem
     resourceList = new JList<IResource>();
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -68,6 +80,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     /*
      * Render all the elements of the listItem when necessary
+     * 
+     * @return Component
+     * 
+     * @see com.oxygenxml.cmis.core.model.model.impl.FolderImpl
+     * 
+     * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
      */
     resourceList.setCellRenderer(new DefaultListCellRenderer() {
       @Override
@@ -81,17 +99,21 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           String renderText = "";
 
           if (value != null) {
-            // Cast in order to use the methods from IResource interface
 
+            // Cast in order to use the methods from IResource interface
             renderText = ((IResource) value).getDisplayName();
             ((JLabel) component).setText(renderText);
 
+            // If it's an instance of custom type of Folder
             if ((IResource) value instanceof FolderImpl) {
 
+              // Set the native icon to the component
               ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
 
             } else if ((IResource) value instanceof DocumentImpl) {
 
+              // If it's an instance of custom type of Folder
+              // Set the native icon to the component
               ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
             }
 
@@ -104,27 +126,32 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     /*
      * Add listener to the entire list
+     * 
+     * @see com.oxygenxml.cmis.core.model.model.impl.FolderImpl
+     * 
+     * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
      */
     resourceList.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(final MouseEvent e) {
+
         // Get the location of the item using location of the click
         int itemIndex = resourceList.locationToIndex(e.getPoint());
+
+        // Get the current item
         IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
 
+        // If right click was pressed
         if (SwingUtilities.isRightMouseButton(e)) {
           menu = new JPopupMenu();
 
-          System.out.println("Current index=" + itemIndex);
-
+          // Get the bounds of the item
           Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
-
-          System.out.println(cellBounds);
-          System.out.println(e.getPoint());
 
           // Check if the lick was outside the visible list
           if (!cellBounds.contains(e.getPoint())) {
 
+            // Create de menu for the outside list
             createExternalListJMenu();
 
           } else {
@@ -134,14 +161,17 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
             if (currentItem instanceof DocumentImpl) {
 
+              // Create the JMenu for the document
               createDocumentJMenu(currentItem);
 
             } else if (currentItem instanceof FolderImpl) {
 
+              // Create the JMenu for the folder
               createFolderJMenu(currentItem);
 
             }
           }
+
           // Bounds of the click
           menu.show(ItemListView.this, e.getX(), e.getY());
 
@@ -155,6 +185,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             System.out.println("TO present breadcrumb=" + currentItem.getDisplayName());
 
             if (!(currentItem instanceof DocumentImpl)) {
+              // Present the next item (folder)
               breadcrumbPresenter.presentBreadcrumb(currentItem);
             }
 
@@ -163,8 +194,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
              * children
              */
             if (currentItem instanceof DocumentImpl) {
+
+              // Present the document
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
             } else {
+
+              // Present the folder children
               presentResources(currentItem);
             }
 
@@ -280,8 +315,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     Iterator<IResource> childrenIterator = parentResource.iterator();
 
     // Iterate them till it has a child
-
     if (childrenIterator != null) {
+
       // Define a model for the list in order to render the items
       DefaultListModel<IResource> model = new DefaultListModel<>();
 
@@ -305,8 +340,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   @Override
   public void presentFolderItems(String folderID) {
-    // TODO Auto-generated method stub
+
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    // Present the folder children
     presentResources(new FolderImpl(resourceController.getFolder(folderID)));
   }
 
