@@ -74,6 +74,9 @@ public class CMISAccess {
     if (uc != null) {
       parameters.put(SessionParameter.USER, uc.username);
       parameters.put(SessionParameter.PASSWORD, String.valueOf(uc.password));
+    } else {
+    	parameters.put(SessionParameter.USER, "admin");
+        parameters.put(SessionParameter.PASSWORD, "admin");
     }
 
     // connection settings
