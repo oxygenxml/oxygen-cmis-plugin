@@ -29,4 +29,11 @@ public class UserCredentials {
   }
   String username;
   String password;
+  
+  
+  @Override
+  public String toString() {
+    // TODO Auto-generated method stub
+    return super.toString();
+  }
 }

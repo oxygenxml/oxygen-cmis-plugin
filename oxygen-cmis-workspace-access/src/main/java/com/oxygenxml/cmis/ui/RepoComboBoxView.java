@@ -129,6 +129,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
       // TODO If the credfentials are wrong an exception is thrown. Retry
       do {
         loggedin = AuthenticatorUtil.isLoggedin(serverURL);
+        System.out.println("Do while");
         serverReposList = CMISAccess.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
 
       } while (serverReposList == null && !loggedin);

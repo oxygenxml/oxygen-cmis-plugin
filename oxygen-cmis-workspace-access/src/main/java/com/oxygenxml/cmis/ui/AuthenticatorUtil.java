@@ -47,7 +47,6 @@ public class AuthenticatorUtil {
       logger.debug("user credentials " + uc);
     }
 
-    logger.info("user credentials " + uc);
 
     // While no valid credentials the login dialog will appear
     while (uc == null) {
@@ -62,9 +61,12 @@ public class AuthenticatorUtil {
 
         // Get the user credentials
         uc = loginDialog.getUserCredentials();
+        logger.info("user credentials " + uc.getUsername());
 
-        // Add the entered credentials to the session
-        SessionStorage.getInstance().addUserCredentials(serverURL, uc);
+        if (CMISAccess.getInstance().connectToServerGetRepositories(serverURL, uc) != null) {
+          // Add the entered credentials to the session
+          SessionStorage.getInstance().addUserCredentials(serverURL, uc);
+        }
 
       } else {
         throw new UserCanceledException();
@@ -92,29 +94,21 @@ public class AuthenticatorUtil {
 
         } catch (UserCanceledException e) {
 
-          // Show the exception if there is one
-          JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
+          // Exit login dialog
+          break;
         }
 
         if (instance.connectToServerGetRepositories(serverURL, uc) != null) {
-          
+
           succesLogin = true;
-          
+          return succesLogin;
+
         }
       } catch (CmisUnauthorizedException e) {
 
-        try {
-          uc = getUserCredentials(serverURL);
+        // Show the exception if there is one
+        JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
 
-          if (uc != null) {
-            succesLogin = true;
-          }
-
-        } catch (UserCanceledException e1) {
-
-          // Show the exception if there is one
-          JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
-        }
       }
     }
 

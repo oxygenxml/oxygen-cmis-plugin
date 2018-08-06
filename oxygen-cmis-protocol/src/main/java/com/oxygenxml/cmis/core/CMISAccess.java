@@ -45,8 +45,8 @@ public class CMISAccess {
     }
     return instance;
   }
-  
-  public void connectToRepo(URL connectionInfo, String repositoryID) throws CmisUnauthorizedException  {
+
+  public void connectToRepo(URL connectionInfo, String repositoryID) throws CmisUnauthorizedException {
     connectToRepo(connectionInfo, repositoryID, null);
   }
 
@@ -60,13 +60,16 @@ public class CMISAccess {
    * @param repositoryID
    *          Repository ID.
    */
-  public void connectToRepo(URL connectionInfo, String repositoryID, UserCredentials uc) throws CmisUnauthorizedException {
+  public void connectToRepo(URL connectionInfo, String repositoryID, UserCredentials uc)
+      throws CmisUnauthorizedException {
     HashMap<String, String> parameters = new HashMap<>();
+    System.out.println("Before try to connect to repo");
     populateParameters(connectionInfo, parameters, uc);
     parameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
 
     // create session
     session = factory.createSession(parameters);
+    System.out.println("After try to connect to repo");
   }
 
   private void populateParameters(URL connectionInfo, HashMap<String, String> parameters, UserCredentials uc) {
@@ -75,8 +78,8 @@ public class CMISAccess {
       parameters.put(SessionParameter.USER, uc.username);
       parameters.put(SessionParameter.PASSWORD, String.valueOf(uc.password));
     } else {
-    	parameters.put(SessionParameter.USER, "admin");
-        parameters.put(SessionParameter.PASSWORD, "admin");
+      parameters.put(SessionParameter.USER, "admin");
+      parameters.put(SessionParameter.PASSWORD, "admin");
     }
 
     // connection settings
@@ -86,7 +89,6 @@ public class CMISAccess {
     parameters.put(SessionParameter.HTTP_INVOKER_CLASS,
         "org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker");
   }
-  
 
   /**
    * Gets the available repositories in the server.

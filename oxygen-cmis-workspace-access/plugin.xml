@@ -22,7 +22,7 @@
   class="com.oxygenxml.cmis.plugin.CMISWorkspaceAccessPluginExtension"/>
   
  <extension type="URLHandler" 
-  class="com.oxygenxml.cmis.core.urlhandler.CustomProtocolExtension"/>
+  class="com.oxygenxml.cmis.core.urlhandler.CmisURLExtension"/>
   
  <view id="com.oxygenxml.cmis.plugin.CMISPlugin.View" initialSide="WEST" initialRow="0"/>
 </plugin>

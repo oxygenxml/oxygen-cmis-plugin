@@ -57,6 +57,10 @@ public class OpenDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+    openDocumentPath();
+  }
+
+  public void openDocumentPath() {
     // -------Oxygen
 
     // Initialize the URL

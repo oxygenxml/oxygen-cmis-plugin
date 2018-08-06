@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.actions.CancelCheckoutDocumentAction;
 import com.oxygenxml.cmis.actions.CancelCheckoutFolderAction;
@@ -62,6 +63,11 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   // Current folder inside
   private IResource currentParent;
+
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(ItemListView.class);
 
   /**
    * Constructor that gets the tabPresenter to show documents in tabs and
@@ -198,8 +204,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
              */
             if (currentItem instanceof DocumentImpl) {
 
-              // Present the document
+              // Present the document in tabs
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
+
+              // Present document in Oxygen
+              new OpenDocumentAction(currentItem).openDocumentPath();
+
             } else {
 
               // Present the folder children
@@ -288,26 +298,27 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       UserCredentials uc = null;
       do {
         try {
+          
           instance.connectToRepo(connectionInfo, repositoryID, uc);
 
           // Get the rootFolder and set the model
           ResourceController resourceController = instance.createResourceController();
           Folder rootFolder = resourceController.getRootFolder();
 
-          // resourceController.createFolder(rootFolder, "Un nume lung cat o zi de
-          // post");
-
           final FolderImpl origin = new FolderImpl(rootFolder);
           setFolder(origin);
-        
+
           connected = true;
+
         } catch (CmisUnauthorizedException e) {
+
           uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
+          System.out.println("User credit item list" + uc.getUsername());
         }
       } while (!connected);
 
     } catch (UserCanceledException e1) {
-
+      logger.error(e1, e1);
       // Show the exception if there is one
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }

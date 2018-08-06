@@ -49,6 +49,7 @@ public class ServerView extends JPanel {
     // serversList.add("http://localhost:8080/B/atom11");
     // serversList.add("http://127.0.0.1:8098/alfresco/api/-default-/cmis/versions/1.1/atom");
     // serversList.add("http://localhost:8088/alfresco/api/-default-/cmis/versions/1.1/atom");
+    // serversList.add("http://localhost:8990/alfresco/api/-default-/cmis/versions/1.1/atom");
     // presentServers(serversList);
 
     // Add all new elements to the LinkedHash set (unique and ordered)
@@ -105,7 +106,7 @@ public class ServerView extends JPanel {
         if (selectedItem != null) {
           try {
             // Get the url from the item selected
-            URL serverURL = new URL(serverItemsCombo.getSelectedItem().toString());
+            URL serverURL = new URL(serverItemsCombo.getSelectedItem().toString().trim());
 
             // Get the typed URL and trim it
             String currentServerURL = serverItemsCombo.getEditor().getItem().toString().trim();

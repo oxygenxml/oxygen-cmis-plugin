@@ -48,15 +48,15 @@ public class Options {
   public LinkedHashSet<String> getServers() {
     return servers;
   }
-  
+
   /*
    * JAXB needs setters and getters for marshal and unmarshal
    */
-  
+
   public void setServers(LinkedHashSet<String> servers) {
     this.servers = servers;
   }
-  
+
   public void setCredentials(HashMap<String, UserCredentials> credentials) {
     this.credentials = credentials;
   }
@@ -97,11 +97,8 @@ public class Options {
     // Encrypt the password
     String encryptedPass = pluginWorkspace.getUtilAccess().encrypt(uc.getPassword());
 
-    // Set the encrypted password
-    uc.setPassword(encryptedPass);
-
     // Add new credentials to the hashmap
-    credentials.put(serverURL, uc);
+    credentials.put(serverURL, new UserCredentials(uc.getUsername(), encryptedPass));
   }
 
   /*
@@ -119,11 +116,13 @@ public class Options {
       // Get the UserCredentials
       UserCredentials uc = credentials.get(serverURL.toExternalForm());
 
-      // Decrypt the password
-      String decryptedPass = pluginWorkspace.getUtilAccess().decrypt(uc.getPassword());
+      if (uc != null) {
 
-      // Set the real password and return
-      uc.setPassword(decryptedPass);
+        // Decrypt the password
+        String decryptedPass = pluginWorkspace.getUtilAccess().decrypt(uc.getPassword());
+
+        uc = new UserCredentials(uc.getUsername(), decryptedPass);
+      }
 
       return uc;
     }

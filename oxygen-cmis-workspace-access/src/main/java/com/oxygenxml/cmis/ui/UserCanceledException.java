@@ -14,6 +14,6 @@ public class UserCanceledException extends Exception {
   public UserCanceledException() {
 
     // Show an exception if there is one
-    JOptionPane.showMessageDialog(null, "Exception use canceled");
+    JOptionPane.showMessageDialog(null, "Exception1 user canceled");
   }
 }
