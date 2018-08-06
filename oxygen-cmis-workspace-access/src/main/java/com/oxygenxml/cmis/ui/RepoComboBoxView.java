@@ -126,16 +126,20 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     if (userCredentials != null) {
       boolean loggedin = false;
 
-      // TODO If the credfentials are wrong an exception is thrown. Retry
+      // Check if is logged in and there repositories to present
       do {
+        
+        // Check if logged in
         loggedin = AuthenticatorUtil.isLoggedin(serverURL);
-        System.out.println("Do while");
+
+        // Get the repositories
         serverReposList = CMISAccess.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
 
       } while (serverReposList == null && !loggedin);
-      
+
       System.out.println(serverReposList + "repos");
 
+      // If there some put them in the model to be shown
       if (serverReposList != null) {
 
         DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();

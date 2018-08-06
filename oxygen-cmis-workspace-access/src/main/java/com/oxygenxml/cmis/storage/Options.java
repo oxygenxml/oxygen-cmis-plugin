@@ -97,7 +97,8 @@ public class Options {
     // Encrypt the password
     String encryptedPass = pluginWorkspace.getUtilAccess().encrypt(uc.getPassword());
 
-    // Add new credentials to the hashmap
+    // Add new credentials to the hashmap by creating a new object and put the
+    // encrypted password
     credentials.put(serverURL, new UserCredentials(uc.getUsername(), encryptedPass));
   }
 
@@ -121,6 +122,7 @@ public class Options {
         // Decrypt the password
         String decryptedPass = pluginWorkspace.getUtilAccess().decrypt(uc.getPassword());
 
+        // Create a new object using the decrypted password
         uc = new UserCredentials(uc.getUsername(), decryptedPass);
       }
 

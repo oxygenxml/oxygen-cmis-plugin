@@ -47,7 +47,6 @@ public class AuthenticatorUtil {
       logger.debug("user credentials " + uc);
     }
 
-
     // While no valid credentials the login dialog will appear
     while (uc == null) {
 
@@ -69,6 +68,7 @@ public class AuthenticatorUtil {
         }
 
       } else {
+        // Throw the custom exception
         throw new UserCanceledException();
       }
 
@@ -77,6 +77,17 @@ public class AuthenticatorUtil {
     return uc;
   }
 
+  /**
+   * Check if the user is logged in
+   * 
+   * @param serverURL
+   * 
+   * @exception UserCanceledException
+   * @exception CmisUnauthorizedException
+   * 
+   * 
+   * @return boolean
+   */
   public static boolean isLoggedin(URL serverURL) {
     UserCredentials uc = null;
 
@@ -85,11 +96,12 @@ public class AuthenticatorUtil {
 
     boolean succesLogin = false;
 
-    // Connect
+    // While it is not connected
     while (succesLogin == false) {
       try {
-        try {
 
+        try {
+          // Get the credentials for the URL
           uc = getUserCredentials(serverURL);
 
         } catch (UserCanceledException e) {
@@ -98,12 +110,15 @@ public class AuthenticatorUtil {
           break;
         }
 
+        // Check if there are some repositories and set succes
         if (instance.connectToServerGetRepositories(serverURL, uc) != null) {
 
+          // Return succes
           succesLogin = true;
           return succesLogin;
 
         }
+
       } catch (CmisUnauthorizedException e) {
 
         // Show the exception if there is one

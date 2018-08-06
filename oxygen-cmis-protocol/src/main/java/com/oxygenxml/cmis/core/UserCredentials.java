@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "userCredentials")
 public class UserCredentials {
-  
+
   public UserCredentials() {
   }
 
@@ -12,6 +12,7 @@ public class UserCredentials {
     this.username = username;
     this.password = password;
   }
+
   public String getUsername() {
     return username;
   }
@@ -27,13 +28,19 @@ public class UserCredentials {
   public void setPassword(String password) {
     this.password = password;
   }
+
   String username;
   String password;
-  
-  
+
+  /*
+   * User credentials shown
+   * 
+   * @see java.lang.Object#toString()
+   */
   @Override
   public String toString() {
-    // TODO Auto-generated method stub
-    return super.toString();
+
+    String result = "Username=" + this.username + " " + "Password=" + this.password;
+    return result;
   }
 }

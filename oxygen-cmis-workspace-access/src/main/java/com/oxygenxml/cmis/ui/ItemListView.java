@@ -298,11 +298,13 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       UserCredentials uc = null;
       do {
         try {
-          
+
+          // Try to connect to the repository
           instance.connectToRepo(connectionInfo, repositoryID, uc);
 
           // Get the rootFolder and set the model
           ResourceController resourceController = instance.createResourceController();
+          
           Folder rootFolder = resourceController.getRootFolder();
 
           final FolderImpl origin = new FolderImpl(rootFolder);
@@ -312,19 +314,27 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
         } catch (CmisUnauthorizedException e) {
 
+          // Get the credentials and show login dialog if necessary
           uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
           System.out.println("User credit item list" + uc.getUsername());
         }
+
       } while (!connected);
 
     } catch (UserCanceledException e1) {
       logger.error(e1, e1);
+
       // Show the exception if there is one
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
   }
 
+  /**
+   * Set the root folder and use the model to be rendered
+   * 
+   * @param origin
+   */
   private void setFolder(final FolderImpl origin) {
     DefaultListModel<IResource> model = new DefaultListModel<>();
 
@@ -365,7 +375,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   @Override
   public void valueChanged(ListSelectionEvent e) {
-    // TODO Auto-generated method stub
 
   }
 
