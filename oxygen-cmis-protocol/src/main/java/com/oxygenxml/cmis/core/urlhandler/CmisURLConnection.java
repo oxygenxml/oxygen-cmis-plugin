@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -32,9 +33,10 @@ import com.oxygenxml.cmis.core.ResourceController;
 // Checkin / Checkout
 
 public class CmisURLConnection extends URLConnection {
-	
+
 	private static final Logger logger = Logger.getLogger(CmisURLConnection.class.getName());
 	private CMISAccess cmisAccess;
+	private ResourceController bigCtrl;
 
 	public CmisURLConnection(URL url, CMISAccess cmisAccess) {
 		super(url);
@@ -102,8 +104,6 @@ public class CmisURLConnection extends URLConnection {
 		// Get from custom URL server URL for connection
 		URL serverURL = getServerURL(url, param);
 
-		System.out.println(serverURL);
-
 		// Get repository ID from custom URL for connection
 		String repoID = param.get(REPOSITORY_PARAM);
 		if (repoID == null) {
@@ -135,19 +135,38 @@ public class CmisURLConnection extends URLConnection {
 
 		logger.info("getServerURL --> " + customURL);
 
-		String originalProtocol = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
+		String originalProtocol = "";
+
+		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
+			originalProtocol = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
+
+		// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		} else { originalProtocol = customURL.replaceFirst(("https://"), ""); }
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 		originalProtocol = originalProtocol.substring(0, originalProtocol.indexOf("/"));
 
 		customURL = customURL.replaceFirst(originalProtocol, "");
-		customURL = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
+
+		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
+			customURL = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
+
+		// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		} else { customURL = customURL.replaceFirst(("https://"), ""); }
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 		customURL = customURL.replaceFirst("/", "");
 
-		param.put(REPOSITORY_PARAM, customURL.substring(0, customURL.indexOf("/")));
+		if (param != null) {
+			param.put(REPOSITORY_PARAM, customURL.substring(0, customURL.indexOf("/")));
+		}
 
 		logger.info("here");
 		customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
 
-		param.put(PATH_PARAM, customURL);
+		if (param != null) {
+			param.put(PATH_PARAM, customURL);
+		}
 
 		originalProtocol = URLDecoder.decode(originalProtocol, "UTF-8");
 		String protocol = originalProtocol.substring(0, originalProtocol.indexOf("://"));
@@ -191,5 +210,25 @@ public class CmisURLConnection extends URLConnection {
 				document.setContentStream(contentStream, true);
 			}
 		};
+	}
+
+
+
+	public ResourceController getCtrl(URL url1) throws MalformedURLException, UnsupportedEncodingException {
+		// TODO Auto-generated method stub
+		Map<String, String> param = new HashMap<>();
+		URL serverUrl = getServerURL(url1.toExternalForm(), param);
+
+		String repoID = param.get(REPOSITORY_PARAM);
+		if (repoID == null) {
+			throw new MalformedURLException("Mising repository ID inside: " + url1);
+		}
+
+		// Accessing the server using params which we gets
+		cmisAccess.connectToRepo(serverUrl, repoID);
+
+		bigCtrl = cmisAccess.createResourceController();
+		
+		return bigCtrl;
 	}
 }

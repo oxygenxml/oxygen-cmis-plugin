@@ -3,12 +3,9 @@ package com.oxygenxml.cmis.core.urlhandler;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.After;
@@ -32,6 +29,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
    */
   private Folder root;
   private ResourceController ctrl;
+  private String serverUrl = "http://localhost:8080/B/atom11";
 
   /**
    * CONECTION TO SERVER REPOSITORY, ACCES ROOT FOLDER
@@ -62,12 +60,11 @@ public class CustomProtocolTest extends ConnectionTestBase {
   }
 
   @Test
-  public void testGetObjectFromURL() throws UnsupportedEncodingException, MalformedURLException {
+  public void testGetObjectFromURL() throws IOException {
     Document doc = null;
 
       doc = createDocument(root, "url", "some text");
  
-      CmisURLExtension cpe = new CmisURLExtension();
       
       String url = CmisURLExtension.getCustomURL(doc, ctrl);
       
@@ -76,52 +73,27 @@ public class CustomProtocolTest extends ConnectionTestBase {
       
 			System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
       
-      Document docURL = (Document) new CmisURLConnection(new URL(url), CMISAccess.getInstance()).getCMISObject(url);
+      Document docURL = (Document) getObjectFromURL(url, serverUrl);
       
       assertNotNull(docURL);
       assertEquals(doc.getName(), docURL.getName());
 
   }
   
-/*   @Test
-  public void testGetDocumentContent() throws IOException, UnsupportedEncodingException, MalformedURLException {
-    Document doc = null;
-    
-
-      doc = createDocument(root, "urlDocCont", "some test text");
-      
-      CustomProtocolExtension cpe = new CustomProtocolExtension();
-      
-      String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
-      
-      // TODO Code review. Assert the obtained URL.
-			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDocCont", url);
-      
-			System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
-      
-      Reader docContent = cpe.getContentURL(url, ctrl);
-      
-      assertNotNull(docContent);
-      assertEquals("some test text", read(docContent));
-      
-
-  }
-	}*/
   
   @Test
-  public void testGetFolderFromURL() throws MalformedURLException, UnsupportedEncodingException {
+  public void testGetFolderFromURL() throws IOException {
     Folder folder = null;
 
       folder = createFolder(root, "folderURL");
-      
-      CmisURLExtension cpe = new CmisURLExtension();
+  
       
       String url = CmisURLExtension.getCustomURL(folder, ctrl);
       
       
 			System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
       
-      Folder foldURL = (Folder) new CmisURLConnection(new URL(url), CMISAccess.getInstance()).getCMISObject(url);
+      Folder foldURL = (Folder) getObjectFromURL(url, serverUrl);
       
       assertNotNull(foldURL);
       assertEquals("folderURL", foldURL.getName());
