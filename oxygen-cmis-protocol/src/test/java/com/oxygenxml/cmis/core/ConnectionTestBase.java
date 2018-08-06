@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.core;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,6 +14,8 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 public class ConnectionTestBase {
 
@@ -183,4 +186,20 @@ public class ConnectionTestBase {
       }
     }
   }
+
+	/**
+	 * Helper method to get CmisObject from URL
+	 * 
+	 * @param url
+	 * @return
+	 * @throws IOException 
+	 */
+	public CmisObject getObjectFromURL(String url, String serverUrl) throws IOException {
+		if (url == null) {
+			throw new NullPointerException();
+		}
+		return new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance()).getCMISObject(url);
+	}
+  
+  
 }

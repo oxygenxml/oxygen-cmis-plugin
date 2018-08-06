@@ -12,9 +12,10 @@
  classLoaderType="preferReferencedResources">
  
  <runtime>
+        <library name="../oxygen-cmis-protocol/target/classes"/>
         <librariesFolder name="lib/"/>
   
-        <library name="target/classes"/>T
+        <library name="target/classes"/>
  </runtime>
  
  <extension type="WorkspaceAccess" 
