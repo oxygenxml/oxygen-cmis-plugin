@@ -35,11 +35,11 @@ public class AlfrescoCustomProtocolTest {
 	public void setUp() throws MalformedURLException {
 		URL url = new URL("http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom");
 
-		List<Repository> repositoryList = CMISAccess.getInstance().getRepositories(url, null);
+		List<Repository> repositoryList = CMISAccess.getInstance().connectToServerGetRepositories(url, null);
 
 		Repository repository = repositoryList.get(0);
 
-		CMISAccess.getInstance().connect(url, repository.getId());
+		CMISAccess.getInstance().connectToRepo(url, repository.getId());
 
 		ctrl = CMISAccess.getInstance().createResourceController();
 

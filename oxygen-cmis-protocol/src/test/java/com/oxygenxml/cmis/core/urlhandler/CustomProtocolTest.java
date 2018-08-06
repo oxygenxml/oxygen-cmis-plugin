@@ -18,7 +18,6 @@ import org.junit.Test;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.core.urlhandler.CustomProtocolExtension;
 
 /**
  * Tests for accessing CMIS resources through our custom protocol. 
@@ -52,7 +51,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
       doc = createDocument(root, "urlDoc", "some text");
       
-      String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
+      String url = CmisURLExtension.getCustomURL(doc, ctrl);
       
 			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc", url);
       
@@ -68,16 +67,16 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
       doc = createDocument(root, "url", "some text");
  
-      CustomProtocolExtension cpe = new CustomProtocolExtension();
+      CmisURLExtension cpe = new CmisURLExtension();
       
-      String url = CustomProtocolExtension.getCustomURL(doc, ctrl);
+      String url = CmisURLExtension.getCustomURL(doc, ctrl);
       
       // TODO Code review. Assert the obtained URL.
 			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/url", url);
       
 			System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
       
-      Document docURL = (Document) cpe.getObjectFromURL(url);
+      Document docURL = (Document) new CmisURLConnection(new URL(url), CMISAccess.getInstance()).getCMISObject(url);
       
       assertNotNull(docURL);
       assertEquals(doc.getName(), docURL.getName());
@@ -115,14 +114,14 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
       folder = createFolder(root, "folderURL");
       
-      CustomProtocolExtension cpe = new CustomProtocolExtension();
+      CmisURLExtension cpe = new CmisURLExtension();
       
-      String url = CustomProtocolExtension.getCustomURL(folder, ctrl);
+      String url = CmisURLExtension.getCustomURL(folder, ctrl);
       
       
 			System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
       
-      Folder foldURL = (Folder) cpe.getObjectFromURL(url);
+      Folder foldURL = (Folder) new CmisURLConnection(new URL(url), CMISAccess.getInstance()).getCMISObject(url);
       
       assertNotNull(foldURL);
       assertEquals("folderURL", foldURL.getName());

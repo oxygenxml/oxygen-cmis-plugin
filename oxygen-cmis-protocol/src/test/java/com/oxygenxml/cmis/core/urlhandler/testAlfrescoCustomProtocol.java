@@ -58,10 +58,10 @@ public class testAlfrescoCustomProtocol {
 		System.out.println(doc.getName());
 		
 		String url = URLEncoder
-				.encode(CustomProtocolExtension
+				.encode(CmisURLExtension
 						.getCustomURL(doc, ctrl), "UTF-8");
 		
-		System.out.println(CustomProtocolExtension.getCustomURL(doc, ctrl));
+		System.out.println(CmisURLExtension.getCustomURL(doc, ctrl));
 		
 		System.out.println(url);
 	}
@@ -81,8 +81,8 @@ public class testAlfrescoCustomProtocol {
 		
 		String url = URLDecoder.decode(encodedURL, "UTF-8");
 		
-		CustomProtocolExtension cpe = new CustomProtocolExtension();
-		Document doc = (Document) cpe.getObjectFromURL(url);
+		CmisURLExtension cpe = new CmisURLExtension();
+		Document doc = (Document) new CmisURLConnection(new URL(url), CMISAccess.getInstance()).getCMISObject(url);
 		
 		System.out.println(url);
 		System.out.println(doc.getName());

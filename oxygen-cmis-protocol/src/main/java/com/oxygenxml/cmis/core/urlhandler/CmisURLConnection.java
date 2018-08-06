@@ -111,7 +111,7 @@ public class CmisURLConnection extends URLConnection {
 		}
 
 		// Accessing the server using params which we gets
-		cmisAccess.connect(serverURL, repoID);
+		cmisAccess.connectToRepo(serverURL, repoID);
 		ResourceController ctrl = cmisAccess.createResourceController();
 
 		// Get the object path
