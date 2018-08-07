@@ -8,6 +8,8 @@ import java.net.URL;
 
 import javax.swing.JPanel;
 
+import com.oxygenxml.cmis.core.model.IFolder;
+
 /**
  * Class that controls every component from the app Holds the main layout of the
  * view.
@@ -45,6 +47,12 @@ public class ControlComponents extends JPanel {
       @Override
       public void presentFolderItems(String folderID) {
         itemsPanel.presentFolderItems(folderID);
+      }
+
+      @Override
+      public void presentFolderItems(IFolder folder) {
+       
+        itemsPanel.presentFolderItems(folder);
       }
     });
 
@@ -98,7 +106,7 @@ public class ControlComponents extends JPanel {
     c.gridy++;
     c.weighty = 1.0;
     c.insets = new Insets(0, 0, 0, 0);
-    
+
     // c.weighty and weightx depends on c.fill V or H
     c.fill = GridBagConstraints.BOTH;
     add(itemsPanel, c);

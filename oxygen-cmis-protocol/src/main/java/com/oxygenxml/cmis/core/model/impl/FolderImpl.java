@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.core.model.impl;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -15,12 +16,12 @@ import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 
 public class FolderImpl implements IFolder {
-  
+
   /**
    * Logger for logging.
    */
   private static Logger logger = Logger.getLogger(FolderImpl.class.getName());
-  
+
   /**
    * Wrapped CMIS folder.
    */
@@ -28,9 +29,9 @@ public class FolderImpl implements IFolder {
 
   public FolderImpl(Folder folder) {
     this.folder = folder;
-    
+
   }
-  
+
   public Folder getFolder() {
     return folder;
   }
@@ -40,14 +41,14 @@ public class FolderImpl implements IFolder {
     // TODO Alexey Teste JUNIT.
     return new ResourceIterator(folder);
   }
-  
+
   private class ResourceIterator implements Iterator<IResource> {
     private Iterator<CmisObject> children;
 
     public ResourceIterator(Folder folder) {
       children = folder.getChildren().iterator();
     }
-    
+
     @Override
     public boolean hasNext() {
       return children.hasNext();
@@ -80,12 +81,20 @@ public class FolderImpl implements IFolder {
   public String getFolderPath() {
     return folder.getPath();
   }
-  
+
+  public String getCreatedBy() {
+    return folder.getCreatedBy();
+  }
+
+  public Date getTimeCreated() {
+    return folder.getCreationDate().getTime();
+  }
+
   public ItemIterable<QueryResult> getQuery(ResourceController ctrl) {
     String query = "SELECT * FROM cmis:folder WHERE cmis:name LIKE '".concat(getDisplayName()).concat("'");
     return ctrl.getSession().query(query, false);
   }
-  
+
   /**
    * Another type of resource.
    */
@@ -98,7 +107,8 @@ public class FolderImpl implements IFolder {
     /**
      * Constructor.
      * 
-     * @param object The wrapped CMIS object.
+     * @param object
+     *          The wrapped CMIS object.
      */
     public OtherResource(CmisObject object) {
       this.object = object;

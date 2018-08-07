@@ -7,15 +7,27 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.chemistry.opencmis.client.api.Folder;
+//import org.apache.chemistry.opencmis.client.api.ObjectId;
+
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.SearchController;
+import com.oxygenxml.cmis.core.model.IDocument;
+import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
+import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.search.SearchDocument;
+import com.oxygenxml.cmis.search.SearchFolder;
+import com.oxygenxml.cmis.storage.SessionStorage;
+import com.oxygenxml.cmis.core.CMISAccess;
 
 /**
  * Search componenet that takes care of the searching for resources
@@ -25,12 +37,10 @@ import com.oxygenxml.cmis.core.model.IResource;
  */
 public class SearchView extends JPanel {
 
-  private ItemsPresenter itemsPresenter;
-  private List<IResource> queryResults = new ArrayList<IResource>();
+  private String option = null;
 
   public SearchView(ItemsPresenter itemsPresenter) {
 
-    this.itemsPresenter = itemsPresenter;
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
 
@@ -54,17 +64,53 @@ public class SearchView extends JPanel {
     JButton searchButton = new JButton("Search");
 
     searchButton.addActionListener(new ActionListener() {
+
       /*
        * TODO: Implement the search using queries
        */
-      /*
-       * TODO: Get the item by name
-       */
+
       @Override
       public void actionPerformed(ActionEvent e) {
+        List<IResource> queryResults = new ArrayList<IResource>();
+
+        // Set the default option
+        option = "name";
+
         SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
-        // searchCtrl.
-        // itemsPresenter.presentItems(null,null);
+
+        // The results from searching the documents
+        ArrayList<IResource> documentsResults = new SearchDocument(searchField.getText().trim(), searchCtrl, option)
+            .getResultsFolder();
+
+        // The results from searching the folders
+        ArrayList<IResource> foldersResults = new SearchFolder(searchField.getText().trim(), searchCtrl, option)
+            .getResultsFolder();
+
+        queryResults.addAll(documentsResults);
+        queryResults.addAll(foldersResults);
+
+        itemsPresenter.presentFolderItems(new IFolder() {
+          @Override
+          public Iterator<IResource> iterator() {
+            return queryResults.iterator();
+          }
+          
+          @Override
+          public String getId() {
+            return "#search.results";
+          }
+          
+          @Override
+          public String getDisplayName() {
+            return "SearchResults";
+          }
+          
+          @Override
+          public String getFolderPath() {
+            // TODO Auto-generated method stub
+            return null;
+          }
+        });
       }
     });
     add(searchButton, c);

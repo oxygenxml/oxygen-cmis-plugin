@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.core.model.impl;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,9 +52,26 @@ public class DocumentImpl implements IDocument {
     return doc.getId();
   }
 
-  public DocumentType getDocType(){
+  public DocumentType getDocType() {
     return doc.getDocumentType();
   }
+
+  public String getMimetype() {
+    return doc.getContentStreamMimeType();
+  }
+
+  public long getSize() {
+    return doc.getContentStream().getLength();
+  }
+
+  public Date getTimeCreated() {
+    return doc.getCreationDate().getTime();
+  }
+
+  public String getCreatedBy() {
+    return doc.getCreatedBy();
+  }
+
   public ItemIterable<QueryResult> getQuery(ResourceController ctrl) {
     String query = "SELECT * FROM cmis:document WHERE cmis:name LIKE '".concat(getDisplayName()).concat("'");
     return ctrl.getSession().query(query, false);
@@ -77,7 +95,6 @@ public class DocumentImpl implements IDocument {
 
     return b.toString();
   }
-
 
   /*
    * @return The last version of the document
@@ -127,7 +144,7 @@ public class DocumentImpl implements IDocument {
   @Override
   public Document checkOut(DocumentType docType) {
     if (Boolean.TRUE.equals(docType.isVersionable())) {
-      
+
       ObjectId pwcId = doc.checkOut();
 
       Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
@@ -145,8 +162,8 @@ public class DocumentImpl implements IDocument {
    * .opencmis.client.api.Document)
    */
   @Override
-  public void cancelCheckOut() throws org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException{
-      doc.cancelCheckOut();
+  public void cancelCheckOut() throws org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException {
+    doc.cancelCheckOut();
   }
 
   /*

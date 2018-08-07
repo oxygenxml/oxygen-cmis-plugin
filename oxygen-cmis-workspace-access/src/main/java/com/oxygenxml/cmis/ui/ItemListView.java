@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Iterator;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -43,6 +44,7 @@ import com.oxygenxml.cmis.actions.PasteDocumentAction;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -56,6 +58,7 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  *
  */
 public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener {
+
   // All the resources recieved
   private JList<IResource> resourceList;
   // Popup menu foe each type of element (folder,document)
@@ -82,6 +85,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     resourceList = new JList<IResource>();
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     resourceList.setSelectedIndex(0);
+    resourceList.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
     resourceList.addListSelectionListener(this);
 
     // Scroller for the listRepo
@@ -304,7 +308,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
           // Get the rootFolder and set the model
           ResourceController resourceController = instance.createResourceController();
-          
+
           Folder rootFolder = resourceController.getRootFolder();
 
           final FolderImpl origin = new FolderImpl(rootFolder);
@@ -384,6 +388,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
     // Present the folder children
     presentResources(new FolderImpl(resourceController.getFolder(folderID)));
+  }
+
+  @Override
+  public void presentFolderItems(IFolder folder) {
+
+    presentResources(folder);
   }
 
 }

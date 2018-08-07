@@ -2,9 +2,7 @@ package com.oxygenxml.cmis.ui;
 
 import java.net.URL;
 
-import org.apache.chemistry.opencmis.client.api.Repository;
-
-import com.oxygenxml.cmis.core.model.IResource;
+import com.oxygenxml.cmis.core.model.IFolder;
 
 /**
  * Makes sure tht the items and the folders can be presented
@@ -27,4 +25,11 @@ public interface ItemsPresenter {
    * @param folderID
    */
   void presentFolderItems(String folderID);
+  
+  /**
+   * use the folder id to present the items inside
+   * 
+   * @param folderID
+   */
+  void presentFolderItems(IFolder folder);
 }
