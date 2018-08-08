@@ -20,4 +20,6 @@ public interface IResource {
   
   String getId();
   
+  String getCreatedBy();
+  
 }

@@ -128,5 +128,11 @@ public class FolderImpl implements IFolder {
     public String getId() {
       return object.getId();
     }
+
+    @Override
+    public String getCreatedBy() {
+
+      return object.getCreatedBy();
+    }
   }
 }

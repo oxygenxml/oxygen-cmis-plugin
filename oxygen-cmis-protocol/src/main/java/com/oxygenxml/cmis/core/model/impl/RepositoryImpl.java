@@ -32,4 +32,10 @@ public class RepositoryImpl implements IRepository {
     // TODO Auto-generated method stub
     return repository.getId();
   }
+
+  @Override
+  public String getCreatedBy() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

@@ -110,6 +110,12 @@ public class SearchView extends JPanel {
             // TODO Auto-generated method stub
             return null;
           }
+
+          @Override
+          public String getCreatedBy() {
+            // TODO Auto-generated method stub
+            return null;
+          }
         });
       }
     });

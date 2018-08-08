@@ -66,6 +66,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   // Current folder inside
   private IResource currentParent;
+  private DefaultListCellRenderer regularRenderer;
 
   /**
    * Logging.
@@ -85,7 +86,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     resourceList = new JList<IResource>();
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     resourceList.setSelectedIndex(0);
-    resourceList.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
+    resourceList.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     resourceList.addListSelectionListener(this);
 
     // Scroller for the listRepo
@@ -100,7 +101,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
      * 
      * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
      */
-    resourceList.setCellRenderer(new DefaultListCellRenderer() {
+    regularRenderer = new DefaultListCellRenderer() {
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
           boolean cellHasFocus) {
@@ -135,8 +136,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
         return component;
       }
-    });
-
+    };
+    resourceList.setCellRenderer(regularRenderer);
+    
     /*
      * Add listener to the entire list
      * 
@@ -353,6 +355,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    *          the resource to present its children.
    */
   private void presentResources(IResource parentResource) {
+    
+    installRenderer(parentResource.getId());
+    
     this.currentParent = parentResource;
 
     System.out.println("Current item=" + parentResource.getDisplayName());
@@ -384,6 +389,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   @Override
   public void presentFolderItems(String folderID) {
+    
+    installRenderer(folderID);
 
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
     // Present the folder children
@@ -392,8 +399,21 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   @Override
   public void presentFolderItems(IFolder folder) {
+    
+    installRenderer(folder.getId());
 
     presentResources(folder);
+  }
+
+  private void installRenderer(String id) {
+    if ("#search.results".equals(id)) {
+      /**
+       * Testing version of the renderer
+       */
+      resourceList.setCellRenderer(new SearchResultCellRenderer());
+    } else {
+      resourceList.setCellRenderer(regularRenderer);
+    }
   }
 
 }

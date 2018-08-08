@@ -44,13 +44,14 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
             }
           }));
           viewInfo.setTitle("CMIS Explorer");
-          
-          //Accepts only PNGs
+
+          // Accepts only PNGs
           // You can have images located inside the JAR library and use them...
-          URL resource = getClass().getClassLoader().getResource("cmis.png");
-    
+          // getClassLoader because no '/' is present in the front of the path
+          URL resource = getClass().getClassLoader().getResource("images/cmis.png");
+
           viewInfo.setIcon(new ImageIcon(resource));
-  
+
         }
       }
     });
