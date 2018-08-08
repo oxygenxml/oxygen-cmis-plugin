@@ -4,15 +4,14 @@ import static org.junit.Assert.assertNotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.oxygenxml.cmis.core.model.IDocument;
-import com.oxygenxml.cmis.core.model.IFolder;
-
+import com.oxygenxml.cmis.core.model.IResource;
 
 
 public class SearchControllerTest extends ConnectionTestBase{
@@ -29,11 +28,11 @@ public class SearchControllerTest extends ConnectionTestBase{
   public void testQueringFolders() {
     SearchController search = new SearchController(ctrl);
     
-    ArrayList<IFolder> folds = search.queringFolder("Fold");
+    List<IResource> folds = search.queringFolder("Fold");
     
     assertNotNull(folds);
 
-    for(IFolder folder : folds) {
+    for(IResource folder : folds) {
       System.out.println(folder.getDisplayName());
     }
   }
@@ -42,11 +41,11 @@ public class SearchControllerTest extends ConnectionTestBase{
   public void testQueringDoc() {
     SearchController search = new SearchController(ctrl);
     
-    ArrayList<IDocument> docs = search.queringDoc("Document");
+    List<IResource> docs = search.queringDoc("Document");
     
     assertNotNull(docs);
 
-    for(IDocument doc : docs) {
+    for(IResource doc : docs) {
       System.out.println(doc.getDisplayName());
     }
   }
@@ -55,7 +54,7 @@ public class SearchControllerTest extends ConnectionTestBase{
   public void testQueringDocContent() {
     SearchController search = new SearchController(ctrl);
     
-    ArrayList<IDocument> docs = search.queringDocContent("At justo in urna");
+    List<IDocument> docs = search.queringDocContent("At justo in urna");
     
     assertNotNull(docs);
 

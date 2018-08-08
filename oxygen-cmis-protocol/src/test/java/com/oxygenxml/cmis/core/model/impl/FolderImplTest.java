@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
@@ -92,12 +92,12 @@ public class FolderImplTest extends ConnectionTestBase {
   @Test
   public void testGetId() {
     SearchController search = new SearchController(ctrl);
-    ArrayList<IFolder> list = search.queringFolder("Folder-2");
+    List<IResource> list = search.queringFolder("My_Folder-1-0");
 
-    IFolder fold = list.get(0);
+    IFolder fold = (IFolder) list.get(0);
 
     System.out.println("Folder ID: " + fold.getId());
-    assertEquals("110", fold.getId());
+    assertEquals("118", fold.getId());
 
   }
 

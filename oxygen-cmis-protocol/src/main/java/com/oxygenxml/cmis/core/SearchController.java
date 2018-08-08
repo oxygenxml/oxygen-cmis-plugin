@@ -48,11 +48,11 @@ public class SearchController {
       scope = "cmis:document";
     }
     
-    if ((searchObjectTypes & SEARCH_IN_FOLDER) != 0) {
+    else if ((searchObjectTypes & SEARCH_IN_FOLDER) != 0) {
       if (scope.length() > 0) {
         scope += ",";
       }
-      scope += " cmis:folder";
+      scope += "cmis:folder";
     }
     
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, "cmis:name LIKE '%" + name + "%'", false, oc);
@@ -109,7 +109,7 @@ public class SearchController {
    * @param oc
    */
   public List<IResource> queringFolder(String name) {
-    return queryResourceName(name, SEARCH_IN_DOCUMENT);
+    return queryResourceName(name, SEARCH_IN_FOLDER);
   }
 
 }

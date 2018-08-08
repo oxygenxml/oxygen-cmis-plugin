@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -20,6 +21,7 @@ import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IDocument;
+import com.oxygenxml.cmis.core.model.IResource;
 
 public class DocumentImplTest extends ConnectionTestBase {
 
@@ -54,9 +56,9 @@ public class DocumentImplTest extends ConnectionTestBase {
   @Test
   public void testGetId() throws UnsupportedEncodingException {
     SearchController search = new SearchController(ctrl);
-    ArrayList<IDocument> list = search.queringDoc("ment-2");
+    List<IResource> list = search.queringDoc("ment-2");
 
-    IDocument docTest = list.get(0);
+    IDocument docTest = (IDocument) list.get(0);
 
     System.out.println("Doc ID: " + docTest.getId());
     assertEquals("111", docTest.getId());
@@ -92,9 +94,9 @@ public class DocumentImplTest extends ConnectionTestBase {
   public void testGetDocumentPath() throws UnsupportedEncodingException {
 
     SearchController search = new SearchController(ctrl);
-    ArrayList<IDocument> list = search.queringDoc("Document-2");
+    List<IResource> list = search.queringDoc("Document-2");
 
-    IDocument doc = list.get(0);
+    IDocument doc = (IDocument) list.get(0);
     System.out.println(doc.getDocumentPath(ctrl));
     assertEquals("/RootFolder/My_Folder-0-0/My_Folder-1-1/My_Document-2-0/", doc.getDocumentPath(ctrl));
 

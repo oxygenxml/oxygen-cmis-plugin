@@ -17,93 +17,89 @@ import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 
 /**
- * Tests for accessing CMIS resources through our custom protocol. 
+ * Tests for accessing CMIS resources through our custom protocol.
  */
 public class CustomProtocolTest extends ConnectionTestBase {
 
-  /**
+	/**
 	 * TODO Code review. It makes no sense to keep the document as a member variable
 	 * since it is used only in each test. A local variable in each test would
 	 * suffice. A member variable makes sense if we always create it on the setUp()
 	 * and we delete it on the afterMethod().
-   */
-  private Folder root;
-  private ResourceController ctrl;
-  private String serverUrl = "http://localhost:8080/B/atom11";
+	 */
+	private Folder root;
+	private ResourceController ctrl;
+	private String serverUrl = "http://localhost:8080/B/atom11";
 
-  /**
-   * CONECTION TO SERVER REPOSITORY, ACCES ROOT FOLDER
-   * 
-   * @throws MalformedURLException
-   */
-  @Before
-  public void setUp() throws MalformedURLException {
-    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1");
-    ctrl = CMISAccess.getInstance().createResourceController();
-    root = ctrl.getRootFolder();
-  }
-  
-  @Test
-  public void testGenerateURLObject() throws UnsupportedEncodingException {
-    Document doc = null;
+	/**
+	 * CONECTION TO SERVER REPOSITORY, ACCES ROOT FOLDER
+	 * 
+	 * @throws MalformedURLException
+	 */
+	@Before
+	public void setUp() throws MalformedURLException {
+		CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1");
+		ctrl = CMISAccess.getInstance().createResourceController();
+		root = ctrl.getRootFolder();
+	}
 
-      doc = createDocument(root, "urlDoc", "some text");
-      
-      String url = CmisURLExtension.getCustomURL(doc, ctrl);
-      
-			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc", url);
-      
-			System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
-      
-      assertNotNull(url);
-      
-  }
+	@Test
+	public void testGenerateURLObject() throws UnsupportedEncodingException {
+		Document doc = null;
+		
+		doc = createDocument(root, "urlDoc", "some text");
 
-  @Test
-  public void testGetObjectFromURL() throws IOException {
-    Document doc = null;
+		String url = CmisURLExtension.getCustomURL(doc, ctrl);
 
-      doc = createDocument(root, "url", "some text");
- 
-      
-      String url = CmisURLExtension.getCustomURL(doc, ctrl);
-      
-      // TODO Code review. Assert the obtained URL.
-			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/url", url);
-      
-			System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
-      
-      Document docURL = (Document) getObjectFromURL(url, serverUrl);
-      
-      assertNotNull(docURL);
-      assertEquals(doc.getName(), docURL.getName());
+		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc", url);
 
-  }
-  
-  
-  @Test
-  public void testGetFolderFromURL() throws IOException {
-    Folder folder = null;
+		System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
 
-      folder = createFolder(root, "folderURL");
-  
-      
-      String url = CmisURLExtension.getCustomURL(folder, ctrl);
-      
-      
-			System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
-      
-      Folder foldURL = (Folder) getObjectFromURL(url, serverUrl);
-      
-      assertNotNull(foldURL);
-      assertEquals("folderURL", foldURL.getName());
+		assertNotNull(url);
 
-  }
-  
-  @After
-  public void afterMethod(){   
-    cleanUpDocuments();
-    cleanUpFolders();
-    ctrl.getSession().clear();
-  }
+	}
+
+	@Test
+	public void testGetObjectFromURL() throws IOException {
+		Document doc = null;
+
+		doc = createDocument(root, "url", "some text");
+
+		String url = CmisURLExtension.getCustomURL(doc, ctrl);
+
+		// TODO Code review. Assert the obtained URL.
+		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/url", url);
+
+		System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
+
+		Document docURL = (Document) getObjectFromURL(url, serverUrl);
+
+		assertNotNull(docURL);
+		assertEquals(doc.getName(), docURL.getName());
+
+	}
+
+	@Test
+	public void testGetFolderFromURL() throws IOException {
+		Folder folder = null;
+
+		folder = createFolder(root, "folderURL");
+
+		String url = CmisURLExtension.getCustomURL(folder, ctrl);
+
+		System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
+
+		Folder foldURL = (Folder) getObjectFromURL(url, serverUrl);
+
+		assertNotNull(foldURL);
+		assertEquals("folderURL", foldURL.getName());
+
+	}
+
+	@After
+	public void afterMethod() {
+		cleanUpDocuments();
+		cleanUpFolders();
+		ctrl.getSession().clear();
+	}
 }
