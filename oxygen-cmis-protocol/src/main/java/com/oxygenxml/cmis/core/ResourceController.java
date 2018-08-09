@@ -97,8 +97,7 @@ public class ResourceController {
 
     properties.put(PropertyIds.NAME, filename);
     properties.put(PropertyIds.OBJECT_TYPE_ID, "VersionableType");
-    properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, false);
-    properties.put(PropertyIds.IS_PRIVATE_WORKING_COPY, false);
+   
     properties.put(PropertyIds.VERSION_LABEL, null);
     properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);
 

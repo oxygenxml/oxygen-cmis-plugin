@@ -8,10 +8,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +28,6 @@ import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 
 public class DocumentImplTest extends ConnectionTestBase {
-
 
   private Folder root;
   private ResourceController ctrl;
@@ -43,6 +44,7 @@ public class DocumentImplTest extends ConnectionTestBase {
     ctrl = CMISAccess.getInstance().createResourceController();
     root = ctrl.getRootFolder();
   }
+
   /*
    * Check is is checked-out
    */
@@ -52,38 +54,32 @@ public class DocumentImplTest extends ConnectionTestBase {
     ObjectId pwc = null;
     doc = createDocument(root, "queryTestFile", "some text");
     pwc = doc.checkOut();
-    doc.getProperty("cmis:isVersionSeriesCheckedOut");
+    doc.refresh();
     
-    HashMap<String, Boolean> properties = new HashMap<String, Boolean>();
-    properties.put("cmis:isVersionSeriesCheckedOut", true);
+    CmisObject pwcDoc = CMISAccess.getInstance().getSession().getObject(pwc);
     
-    doc.updateProperties(properties);
     
-    System.out.println("this is the document:" + CMISAccess.getInstance().getSession().getObject(doc).getProperties());
-    System.out.println("this is the private :" + CMISAccess.getInstance().getSession().getObject(pwc).getProperties());
-    
+    List<Property<?>> properties = doc.getProperties();
+    for (Property<?> property : properties) {
+      System.out.println(property.getId() + " -> " + property.getValues());
+    }
+  
+
+    System.out.println("this is the document:" + doc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
+    System.out
+        .println("this is the private :" + pwcDoc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
+
     System.out.println("Is it checkout:" + doc.isVersionSeriesCheckedOut());
-    
-    // boolean isCheckedOut = false;
-    //
-    // for (Document element :
-    // CMISAccess.getInstance().getSession().getCheckedOutDocs()) {
-    // if
-    // (element.getId().equals(CMISAccess.getInstance().getSession().getObject(pwc).getId()))
-    // {
-    // isCheckedOut = true;
-    // break;
-    // }
-    // }
-    
+
+
     Boolean isCheckedOut = doc.isVersionSeriesCheckedOut();
     // cmis:versionSeriesCheckedOutBy
     String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
-    
+
     assertEquals(true, isCheckedOut);
     System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
   }
-  
+
   /*
    * Check in the document
    */
@@ -92,19 +88,17 @@ public class DocumentImplTest extends ConnectionTestBase {
     Document doc = null;
     doc = createDocument(root, "queryTestFile3", "some text");
     ObjectId pwcId = doc.checkOut();
-    
+
     System.out.println(doc.getName());
     Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
     System.out.println(pwc.getName());
-    
-    HashMap<String, Boolean> propertiesDoc = new HashMap<String, Boolean>();
-    propertiesDoc.put("cmis:isVersionSeriesCheckedOut", false);
-    propertiesDoc.put("cmis:isPrivateWorkingCopy", false);
-    
-    ObjectId idDoc = pwc.checkIn(true, propertiesDoc, doc.getContentStream(), "new version");
-    
+
+   
+
+    ObjectId idDoc = pwc.checkIn(true, null, doc.getContentStream(), "new version");
+
     System.out.println("Object checked in =" + CMISAccess.getInstance().getSession().getObject(idDoc));
-    
+
   }
 
   @Test

@@ -44,7 +44,7 @@ public class SearchController {
     ArrayList<IResource> resources = new ArrayList<>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
-    oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+   // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
     String scope = "";
     
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
@@ -96,7 +96,7 @@ public class SearchController {
     ArrayList<IDocument> docList = new ArrayList<IDocument>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
-    oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+   // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:document", "CONTAINS ('" + content + "')",
         false, oc);
 
