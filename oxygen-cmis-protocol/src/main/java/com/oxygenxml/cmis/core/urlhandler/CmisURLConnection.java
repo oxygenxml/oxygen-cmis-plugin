@@ -15,20 +15,24 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.UserCredentials;
 
 import ro.sync.basic.util.URLUtil;
+import ro.sync.ecss.extensions.api.webapp.WebappMessage;
+import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 
 // Auth - URLStreamHandlerWithContext
 // File Browsing
@@ -38,23 +42,23 @@ public class CmisURLConnection extends URLConnection {
 
 	private static final Logger logger = Logger.getLogger(CmisURLConnection.class.getName());
 
-	private CMISAccess 			cmisAccess;
-	private ResourceController  bigCtrl;
+	private CMISAccess cmisAccess;
+	private ResourceController bigCtrl;
+	private UserCredentials credentials;
 
 	// KEYWORDS
-	public static final  String CMIS_PROTOCOL    = "cmis";
+	public static final String CMIS_PROTOCOL = "cmis";
 	private static final String REPOSITORY_PARAM = "repo";
-	private static final String PATH_PARAM       = "path";
-	
-	//ENCODED " " TO REPLACE ALL SPACES IN FOLDERS NAME
-	private static final String encodedSpace     = URLUtil.encodeURIComponent(" ");
-	
-	//CONSTRUCTOR
-	public CmisURLConnection(URL url, CMISAccess cmisAccess) {
+	private static final String PATH_PARAM = "path";
+
+	// CONSTRUCTOR
+	public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
 		super(url);
 		this.cmisAccess = cmisAccess;
+		this.credentials = credentials;
+
 	}
-	
+
 	/**
 	 * 
 	 * @param object
@@ -72,22 +76,25 @@ public class CmisURLConnection extends URLConnection {
 		// Get server URL
 		String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
 
-		//Encode server URL
+		// Encode server URL
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
 
-		//Generate first part of custom URL
+		// Generate first part of custom URL
 		urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
 		urlb.append(ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID));
 
 		// Get path of Cmis Object
 		List<String> objectPath = ((FileableCmisObject) object).getPaths();
 
-		//!!!!!!!!!!!!
+		// !!!!!!!!!!!!
 		// Appeding file path to URL and encode spaces
-		for (String pth : objectPath) {
-			urlb.append(pth.replaceAll(" ", encodedSpace));
+		for (int i = 0; i < objectPath.size(); i++) {
+			for (String pth : objectPath.get(i).split("/")) {
+				if (!pth.isEmpty()) {
+					urlb.append("/").append(URLUtil.encodeURIComponent(pth));
+				}
+			}
 		}
-
 		return urlb.toString();
 	}
 
@@ -102,15 +109,17 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 *             If the URL doesn't contain the expected syntax.
 	 * @throws UnsupportedEncodingException
+	 * @throws UserActionRequiredException
 	 */
-	public CmisObject getCMISObject(String url) throws MalformedURLException, UnsupportedEncodingException {
+	public CmisObject getCMISObject(String url) throws MalformedURLException, UnsupportedEncodingException,
+			CmisUnauthorizedException, UserActionRequiredException {
 
 		// Decompose the custom URL in query elements
 		Map<String, String> param = new HashMap<>();
 
-		//Decode encoded spaces
-		url = url.replaceAll(encodedSpace, " ");
-		
+		// Decode encoded spaces
+		// url = url.replaceAll(encodedSpace, " ");
+
 		// Get from custom URL server URL for connection
 		URL serverURL = getServerURL(url, param);
 
@@ -121,7 +130,16 @@ public class CmisURLConnection extends URLConnection {
 		}
 
 		// Accessing the server using params which we gets
-		cmisAccess.connectToRepo(serverURL, repoID);
+
+		try {
+			cmisAccess.connectToRepo(serverURL, repoID, credentials);
+		} catch (CmisUnauthorizedException e) {
+			logger.info("CmisBrowsingURLConnection ---> " + e.toString());
+
+			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			throw new UserActionRequiredException(webappMessage);
+		}
+
 		bigCtrl = cmisAccess.createResourceController();
 
 		// Get the object path
@@ -144,42 +162,47 @@ public class CmisURLConnection extends URLConnection {
 			throws MalformedURLException, UnsupportedEncodingException {
 		String originalProtocol = "";
 
-		logger.info("getServerURL() --> " + customURL);
+		logger.info("CmisURLConnection.getServerURL() --> " + customURL);
 
 		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			originalProtocol = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
 
-		// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		} else { originalProtocol = customURL.replaceFirst(("https://"), ""); }
+			// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		} else {
+			originalProtocol = customURL.replaceFirst(("https://"), "");
+		}
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		//Get server URL, put it into originalProtocol and replace from customURL
+		// Get server URL, put it into originalProtocol and replace from customURL
 		originalProtocol = originalProtocol.substring(0, originalProtocol.indexOf("/"));
 		customURL = customURL.replaceFirst(originalProtocol, "");
-		
-		//Replace CMIS part
+
+		// Replace CMIS part
 		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			customURL = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
 
-		// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		} else { customURL = customURL.replaceFirst(("https://"), ""); }
+			// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		} else {
+			customURL = customURL.replaceFirst(("https://"), "");
+		}
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		customURL = customURL.replaceFirst("/", "");
 
-		//Save Repository
+		// Save Repository
 		if (param != null) {
 			param.put(REPOSITORY_PARAM, customURL.substring(0, customURL.indexOf("/")));
 		}
-		
-		customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
 
-		//Save file path
+		customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
+		customURL = URLUtil.decodeURIComponent(customURL);
+
+		// Save file path
 		if (param != null) {
 			param.put(PATH_PARAM, customURL);
 		}
 
-		//Creating server URL
+		// Creating server URL
 		originalProtocol = URLDecoder.decode(originalProtocol, "UTF-8");
 		String protocol = originalProtocol.substring(0, originalProtocol.indexOf("://"));
 
@@ -222,19 +245,21 @@ public class CmisURLConnection extends URLConnection {
 			}
 		};
 	}
-	
+
 	/**
 	 * 
 	 * @param url1
 	 * @return ResourceController
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
+	 * @throws UserActionRequiredException
 	 */
-	public ResourceController getCtrl(URL url1) throws MalformedURLException, UnsupportedEncodingException {
+	public ResourceController getCtrl(URL url1)
+			throws MalformedURLException, UnsupportedEncodingException, UserActionRequiredException {
 		getCMISObject(url1.toExternalForm());
 		return bigCtrl;
 	}
-	
+
 	/**
 	 * 
 	 * @param url1
@@ -242,20 +267,23 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 */
-	public List<Repository> getReposList(URL url1) throws MalformedURLException, UnsupportedEncodingException{
-		
+	public List<Repository> getReposList(URL url1, UserCredentials credentials)
+			throws MalformedURLException, UnsupportedEncodingException {
+
 		String serverUrl = url1.toExternalForm();
-		
+
 		if (serverUrl.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			serverUrl = serverUrl.replaceFirst((CMIS_PROTOCOL + "://"), "");
 
-		// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		} else { serverUrl = serverUrl.replaceFirst(("https://"), ""); }
+			// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		} else {
+			serverUrl = serverUrl.replaceFirst(("https://"), "");
+		}
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		
+
 		serverUrl = URLDecoder.decode(serverUrl, "UTF-8");
-		
-		return cmisAccess.connectToServerGetRepositories(new URL(serverUrl), null);
-		
+
+		return cmisAccess.connectToServerGetRepositories(new URL(serverUrl), credentials);
+
 	}
 }

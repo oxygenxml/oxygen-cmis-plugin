@@ -30,8 +30,83 @@
       }
     });
   
+  
+  /**
+   * Login the user and call this callback at the end.
+   *
+   * @param {function} authenticated The callback when the user was authenticated - successfully or not.
+   */
+  var loginDialog_ = null;
+  function login(authenticated) {
+    var cmisNameInput,
+      cmisPasswordInput;
+    // pop-up an authentication window,
+    if (!loginDialog_) {
+      loginDialog_ = workspace.createDialog();
 
+      var cD = goog.dom.createDom;
 
+      cmisNameInput = cD('input', {id: 'cmis-name', type: 'text'});
+      cmisNameInput.setAttribute('autocorrect', 'off');
+      cmisNameInput.setAttribute('autocapitalize', 'none');
+      cmisNameInput.setAttribute('autofocus', '');
+
+      cmisPasswordInput = cD('input', {id: 'cmis-passwd', type: 'password'});
+
+      goog.dom.appendChild(loginDialog_.getElement(),
+        cD('div', 'cmis-login-dialog',
+          cD('label', '',
+            tr(msgs.NAME_) + ': ',
+            cmisNameInput
+          ),
+          cD('label', '',
+            tr(msgs.PASSWORD_)+ ': ',
+            cmisPasswordInput
+          )
+        )
+      );
+
+      loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
+      loginDialog_.setPreferredSize(300, null);
+    }
+    loginDialog_.onSelect(function(key) {
+      if (key === 'ok') {
+        // Send the user and password to the login servlet which runs in the webapp.
+        var userField = cmisNameInput || document.getElementById('cmis-name');
+        var user = userField.value.trim();
+        var passwdField = cmisPasswordInput || document.getElementById('cmis-passwd');
+        var passwd = passwdField.value;
+
+        userField.value = '';
+        passwdField.value = '';
+
+        goog.net.XhrIo.send(
+          '../plugins-dispatcher/cmis-login',
+          function () {
+            localStorage.setItem('cmis.user', user);
+
+            authenticated && authenticated();
+          },
+          'POST',
+          // form params
+          goog.Uri.QueryData.createFromMap(new goog.structs.Map({
+            user: user,
+            passwd: passwd,
+          })).toString()
+        );
+      }
+    });
+
+    loginDialog_.show();
+    var lastUser = localStorage.getItem('cmis.user');
+    if(lastUser) {
+      var userInput = cmisNameInput || loginDialog_.getElement().querySelector('#cmis-name');
+      userInput.value = lastUser;
+      userInput.select();
+    }
+}
+
+	window.login = login;
     
   })();
 

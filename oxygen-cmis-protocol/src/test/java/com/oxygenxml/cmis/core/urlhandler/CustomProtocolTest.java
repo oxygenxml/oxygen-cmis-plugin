@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.UserCredentials;
 
 /**
  * Tests for accessing CMIS resources through our custom protocol.
@@ -38,7 +39,8 @@ public class CustomProtocolTest extends ConnectionTestBase {
 	 */
 	@Before
 	public void setUp() throws MalformedURLException {
-		CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1");
+		CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
+				new UserCredentials("admin", "admin"));
 		ctrl = CMISAccess.getInstance().createResourceController();
 		root = ctrl.getRootFolder();
 	}
@@ -46,7 +48,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 	@Test
 	public void testGenerateURLObject() throws UnsupportedEncodingException {
 		Document doc = null;
-		
+
 		doc = createDocument(root, "urlDoc", "some text");
 
 		String url = CmisURLExtension.getCustomURL(doc, ctrl);
@@ -72,7 +74,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 		System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
 
-		Document docURL = (Document) getObjectFromURL(url, serverUrl);
+		Document docURL = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 
 		assertNotNull(docURL);
 		assertEquals(doc.getName(), docURL.getName());
@@ -89,7 +91,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 		System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
 
-		Folder foldURL = (Folder) getObjectFromURL(url, serverUrl);
+		Folder foldURL = (Folder) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 
 		assertNotNull(foldURL);
 		assertEquals("folderURL", foldURL.getName());
