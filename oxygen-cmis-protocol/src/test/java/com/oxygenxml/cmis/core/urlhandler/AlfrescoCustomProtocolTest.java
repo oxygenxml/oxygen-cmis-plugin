@@ -24,10 +24,10 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
+import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 
-import ro.sync.basic.util.URLUtil;
 import ro.sync.net.protocol.FolderEntryDescriptor;
 
 public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
@@ -49,13 +49,14 @@ public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
 	public void setUp() throws MalformedURLException {
 		URL url = new URL("http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom");
 
-		List<Repository> repositoryList = CMISAccess.getInstance().connectToServerGetRepositories(url, null);
+		List<Repository> repositoryList = CMISAccess.getInstance().connectToServerGetRepositories(url,
+				new UserCredentials("admin", "admin"));
 
 		Repository repository = repositoryList.get(0);
 
 		access = CMISAccess.getInstance();
 
-		access.connectToRepo(url, repository.getId());
+		access.connectToRepo(url, repository.getId(), new UserCredentials("admin", "admin"));
 
 		ctrl = CMISAccess.getInstance().createResourceController();
 
@@ -78,7 +79,7 @@ public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
 
 		System.out.println(url);
 
-		Document doc1 = (Document) getObjectFromURL(url, serverUrl);
+		Document doc1 = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 
 		System.out.println(doc1.getName());
 
@@ -86,7 +87,23 @@ public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
 
 		URL testUrl = new URL(url.replace("cmis", "https"));
 
-		System.out.println(testUrl.getHost());
+		System.out.println(testUrl.getPath());
+
+		Document docker = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
+
+		System.out.println(docker.getName());
+
+		/*
+		 * List<String> objectPath = ((FileableCmisObject) doc).getPaths();
+		 * 
+		 * StringBuilder str = new StringBuilder(); //!!!!!!!!!!!! // Appeding file path
+		 * to URL and encode spaces for (String pth : objectPath.get(0).split("/")) {
+		 * if(!pth.isEmpty()) { str.append("/").append(URLUtil.encodeURIComponent(pth));
+		 * } }
+		 * 
+		 * System.out.println(str.toString());
+		 * System.out.println(URLUtil.decodeURIComponent(str.toString()));
+		 */
 
 	}
 
@@ -114,7 +131,7 @@ public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
 
 		url = URLDecoder.decode(url, "UTF-8");
 
-		Document doc = (Document) getObjectFromURL(url, serverUrl);
+		Document doc = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 
 		System.out.println("URL: " + url);
 		System.out.println("DOC_NAME: " + doc.getName());
@@ -131,7 +148,8 @@ public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
 		List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
 		// url = url.replaceAll("cmis://", "");
 
-		CmisURLConnection cuc = new CmisURLConnection(new URL(url), CMISAccess.getInstance());
+		CmisURLConnection cuc = new CmisURLConnection(new URL(url), CMISAccess.getInstance(),
+				new UserCredentials("admin", "admin"));
 		FileableCmisObject object = (FileableCmisObject) cuc.getCMISObject(url);
 		// After connection we get ResourceController for generate URL!
 
@@ -162,10 +180,11 @@ public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
 
 	@Test
 	public void testReposList() throws IOException {
-		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance());
+		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance(),
+				new UserCredentials("admin", "admin"));
 		String sURL = "https://http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/";
 
-		List<Repository> reposList = cuc.getReposList(new URL(sURL));
+		List<Repository> reposList = cuc.getReposList(new URL(sURL), new UserCredentials("admin", "admin"));
 
 		for (Repository repos : reposList) {
 			System.out.println(repos.getName() + " " + repos.getId());

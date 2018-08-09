@@ -21,92 +21,98 @@ import org.junit.Test;
  * 
  */
 public class ResourceControllerDocumentTest extends ConnectionTestBase {
-  /**
-   * Root folder.
-   */
-  private Folder testFolder;
-  /**
-   * Executes operations over the resources.
-   */
-  private ResourceController ctrl;
+	/**
+	 * Root folder.
+	 */
+	private Folder testFolder;
+	/**
+	 * Executes operations over the resources.
+	 */
+	private ResourceController ctrl;
 
-  @Before
-  public void setUp() throws Exception {
-    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1");
+	@Before
+	public void setUp() throws Exception {
+		CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
+				new UserCredentials("admin", "admin"));
 
-    Map<String, Object> properties = new HashMap<String, Object>();
-    properties.put(PropertyIds.NAME, "testFolder");
-    properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(PropertyIds.NAME, "testFolder");
+		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
 
-    ctrl = CMISAccess.getInstance().createResourceController();
-    
-    // Create a folder to keep the new documents.
-    testFolder = ctrl.createFolder(ctrl.getRootFolder(), "docTestFolder");
-  }
+		ctrl = CMISAccess.getInstance().createResourceController();
 
-  /**
-   * Tests the deletion of a document.
-   * 
-   * @throws IOException If it fails.
-   */
-  @Test(timeout=10000)
-  public void testDocumentDelete() throws IOException {
-    Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
-    debugPrint(testFolder);
+		// Create a folder to keep the new documents.
+		testFolder = ctrl.createFolder(ctrl.getRootFolder(), "docTestFolder");
+	}
 
-    if(documentExists(document, testFolder)) {
-      ctrl.deleteAllVersionsDocument(document);
-    }
-    
-    debugPrint(testFolder);
-    
-    Assert.assertFalse(documentExists(document, testFolder));
-  }
+	/**
+	 * Tests the deletion of a document.
+	 * 
+	 * @throws IOException
+	 *             If it fails.
+	 */
+	@Test(timeout = 10000)
+	public void testDocumentDelete() throws IOException {
+		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
+		debugPrint(testFolder);
 
-  @Test(timeout=10000)
-  public void testMoveDocument() throws IOException {
-    Map<String, Object> properties = new HashMap<String, Object>();
-    properties.put(PropertyIds.NAME, "testFolderMove");
-    properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder"); 
+		if (documentExists(document, testFolder)) {
+			ctrl.deleteAllVersionsDocument(document);
+		}
 
-    Folder sourceFolder = testFolder;
-    Folder targetFolder = testFolder.createFolder(properties);
-    
-    debugPrint(testFolder);
-    
-    Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
-    
-    debugPrint(testFolder);
-    
-    ctrl.move(sourceFolder, targetFolder, document);
-    
-    debugPrint(targetFolder);
-    
-    Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
-    
-    ctrl.deleteFolderTree(targetFolder);
-  }
+		debugPrint(testFolder);
 
-  @Test(timeout=10000)
-  public void testDocumentContent() throws IOException {
-    Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text", "text/plain");
-  
-    Reader docContent = ctrl.getDocumentContent(doc.getId());
-    
-    /*InputStream expectedStream = getClass().getClassLoader().getResourceAsStream("docs/content.txt");
-    Reader expectedReader = new InputStreamReader(expectedStream, "UTF-8");*/
-    
-   // assertEquals(read(expectedReader).replaceAll("\r", ""), read(docContent).replace("\r", ""));
-    
-    assertEquals("some test text", read(docContent));
-    ctrl.deleteAllVersionsDocument(doc);
-  }
+		Assert.assertFalse(documentExists(document, testFolder));
+	}
 
-  @After
-  public void afterMethod(){
-    if (testFolder != null) {
-      ctrl.deleteFolderTree(testFolder);
-      ctrl.getSession().clear();
-    }
-  }
+	@Test(timeout = 10000)
+	public void testMoveDocument() throws IOException {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(PropertyIds.NAME, "testFolderMove");
+		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+
+		Folder sourceFolder = testFolder;
+		Folder targetFolder = testFolder.createFolder(properties);
+
+		debugPrint(testFolder);
+
+		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
+
+		debugPrint(testFolder);
+
+		ctrl.move(sourceFolder, targetFolder, document);
+
+		debugPrint(targetFolder);
+
+		Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
+
+		ctrl.deleteFolderTree(targetFolder);
+	}
+
+	@Test(timeout = 10000)
+	public void testDocumentContent() throws IOException {
+		Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text", "text/plain");
+
+		Reader docContent = ctrl.getDocumentContent(doc.getId());
+
+		/*
+		 * InputStream expectedStream =
+		 * getClass().getClassLoader().getResourceAsStream("docs/content.txt"); Reader
+		 * expectedReader = new InputStreamReader(expectedStream, "UTF-8");
+		 */
+
+		// assertEquals(read(expectedReader).replaceAll("\r", ""),
+		// read(docContent).replace("\r", ""));
+
+		assertEquals("some test text", read(docContent));
+		ctrl.deleteAllVersionsDocument(doc);
+	}
+
+	@After
+	public void afterMethod() {
+		if (testFolder != null) {
+			ctrl.deleteFolderTree(testFolder);
+			ctrl.getSession().clear();
+		}
+	}
 }

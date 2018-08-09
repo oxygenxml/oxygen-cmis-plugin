@@ -20,7 +20,7 @@
   <!-- Add extensions here-->
 
   <!-- Example extensions: -->
-  <extension type="WebappServlet" class="com.oxygenxml.cmis.SampleWebappServletPluginExtension"/>
+  <extension type="WebappServlet" class="com.oxygenxml.web.cmis.CmisLoginServlet"/>
   <extension type="URLHandler" 
     class="com.oxygenxml.cmis.core.urlhandler.CmisURLExtension"/>
 

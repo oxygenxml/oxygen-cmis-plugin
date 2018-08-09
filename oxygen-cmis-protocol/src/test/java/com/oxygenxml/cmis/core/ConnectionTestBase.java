@@ -194,11 +194,11 @@ public class ConnectionTestBase {
 	 * @return
 	 * @throws IOException 
 	 */
-	public CmisObject getObjectFromURL(String url, String serverUrl) throws IOException {
+	public CmisObject getObjectFromURL(String url, String serverUrl, UserCredentials credentials) throws IOException {
 		if (url == null) {
 			throw new NullPointerException();
 		}
-		return new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance()).getCMISObject(url);
+		return new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance(), credentials).getCMISObject(url);
 	}
   
   

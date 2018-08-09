@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>oxygen-cmis-protocol</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	
+
 	<parent>
 		<groupId>com.oxygenxml.cmis</groupId>
 		<artifactId>cmis.plugins</artifactId>
@@ -12,7 +13,7 @@
 	</parent>
 
 	<description>The core functionality. Offers an API for accessing documents and browsing. Contains an Oxygen Custom protocol implementation.</description>
-	
+
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.chemistry.opencmis/chemistry-opencmis-client-api -->
 		<dependency>
@@ -29,7 +30,13 @@
 			<scope>provided</scope>
 		</dependency>
 
-
+	<!-- 	<dependency>
+			<groupId>com.oxygenxml.cmis</groupId>
+			<artifactId>web-author-cmis-plugin</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>build</scope>
+		</dependency> -->
+		
 	</dependencies>
 
 	<build>
@@ -114,7 +121,7 @@
 				</executions>
 			</plugin>
 
-			
+
 		</plugins>
 	</build>
 </project>
