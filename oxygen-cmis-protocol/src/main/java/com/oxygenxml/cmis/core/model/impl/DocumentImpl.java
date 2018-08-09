@@ -2,6 +2,7 @@ package com.oxygenxml.cmis.core.model.impl;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -127,12 +128,22 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public boolean isCheckedOut() {
+    // A property needed to be set on creation of the document in order to get
+    // this property
+    return doc.isVersionSeriesCheckedOut();
+  }
 
-    boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
-    String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
+  /*
+   * @return The boolean value if is a kind of cmis:document
+   * 
+   * @see
+   * com.oxygenxml.cmis.core.model.IDocument#isCheckedOut(org.apache.chemistry.
+   * opencmis.client.api.Document)
+   */
+  @Override
+  public boolean isPrivateWorkingCopy() {
 
-    System.out.println(isCheckedOut + "checkout by" + checkedOutBy);
-    return isCheckedOut;
+    return doc.isPrivateWorkingCopy();
   }
 
   /*
@@ -148,6 +159,21 @@ public class DocumentImpl implements IDocument {
       ObjectId pwcId = doc.checkOut();
 
       Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
+
+      // Set the property to designate that the original document was checked
+      // out
+      // VERSION_SERIES_CHECKED_OUT_BY = "cmis:versionSeriesCheckedOutBy";
+      HashMap<String, Boolean> propertiesDoc = new HashMap<String, Boolean>();
+      propertiesDoc.put("cmis:isVersionSeriesCheckedOut", true);
+      doc.updateProperties(propertiesDoc);
+
+      // Set the property to designate that the private working copy is this
+      // document
+      // VERSION_SERIES_CHECKED_OUT_BY = "cmis:versionSeriesCheckedOutBy";
+      HashMap<String, Boolean> propertiesPWC = new HashMap<String, Boolean>();
+      propertiesPWC.put("cmis:isPrivateWorkingCopy", true);
+
+      pwc.updateProperties(propertiesPWC);
 
       return pwc;
     }
@@ -175,6 +201,11 @@ public class DocumentImpl implements IDocument {
   @Override
   public ObjectId checkIn() {
 
-    return doc.checkIn(true, null, doc.getContentStream(), "new version");
+    // Se the properties to false beacause no PWC will be present
+    HashMap<String, Boolean> propertiesDoc = new HashMap<String, Boolean>();
+    propertiesDoc.put("cmis:isVersionSeriesCheckedOut", false);
+    propertiesDoc.put("cmis:isPrivateWorkingCopy", false);
+
+    return doc.checkIn(true, propertiesDoc, doc.getContentStream(), "new version");
   }
 }

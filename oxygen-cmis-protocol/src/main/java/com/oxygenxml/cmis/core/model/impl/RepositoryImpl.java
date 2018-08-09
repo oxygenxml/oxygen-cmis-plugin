@@ -38,4 +38,10 @@ public class RepositoryImpl implements IRepository {
     // TODO Auto-generated method stub
     return null;
   }
+
+  @Override
+  public boolean isCheckedOut() {
+    // TODO Auto-generated method stub
+    return false;
+  }
 }

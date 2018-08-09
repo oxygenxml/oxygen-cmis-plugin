@@ -134,5 +134,17 @@ public class FolderImpl implements IFolder {
 
       return object.getCreatedBy();
     }
+
+    @Override
+    public boolean isCheckedOut() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+  }
+
+  @Override
+  public boolean isCheckedOut() {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

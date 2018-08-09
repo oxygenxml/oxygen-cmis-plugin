@@ -6,11 +6,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.junit.After;
 import org.junit.Before;
@@ -20,6 +23,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
+import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 
@@ -35,7 +39,8 @@ public class DocumentImplTest extends ConnectionTestBase {
    */
   @Before
   public void setUp() throws MalformedURLException {
-    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1");
+    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
+        new UserCredentials("admin", "admin"));
     ctrl = CMISAccess.getInstance().createResourceController();
     root = ctrl.getRootFolder();
   }
@@ -108,47 +113,82 @@ public class DocumentImplTest extends ConnectionTestBase {
   @Test
   public void testGetLastVersionDocument() throws UnsupportedEncodingException {
     Document latest = null;
-      Document doc = createDocument(root, "queryTestFile2", "some text");
+    Document doc = createDocument(root, "queryTestFile2", "some text");
 
-      if (Boolean.TRUE.equals(doc.isLatestVersion())) {
+    if (Boolean.TRUE.equals(doc.isLatestVersion())) {
 
-        latest = doc;
-      } else {
+      latest = doc;
+    } else {
 
-        latest = doc.getObjectOfLatestVersion(false);
-      }
-      System.out.println(latest.getName());
-      System.out.println(latest.getContentStream().toString());
+      latest = doc.getObjectOfLatestVersion(false);
+    }
+    System.out.println(latest.getName());
+    System.out.println(latest.getContentStream().toString());
   }
 
-//  /*
-//   * Check is is checked-out
-//   */
-//  @Test
-//  public void testIsCheckedOut() throws UnsupportedEncodingException {
-//    Document doc = null;
-//    doc = createDocument(root, "queryTestFile", "some text");
-//    doc.checkOut();
-//    boolean isCheckedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
-//    String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
-//
-//    System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
-//  }
-//
-//  /*
-//   * Check-out the document
-//   */
-//  @Test
-//  public void testCheckOut() throws UnsupportedEncodingException {
-//    Document doc = null;
-//    doc = createDocument(root, "queryTestFile3", "some text");
-//    ObjectId pwcId = doc.checkOut();
-//
-//    System.out.println(doc.getName());
-//    Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
-//    System.out.println(pwc.getName());
-//
-//  }
+  /*
+   * Check is is checked-out
+   */
+  @Test
+  public void testIsCheckedOut() throws UnsupportedEncodingException {
+    Document doc = null;
+    ObjectId pwc = null;
+    doc = createDocument(root, "queryTestFile", "some text");
+    pwc = doc.checkOut();
+    doc.getProperty("cmis:isVersionSeriesCheckedOut");
+
+    HashMap<String, Boolean> properties = new HashMap<String, Boolean>();
+    properties.put("cmis:isVersionSeriesCheckedOut", true);
+
+    doc.updateProperties(properties);
+
+    System.out.println("this is the document:" + CMISAccess.getInstance().getSession().getObject(doc).getProperties());
+    System.out.println("this is the private :" + CMISAccess.getInstance().getSession().getObject(pwc).getProperties());
+
+    System.out.println("Is it checkout:" + doc.isVersionSeriesCheckedOut());
+
+    // boolean isCheckedOut = false;
+    //
+    // for (Document element :
+    // CMISAccess.getInstance().getSession().getCheckedOutDocs()) {
+    // if
+    // (element.getId().equals(CMISAccess.getInstance().getSession().getObject(pwc).getId()))
+    // {
+    // isCheckedOut = true;
+    // break;
+    // }
+    // }
+
+    Boolean isCheckedOut = doc.isVersionSeriesCheckedOut();
+    // cmis:versionSeriesCheckedOutBy
+    String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
+
+    assertEquals(true, isCheckedOut);
+    System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
+  }
+
+  /*
+   * Check in the document
+   */
+  @Test
+  public void testCheckIn() throws UnsupportedEncodingException {
+    Document doc = null;
+    doc = createDocument(root, "queryTestFile3", "some text");
+    ObjectId pwcId = doc.checkOut();
+
+    System.out.println(doc.getName());
+    Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
+    System.out.println(pwc.getName());
+
+    HashMap<String, Boolean> propertiesDoc = new HashMap<String, Boolean>();
+    propertiesDoc.put("cmis:isVersionSeriesCheckedOut", false);
+    propertiesDoc.put("cmis:isPrivateWorkingCopy", false);
+
+    ObjectId idDoc = pwc.checkIn(true, propertiesDoc, doc.getContentStream(), "new version");
+
+    System.out.println("Object checked in =" + CMISAccess.getInstance().getSession().getObject(idDoc));
+
+  }
 
   @After
   public void afterMethod() {
