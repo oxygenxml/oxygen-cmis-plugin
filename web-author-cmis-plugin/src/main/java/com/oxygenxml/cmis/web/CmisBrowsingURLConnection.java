@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.core.urlhandler;
+package com.oxygenxml.cmis.web;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
@@ -151,7 +152,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		// LOGGING
 		int i = 0;
 		for (FolderEntryDescriptor fed : list) {
-			logger.info(++i + ") Entry folders URL ---> " + fed.getAbsolutePath());
+			logger.info(++i + ") folderEntryLogger ---> " + fed.getAbsolutePath());
 		}
 	}
 }

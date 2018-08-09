@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.core.urlhandler;
+package com.oxygenxml.cmis.web;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;

@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.core.model.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -59,7 +60,7 @@ public class FolderImplTest extends ConnectionTestBase {
 		StringBuilder b = new StringBuilder();
 		dump(folderImpl, b, "");
 
-		System.out.println(b);
+		assertNotNull(b);
 	}
 
 	/**
@@ -85,7 +86,8 @@ public class FolderImplTest extends ConnectionTestBase {
 		Folder folder = createFolder(root, "testDisplayName");
 		FolderImpl testFolder = new FolderImpl(folder);
 
-		System.out.println("Folder name: " + testFolder.getDisplayName());
+		assertNotNull(folder);
+		assertNotNull(testFolder);
 		assertEquals("testDisplayName", testFolder.getDisplayName());
 
 	}
@@ -97,7 +99,7 @@ public class FolderImplTest extends ConnectionTestBase {
 
 		IFolder fold = (IFolder) list.get(0);
 
-		System.out.println("Folder ID: " + fold.getId());
+		assertNotNull(fold);
 		assertEquals("118", fold.getId());
 
 	}
@@ -108,11 +110,8 @@ public class FolderImplTest extends ConnectionTestBase {
 		Folder folder = createFolder(root, "testFolderPath");
 		FolderImpl testFolder = new FolderImpl(folder);
 
-		System.out.println("id " + testFolder.getFolder().getParentId());
-		System.out.println("pa " + testFolder.getFolder().getParents());
-
-		System.out.println(testFolder.getDisplayName() + " -path-> " + testFolder.getFolderPath());
-
+		assertNotNull(folder);
+		assertNotNull(testFolder);
 		assertEquals("/testFolderPath", testFolder.getFolderPath());
 
 	}
@@ -129,11 +128,12 @@ public class FolderImplTest extends ConnectionTestBase {
 
 		ItemIterable<QueryResult> q = fold.getQuery(ctrl);
 
+		assertNotNull(folder);
+		assertNotNull(fold);
+		assertNotNull(q);
+
 		for (QueryResult qr : q) {
-			System.out.println("------------------------------------------\n"
-					+ qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue() + " , "
-					+ qr.getPropertyByQueryName("cmis:name").getFirstValue() + " , "
-					+ qr.getPropertyByQueryName("cmis:createdBy").getFirstValue());
+			assertNotNull(qr);
 		}
 
 	}

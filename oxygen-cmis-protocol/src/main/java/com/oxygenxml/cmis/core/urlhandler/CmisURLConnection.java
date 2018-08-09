@@ -31,7 +31,6 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 
 import ro.sync.basic.util.URLUtil;
-import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 
 // Auth - URLStreamHandlerWithContext
@@ -117,9 +116,6 @@ public class CmisURLConnection extends URLConnection {
 		// Decompose the custom URL in query elements
 		Map<String, String> param = new HashMap<>();
 
-		// Decode encoded spaces
-		// url = url.replaceAll(encodedSpace, " ");
-
 		// Get from custom URL server URL for connection
 		URL serverURL = getServerURL(url, param);
 
@@ -130,16 +126,7 @@ public class CmisURLConnection extends URLConnection {
 		}
 
 		// Accessing the server using params which we gets
-
-		try {
-			cmisAccess.connectToRepo(serverURL, repoID, credentials);
-		} catch (CmisUnauthorizedException e) {
-			logger.info("CmisBrowsingURLConnection ---> " + e.toString());
-
-			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
-			throw new UserActionRequiredException(webappMessage);
-		}
-
+		cmisAccess.connectToRepo(serverURL, repoID, credentials);
 		bigCtrl = cmisAccess.createResourceController();
 
 		// Get the object path
@@ -274,13 +261,11 @@ public class CmisURLConnection extends URLConnection {
 
 		if (serverUrl.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			serverUrl = serverUrl.replaceFirst((CMIS_PROTOCOL + "://"), "");
-
-			// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		} else {
-			serverUrl = serverUrl.replaceFirst(("https://"), "");
+			serverUrl = serverUrl.replaceFirst(serverUrl
+					.substring(0, serverUrl.indexOf("://") + "://".length()), "");
 		}
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+		
 		serverUrl = URLDecoder.decode(serverUrl, "UTF-8");
 
 		return cmisAccess.connectToServerGetRepositories(new URL(serverUrl), credentials);

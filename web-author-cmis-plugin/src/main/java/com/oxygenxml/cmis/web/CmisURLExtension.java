@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.core.urlhandler;
+package com.oxygenxml.cmis.web;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLStreamHandler;
@@ -7,6 +7,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension;
 
@@ -35,7 +36,7 @@ public class CmisURLExtension implements URLStreamHandlerPluginExtension {
 	 */
 	@Override
 	public URLStreamHandler getURLStreamHandler(String protocol) {
-		logger.info("CmisURLExts getURLStrHndl --> " + protocol);
+		logger.info("CmisURLExtension.getURLStreamHandler() ---> " + protocol);
 		if (protocol.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			return new CmisStreamHandler();
 		}

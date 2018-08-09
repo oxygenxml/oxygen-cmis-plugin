@@ -13,7 +13,6 @@
 	</parent>
 
 	<properties>
-		<oxygen.sdk.version>20.0.0.0</oxygen.sdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -28,19 +27,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.oxygenxml</groupId>
-			<artifactId>oxygen-webapp</artifactId>
-			<version>${oxygen.sdk.version}</version>
-			<classifier>classes</classifier>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.oxygenxml.cmis</groupId>
 			<artifactId>oxygen-cmis-protocol</artifactId>

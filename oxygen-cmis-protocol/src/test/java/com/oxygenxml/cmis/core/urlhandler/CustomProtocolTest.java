@@ -2,10 +2,12 @@ package com.oxygenxml.cmis.core.urlhandler;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.After;
@@ -51,12 +53,9 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 		doc = createDocument(root, "urlDoc", "some text");
 
-		String url = CmisURLExtension.getCustomURL(doc, ctrl);
+		String url = CmisURLConnection.generateURLObject(doc, ctrl);
 
 		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc", url);
-
-		System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
-
 		assertNotNull(url);
 
 	}
@@ -67,12 +66,9 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 		doc = createDocument(root, "url", "some text");
 
-		String url = CmisURLExtension.getCustomURL(doc, ctrl);
+		String url = CmisURLConnection.generateURLObject(doc, ctrl);
 
-		// TODO Code review. Assert the obtained URL.
 		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/url", url);
-
-		System.out.println("[cmis:document] id = " + doc.getId() + " URL = " + url);
 
 		Document docURL = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 
@@ -87,9 +83,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 		folder = createFolder(root, "folderURL");
 
-		String url = CmisURLExtension.getCustomURL(folder, ctrl);
-
-		System.out.println("[cmis:folder] id = " + folder.getId() + " URL = " + url);
+		String url = CmisURLConnection.generateURLObject(folder, ctrl);
 
 		Folder foldURL = (Folder) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 

@@ -15,7 +15,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.core.urlhandler.CmisURLExtension;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -89,7 +89,7 @@ public class CreateDocumentAction extends AbstractAction {
 
     try {
       // Get the <Code>getCustomURL</Code> of the document created
-      urlAsTring = CmisURLExtension.getCustomURL(documentCreated,
+      urlAsTring = CmisURLConnection.generateURLObject(documentCreated,
           CMISAccess.getInstance().createResourceController());
 
     } catch (UnsupportedEncodingException e2) {

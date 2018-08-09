@@ -30,13 +30,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-	<!-- 	<dependency>
-			<groupId>com.oxygenxml.cmis</groupId>
-			<artifactId>web-author-cmis-plugin</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>build</scope>
-		</dependency> -->
-		
 	</dependencies>
 
 	<build>

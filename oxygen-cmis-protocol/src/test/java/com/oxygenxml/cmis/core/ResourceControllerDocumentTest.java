@@ -60,8 +60,6 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 			ctrl.deleteAllVersionsDocument(document);
 		}
 
-		debugPrint(testFolder);
-
 		Assert.assertFalse(documentExists(document, testFolder));
 	}
 
@@ -74,15 +72,9 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 		Folder sourceFolder = testFolder;
 		Folder targetFolder = testFolder.createFolder(properties);
 
-		debugPrint(testFolder);
-
 		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
 
-		debugPrint(testFolder);
-
 		ctrl.move(sourceFolder, targetFolder, document);
-
-		debugPrint(targetFolder);
 
 		Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
 
@@ -94,15 +86,6 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 		Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text", "text/plain");
 
 		Reader docContent = ctrl.getDocumentContent(doc.getId());
-
-		/*
-		 * InputStream expectedStream =
-		 * getClass().getClassLoader().getResourceAsStream("docs/content.txt"); Reader
-		 * expectedReader = new InputStreamReader(expectedStream, "UTF-8");
-		 */
-
-		// assertEquals(read(expectedReader).replaceAll("\r", ""),
-		// read(docContent).replace("\r", ""));
 
 		assertEquals("some test text", read(docContent));
 		ctrl.deleteAllVersionsDocument(doc);

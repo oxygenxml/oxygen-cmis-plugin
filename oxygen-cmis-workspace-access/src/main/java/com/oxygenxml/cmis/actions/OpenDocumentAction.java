@@ -12,7 +12,7 @@ import javax.swing.UIManager;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.core.urlhandler.CmisURLExtension;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -68,7 +68,7 @@ public class OpenDocumentAction extends AbstractAction {
 
     // Try getting the custom URL for the document to open in
     try {
-      urlAsTring = CmisURLExtension.getCustomURL(((DocumentImpl) resource).getDoc(),
+      urlAsTring = CmisURLConnection.generateURLObject(((DocumentImpl) resource).getDoc(),
           CMISAccess.getInstance().createResourceController());
     } catch (UnsupportedEncodingException e2) {
 

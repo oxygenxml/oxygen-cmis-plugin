@@ -1,10 +1,10 @@
 package com.oxygenxml.cmis.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -45,7 +45,7 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
 	public void testPassCreateFolder() {
 		testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderCreate");
 		Assert.assertFalse(folderExists(testFolder, ctrl.getRootFolder()));
-
+		assertNotNull(testFolder);
 	}
 
 	/**
@@ -63,18 +63,20 @@ public class ResourceControllerFolderTest extends ConnectionTestBase {
 	 */
 	@Test
 	public void testRenameFolder() {
-		testFolder = ctrl.createFolder(ctrl.getRootFolder(), "testFolderRename");
+
+		testFolder = ctrl.createFolder(ctrl.getRootFolder(), "Rename");
 		CmisObject renamedFolder = null;
 
 		renamedFolder = ctrl.renameFolder(testFolder, "MI6");
-		System.out.println(renamedFolder.getName());
-
+		
+		assertNotNull(renamedFolder);
 		assertEquals("Renaming the file failed.", "MI6", testFolder.getName());
 
 	}
 
 	@After
 	public void afterMethod() {
+		cleanUpFolders();
 		if (testFolder != null) {
 			ctrl.getSession().clear();
 		}

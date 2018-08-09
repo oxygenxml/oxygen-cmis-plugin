@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.core.urlhandler;
+package com.oxygenxml.cmis.web;
 
 import static org.junit.Assert.*;
 
@@ -21,16 +21,19 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.junit.Before;
 import org.junit.Test;
 import com.oxygenxml.cmis.core.CMISAccess;
-import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.CmisURLExtension;
 
 import ro.sync.net.protocol.FolderEntryDescriptor;
 
-public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
+
+
+public class AlfrescoCustomProtocolTest {
 
 	private ResourceController ctrl;
 	Logger logger = Logger.getLogger(AlfrescoCustomProtocolTest.class.getName());
@@ -210,6 +213,13 @@ public class AlfrescoCustomProtocolTest extends ConnectionTestBase {
 		urlb.append("/");
 
 		return urlb.toString();
+	}
+	
+	public CmisObject getObjectFromURL(String url, String serverUrl, UserCredentials credentials) throws IOException {
+		if (url == null) {
+			throw new NullPointerException();
+		}
+		return new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance(), credentials).getCMISObject(url);
 	}
 
 }
