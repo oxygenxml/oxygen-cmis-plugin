@@ -6,6 +6,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -43,6 +46,8 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
   private List<Repository> serverReposList;
   // Current URL
   private URL serverURL;
+  private ItemsPresenter itemsPresenter;
+  private BreadcrumbPresenter breadcrumbPresenter;
 
   /**
    * Constructor that receives an items presenter to show the items inside the
@@ -54,6 +59,8 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    * @param breadcrumbPresenter
    */
   RepoComboBoxView(ItemsPresenter itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+    this.itemsPresenter = itemsPresenter;
+    this.breadcrumbPresenter = breadcrumbPresenter;
 
     repoItems = new JComboBox<Repository>();
 
@@ -128,7 +135,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
       // Check if is logged in and there repositories to present
       do {
-        
+
         // Check if logged in
         loggedin = AuthenticatorUtil.isLoggedin(serverURL);
 
@@ -140,7 +147,13 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
       System.out.println(serverReposList + "repos");
 
       // If there some put them in the model to be shown
-      if (serverReposList != null) {
+      if (serverReposList != null && !serverReposList.isEmpty()) {
+        
+        // Present the items with the URL and repository
+        itemsPresenter.presentItems(serverURL, serverReposList.get(0).getId());
+
+        // Reset the breadcrumb to show new items from repository
+        breadcrumbPresenter.resetBreadcrumb(true);
 
         DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();
         // Iterate all the elements

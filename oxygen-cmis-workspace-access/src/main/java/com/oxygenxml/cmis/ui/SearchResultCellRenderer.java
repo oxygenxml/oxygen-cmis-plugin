@@ -137,16 +137,19 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       System.out.println();
 
       pathValue = doc.getDocumentPath(ctrl);
-      notifyValue = doc.getCreatedBy();
+      notifyValue = "By:" + doc.getCreatedBy();
       // TODO: use breadcrumb view for the path
 
       // textResource.setText(doc.getDoc().getContentStream().toString());
 
     } else if (value instanceof FolderImpl && value != null) {
+
+      FolderImpl folder = ((FolderImpl) value);
       iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
 
-      notifyValue = ((FolderImpl) value).getCreatedBy();
-      pathValue = ((FolderImpl) value).getFolderPath();
+      notifyValue = "By:" + folder.getCreatedBy();
+      pathValue = folder.getFolderPath();
+
     }
 
     pathResource.setText(pathValue);

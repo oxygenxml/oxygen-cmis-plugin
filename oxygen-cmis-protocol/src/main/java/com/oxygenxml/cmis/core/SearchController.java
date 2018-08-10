@@ -100,10 +100,10 @@ public class SearchController {
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:document", "CONTAINS ('" + content + "')",
         false, oc);
 
-    for (CmisObject cmisObject : results) {
-      IDocument doc = new DocumentImpl((Document) cmisObject);
-      docList.add(doc);
-    }
+//    for (CmisObject cmisObject : results) {
+//      IDocument doc = new DocumentImpl((Document) cmisObject);
+//      docList.add(doc);
+//    }
 
     return docList;
   }
