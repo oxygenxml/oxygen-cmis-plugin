@@ -122,6 +122,7 @@ public class CreateDocumentAction extends AbstractAction {
     
     // Presenter the updated content of the parent folder
     itemsPresenter.presentFolderItems(currentParent.getId());
+ 
   }
 
 }

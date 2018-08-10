@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import org.apache.chemistry.opencmis.client.api.Repository;
 
+import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IRepository;
 import com.oxygenxml.cmis.core.model.IResource;
 
@@ -43,5 +44,9 @@ public class RepositoryImpl implements IRepository {
   public boolean isCheckedOut() {
     // TODO Auto-generated method stub
     return false;
+  }
+
+  @Override
+  public void refresh() {
   }
 }

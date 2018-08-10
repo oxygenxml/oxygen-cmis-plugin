@@ -138,7 +138,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       }
     };
     resourceList.setCellRenderer(regularRenderer);
-    
+
     /*
      * Add listener to the entire list
      * 
@@ -256,9 +256,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     menu.add(new OpenDocumentAction(selectedResource));
     menu.add(new CopyDocumentAction(selectedResource));
     menu.add(new DeleteDocumentAction(selectedResource, currentParent, this));
-    menu.add(new CheckinDocumentAction(selectedResource));
-    menu.add(new CheckoutDocumentAction(selectedResource));
-    menu.add(new CancelCheckoutDocumentAction(selectedResource));
+    menu.add(new CheckinDocumentAction(selectedResource, currentParent, this));
+    menu.add(new CheckoutDocumentAction(selectedResource, currentParent, this));
+    menu.add(new CancelCheckoutDocumentAction(selectedResource, currentParent, this));
 
     // TODO Check if is removed one reference or all maybe use of
     // removeFromFolder
@@ -283,9 +283,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     menu.add(new PasteDocumentAction(selectedResource, currentParent, this));
     menu.add(new DeleteFolderAction(selectedResource, currentParent, this));
 
-    menu.add(new CheckinFolderAction(selectedResource));
-    menu.add(new CheckoutFolderAction(selectedResource));
-    menu.add(new CancelCheckoutFolderAction(selectedResource));
+    menu.add(new CheckinFolderAction(selectedResource, currentParent, this));
+    menu.add(new CheckoutFolderAction(selectedResource, currentParent, this));
+    menu.add(new CancelCheckoutFolderAction(selectedResource, currentParent, this));
 
   }
 
@@ -343,7 +343,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    */
   private void setFolder(final FolderImpl origin) {
     DefaultListModel<IResource> model = new DefaultListModel<>();
-
+    
+    installRenderer(origin.getId());
     model.addElement(origin);
     resourceList.setModel(model);
   }
@@ -354,10 +355,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param resource
    *          the resource to present its children.
    */
-  private void presentResources(IResource parentResource) {
-    
+  public void presentResources(IResource parentResource) {
+
     installRenderer(parentResource.getId());
-    
+
     this.currentParent = parentResource;
 
     System.out.println("Current item=" + parentResource.getDisplayName());
@@ -389,7 +390,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   @Override
   public void presentFolderItems(String folderID) {
-    
+
     installRenderer(folderID);
 
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
@@ -399,7 +400,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   @Override
   public void presentFolderItems(IFolder folder) {
-    
+
     installRenderer(folder.getId());
 
     presentResources(folder);

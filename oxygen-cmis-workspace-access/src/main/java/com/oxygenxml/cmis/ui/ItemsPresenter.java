@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.ui;
 import java.net.URL;
 
 import com.oxygenxml.cmis.core.model.IFolder;
+import com.oxygenxml.cmis.core.model.IResource;
 
 /**
  * Makes sure tht the items and the folders can be presented
@@ -32,4 +33,6 @@ public interface ItemsPresenter {
    * @param folderID
    */
   void presentFolderItems(IFolder folder);
+  
+  void presentResources(IResource parentResource);
 }

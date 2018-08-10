@@ -71,40 +71,32 @@ public class SearchView extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        List<IResource> queryResults = new ArrayList<IResource>();
 
         // Set the default option
         option = "name";
 
-        SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
 
-        // The results from searching the documents
-        ArrayList<IResource> documentsResults = new SearchDocument(searchField.getText().trim(), searchCtrl, option)
-            .getResultsFolder();
-
-        // The results from searching the folders
-        ArrayList<IResource> foldersResults = new SearchFolder(searchField.getText().trim(), searchCtrl, option)
-            .getResultsFolder();
-
-        queryResults.addAll(documentsResults);
-        queryResults.addAll(foldersResults);
-
+        final String searchText = searchField.getText().trim();
         itemsPresenter.presentFolderItems(new IFolder() {
+          List<IResource> queryResults = null;
           @Override
           public Iterator<IResource> iterator() {
+            if (queryResults == null) {
+              queryResults = searchItems(searchText);
+            }
             return queryResults.iterator();
           }
-          
+
           @Override
           public String getId() {
             return "#search.results";
           }
-          
+
           @Override
           public String getDisplayName() {
             return "SearchResults";
           }
-          
+
           @Override
           public String getFolderPath() {
             // TODO Auto-generated method stub
@@ -122,7 +114,30 @@ public class SearchView extends JPanel {
             // TODO Auto-generated method stub
             return false;
           }
+
+          @Override
+          public void refresh() {
+            queryResults = null;
+          }
         });
+      }
+
+      private List<IResource> searchItems(String searchText) {
+        List<IResource> queryResults = new ArrayList<>();
+        SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
+
+        // The results from searching the documents
+        ArrayList<IResource> documentsResults = new SearchDocument(searchText, searchCtrl, option)
+            .getResultsFolder();
+
+        // The results from searching the folders
+        ArrayList<IResource> foldersResults = new SearchFolder(searchText, searchCtrl, option)
+            .getResultsFolder();
+
+        queryResults.addAll(documentsResults);
+        queryResults.addAll(foldersResults);
+        
+        return queryResults;
       }
     });
     add(searchButton, c);

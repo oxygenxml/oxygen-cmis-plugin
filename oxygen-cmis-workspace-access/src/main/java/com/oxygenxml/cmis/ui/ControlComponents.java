@@ -9,6 +9,7 @@ import java.net.URL;
 import javax.swing.JPanel;
 
 import com.oxygenxml.cmis.core.model.IFolder;
+import com.oxygenxml.cmis.core.model.IResource;
 
 /**
  * Class that controls every component from the app Holds the main layout of the
@@ -53,6 +54,12 @@ public class ControlComponents extends JPanel {
       public void presentFolderItems(IFolder folder) {
        
         itemsPanel.presentFolderItems(folder);
+      }
+
+      @Override
+      public void presentResources(IResource parentResource) {
+        itemsPanel.presentResources(parentResource);
+        
       }
     });
 

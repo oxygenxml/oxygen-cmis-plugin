@@ -68,9 +68,35 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     // Notification panel
     notifierPanel = new JPanel(new BorderLayout());
+    notifierPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     // Will be drawn in paintComponent
-    notification = new JLabel();
+    notification = new JLabel() {
+      // @Override
+      // protected void paintComponent(Graphics g) {
+      // // TODO Auto-generated method stub
+      //
+      // Graphics2D g2d = (Graphics2D) g;
+      // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+      // RenderingHints.VALUE_ANTIALIAS_ON);
+      // super.paintComponent(g);
+      // g2d.setPaint(Color.BLUE);
+      // g2d.fill(new Ellipse2D.Double(getWidth() - 18 - 5, getHeight() / 2 - 9,
+      // 18, 18));
+      //
+      // final String text = "" + notification.getText();
+      // final Font oldFont = g2d.getFont();
+      //
+      // g2d.setFont(oldFont.deriveFont(oldFont.getSize() - 1f));
+      //
+      // final FontMetrics fm = g2d.getFontMetrics();
+      // g2d.setPaint(Color.WHITE);
+      // g2d.drawString(text, getWidth() - 9 - 5 - fm.stringWidth(text) / 2,
+      // getHeight() / 2 + (fm.getAscent() - fm.getLeading() - fm.getDescent())
+      // / 2);
+      // g2d.setFont(oldFont);
+      // }
+    };
     notifierPanel.add(notification);
 
     add(iconPanel, BorderLayout.WEST);
@@ -87,6 +113,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     ResourceController ctrl = CMISAccess.getInstance().createResourceController();
     String pathValue = null;
+    String notifyValue = null;
 
     setComponentOrientation(list.getComponentOrientation());
 
@@ -110,20 +137,20 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       System.out.println();
 
       pathValue = doc.getDocumentPath(ctrl);
-
+      notifyValue = doc.getCreatedBy();
       // TODO: use breadcrumb view for the path
 
       // textResource.setText(doc.getDoc().getContentStream().toString());
 
-    } else if (value instanceof FolderImpl && value != null)
-
-    {
+    } else if (value instanceof FolderImpl && value != null) {
       iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
 
+      notifyValue = ((FolderImpl) value).getCreatedBy();
       pathValue = ((FolderImpl) value).getFolderPath();
     }
 
     pathResource.setText(pathValue);
+    notification.setText(notifyValue);
 
     JList.DropLocation dropLocation = list.getDropLocation();
     if (dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == index) {

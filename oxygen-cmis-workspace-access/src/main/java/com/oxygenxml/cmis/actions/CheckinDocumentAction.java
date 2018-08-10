@@ -9,6 +9,8 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.ui.ItemListView;
+import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 /**
  * Describes the check in action on a document by extending the AbstractAction
@@ -21,18 +23,24 @@ public class CheckinDocumentAction extends AbstractAction {
 
   // The resource that will receive
   private IResource resource = null;
+  private IResource currentParent = null;
+  private ItemsPresenter itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
    * 
    * @param resource
+   * @param itemsPresenter
+   * @param currentParent
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  public CheckinDocumentAction(IResource resource) {
+  public CheckinDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
     super("Check in");
 
     this.resource = resource;
+    this.currentParent = currentParent;
+    this.itemsPresenter = itemsPresenter;
   }
 
   /**
@@ -58,6 +66,9 @@ public class CheckinDocumentAction extends AbstractAction {
 
       // Commit the <Code>checkIn</Code> andgGet the ObjectId
       res = (ObjectId) doc.checkIn();
+
+      currentParent.refresh();
+      itemsPresenter.presentResources(currentParent);
 
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
 

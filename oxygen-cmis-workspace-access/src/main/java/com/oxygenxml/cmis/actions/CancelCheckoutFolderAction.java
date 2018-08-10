@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.ui.ItemListView;
+import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 /**
  * Describes the cancel checkout action on a folder by extending the
@@ -22,19 +24,24 @@ public class CancelCheckoutFolderAction extends AbstractAction {
 
   // The resource that will receive
   private IResource resource = null;
+  private IResource currentParent = null;
+  private ItemsPresenter itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
    * 
    * @param resource
+   * @param itemsPresenter
+   * @param currentParent
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  public CancelCheckoutFolderAction(IResource resource) {
+  public CancelCheckoutFolderAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
 
     super("Cancel check out");
     this.resource = resource;
-
+    this.currentParent = currentParent;
+    this.itemsPresenter = itemsPresenter;
   }
 
   /**
@@ -53,41 +60,10 @@ public class CancelCheckoutFolderAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
 
-    // Get all the children of the item in an iterator
-    Iterator<IResource> childrenIterator = resource.iterator();
+    cancelCheckoutFolder(resource);
 
-    // Check if
-    if (childrenIterator != null) {
-
-      // While has a child, add to the model
-      while (childrenIterator.hasNext()) {
-
-        // Get the next child
-        IResource iResource = childrenIterator.next();
-
-        // Check if it an instance of custom interface Folder
-        if (iResource instanceof FolderImpl) {
-
-          // Call the helper method used for recursion
-          cancelCheckoutFolder(iResource);
-
-        } else if (iResource instanceof DocumentImpl) {
-
-          // If it is a document type of custom interface
-          try {
-
-            // Commit the <Code>cancelCheckOout()</Code>
-            ((DocumentImpl) iResource).cancelCheckOut();
-
-          } catch (Exception ev) {
-
-            // Show the exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
-          }
-        }
-
-      }
-    }
+    currentParent.refresh();
+    itemsPresenter.presentResources(currentParent);
   }
 
   /**

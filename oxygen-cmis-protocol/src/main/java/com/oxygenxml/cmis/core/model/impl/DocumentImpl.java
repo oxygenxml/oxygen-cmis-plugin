@@ -209,4 +209,9 @@ public class DocumentImpl implements IDocument {
 
     return doc.checkIn(true, null, doc.getContentStream(), "new version");
   }
+
+  @Override
+  public void refresh() {
+    doc.refresh();
+  }
 }

@@ -9,6 +9,8 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.ui.ItemListView;
+import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 /**
  * Describes the cancel checkout action on a folder by extending the
@@ -21,27 +23,32 @@ public class CheckinFolderAction extends AbstractAction {
 
   // The resource that will receive
   private IResource resource = null;
+  private IResource currentParent = null;
+  private ItemsPresenter itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
    * 
    * @param resource
+   * @param itemsPresenter
+   * @param currentParent
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  public CheckinFolderAction(IResource resource) {
+  public CheckinFolderAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
 
     super("Check in");
     this.resource = resource;
-
+    this.currentParent = currentParent;
+    this.itemsPresenter = itemsPresenter;
   }
 
   /**
    * When the event was triggered cast the resource to custom interface for
    * processing the folder using the recursion.
    * 
-   * <Code>checkinFolder</Code> will be called whenever a folder child
-   * folder will be encountered, otherwise the checkin will precede
+   * <Code>checkinFolder</Code> will be called whenever a folder child folder
+   * will be encountered, otherwise the checkin will precede
    * 
    * @param e
    * @exception org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException
@@ -52,45 +59,10 @@ public class CheckinFolderAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
 
-    // Get all the children of the item in an iterator
-    Iterator<IResource> childrenIterator = resource.iterator();
+    checkinFolder(resource);
 
-    // Check if it's not null
-    if (childrenIterator != null) {
-
-      // While has a child, add to the model
-      while (childrenIterator.hasNext()) {
-
-        // Get the next child
-        IResource iResource = childrenIterator.next();
-
-        // Check if it an instance of custom interface Folder
-        if (iResource instanceof FolderImpl) {
-
-          // Try calling the <Code>checkinFolder</Code>
-          try {
-            checkinFolder(iResource);
-
-          } catch (Exception ev) {
-            // Show the exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
-          }
-
-        } else if (iResource instanceof DocumentImpl) {
-
-          // If it's a document try <Code>checkIn</Code>
-          try {
-            ((DocumentImpl) iResource).checkIn();
-
-          } catch (Exception ev) {
-
-            // Show the exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
-          }
-        }
-
-      }
-    }
+    currentParent.refresh();
+    itemsPresenter.presentResources(currentParent);
   }
 
   /**
@@ -127,7 +99,7 @@ public class CheckinFolderAction extends AbstractAction {
             ((DocumentImpl) iResource).checkIn();
 
           } catch (Exception ev) {
-            
+
             // Show the exception if there is one
             JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
           }
