@@ -60,7 +60,7 @@ public class CmisURLConnection extends URLConnection {
 	 */
 	public void setCredentials(UserCredentials credentials) {
 		this.credentials = credentials;
-		cmisAccess.connectToRepo(url, null, credentials);
+		//cmisAccess.connectToRepo(url, null, credentials);
 	}
 	
 	/**

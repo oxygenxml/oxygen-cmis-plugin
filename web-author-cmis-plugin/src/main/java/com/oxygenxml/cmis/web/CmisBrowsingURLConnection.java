@@ -94,10 +94,11 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 */
 	public void entryMethod(List<FolderEntryDescriptor> list)
 			throws MalformedURLException, UserActionRequiredException, UnsupportedEncodingException {
-		FileableCmisObject parent = (FileableCmisObject) cuc.getCMISObject(url.toExternalForm());
+		FileableCmisObject parent = null;
 
 		// After connection we get ResourceController for generate URL!
 		try {
+			parent = (FileableCmisObject) cuc.getCMISObject(url.toExternalForm());
 			ctrl = cuc.getCtrl(url);
 		} catch (CmisUnauthorizedException e) {
 			logger.info("entryMethod() ---> " + e.toString());
@@ -180,7 +181,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @param list
 	 */
 	public void folderEntryLogger(List<FolderEntryDescriptor> list) {
-		// LOGGING
+		// LOGGING 
 		int i = 0;
 		for (FolderEntryDescriptor fed : list) {
 			logger.info(++i + ") folderEntryLogger ---> " + fed.getAbsolutePath());

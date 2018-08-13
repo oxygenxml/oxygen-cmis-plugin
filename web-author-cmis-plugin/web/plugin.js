@@ -1,3 +1,5 @@
+var cmisTimeOut = 5000;
+
 
 (function () {
   var initialUrl = decodeURIComponent(sync.util.getURLParameter('url'));
@@ -29,8 +31,15 @@
   //   }
   // });
   
-  var rootUrl = sync.options.PluginsOptions.getClientOption("cmis.enforced_url") || 
-    'cmis://http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/'; 
+  var urlFromOptions = sync.options.PluginsOptions.getClientOption("cmis.enforced_url");
+  var rootUrl = null;
+  if (urlFromOptions) {
+    rootUrl = 'cmis://' + encodeURIComponent(urlFromOptions);
+    if (urlFromOptions.lastIndexOf('/') !== urlFromOptions.length) {
+      rootUrl += '/';
+    } 
+  }
+   // 'cmis://http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/'; 
   var cmisFileRepo = {};
   
   /**
@@ -128,15 +137,19 @@
 
 
   cmisFileRepo.createRepositoryAddressComponent = function (rootUrlParam, currentBrowseUrl, rootURLChangedCallback) {
-    console.log(rootUrl, rootUrlParam, currentBrowseUrl);
-    if (!rootUrlParam) {
-     setTimeout(function() {
-        rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
-      }, 5000)
-     // rootURLChangedCallback(rootUrl, rootUrl + '-default-/') // TODO: bug in web author.
-    }
     var div = document.createElement('div');
-    div.innerHTML = 'CMIS'; // TODO: use the CMIS server host name
+    if (rootUrl) {
+      console.log(rootUrl, rootUrlParam, currentBrowseUrl);
+      if (!rootUrlParam) {
+       setTimeout(function() {
+          rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
+        }, cmisTimeOut)
+       // rootURLChangedCallback(rootUrl, rootUrl + '-default-/') // TODO: bug in web author.
+      }
+      div.textContent = 'CMIS'; // TODO: use the CMIS server host name
+    } else {
+      div.textContent = 'Please set the CMIS API URL in the Admin Page Configuration.'; // TODO link to documentation.
+    }
     return div;
   };
   
