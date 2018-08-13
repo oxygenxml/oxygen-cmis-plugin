@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -57,7 +58,7 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  * @author bluecc
  *
  */
-public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener {
+public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener, SearchListener {
 
   // All the resources recieved
   private JList<IResource> resourceList;
@@ -67,7 +68,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   // Current folder inside
   private IResource currentParent;
   private DefaultListCellRenderer regularRenderer;
-
+  
   /**
    * Logging.
    */
@@ -359,6 +360,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     installRenderer(parentResource.getId());
 
+    presentResourcesInternal(parentResource);
+  }
+
+  private void presentResourcesInternal(IResource parentResource) {
     this.currentParent = parentResource;
 
     System.out.println("Current item=" + parentResource.getDisplayName());
@@ -407,14 +412,50 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   }
 
   private void installRenderer(String id) {
-    if ("#search.results".equals(id)) {
-      /**
-       * Testing version of the renderer
-       */
-      resourceList.setCellRenderer(new SearchResultCellRenderer());
-    } else {
       resourceList.setCellRenderer(regularRenderer);
-    }
+  }
+
+  @Override
+  public void searchFinished(String filter, final List<IResource> resources, ContentSearchProvider contentProvider) {
+    // TODO Create the CahceSearchProvider
+    CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
+    SearchResultCellRenderer cellRenderer = new SearchResultCellRenderer(csp, filter);
+    resourceList.setCellRenderer(cellRenderer);
+    
+    IResource parentResource = new IFolder() {
+      @Override
+      public Iterator<IResource> iterator() {
+        return resources.iterator();
+      }
+      @Override
+      public boolean isCheckedOut() {
+        return false;
+      }
+      @Override
+      public String getId() {
+        return "#search.results";
+      }
+      @Override
+      public String getDisplayName() {
+        return "Search results";
+      }
+      
+      @Override
+      public String getCreatedBy() {
+        return null;
+      }
+      
+      @Override
+      public void refresh() {
+      }
+      
+      @Override
+      public String getFolderPath() {
+        return null;
+      }
+    };
+    
+    presentResourcesInternal(parentResource );
   }
 
 }

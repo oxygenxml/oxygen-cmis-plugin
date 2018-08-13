@@ -13,6 +13,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -23,6 +25,7 @@ import javax.swing.ListCellRenderer;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -30,22 +33,27 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import sun.swing.DefaultLookup;
 
 public class SearchResultCellRenderer extends JPanel implements ListCellRenderer<IResource> {
-
   private JPanel iconPanel;
   private JLabel iconLabel;
 
   private JPanel descriptionPanel;
   private JLabel nameRsource;
   private JLabel pathResource;
-  private JLabel textResource;
+  private JLabel lineResource;
 
   private JPanel notifierPanel;
   private JLabel notification;
 
+  private ContentSearchProvider contentProv;
+
   // Graphics configurations
   private boolean isSelected;
+  private String matchPattern;
 
-  public SearchResultCellRenderer() {
+  public SearchResultCellRenderer(ContentSearchProvider contentProvider, String matchPattern) {
+    contentProv = contentProvider;
+    this.matchPattern = matchPattern;
+
     setLayout(new BorderLayout());
 
     // Drawing will occur in paintComponent
@@ -61,10 +69,10 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     nameRsource = new JLabel();
     pathResource = new JLabel();
-    textResource = new JLabel();
+    lineResource = new JLabel();
     descriptionPanel.add(nameRsource);
     descriptionPanel.add(pathResource);
-    descriptionPanel.add(textResource);
+    descriptionPanel.add(lineResource);
 
     // Notification panel
     notifierPanel = new JPanel(new BorderLayout());
@@ -112,6 +120,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     this.isSelected = isSelected;
 
     ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+
     String pathValue = null;
     String notifyValue = null;
 
@@ -123,16 +132,23 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     nameRsource.setText(value.getDisplayName());
 
     if (value instanceof DocumentImpl && value != null) {
+
       DocumentImpl doc = ((DocumentImpl) value);
 
       if (doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
+
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/workingcopy.png")));
         System.out.println("DocPWC:" + doc.getDisplayName());
+
       } else if (doc.isCheckedOut()) {
+
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/checkedout.png")));
         System.out.println("Doc:" + doc.getDisplayName());
+
       } else {
+
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
+
       }
       System.out.println();
 
@@ -140,7 +156,10 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       notifyValue = "By:" + doc.getCreatedBy();
       // TODO: use breadcrumb view for the path
 
-      // textResource.setText(doc.getDoc().getContentStream().toString());
+      System.out.println("Line=" + contentProv.getLineDoc(doc, matchPattern));
+      lineResource.setText("<html><font  color=yellow>" + contentProv.getLineDoc(doc, matchPattern) + "</font></html>");
+      lineResource.setOpaque(true);
+      lineResource.setBackground(Color.gray);
 
     } else if (value instanceof FolderImpl && value != null) {
 

@@ -145,7 +145,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 */
-	public URL getServerURL(String customURL, Map<String, String> param)
+	public static URL getServerURL(String customURL, Map<String, String> param)
 			throws MalformedURLException, UnsupportedEncodingException {
 		String originalProtocol = "";
 

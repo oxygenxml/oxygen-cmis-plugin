@@ -18,6 +18,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 //import org.apache.chemistry.opencmis.client.api.ObjectId;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IFolder;
@@ -35,8 +36,13 @@ import com.oxygenxml.cmis.core.CMISAccess;
  * @author bluecc
  *
  */
-public class SearchView extends JPanel {
-
+public class SearchView extends JPanel implements ContentSearchProvider {
+  /**
+   * Objects interested in search events.
+   */
+  private List<SearchListener> listeners = new ArrayList<>();
+  
+  private JTextField searchField = null;
   private String option = null;
 
   public SearchView(ItemsPresenter itemsPresenter) {
@@ -52,7 +58,7 @@ public class SearchView extends JPanel {
     c.gridy = 0;
     c.ipadx = 40;
     c.insets = new Insets(1, 5, 1, 5);
-    JTextField searchField = new JTextField("Search");
+    searchField = new JTextField("Search");
     add(searchField, c);
 
     // Search JButton constraints
@@ -75,72 +81,59 @@ public class SearchView extends JPanel {
         // Set the default option
         option = "name";
 
-
         final String searchText = searchField.getText().trim();
-        itemsPresenter.presentFolderItems(new IFolder() {
-          List<IResource> queryResults = null;
-          @Override
-          public Iterator<IResource> iterator() {
-            if (queryResults == null) {
-              queryResults = searchItems(searchText);
-            }
-            return queryResults.iterator();
-          }
-
-          @Override
-          public String getId() {
-            return "#search.results";
-          }
-
-          @Override
-          public String getDisplayName() {
-            return "SearchResults";
-          }
-
-          @Override
-          public String getFolderPath() {
-            // TODO Auto-generated method stub
-            return null;
-          }
-
-          @Override
-          public String getCreatedBy() {
-            // TODO Auto-generated method stub
-            return null;
-          }
-
-          @Override
-          public boolean isCheckedOut() {
-            // TODO Auto-generated method stub
-            return false;
-          }
-
-          @Override
-          public void refresh() {
-            queryResults = null;
-          }
-        });
-      }
-
-      private List<IResource> searchItems(String searchText) {
-        List<IResource> queryResults = new ArrayList<>();
-        SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
-
-        // The results from searching the documents
-        ArrayList<IResource> documentsResults = new SearchDocument(searchText, searchCtrl, option)
-            .getResultsFolder();
-
-        // The results from searching the folders
-        ArrayList<IResource> foldersResults = new SearchFolder(searchText, searchCtrl, option)
-            .getResultsFolder();
-
-        queryResults.addAll(documentsResults);
-        queryResults.addAll(foldersResults);
-        
-        return queryResults;
+        List<IResource> queryResults = searchItems(searchText);;
+        fireSearchFinished(searchText, queryResults);
       }
     });
+
     add(searchButton, c);
   }
+
+  protected void fireSearchFinished(String searchText, List<IResource> queryResults) {
+    for (SearchListener l : listeners) {
+      l.searchFinished(searchText, queryResults, this);
+    }
+  }
+
+  void addSearchListener(SearchListener searchListener) {
+   listeners.add(searchListener);
+  }
+  
+  private List<IResource> searchItems(String searchText) {
+    List<IResource> queryResults = new ArrayList<>();
+    SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
+
+    // The results from searching the documents
+    ArrayList<IResource> documentsResults = new SearchDocument(searchText, searchCtrl, option).getResultsFolder();
+
+    // The results from searching the folders
+    ArrayList<IResource> foldersResults = new SearchFolder(searchText, searchCtrl, option).getResultsFolder();
+
+    queryResults.addAll(documentsResults);
+    queryResults.addAll(foldersResults);
+
+    return queryResults;
+  }
+
+  @Override
+  public String getLineDoc(IResource doc, String matchPattern) {
+    SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
+    return searchCtrl.queryFindLine(doc, matchPattern);
+  }
+
+//  @Override
+//  public List<String> getLinesDocuments() {
+//
+//    ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+//    SearchController searchCtrl = new SearchController(ctrl);
+//
+//    final String searchText = searchField.getText().trim();
+//
+//    List<IResource> docList = searchItems(searchText);
+//
+//    return searchCtrl.queryFindLineContent(docList, searchText);
+//
+//  }
 
 }

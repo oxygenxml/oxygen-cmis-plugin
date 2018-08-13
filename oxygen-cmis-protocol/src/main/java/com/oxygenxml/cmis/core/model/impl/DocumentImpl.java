@@ -161,21 +161,6 @@ public class DocumentImpl implements IDocument {
 
       Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
 
-      // Set the property to designate that the original document was checked
-      // out
-//      // VERSION_SERIES_CHECKED_OUT_BY = "cmis:versionSeriesCheckedOutBy";
-//      HashMap<String, Boolean> propertiesDoc = new HashMap<String, Boolean>();
-//      propertiesDoc.put("cmis:isVersionSeriesCheckedOut", true);
-//      doc.updateProperties(propertiesDoc);
-
-      // Set the property to designate that the private working copy is this
-      // document
-      // VERSION_SERIES_CHECKED_OUT_BY = "cmis:versionSeriesCheckedOutBy";
-//      HashMap<String, Boolean> propertiesPWC = new HashMap<String, Boolean>();
-//      propertiesPWC.put("cmis:isPrivateWorkingCopy", true);
-//
-//      pwc.updateProperties(propertiesPWC);
-
       return pwc;
     }
     return doc;
@@ -201,11 +186,6 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public ObjectId checkIn() {
-
-    // Se the properties to false beacause no PWC will be present
-//    HashMap<String, Boolean> propertiesDoc = new HashMap<String, Boolean>();
-//    propertiesDoc.put("cmis:isVersionSeriesCheckedOut", false);
-//    propertiesDoc.put("cmis:isPrivateWorkingCopy", false);
 
     return doc.checkIn(true, null, doc.getContentStream(), "new version");
   }

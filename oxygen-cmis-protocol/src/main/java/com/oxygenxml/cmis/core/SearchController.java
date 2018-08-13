@@ -1,7 +1,9 @@
 package com.oxygenxml.cmis.core;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -20,6 +22,7 @@ public class SearchController {
   public static final int SEARCH_IN_FOLDER = 2;
 
   private ResourceController ctrl;
+  private Scanner scanner;
 
   /**
    * CONSTRUCTOR
@@ -44,9 +47,9 @@ public class SearchController {
     ArrayList<IResource> resources = new ArrayList<>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
-   // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+    // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
     String scope = "";
-    
+
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
       scope = "cmis:document";
     }
@@ -96,14 +99,14 @@ public class SearchController {
     ArrayList<IDocument> docList = new ArrayList<IDocument>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
-   // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+    // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:document", "CONTAINS ('" + content + "')",
         false, oc);
 
-//    for (CmisObject cmisObject : results) {
-//      IDocument doc = new DocumentImpl((Document) cmisObject);
-//      docList.add(doc);
-//    }
+    for (CmisObject cmisObject : results) {
+      IDocument doc = new DocumentImpl((Document) cmisObject);
+      docList.add(doc);
+    }
 
     return docList;
   }
@@ -119,4 +122,69 @@ public class SearchController {
     return queryResourceName(name, SEARCH_IN_FOLDER);
   }
 
+  /**
+   * 
+   * @param docList
+   * @param content
+   * @return
+   */
+  public List<String> queryFindLineContent(List<IResource> docList, String content) {
+    // MaybeReader
+    List<String> peekContentList = new ArrayList<String>();
+
+    for (IResource iResource : docList) {
+      if (iResource instanceof DocumentImpl) {
+
+        IDocument iDocument = (IDocument) iResource;
+
+        try {
+          Scanner scanner = new Scanner(new FileInputStream(iDocument.getDocumentPath(ctrl)));
+
+          while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+
+            // line, not scanner.
+            if (line.contains(content)) // tag in the txt to locate position
+            {
+              peekContentList.add(line);
+            }
+          }
+          scanner.close();
+
+        } catch (Exception e) {
+          System.out.println("File not found.");
+        }
+      }
+    }
+    return peekContentList;
+  }
+
+  public String queryFindLine(IResource resource, String content) {
+    
+   
+
+    if (resource instanceof DocumentImpl) {
+
+      IDocument iDocument = (IDocument) resource;
+
+      try {
+        scanner = new Scanner(ctrl.getDocumentContent(iDocument.getId()));
+
+        while (scanner.hasNextLine()) {
+          String line = scanner.nextLine().trim();
+
+          if (line.contains(content)) 
+          {
+           return line;
+          }
+        }
+        scanner.close();
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+    return null;
+  }
 }
