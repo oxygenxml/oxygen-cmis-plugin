@@ -38,8 +38,9 @@ public class CMISAccess {
 
 	/**
 	 * Private constructor.
+	 * For Web-Author we need more instances of CMISAccess
 	 */
-	private CMISAccess() {
+	public CMISAccess() {
 		factory = SessionFactoryImpl.newInstance();
 	}
 

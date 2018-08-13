@@ -1,6 +1,5 @@
 package com.oxygenxml.cmis.core.model.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -12,7 +11,6 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;

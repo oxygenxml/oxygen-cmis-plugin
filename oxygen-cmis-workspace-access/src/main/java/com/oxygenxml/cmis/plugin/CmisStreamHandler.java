@@ -12,7 +12,7 @@ public class CmisStreamHandler extends URLStreamHandler {
 
 	@Override
 	protected URLConnection openConnection(URL url) throws IOException {
-		return new CmisURLConnection(url, CMISAccess.getInstance(), null);
+		return new CmisURLConnection(url, CMISAccess.getInstance());
 	}
 
 }

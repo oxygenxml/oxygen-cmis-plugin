@@ -2,8 +2,10 @@ package com.oxygenxml.cmis.web;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -16,7 +18,6 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
@@ -32,13 +33,16 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	// PRIVATE RESOURCES
 	private CmisURLConnection cuc;
 	private ResourceController ctrl;
+	private UserCredentials credentials;
 
 	// CONSTRUCTOR
-	public CmisBrowsingURLConnection(URLConnection delegateConnection, String contextId) {
+	public CmisBrowsingURLConnection(URLConnection delegateConnection, UserCredentials credentials) {
 		super(delegateConnection);
 		this.cuc = (CmisURLConnection) delegateConnection;
-		// TESTING
-		// this.contextId = contextId;
+		this.credentials = credentials;
+		
+		//Set UserCredentials in CmisURLConnection
+		this.cuc.setCredentials(credentials);
 	}
 
 	@Override
@@ -46,8 +50,18 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		try {
 			return super.getInputStream();
 		} catch (CmisUnauthorizedException e) {
-			logger.info("CmisBrowsingURLConnection ---> " + e.toString());
+			logger.info("getInputStream() ---> " + e.toString());
+			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			throw new UserActionRequiredException(webappMessage);
+		}
+	}
 
+	@Override
+	public OutputStream getOutputStream() throws IOException {
+		try {
+			return super.getOutputStream();
+		} catch (CmisUnauthorizedException e) {
+			logger.info("getInputStream() ---> " + e.toString());
 			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 			throw new UserActionRequiredException(webappMessage);
 		}
@@ -83,7 +97,13 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		FileableCmisObject parent = (FileableCmisObject) cuc.getCMISObject(url.toExternalForm());
 
 		// After connection we get ResourceController for generate URL!
-		ctrl = cuc.getCtrl(url);
+		try {
+			ctrl = cuc.getCtrl(url);
+		} catch (CmisUnauthorizedException e) {
+			logger.info("entryMethod() ---> " + e.toString());
+			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			throw new UserActionRequiredException(webappMessage);
+		}
 
 		if (ctrl == null) {
 			logger.info("CmisBrowsingURLConnection.entryMethod() ---> ResourceController is null!");
@@ -111,7 +131,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			throws MalformedURLException, UnsupportedEncodingException {
 		logger.info("CmisBrowsingURLConnection.rootEntryMethod() url ---> " + url.toExternalForm());
 
-		List<Repository> reposList = cuc.getReposList(url, new UserCredentials("admin", "admin"));
+		List<Repository> reposList = cuc.getReposList(url, credentials);
 
 		for (Repository repos : reposList) {
 			String reposUrl = generateRepoUrl(repos);
@@ -127,23 +147,26 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @param repo
 	 * @return
 	 * @throws UnsupportedEncodingException
+	 * @throws MalformedURLException 
 	 */
-	public String generateRepoUrl(Repository repo) throws UnsupportedEncodingException {
+	public String generateRepoUrl(Repository repo) throws UnsupportedEncodingException, MalformedURLException {
 		StringBuilder urlb = new StringBuilder();
-
+		
+		URL serverURL = cuc.getServerURL(url.toExternalForm(), null);
+		
+		//Connecting to Cmis Server to get host
+		cuc.getAccess().connectToRepo(serverURL, repo.getId(), credentials);
 		// Get server URL
-		String originalProtocol = CMISAccess.getInstance().getSession().getSessionParameters()
+		String originalProtocol = cuc.getAccess().getSession().getSessionParameters()
 				.get(SessionParameter.ATOMPUB_URL);
 
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
-
-		urlb.append(("cmis" + "://")).append(originalProtocol).append("/");
-		urlb.append(CMISAccess.getInstance().getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID));
-		urlb.append("/");
+		urlb.append((CmisURLConnection.CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
+		urlb.append(repo.getId()).append("/");
 
 		return urlb.toString();
 	}
-
+	
 	/**
 	 * 
 	 * @param list

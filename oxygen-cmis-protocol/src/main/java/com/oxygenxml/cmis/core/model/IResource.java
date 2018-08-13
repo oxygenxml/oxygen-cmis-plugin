@@ -2,8 +2,6 @@ package com.oxygenxml.cmis.core.model;
 
 import java.util.Iterator;
 
-import org.apache.chemistry.opencmis.client.api.ObjectId;
-
 /**
  * TODO Alexey Test the implementations that they can actually iterate over the
  * resources structure.

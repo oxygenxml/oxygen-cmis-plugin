@@ -22,7 +22,6 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 
 	@Override
 	protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
-
 		// Accessing webapp to get credentials
 		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
 		SessionStore sessionStore = workspace.getSessionStore();
@@ -34,8 +33,9 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 				+ credentials.toString());
 
 		// Creating URLConnection with credentials
-		CmisURLConnection cuc = new CmisURLConnection(url, CMISAccess.getInstance(), credentials);
+		CmisURLConnection cuc = new CmisURLConnection(url, new CMISAccess());
 
-		return new CmisBrowsingURLConnection(cuc, contextId);
+		return new CmisBrowsingURLConnection(cuc, credentials);
 	}
+
 }

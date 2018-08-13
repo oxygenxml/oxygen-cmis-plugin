@@ -107,7 +107,7 @@
 }
 
 	window.login = login;
-    
+  sync.options.PluginsOptions.getClientOption("cmis.enforced_url")
   })();
 
 
