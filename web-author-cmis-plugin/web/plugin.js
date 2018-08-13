@@ -1,35 +1,37 @@
+
 (function () {
-  
-    var regExpOption = sync.options.PluginsOptions.getClientOption('restRootRegExp');
-    var ROOT_REGEXP = regExpOption ? new RegExp(regExpOption) : null;
-  
-    goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
-      console.log('Plugin loaded successfully');
-	  
-      var url = e.options.url;
-      // If the URL has 'rest' protocol we use the rest protocol handler.
-      if (url.match('cmis')) {
-        var initialUrl = decodeURIComponent(sync.util.getURLParameter('url'));
-        var prefix = 'cmis://';
+  var initialUrl = decodeURIComponent(sync.util.getURLParameter('url'));
+  var prefix = 'cmis://';
 
-        var limit = initialUrl.substring(prefix.length).indexOf('/') + prefix.length;
-        var rootUrl = initialUrl.substring(0, limit);
+  var limit = initialUrl.substring(prefix.length).indexOf('/') + prefix.length;
+  var rootUrl = initialUrl.substring(0, limit);
+  
+  // goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
+  //   console.log('Plugin loaded successfully');
+  
+  //   var url = e.options.url;
+  //   // If the URL has 'rest' protocol we use the rest protocol handler.
+  //   if (url.match('cmis')) {
       
+    
 
-        // initialUrl = initialUrl.replace('/' + repoId);
+  //     // initialUrl = initialUrl.replace('/' + repoId);
 
-        // console.log('RepoID ' + repoId);
+  //     // console.log('RepoID ' + repoId);
 
-        console.log('Initial URL ' + initialUrl);
-        console.log('Root URL ' + rootUrl);
-        // set the workspace UrlChooser
-        workspace.setUrlChooser(new sync.api.FileBrowsingDialog({
-          initialUrl: initialUrl,
-          rootUrl: rootUrl
-        }));
-      }
-    });
+  //     console.log('Initial URL ' + initialUrl);
+  //     console.log('Root URL ' + rootUrl);
+  //     // set the workspace UrlChooser
+  //     workspace.setUrlChooser(new sync.api.FileBrowsingDialog({
+  //       initialUrl: initialUrl,
+  //       rootUrl: rootUrl
+  //     }));
+  //   }
+  // });
   
+  var rootUrl = sync.options.PluginsOptions.getClientOption("cmis.enforced_url") || 
+    'cmis://http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/'; 
+  var cmisFileRepo = {};
   
   /**
    * Login the user and call this callback at the end.
@@ -107,7 +109,59 @@
 }
 
 	window.login = login;
-  sync.options.PluginsOptions.getClientOption("cmis.enforced_url")
+
+  cmisFileRepo.login = login;
+  cmisFileRepo.logout = function (logoutCallback) {
+    goog.net.XhrIo.send(
+      '../plugins-dispatcher/cmis-login?action=logout',
+      goog.bind(function () {
+        try {
+          localStorage.removeItem('cmis.user');
+        } catch (e) {
+          console.warn(e);
+        }
+
+        logoutCallback();
+      }, this),
+      'POST');
+};
+
+
+  cmisFileRepo.createRepositoryAddressComponent = function (rootUrlParam, currentBrowseUrl, rootURLChangedCallback) {
+    console.log(rootUrl, rootUrlParam, currentBrowseUrl);
+    if (!rootUrlParam) {
+     setTimeout(function() {
+        rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
+      }, 5000)
+     // rootURLChangedCallback(rootUrl, rootUrl + '-default-/') // TODO: bug in web author.
+    }
+    var div = document.createElement('div');
+    div.innerHTML = 'CMIS'; // TODO: use the CMIS server host name
+    return div;
+  };
+  
+
+cmisFileRepo.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
+  urlInfoCallback(rootUrl, url);
+};
+
+
+  // -------- Initialize the file browser information ------------
+var cmisFileRepositoryDescriptor = {
+    'id' : 'cmis',
+    'name' : 'CMIS',
+    'icon' : sync.util.computeHdpiIcon('../plugin-resources/cmis/cmis.png'), // the large icon url, hidpi enabled.
+    'matches' : function matches(url) {
+      return url.match('cmis'); // Check if the provided URL points to a file or folder from Cmis file repository
+    },
+    'repository' : cmisFileRepo
+};
+
+
+ 
+workspace.getFileRepositoriesManager().registerRepository(cmisFileRepositoryDescriptor);
+
+
   })();
 
 

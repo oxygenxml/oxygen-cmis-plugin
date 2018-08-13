@@ -10,8 +10,6 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +60,7 @@ public class CmisURLConnection extends URLConnection {
 	 */
 	public void setCredentials(UserCredentials credentials) {
 		this.credentials = credentials;
+		cmisAccess.connectToRepo(url, null, credentials);
 	}
 	
 	/**
@@ -73,7 +72,7 @@ public class CmisURLConnection extends URLConnection {
 	 */
 	// TODO: param parentURL
 	public static String generateURLObject(CmisObject object, ResourceController _ctrl)
-			throws UnsupportedEncodingException {
+			 {
 		ResourceController ctrl = _ctrl;
 
 		// Builder for building custom URL
@@ -83,7 +82,7 @@ public class CmisURLConnection extends URLConnection {
 		String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
 
 		// Encode server URL
-		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
+		originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
 
 		// Generate first part of custom URL
 		urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
@@ -193,7 +192,7 @@ public class CmisURLConnection extends URLConnection {
 		}
 
 		// Creating server URL
-		originalProtocol = URLDecoder.decode(originalProtocol, "UTF-8");
+		originalProtocol = URLUtil.decodeURIComponent(originalProtocol);
 		String protocol = originalProtocol.substring(0, originalProtocol.indexOf("://"));
 
 		URL url = new URL(originalProtocol + "/");
@@ -258,7 +257,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UnsupportedEncodingException
 	 */
 	public List<Repository> getReposList(URL url1, UserCredentials credentials)
-			throws MalformedURLException, UnsupportedEncodingException {
+			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
 
 		String serverUrl = url1.toExternalForm();
 
@@ -268,10 +267,10 @@ public class CmisURLConnection extends URLConnection {
 			serverUrl = serverUrl.replaceFirst(serverUrl.substring(0, serverUrl.indexOf("://") + "://".length()), "");
 		}
 
-		serverUrl = URLDecoder.decode(serverUrl, "UTF-8");
-
-		return cmisAccess.connectToServerGetRepositories(new URL(serverUrl), credentials);
-
+		serverUrl = URLUtil.decodeURIComponent(serverUrl);
+		List<Repository> list = cmisAccess.connectToServerGetRepositories(new URL(serverUrl), credentials);
+		
+		return list;
 	}
 
 	public CMISAccess getAccess() {

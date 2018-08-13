@@ -40,8 +40,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		super(delegateConnection);
 		this.cuc = (CmisURLConnection) delegateConnection;
 		this.credentials = credentials;
-		
-		//Set UserCredentials in CmisURLConnection
+		logger.info("CONSTRUCTOR: " + credentials.toString());
+		// Set UserCredentials in CmisURLConnection
 		this.cuc.setCredentials(credentials);
 	}
 
@@ -93,7 +93,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UserActionRequiredException
 	 */
 	public void entryMethod(List<FolderEntryDescriptor> list)
-			throws MalformedURLException, UnsupportedEncodingException, UserActionRequiredException {
+			throws MalformedURLException, UserActionRequiredException, UnsupportedEncodingException {
 		FileableCmisObject parent = (FileableCmisObject) cuc.getCMISObject(url.toExternalForm());
 
 		// After connection we get ResourceController for generate URL!
@@ -126,12 +126,21 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @param list
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
+	 * @throws UserActionRequiredException
 	 */
 	public void rootEntryMethod(List<FolderEntryDescriptor> list)
-			throws MalformedURLException, UnsupportedEncodingException {
+			throws MalformedURLException, UnsupportedEncodingException, UserActionRequiredException {
 		logger.info("CmisBrowsingURLConnection.rootEntryMethod() url ---> " + url.toExternalForm());
 
-		List<Repository> reposList = cuc.getReposList(url, credentials);
+		List<Repository> reposList = null;
+
+		try {
+			reposList = cuc.getReposList(url, credentials);
+		} catch (CmisUnauthorizedException e) {
+			logger.info("entryMethod() ---> " + e.toString());
+			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			throw new UserActionRequiredException(webappMessage);
+		}
 
 		for (Repository repos : reposList) {
 			String reposUrl = generateRepoUrl(repos);
@@ -147,18 +156,17 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @param repo
 	 * @return
 	 * @throws UnsupportedEncodingException
-	 * @throws MalformedURLException 
+	 * @throws MalformedURLException
 	 */
 	public String generateRepoUrl(Repository repo) throws UnsupportedEncodingException, MalformedURLException {
 		StringBuilder urlb = new StringBuilder();
-		
+
 		URL serverURL = cuc.getServerURL(url.toExternalForm(), null);
-		
-		//Connecting to Cmis Server to get host
+
+		// Connecting to Cmis Server to get host
 		cuc.getAccess().connectToRepo(serverURL, repo.getId(), credentials);
 		// Get server URL
-		String originalProtocol = cuc.getAccess().getSession().getSessionParameters()
-				.get(SessionParameter.ATOMPUB_URL);
+		String originalProtocol = cuc.getAccess().getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
 
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
 		urlb.append((CmisURLConnection.CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
@@ -166,7 +174,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 		return urlb.toString();
 	}
-	
+
 	/**
 	 * 
 	 * @param list

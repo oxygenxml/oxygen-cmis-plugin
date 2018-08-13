@@ -43,4 +43,5 @@ public class UserCredentials {
     String result = "Username=" + this.username + " " + "Password=" + this.password;
     return result;
   }
+
 }

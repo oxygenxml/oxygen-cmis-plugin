@@ -78,6 +78,7 @@ public class AlfrescoCustomProtocolTest {
 
 		String url = CmisURLConnection.generateURLObject(doc, ctrl);
 		System.out.println("URL: " + URLEncoder.encode(url, "UTF-8"));
+		System.out.println(url);
 
 		Document doc1 = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 		System.out.println(doc1.getName());
