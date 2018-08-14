@@ -84,6 +84,7 @@ public class DocumentImpl implements IDocument {
   public String getDocumentPath(ResourceController ctrl) {
     StringBuilder b = new StringBuilder();
     List<String> docPath = doc.getPaths();
+    System.out.println("Doc path:"+docPath);
 
     b.append("/").append(ctrl.getRootFolder().getName());
 
@@ -93,7 +94,6 @@ public class DocumentImpl implements IDocument {
       }
       b.append(docPath.get(i)).append("/");
     }
-
     return b.toString();
   }
 

@@ -15,12 +15,10 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  * @see com.oxygenxml.core.model.impl
  * @author bluecc
  *
- *         !!! DUNNO IF WORKS
  */
 public class SearchFolder {
 
   private ArrayList<IResource> resultsQueries;
-
 
   /**
    * 
@@ -34,8 +32,12 @@ public class SearchFolder {
 
     switch (option) {
 
+    case "null":
+      resultsQueries.addAll(searchCtrl.queryFolder(toSearch));
+      break;
+
     case "name":
-      resultsQueries.addAll(searchCtrl.queringFolder(toSearch));
+      resultsQueries.addAll(searchCtrl.queryFolderName(toSearch));
       break;
 
     default:

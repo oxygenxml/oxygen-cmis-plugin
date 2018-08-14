@@ -14,7 +14,7 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  * @see com.oxygenxml.core.model.impl
  * @author bluecc
  *
- *         !!! DUNNO IF WORKS
+ * 
  */
 public class SearchDocument {
 
@@ -34,9 +34,12 @@ public class SearchDocument {
     this.tempFolder = new FolderImpl(CMISAccess.getInstance().createResourceController().getRootFolder());
 
     switch (option) {
+    case "null":
+      resultsQueries.addAll(searchCtrl.queryDoc(toSearch));
+      break;
 
     case "name":
-      resultsQueries.addAll(searchCtrl.queringDoc(toSearch));
+      resultsQueries.addAll(searchCtrl.queryDocName(toSearch));
       break;
 
     default:

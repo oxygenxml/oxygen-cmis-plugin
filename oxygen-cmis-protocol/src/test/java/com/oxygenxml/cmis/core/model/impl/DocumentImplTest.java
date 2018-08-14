@@ -117,7 +117,7 @@ public class DocumentImplTest extends ConnectionTestBase {
   @Test
   public void testGetId() throws UnsupportedEncodingException {
     SearchController search = new SearchController(ctrl);
-    List<IResource> list = search.queringDoc("ment-2");
+    List<IResource> list = search.queryDocName("ment-2");
 
     IDocument docTest = (IDocument) list.get(0);
 
@@ -155,7 +155,7 @@ public class DocumentImplTest extends ConnectionTestBase {
   public void testGetDocumentPath() throws UnsupportedEncodingException {
 
     SearchController search = new SearchController(ctrl);
-    List<IResource> list = search.queringDoc("Document-2");
+    List<IResource> list = search.queryDocName("Document-2");
 
     IDocument doc = (IDocument) list.get(0);
     System.out.println(doc.getDocumentPath(ctrl));

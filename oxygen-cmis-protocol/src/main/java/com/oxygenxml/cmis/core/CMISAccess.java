@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.core;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -36,10 +37,12 @@ public class CMISAccess {
 	 */
 	private Session session;
 
+  private Map<String, String> parameters;
+
 	/**
 	 * Private constructor.
 	 */
-	private CMISAccess() {
+	public CMISAccess() {
 		factory = SessionFactoryImpl.newInstance();
 	}
 
@@ -48,6 +51,16 @@ public class CMISAccess {
 			instance = new CMISAccess();
 		}
 		return instance;
+	}
+	
+	public CMISAccess clone() {
+	  CMISAccess cmisAccess = new CMISAccess();
+	  
+	  cmisAccess.parameters = parameters;
+    // create session
+	  cmisAccess.session = factory.createSession(parameters);
+    
+	  return cmisAccess;
 	}
 
 	/**
@@ -62,7 +75,7 @@ public class CMISAccess {
 	 */
 	public void connectToRepo(URL connectionInfo, String repositoryID, UserCredentials uc)
 			throws CmisUnauthorizedException {
-		HashMap<String, String> parameters = new HashMap<>();
+		parameters = new HashMap<>();
 
 		logger.info("Before try to connect to repo");
 
@@ -75,7 +88,7 @@ public class CMISAccess {
 		logger.info("After try to connect to repo");
 	}
 
-	private void populateParameters(URL connectionInfo, HashMap<String, String> parameters, UserCredentials uc) {
+	private void populateParameters(URL connectionInfo, Map<String, String> parameters, UserCredentials uc) {
 		// TODO Ask for credentials. Different implementations SA/Web
 		if (uc != null) {
 			parameters.put(SessionParameter.USER, uc.username);

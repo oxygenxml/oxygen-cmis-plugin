@@ -68,7 +68,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   // Current folder inside
   private IResource currentParent;
   private DefaultListCellRenderer regularRenderer;
-  
+
   /**
    * Logging.
    */
@@ -344,7 +344,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    */
   private void setFolder(final FolderImpl origin) {
     DefaultListModel<IResource> model = new DefaultListModel<>();
-    
+
     installRenderer(origin.getId());
     model.addElement(origin);
     resourceList.setModel(model);
@@ -357,12 +357,17 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    *          the resource to present its children.
    */
   public void presentResources(IResource parentResource) {
-
+    // Install a renderer
     installRenderer(parentResource.getId());
 
     presentResourcesInternal(parentResource);
   }
 
+  /**
+   * Present the resources inside UI
+   * 
+   * @param parentResource
+   */
   private void presentResourcesInternal(IResource parentResource) {
     this.currentParent = parentResource;
 
@@ -412,50 +417,57 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   }
 
   private void installRenderer(String id) {
-      resourceList.setCellRenderer(regularRenderer);
+    resourceList.setCellRenderer(regularRenderer);
   }
 
   @Override
   public void searchFinished(String filter, final List<IResource> resources, ContentSearchProvider contentProvider) {
-    // TODO Create the CahceSearchProvider
+
+    // Provides the threads needed for async response
     CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
+    
+    // Create a rendered by using the custom renderer with the resources from
+    // cache (data gotten and the filter(text to search))
     SearchResultCellRenderer cellRenderer = new SearchResultCellRenderer(csp, filter);
     resourceList.setCellRenderer(cellRenderer);
-    
+
     IResource parentResource = new IFolder() {
       @Override
       public Iterator<IResource> iterator() {
         return resources.iterator();
       }
+
       @Override
       public boolean isCheckedOut() {
         return false;
       }
+
       @Override
       public String getId() {
         return "#search.results";
       }
+
       @Override
       public String getDisplayName() {
         return "Search results";
       }
-      
+
       @Override
       public String getCreatedBy() {
         return null;
       }
-      
+
       @Override
       public void refresh() {
       }
-      
+
       @Override
       public String getFolderPath() {
         return null;
       }
     };
-    
-    presentResourcesInternal(parentResource );
+
+    presentResourcesInternal(parentResource);
   }
 
 }

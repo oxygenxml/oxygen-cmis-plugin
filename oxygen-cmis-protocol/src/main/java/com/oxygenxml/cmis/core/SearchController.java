@@ -33,11 +33,10 @@ public class SearchController {
   public SearchController(ResourceController ctrl) {
     this.ctrl = ctrl;
 
-    // query("", SEARCH_IN_DOCUMENT | SEARCH_IN_FOLDER);
   }
 
   /**
-   * HELPER FOR DOCUMENTS
+   * 
    * 
    * @param cmisType
    * @param name
@@ -79,14 +78,84 @@ public class SearchController {
   }
 
   /**
-   * HELPER FOR DOCUMENTS
+   * 
    * 
    * @param cmisType
    * @param name
    * @param oc
    */
-  public List<IResource> queringDoc(String name) {
-    return queryResourceName(name, SEARCH_IN_DOCUMENT);
+  private List<IResource> queryResource(String content, int searchObjectTypes) {
+    ArrayList<IResource> resources = new ArrayList<>();
+
+    OperationContext oc = ctrl.getSession().createOperationContext();
+    String scope = "";
+
+    if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
+      scope = "cmis:document";
+    }
+
+    else if ((searchObjectTypes & SEARCH_IN_FOLDER) != 0) {
+      if (scope.length() > 0) {
+        scope += ",";
+      }
+      scope += "cmis:folder";
+    }
+
+    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope,
+        "cmis:name LIKE '%" + content + "%' OR cmis:description LIKE '%" + content + "%' OR cmis:createdBy LIKE '%" + content + "%'", false, oc);
+
+    for (CmisObject cmisObject : results) {
+      IResource res = null;
+      if (cmisObject instanceof Document) {
+        res = new DocumentImpl((Document) cmisObject);
+      } else {
+        res = new FolderImpl((Folder) cmisObject);
+      }
+
+      resources.add(res);
+    }
+
+    return resources;
+  }
+
+  /**
+   * Get the results for searching the name in the documents
+   * 
+   * @param content
+   * @return
+   */
+  public List<IResource> queryDocName(String content) {
+    return queryResourceName(content, SEARCH_IN_DOCUMENT);
+  }
+
+  /**
+   * Get the results for searching the name in the folders
+   * 
+   * @param content
+   * @return
+   */
+  public List<IResource> queryFolderName(String content) {
+    return queryResourceName(content, SEARCH_IN_FOLDER);
+  }
+
+  /**
+   * Get the results for searching the name and the title in the documents
+   * 
+   * @param content
+   * @return
+   */
+  public List<IResource> queryDoc(String content) {
+    return queryResource(content, SEARCH_IN_DOCUMENT);
+  }
+
+  /**
+   * Get the results for searching the name and the title in the folders
+   * 
+   * @param content
+   * @return
+   */
+  public List<IResource> queryFolder(String content) {
+    return queryResource(content, SEARCH_IN_FOLDER);
   }
 
   /**
@@ -95,7 +164,7 @@ public class SearchController {
    * @param content
    * @return
    */
-  public List<IDocument> queringDocContent(String content) {
+  public List<IDocument> queryDocContent(String content) {
     ArrayList<IDocument> docList = new ArrayList<IDocument>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
@@ -112,24 +181,13 @@ public class SearchController {
   }
 
   /**
-   * HELPER FOR FOLDERS
-   * 
-   * @param cmisType
-   * @param name
-   * @param oc
-   */
-  public List<IResource> queringFolder(String name) {
-    return queryResourceName(name, SEARCH_IN_FOLDER);
-  }
-
-  /**
    * 
    * @param docList
    * @param content
    * @return
    */
   public List<String> queryFindLineContent(List<IResource> docList, String content) {
-    // MaybeReader
+
     List<String> peekContentList = new ArrayList<String>();
 
     for (IResource iResource : docList) {
@@ -160,8 +218,6 @@ public class SearchController {
   }
 
   public String queryFindLine(IResource resource, String content) {
-    
-   
 
     if (resource instanceof DocumentImpl) {
 
@@ -173,9 +229,8 @@ public class SearchController {
         while (scanner.hasNextLine()) {
           String line = scanner.nextLine().trim();
 
-          if (line.contains(content)) 
-          {
-           return line;
+          if (line.contains(content)) {
+            return line;
           }
         }
         scanner.close();

@@ -4,17 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.RenderingHints;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.RoundRectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -25,7 +15,6 @@ import javax.swing.ListCellRenderer;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -69,7 +58,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     nameRsource = new JLabel();
     pathResource = new JLabel();
-    lineResource = new JLabel();
+    lineResource = new JLabel("Empty");
     descriptionPanel.add(nameRsource);
     descriptionPanel.add(pathResource);
     descriptionPanel.add(lineResource);
@@ -152,14 +141,13 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       }
       System.out.println();
 
-      pathValue = doc.getDocumentPath(ctrl);
+      pathValue = contentProv.getPath(doc, ctrl);
+
       notifyValue = "By:" + doc.getCreatedBy();
       // TODO: use breadcrumb view for the path
 
       System.out.println("Line=" + contentProv.getLineDoc(doc, matchPattern));
-      lineResource.setText("<html><font  color=yellow>" + contentProv.getLineDoc(doc, matchPattern) + "</font></html>");
-      lineResource.setOpaque(true);
-      lineResource.setBackground(Color.gray);
+      lineResource.setText("<html><font  color=blue>" + contentProv.getLineDoc(doc, matchPattern) + "</font></html>");
 
     } else if (value instanceof FolderImpl && value != null) {
 
@@ -167,7 +155,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
 
       notifyValue = "By:" + folder.getCreatedBy();
-      pathValue = folder.getFolderPath();
+      pathValue = contentProv.getPath(folder, ctrl);
 
     }
 
@@ -218,41 +206,5 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         setForegroundC(child, foreground);
       }
     }
-  }
-
-  @Override
-  protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    Graphics2D g2d = (Graphics2D) g;
-    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-    // if (isSelected) {
-    // Area area = new Area(new Ellipse2D.Double(0, 0, 36, 36));
-    // area.add(new Area(new RoundRectangle2D.Double(18, 3, getWidth() - 18, 29,
-    // 6, 6)));
-    // g2d.setPaint(currentColor);
-    // g2d.fill(area);
-    //
-    // g2d.setPaint(Color.WHITE);
-    // g2d.fill(new Ellipse2D.Double(2, 2, 32, 32));
-    // }
-
-    // g2d.drawImage(icon.getImage(), 5 + 13 - icon.getIconWidth() / 2, 5 + 13 -
-    // icon.getIconHeight() / 2, null);
-
-    // g2d.setPaint(currentColor);
-    // g2d.fill(new Ellipse2D.Double(getWidth() - 18 - 5, getHeight() / 2 - 9,
-    // 18, 18));
-
-    // final String text = "" + notification.getText();
-    // final Font oldFont = g2d.getFont();
-    // g2d.setFont(oldFont.deriveFont(oldFont.getSize() - 1f));
-    // final FontMetrics fm = g2d.getFontMetrics();
-    // g2d.setPaint(Color.WHITE);
-    // g2d.drawString(text, getWidth() - 9 - 5 - fm.stringWidth(text) / 2,
-    // getHeight() / 2 + (fm.getAscent() - fm.getLeading() - fm.getDescent()) /
-    // 2);
-    // g2d.setFont(oldFont);
-
   }
 }

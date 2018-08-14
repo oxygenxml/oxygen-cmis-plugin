@@ -95,7 +95,7 @@ public class FolderImplTest extends ConnectionTestBase {
 	@Test
 	public void testGetId() {
 		SearchController search = new SearchController(ctrl);
-		List<IResource> list = search.queringFolder("My_Folder-1-0");
+		List<IResource> list = search.queryFolderName("My_Folder-1-0");
 
 		IFolder fold = (IFolder) list.get(0);
 

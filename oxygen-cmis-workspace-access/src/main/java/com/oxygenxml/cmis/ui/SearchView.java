@@ -40,9 +40,13 @@ public class SearchView extends JPanel implements ContentSearchProvider {
   /**
    * Objects interested in search events.
    */
+
+  // Listeners of the search behavior
   private List<SearchListener> listeners = new ArrayList<>();
-  
+
   private JTextField searchField = null;
+
+  // Option of the search (name, title)
   private String option = null;
 
   public SearchView(ItemsPresenter itemsPresenter) {
@@ -69,20 +73,21 @@ public class SearchView extends JPanel implements ContentSearchProvider {
 
     JButton searchButton = new JButton("Search");
 
+    /**
+     * This is where the fireSearch will occur when the button is pressed
+     */
     searchButton.addActionListener(new ActionListener() {
-
-      /*
-       * TODO: Implement the search using queries
-       */
 
       @Override
       public void actionPerformed(ActionEvent e) {
-
-        // Set the default option
-        option = "name";
-
+        option = "null";
+        // Get the entered text and trim of white space from both sides
         final String searchText = searchField.getText().trim();
-        List<IResource> queryResults = searchItems(searchText);;
+
+        // Get the search results of the query
+        List<IResource> queryResults = searchItems(searchText);
+
+        // Fire the search for each listener
         fireSearchFinished(searchText, queryResults);
       }
     });
@@ -90,16 +95,33 @@ public class SearchView extends JPanel implements ContentSearchProvider {
     add(searchButton, c);
   }
 
+  /**
+   * Searches async for each listener
+   * 
+   * @param searchText
+   * @param queryResults
+   */
   protected void fireSearchFinished(String searchText, List<IResource> queryResults) {
     for (SearchListener l : listeners) {
       l.searchFinished(searchText, queryResults, this);
     }
   }
 
+  /**
+   * Add from outside those listeners here to be used for search
+   * 
+   * @param searchListener
+   */
   void addSearchListener(SearchListener searchListener) {
-   listeners.add(searchListener);
+    listeners.add(searchListener);
   }
-  
+
+  /**
+   * Add all the data searched in a list
+   * 
+   * @param searchText
+   * @return
+   */
   private List<IResource> searchItems(String searchText) {
     List<IResource> queryResults = new ArrayList<>();
     SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
@@ -112,28 +134,39 @@ public class SearchView extends JPanel implements ContentSearchProvider {
 
     queryResults.addAll(documentsResults);
     queryResults.addAll(foldersResults);
+    System.out.println("Results from server=" + queryResults.size());
 
     return queryResults;
   }
 
+  /**
+   * Find the line where the text was found
+   */
   @Override
   public String getLineDoc(IResource doc, String matchPattern) {
-    SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
+    SearchController searchCtrl = new SearchController(CMISAccess.getInstance().clone().createResourceController());
     return searchCtrl.queryFindLine(doc, matchPattern);
   }
 
-//  @Override
-//  public List<String> getLinesDocuments() {
-//
-//    ResourceController ctrl = CMISAccess.getInstance().createResourceController();
-//    SearchController searchCtrl = new SearchController(ctrl);
-//
-//    final String searchText = searchField.getText().trim();
-//
-//    List<IResource> docList = searchItems(searchText);
-//
-//    return searchCtrl.queryFindLineContent(docList, searchText);
-//
-//  }
+  @Override
+  public String getPath(IResource doc, ResourceController ctrl) {
+
+    return ((DocumentImpl) doc).getDocumentPath(ctrl);
+  }
+
+  // @Override
+  // public List<String> getLinesDocuments() {
+  //
+  // ResourceController ctrl =
+  // CMISAccess.getInstance().createResourceController();
+  // SearchController searchCtrl = new SearchController(ctrl);
+  //
+  // final String searchText = searchField.getText().trim();
+  //
+  // List<IResource> docList = searchItems(searchText);
+  //
+  // return searchCtrl.queryFindLineContent(docList, searchText);
+  //
+  // }
 
 }
