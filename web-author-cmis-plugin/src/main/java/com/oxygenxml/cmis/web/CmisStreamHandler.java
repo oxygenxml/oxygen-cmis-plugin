@@ -12,8 +12,10 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
+import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
+import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class CmisStreamHandler extends URLStreamHandlerWithContext {
@@ -22,7 +24,6 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 
 	@Override
 	protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
-
 		// Accessing webapp to get credentials
 		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
 		SessionStore sessionStore = workspace.getSessionStore();
@@ -30,12 +31,18 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		// Getting credentials
 		UserCredentials credentials = sessionStore.get(contextId, "credentials");
 
-		logger.info("CmisStreamHandler.openConnectionInContext() ---> " + url.toExternalForm() + " -- "
-				+ credentials.toString());
+		if (credentials == null) {
+			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			throw new UserActionRequiredException(webappMessage);
+		}
 
+		 logger.info("CmisStreamHandler.openConnectionInContext() ---> " +
+		 url.toExternalForm() + " -- " + credentials != null ? credentials.toString() : "Is NULL" );
+		 
 		// Creating URLConnection with credentials
-		CmisURLConnection cuc = new CmisURLConnection(url, CMISAccess.getInstance(), credentials);
+		CmisURLConnection cuc = new CmisURLConnection(url, new CMISAccess());
 
-		return new CmisBrowsingURLConnection(cuc, contextId);
+		return new CmisBrowsingURLConnection(cuc, credentials);
 	}
+
 }

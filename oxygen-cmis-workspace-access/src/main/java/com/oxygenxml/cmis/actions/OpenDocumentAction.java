@@ -66,15 +66,8 @@ public class OpenDocumentAction extends AbstractAction {
     // Initialize the URL
     String urlAsTring = null;
 
-    // Try getting the custom URL for the document to open in
-    try {
-      urlAsTring = CmisURLConnection.generateURLObject(((DocumentImpl) resource).getDoc(),
-          CMISAccess.getInstance().createResourceController());
-    } catch (UnsupportedEncodingException e2) {
-
-      // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
-    }
+    urlAsTring = CmisURLConnection.generateURLObject(((DocumentImpl) resource).getDoc(),
+        CMISAccess.getInstance().createResourceController());
 
     System.out.println(urlAsTring);
     // Get the workspace of the plugin

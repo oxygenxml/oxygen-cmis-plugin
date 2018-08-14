@@ -87,16 +87,9 @@ public class CreateDocumentAction extends AbstractAction {
     // -------- Open into Oxygen
     String urlAsTring = null;
 
-    try {
-      // Get the <Code>getCustomURL</Code> of the document created
-      urlAsTring = CmisURLConnection.generateURLObject(documentCreated,
-          CMISAccess.getInstance().createResourceController());
-
-    } catch (UnsupportedEncodingException e2) {
-
-      // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
-    }
+    // Get the <Code>getCustomURL</Code> of the document created
+    urlAsTring = CmisURLConnection.generateURLObject(documentCreated,
+        CMISAccess.getInstance().createResourceController());
 
     System.out.println(urlAsTring);
 

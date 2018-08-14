@@ -10,8 +10,6 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,13 +49,20 @@ public class CmisURLConnection extends URLConnection {
 	private static final String PATH_PARAM = "path";
 
 	// CONSTRUCTOR
-	public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
+	public CmisURLConnection(URL url, CMISAccess cmisAccess) {
 		super(url);
 		this.cmisAccess = cmisAccess;
-		this.credentials = credentials;
-
 	}
-
+	
+	/**
+	 * 
+	 * @param credentials
+	 */
+	public void setCredentials(UserCredentials credentials) {
+		this.credentials = credentials;
+		//cmisAccess.connectToRepo(url, null, credentials);
+	}
+	
 	/**
 	 * 
 	 * @param object
@@ -65,8 +70,9 @@ public class CmisURLConnection extends URLConnection {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
+	// TODO: param parentURL
 	public static String generateURLObject(CmisObject object, ResourceController _ctrl)
-			throws UnsupportedEncodingException {
+			 {
 		ResourceController ctrl = _ctrl;
 
 		// Builder for building custom URL
@@ -76,7 +82,7 @@ public class CmisURLConnection extends URLConnection {
 		String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
 
 		// Encode server URL
-		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
+		originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
 
 		// Generate first part of custom URL
 		urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
@@ -85,15 +91,19 @@ public class CmisURLConnection extends URLConnection {
 		// Get path of Cmis Object
 		List<String> objectPath = ((FileableCmisObject) object).getPaths();
 
+		// TODO: if (!parentURL.isEmpty()) {
 		// !!!!!!!!!!!!
 		// Appeding file path to URL and encode spaces
 		for (int i = 0; i < objectPath.size(); i++) {
+			// TODO: if (objectPath.startsWith(parentURL)) {
 			for (String pth : objectPath.get(i).split("/")) {
 				if (!pth.isEmpty()) {
 					urlb.append("/").append(URLUtil.encodeURIComponent(pth));
 				}
 			}
 		}
+		// } else { /* The file should be in the root folder - there is no path to
+		// append. Only the file name*/ }
 		return urlb.toString();
 	}
 
@@ -147,32 +157,22 @@ public class CmisURLConnection extends URLConnection {
 	 */
 	public static URL getServerURL(String customURL, Map<String, String> param)
 			throws MalformedURLException, UnsupportedEncodingException {
-		String originalProtocol = "";
 
 		logger.info("CmisURLConnection.getServerURL() --> " + customURL);
-
-		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
-			originalProtocol = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
-
-			// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		} else {
-			originalProtocol = customURL.replaceFirst(("https://"), "");
-		}
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-		// Get server URL, put it into originalProtocol and replace from customURL
-		originalProtocol = originalProtocol.substring(0, originalProtocol.indexOf("/"));
-		customURL = customURL.replaceFirst(originalProtocol, "");
 
 		// Replace CMIS part
 		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			customURL = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
-
-			// ONLY FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		} else {
-			customURL = customURL.replaceFirst(("https://"), "");
+			// Test only!
+			customURL = customURL.replaceFirst(customURL.substring(0, customURL.indexOf("://") + "://".length()), "");
 		}
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		String originalProtocol = customURL;
+
+		// Get server URL, put it into originalProtocol and replace from customURL
+		originalProtocol = originalProtocol.substring(0, originalProtocol.indexOf("/"));
+		customURL = customURL.replaceFirst(originalProtocol, "");
 
 		customURL = customURL.replaceFirst("/", "");
 
@@ -181,7 +181,9 @@ public class CmisURLConnection extends URLConnection {
 			param.put(REPOSITORY_PARAM, customURL.substring(0, customURL.indexOf("/")));
 		}
 
-		customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
+		if (param != null) {
+			customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
+		}
 		customURL = URLUtil.decodeURIComponent(customURL);
 
 		// Save file path
@@ -190,7 +192,7 @@ public class CmisURLConnection extends URLConnection {
 		}
 
 		// Creating server URL
-		originalProtocol = URLDecoder.decode(originalProtocol, "UTF-8");
+		originalProtocol = URLUtil.decodeURIComponent(originalProtocol);
 		String protocol = originalProtocol.substring(0, originalProtocol.indexOf("://"));
 
 		URL url = new URL(originalProtocol + "/");
@@ -255,20 +257,23 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UnsupportedEncodingException
 	 */
 	public List<Repository> getReposList(URL url1, UserCredentials credentials)
-			throws MalformedURLException, UnsupportedEncodingException {
+			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
 
 		String serverUrl = url1.toExternalForm();
 
 		if (serverUrl.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			serverUrl = serverUrl.replaceFirst((CMIS_PROTOCOL + "://"), "");
 		} else {
-			serverUrl = serverUrl.replaceFirst(serverUrl
-					.substring(0, serverUrl.indexOf("://") + "://".length()), "");
+			serverUrl = serverUrl.replaceFirst(serverUrl.substring(0, serverUrl.indexOf("://") + "://".length()), "");
 		}
+
+		serverUrl = URLUtil.decodeURIComponent(serverUrl);
+		List<Repository> list = cmisAccess.connectToServerGetRepositories(new URL(serverUrl), credentials);
 		
-		serverUrl = URLDecoder.decode(serverUrl, "UTF-8");
+		return list;
+	}
 
-		return cmisAccess.connectToServerGetRepositories(new URL(serverUrl), credentials);
-
+	public CMISAccess getAccess() {
+		return cmisAccess;
 	}
 }

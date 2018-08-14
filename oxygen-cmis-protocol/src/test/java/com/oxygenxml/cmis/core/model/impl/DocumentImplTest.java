@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;

@@ -198,7 +198,10 @@ public class ConnectionTestBase {
 		if (url == null) {
 			throw new NullPointerException();
 		}
-		return new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance(), credentials).getCMISObject(url);
+		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance());
+		cuc.setCredentials(new UserCredentials("admin", "admin"));
+		
+		return cuc.getCMISObject(url);
 	}
   
   
