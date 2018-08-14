@@ -69,14 +69,14 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private IResource currentParent;
   private DefaultListCellRenderer regularRenderer;
   private SearchResultCellRenderer seachRenderer;
-  
+
   ContentSearchProvider contentProvider;
 
   /**
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(ItemListView.class);
-  
+
   public void setContentProvider(ContentSearchProvider contentProvider) {
     this.contentProvider = contentProvider;
     contentProvider.addSearchListener(this);
@@ -89,10 +89,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param tabsPresenter
    * @param breadcrumbPresenter
    */
-  ItemListView(
-      TabsPresenter tabsPresenter, 
-      BreadcrumbPresenter breadcrumbPresenter) {
-    
+  ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
 
     // Create the listItem
     resourceList = new JList<IResource>();
@@ -161,49 +158,50 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     resourceList.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(final MouseEvent e) {
-
+        IResource currentItem = null;
         // Get the location of the item using location of the click
         int itemIndex = resourceList.locationToIndex(e.getPoint());
+        if (itemIndex != -1) {
 
-        // Get the current item
-        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+          // Get the current item
+          currentItem = resourceList.getModel().getElementAt(itemIndex);
 
-        // If right click was pressed
-        if (SwingUtilities.isRightMouseButton(e)) {
-          menu = new JPopupMenu();
+          // If right click was pressed
+          if (SwingUtilities.isRightMouseButton(e)) {
+            menu = new JPopupMenu();
 
-          // Get the bounds of the item
-          Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
+            // Get the bounds of the item
+            Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
 
-          // Check if the lick was outside the visible list
-          if (!cellBounds.contains(e.getPoint())) {
+            // Check if the lick was outside the visible list
+            if (!cellBounds.contains(e.getPoint())) {
 
-            // Create de menu for the outside list
-            createExternalListJMenu();
+              // Create de menu for the outside list
+              createExternalListJMenu();
 
-          } else {
+            } else {
 
-            // Set selected on right click
-            resourceList.setSelectedIndex(itemIndex);
+              // Set selected on right click
+              resourceList.setSelectedIndex(itemIndex);
 
-            if (currentItem instanceof DocumentImpl) {
+              if (currentItem instanceof DocumentImpl) {
 
-              // Create the JMenu for the document
-              createDocumentJMenu(currentItem);
+                // Create the JMenu for the document
+                createDocumentJMenu(currentItem);
 
-            } else if (currentItem instanceof FolderImpl) {
+              } else if (currentItem instanceof FolderImpl) {
 
-              // Create the JMenu for the folder
-              createFolderJMenu(currentItem);
+                // Create the JMenu for the folder
+                createFolderJMenu(currentItem);
 
+              }
             }
+
+            // Bounds of the click
+            menu.show(ItemListView.this, e.getX(), e.getY());
+
           }
-
-          // Bounds of the click
-          menu.show(ItemListView.this, e.getX(), e.getY());
-
         }
-
         // Check if user clicked two times
         if (itemIndex != -1 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 
@@ -225,8 +223,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
               // Present the document in tabs
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
 
-              // Present document in Oxygen
-              new OpenDocumentAction(currentItem).openDocumentPath();
+              if (((DocumentImpl) currentItem).isCheckedOut() && ((DocumentImpl) currentItem).isPrivateWorkingCopy()) {
+                // Present document in Oxygen
+                new OpenDocumentAction(currentItem).openDocumentPath();
+              }
 
             } else {
 
@@ -479,7 +479,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       @Override
       public void refresh() {
-       contentProvider.doSearch(filter);
+        contentProvider.doSearch(filter);
       }
 
       @Override

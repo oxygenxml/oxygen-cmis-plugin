@@ -39,6 +39,13 @@ public class OpenDocumentAction extends AbstractAction {
     super("Open document", UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
+    if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
+      
+      this.enabled = true;
+      
+    } else {
+      this.enabled = false;
+    }
   }
 
   /**
@@ -57,7 +64,9 @@ public class OpenDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+
     openDocumentPath();
+
   }
 
   public void openDocumentPath() {

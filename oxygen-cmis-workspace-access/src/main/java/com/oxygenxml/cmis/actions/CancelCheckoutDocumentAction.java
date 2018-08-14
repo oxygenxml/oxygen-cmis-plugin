@@ -39,6 +39,14 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+    
+    if (((DocumentImpl) resource).isCheckedOut()) {
+
+      this.enabled = true;
+
+    } else {
+      this.enabled = false;
+    }
   }
 
   /**
@@ -59,7 +67,7 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
 
       // Commit the <Code>cancelCheckOut</Code>
       doc.cancelCheckOut();
-      
+
       if (currentParent.getId().equals("#search.results")) {
         currentParent.refresh();
 

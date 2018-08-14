@@ -41,6 +41,13 @@ public class CheckinDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+    if (((DocumentImpl) resource).isCheckedOut()) {
+
+      this.enabled = true;
+
+    } else {
+      this.enabled = false;
+    }
   }
 
   /**

@@ -42,6 +42,16 @@ public class CancelCheckoutFolderAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+
+    if (checkCanCancelCheckoutFolder(resource)) {
+
+      this.enabled = true;
+
+    } else {
+      this.enabled = false;
+
+    }
+
   }
 
   /**
@@ -61,6 +71,8 @@ public class CancelCheckoutFolderAction extends AbstractAction {
   public void actionPerformed(ActionEvent e) {
 
     cancelCheckoutFolder(resource);
+
+    this.enabled = false;
 
     if (currentParent.getId().equals("#search.results")) {
       currentParent.refresh();
@@ -104,7 +116,47 @@ public class CancelCheckoutFolderAction extends AbstractAction {
           try {
 
             // Commit the <Code>cancelCheckOout()</Code>
-            ((DocumentImpl) iResource).cancelCheckOut();
+            if (((DocumentImpl) iResource).isCheckedOut()) {
+              ((DocumentImpl) iResource).cancelCheckOut();
+            }
+          } catch (Exception ev) {
+
+            // Show the exception if there is one
+            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+          }
+        }
+      }
+    }
+  }
+
+  private boolean checkCanCancelCheckoutFolder(IResource resource) {
+
+    // Get all the children of the item in an iterator
+    Iterator<IResource> childrenIterator = resource.iterator();
+
+    if (childrenIterator != null) {
+
+      // While has a child, add to the model
+      while (childrenIterator.hasNext()) {
+
+        // Get the next child
+        IResource iResource = (IResource) childrenIterator.next();
+
+        // Check if it's a custom type interface FolderImpl
+        if (iResource instanceof FolderImpl) {
+
+          // Call the helper method used for recursion
+          checkCanCancelCheckoutFolder(iResource);
+
+        } else if (iResource instanceof DocumentImpl) {
+
+          // If it is a document type of custom interface
+          try {
+
+            if (((DocumentImpl) iResource).isCheckedOut()) {
+              // return true if a document was found checked out so
+              return true;
+            }
 
           } catch (Exception ev) {
 
@@ -114,5 +166,6 @@ public class CancelCheckoutFolderAction extends AbstractAction {
         }
       }
     }
+    return false;
   }
 }
