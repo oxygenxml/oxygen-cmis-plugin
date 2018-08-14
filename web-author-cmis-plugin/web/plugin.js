@@ -48,7 +48,7 @@ var cmisTimeOut = 5000;
    * @param {function} authenticated The callback when the user was authenticated - successfully or not.
    */
   var loginDialog_ = null;
-  function login(authenticated) {
+  function login(serverUrl, authenticated) {
     var cmisNameInput,
       cmisPasswordInput;
     // pop-up an authentication window,
@@ -115,6 +115,8 @@ var cmisTimeOut = 5000;
       userInput.value = lastUser;
       userInput.select();
     }
+
+    
 }
 
 	window.login = login;
@@ -129,29 +131,35 @@ var cmisTimeOut = 5000;
         } catch (e) {
           console.warn(e);
         }
-
         logoutCallback();
       }, this),
       'POST');
 };
 
 
+
   cmisFileRepo.createRepositoryAddressComponent = function (rootUrlParam, currentBrowseUrl, rootURLChangedCallback) {
     var div = document.createElement('div');
+
     if (rootUrl) {
       console.log(rootUrl, rootUrlParam, currentBrowseUrl);
       if (!rootUrlParam) {
-       setTimeout(function() {
+      if (!this.rootUrlSet) {
+        this.rootUrlSet = true;
+        setTimeout(function() {
           rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
-        }, cmisTimeOut)
-       // rootURLChangedCallback(rootUrl, rootUrl + '-default-/') // TODO: bug in web author.
+        }, 0)
+      // rootURLChangedCallback(rootUrl, rootUrl); // TODO: bug in web author.
+      }
       }
       div.textContent = 'CMIS'; // TODO: use the CMIS server host name
+  
     } else {
       div.textContent = 'Please set the CMIS API URL in the Admin Page Configuration.'; // TODO link to documentation.
     }
     return div;
   };
+
   
 
 cmisFileRepo.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {

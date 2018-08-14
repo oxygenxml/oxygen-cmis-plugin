@@ -53,7 +53,7 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 	 */
 	@Test(timeout = 10000)
 	public void testDocumentDelete() throws IOException {
-		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
+		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain", "none");
 		debugPrint(testFolder);
 
 		if (documentExists(document, testFolder)) {
@@ -72,7 +72,7 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 		Folder sourceFolder = testFolder;
 		Folder targetFolder = testFolder.createFolder(properties);
 
-		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
+		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain", "none");
 
 		ctrl.move(sourceFolder, targetFolder, document);
 
@@ -83,7 +83,7 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 
 	@Test(timeout = 10000)
 	public void testDocumentContent() throws IOException {
-		Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text", "text/plain");
+		Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text", "text/plain", "none");
 
 		Reader docContent = ctrl.getDocumentContent(doc.getId());
 

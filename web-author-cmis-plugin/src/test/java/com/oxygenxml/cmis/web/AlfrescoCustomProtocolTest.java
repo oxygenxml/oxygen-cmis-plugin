@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -28,8 +29,6 @@ import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import ro.sync.net.protocol.FolderEntryDescriptor;
-
-
 
 public class AlfrescoCustomProtocolTest {
 
@@ -71,14 +70,18 @@ public class AlfrescoCustomProtocolTest {
 	@Test
 	public void testGenerateUrl() throws IOException {
 		SearchController search = new SearchController(ctrl);
-		List<IResource> docs = search.queringDoc("flowers.dita");
+		List<IResource> docs = search.queryDoc("flowers.dita");
 
 		Document doc = ((IDocument) docs.get(0)).getDoc();
 		assertNotNull(doc);
-
+		
+		System.out.println(URLConnection.guessContentTypeFromName(".dita"));
+		
 		String url = CmisURLConnection.generateURLObject(doc, ctrl);
 		System.out.println("URL: " + URLEncoder.encode(url, "UTF-8"));
 		System.out.println(url);
+
+		System.out.println("TUT " + CMISAccess.getInstance().getSession().toString());
 
 		Document doc1 = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 		System.out.println(doc1.getName());
@@ -122,7 +125,7 @@ public class AlfrescoCustomProtocolTest {
 		CmisURLConnection cuc = new CmisURLConnection(new URL(url), CMISAccess.getInstance());
 		cuc.setCredentials(new UserCredentials("admin", "admin"));
 		FileableCmisObject object = (FileableCmisObject) cuc.getCMISObject(url);
-		
+
 		if (ctrl == null) {
 			logger.info("ResourceController is null!");
 		}
@@ -154,7 +157,8 @@ public class AlfrescoCustomProtocolTest {
 		cuc.setCredentials(new UserCredentials("admin", "admin"));
 		String sURL = "https://http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/";
 
-		List<Repository> reposList = cuc.getReposList(new URL(sURL), new UserCredentials("admin", "admin"));
+		List<Repository> reposList = cuc.getAccess().connectToServerGetRepositories(CmisURLConnection.getServerURL(sURL, null),
+				new UserCredentials("admin", "admin"));
 
 		for (Repository repos : reposList) {
 			System.out.println(repos.getName() + " " + repos.getId());
@@ -165,11 +169,11 @@ public class AlfrescoCustomProtocolTest {
 		System.out.println(url);
 	}
 
-	public String generateRepoUrl(Repository repo, ResourceController _ctrl) throws UnsupportedEncodingException, MalformedURLException {
+	public String generateRepoUrl(Repository repo, ResourceController _ctrl)
+			throws UnsupportedEncodingException, MalformedURLException {
 		StringBuilder urlb = new StringBuilder();
 
-		String originalProtocol = _ctrl.getSession().getSessionParameters()
-				.get(SessionParameter.ATOMPUB_URL);
+		String originalProtocol = _ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
 
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
 
@@ -179,14 +183,14 @@ public class AlfrescoCustomProtocolTest {
 
 		return urlb.toString();
 	}
-	
+
 	public CmisObject getObjectFromURL(String url, String serverUrl, UserCredentials credentials) throws IOException {
 		if (url == null) {
 			throw new NullPointerException();
 		}
 		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance());
 		cuc.setCredentials(new UserCredentials("admin", "admin"));
-		
+
 		return cuc.getCMISObject(url);
 	}
 

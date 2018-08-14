@@ -5,6 +5,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -28,21 +29,36 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
 		SessionStore sessionStore = workspace.getSessionStore();
 
-		// Getting credentials
+		// Getting credentials and another information
 		UserCredentials credentials = sessionStore.get(contextId, "credentials");
+		CMISAccess cmisAccess = new CMISAccess();
+		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess);
+		URL serverUrl = CmisURLConnection.getServerURL(url.toExternalForm(), null);
+		
+		logger.info("Server URL = " + serverUrl.toExternalForm());
+		
+		WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 
-		if (credentials == null) {
-			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+		if (credentials != null) {
+			logger.info(credentials.toString());
+			
+			try {
+				cmisAccess.connectToServerGetRepositories(serverUrl, credentials);
+			} catch (CmisUnauthorizedException e) {
+				logger.info("getInputStream() ---> " + e.toString()); 	
+				throw new UserActionRequiredException(webappMessage);
+			}
+		} else {
 			throw new UserActionRequiredException(webappMessage);
 		}
+		
 
-		 logger.info("CmisStreamHandler.openConnectionInContext() ---> " +
-		 url.toExternalForm() + " -- " + credentials != null ? credentials.toString() : "Is NULL" );
+		/* logger.info("CmisStreamHandler.openConnectionInContext() ---> " +
+		 url.toExternalForm() + " -- " + credentials != null ? credentials.toString() : "Is NULL" );*/
 		 
 		// Creating URLConnection with credentials
-		CmisURLConnection cuc = new CmisURLConnection(url, new CMISAccess());
 
-		return new CmisBrowsingURLConnection(cuc, credentials);
+		return new CmisBrowsingURLConnection(cuc, credentials, serverUrl);
 	}
 
 }

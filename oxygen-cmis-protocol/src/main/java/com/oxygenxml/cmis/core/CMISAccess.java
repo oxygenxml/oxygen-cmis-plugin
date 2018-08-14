@@ -36,9 +36,7 @@ public class CMISAccess {
 	 * data across calls and to deal with user authentication.
 	 */
 	private Session session;
-
-  private Map<String, String> parameters;
-
+	private Map<String, String> parameters;
 	/**
 	 * Private constructor.
 	 * For Web-Author we need more instances of CMISAccess
@@ -53,17 +51,19 @@ public class CMISAccess {
 		}
 		return instance;
 	}
+
 	
 	public CMISAccess clone() {
-	  CMISAccess cmisAccess = new CMISAccess();
-	  
-	  cmisAccess.parameters = parameters;
-    // create session
-	  cmisAccess.session = factory.createSession(parameters);
-    
-	  return cmisAccess;
-	}
-
+		  CMISAccess cmisAccess = new CMISAccess();
+		  
+		  cmisAccess.parameters = parameters;
+	    // create session
+		  cmisAccess.session = factory.createSession(parameters);
+	    
+		  return cmisAccess;
+		}
+	
+	
 	/**
 	 * "http://localhost:8080/atom11 http://localhost:8080/B/atom11"
 	 * 
@@ -116,7 +116,7 @@ public class CMISAccess {
 
 		return factory.getRepositories(parameters);
 	}
-
+	
 	/**
 	 * @return A controller to work with resources.
 	 */

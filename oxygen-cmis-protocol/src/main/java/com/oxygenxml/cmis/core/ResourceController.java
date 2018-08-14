@@ -16,6 +16,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 
 public class ResourceController {
 
@@ -45,9 +46,8 @@ public class ResourceController {
    * @return
    * @throws UnsupportedEncodingException
    */
-  public Document createDocument(Folder path, String filename, String content, String mimeType)
-      throws UnsupportedEncodingException {
-
+  public Document createDocument(Folder path, String filename, String content, String mimeType, String state)
+      throws UnsupportedEncodingException, CmisConstraintException {
     // TODO Pass a Reader instead of a String as content.
 
     String mimetype = mimeType.concat("; charset=UTF-8");
@@ -65,7 +65,7 @@ public class ResourceController {
     properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
 
     // create the document
-    return path.createDocument(properties, contentStream, VersioningState.NONE);
+    return path.createDocument(properties, contentStream, VersioningState.fromValue(state));
   }
 
   /**

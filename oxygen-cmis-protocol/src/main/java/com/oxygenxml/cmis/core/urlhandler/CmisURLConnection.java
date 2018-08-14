@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,13 @@ import org.apache.log4j.Logger;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
-import org.apache.chemistry.opencmis.client.api.Repository;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
+import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -47,22 +51,23 @@ public class CmisURLConnection extends URLConnection {
 	public static final String CMIS_PROTOCOL = "cmis";
 	private static final String REPOSITORY_PARAM = "repo";
 	private static final String PATH_PARAM = "path";
+	private static final String CONTENT_SAMPLE = "Empty";
 
 	// CONSTRUCTOR
 	public CmisURLConnection(URL url, CMISAccess cmisAccess) {
 		super(url);
 		this.cmisAccess = cmisAccess;
 	}
-	
+
 	/**
 	 * 
 	 * @param credentials
 	 */
 	public void setCredentials(UserCredentials credentials) {
 		this.credentials = credentials;
-		//cmisAccess.connectToRepo(url, null, credentials);
+		// cmisAccess.connectToRepo(url, null, credentials);
 	}
-	
+
 	/**
 	 * 
 	 * @param object
@@ -71,8 +76,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UnsupportedEncodingException
 	 */
 	// TODO: param parentURL
-	public static String generateURLObject(CmisObject object, ResourceController _ctrl)
-			 {
+	public static String generateURLObject(CmisObject object, ResourceController _ctrl) {
 		ResourceController ctrl = _ctrl;
 
 		// Builder for building custom URL
@@ -121,7 +125,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UserActionRequiredException
 	 */
 	public CmisObject getCMISObject(String url) throws MalformedURLException, UnsupportedEncodingException,
-			CmisUnauthorizedException, UserActionRequiredException {
+			CmisUnauthorizedException, CmisObjectNotFoundException {
 
 		// Decompose the custom URL in query elements
 		Map<String, String> param = new HashMap<>();
@@ -143,7 +147,9 @@ public class CmisURLConnection extends URLConnection {
 		String path = param.get(PATH_PARAM);
 
 		// Get and return from server cmis object
-		return bigCtrl.getSession().getObjectByPath(path);
+		CmisObject object = bigCtrl.getSession().getObjectByPath(path);
+
+		return object;
 	}
 
 	/**
@@ -184,10 +190,10 @@ public class CmisURLConnection extends URLConnection {
 		if (param != null) {
 			customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
 		}
-		customURL = URLUtil.decodeURIComponent(customURL);
 
 		// Save file path
 		if (param != null) {
+			customURL = URLUtil.decodeURIComponent(customURL);
 			param.put(PATH_PARAM, customURL);
 		}
 
@@ -222,17 +228,69 @@ public class CmisURLConnection extends URLConnection {
 			@Override
 			public void close() throws IOException {
 				// All bytes have been written.
-				Document document = (Document) getCMISObject(getURL().toExternalForm());
-				byte[] byteArray = toByteArray();
-				ContentStream contentStream = new ContentStreamImpl(document.getName(),
-						BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
-						new ByteArrayInputStream(byteArray));
+				Document document = null;
+				try {
+					document = (Document) getCMISObject(getURL().toExternalForm());
+					
+					byte[] byteArray = toByteArray();
+					ContentStream contentStream = new ContentStreamImpl(document.getName(),
+							BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
+							new ByteArrayInputStream(byteArray));
 
-				// TODO What to do if the system created a new document.
-				// TODO Maybe refresh the browser....
-				document.setContentStream(contentStream, true);
+					// TODO What to do if the system created a new document.
+					// TODO Maybe refresh the browser....
+					document.setContentStream(contentStream, true);
+					
+				} catch (CmisObjectNotFoundException e) {
+					// TODO: create if doesn't exist!
+					logger.info("CATCHED!!!" + url.toExternalForm());
+					createIfNotExist(document);
+				}
 			}
 		};
+	}
+
+	/**
+	 * 
+	 * @param document
+	 * @throws MalformedURLException
+	 * @throws UnsupportedEncodingException
+	 */
+	public void createIfNotExist(Document document) throws MalformedURLException, UnsupportedEncodingException {
+		logger.info("HERE!!!!!");
+		
+		HashMap<String, String> param = new HashMap<>();
+		getServerURL(url.toExternalForm(), param);
+
+		String path = param.get(PATH_PARAM);
+		ArrayList<String> list = new ArrayList<>();
+
+		logger.info("AND HERREEEE!!!!");
+		
+		for (String temp : path.split("/")) {
+			list.add(temp);
+		}
+		
+		String fileName = list.get(list.size() - 1);
+		path = path.replace(fileName, "");
+
+		String mimeType = fileName.substring(fileName.indexOf("."), fileName.length());
+		mimeType = MimeTypes.getMIMEType(mimeType);
+
+		if(mimeType == "application/octet-stream") {
+			mimeType = "text/xml";
+		}
+		
+		logger.info("AAAAND HEEEREE IS MIMETYPE! " + mimeType );
+		
+		
+		Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
+		
+		try {
+			document = bigCtrl.createDocument(rootFolder, fileName, CONTENT_SAMPLE , mimeType, "none");
+		} catch (CmisConstraintException e) {
+			document = bigCtrl.createDocument(rootFolder, fileName, CONTENT_SAMPLE , mimeType, "major");
+		}
 	}
 
 	/**
@@ -244,33 +302,10 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UserActionRequiredException
 	 */
 	public ResourceController getCtrl(URL url1)
-			throws MalformedURLException, UnsupportedEncodingException, UserActionRequiredException {
+			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
+		
 		getCMISObject(url1.toExternalForm());
 		return bigCtrl;
-	}
-
-	/**
-	 * 
-	 * @param url1
-	 * @return Repository List
-	 * @throws MalformedURLException
-	 * @throws UnsupportedEncodingException
-	 */
-	public List<Repository> getReposList(URL url1, UserCredentials credentials)
-			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
-
-		String serverUrl = url1.toExternalForm();
-
-		if (serverUrl.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
-			serverUrl = serverUrl.replaceFirst((CMIS_PROTOCOL + "://"), "");
-		} else {
-			serverUrl = serverUrl.replaceFirst(serverUrl.substring(0, serverUrl.indexOf("://") + "://".length()), "");
-		}
-
-		serverUrl = URLUtil.decodeURIComponent(serverUrl);
-		List<Repository> list = cmisAccess.connectToServerGetRepositories(new URL(serverUrl), credentials);
-		
-		return list;
 	}
 
 	public CMISAccess getAccess() {

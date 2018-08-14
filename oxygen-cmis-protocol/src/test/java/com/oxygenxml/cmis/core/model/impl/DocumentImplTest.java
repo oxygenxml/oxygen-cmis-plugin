@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.core.model.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -104,11 +105,9 @@ public class DocumentImplTest extends ConnectionTestBase {
   public void testGetDisplayName() throws UnsupportedEncodingException {
     Document doc = null;
 
-    // Set Up
     doc = createDocument(root, "testDoc_name", "some text");
     DocumentImpl docTest = new DocumentImpl(doc);
 
-    System.out.println("Doc name: " + docTest.getDisplayName());
     assertEquals("testDoc_name", docTest.getDisplayName());
 
   }
@@ -138,26 +137,18 @@ public class DocumentImplTest extends ConnectionTestBase {
     DocumentImpl docImpl = new DocumentImpl(doc);
 
     ItemIterable<QueryResult> q = docImpl.getQuery(ctrl);
+    
+    assertNotNull(docImpl);
+    assertNotNull(q);
 
-    for (QueryResult qr : q) {
-      System.out.println("------------------------------------------\n"
-          + qr.getPropertyByQueryName("cmis:objectTypeId").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:name").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:createdBy").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:contentStreamFileName").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:contentStreamMimeType").getFirstValue() + " , "
-          + qr.getPropertyByQueryName("cmis:contentStreamLength").getFirstValue());
-    }
   }
 
   @Test
   public void testGetDocumentPath() throws UnsupportedEncodingException {
-
     SearchController search = new SearchController(ctrl);
     List<IResource> list = search.queryDocName("Document-2");
 
     IDocument doc = (IDocument) list.get(0);
-    System.out.println(doc.getDocumentPath(ctrl));
     assertEquals("/RootFolder/My_Folder-0-0/My_Folder-1-1/My_Document-2-0/", doc.getDocumentPath(ctrl));
 
   }
@@ -171,14 +162,13 @@ public class DocumentImplTest extends ConnectionTestBase {
     Document doc = createDocument(root, "queryTestFile2", "some text");
 
     if (Boolean.TRUE.equals(doc.isLatestVersion())) {
-
       latest = doc;
     } else {
-
       latest = doc.getObjectOfLatestVersion(false);
     }
-    System.out.println(latest.getName());
-    System.out.println(latest.getContentStream().toString());
+   
+    assertEquals("queryTestFile2", latest.getName());
+    assertNotNull(latest);
   }
 
   @After
