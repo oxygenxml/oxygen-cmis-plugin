@@ -84,15 +84,21 @@ public class SearchView extends JPanel implements ContentSearchProvider {
         // Get the entered text and trim of white space from both sides
         final String searchText = searchField.getText().trim();
 
-        // Get the search results of the query
-        List<IResource> queryResults = searchItems(searchText);
-
-        // Fire the search for each listener
-        fireSearchFinished(searchText, queryResults);
+        doSearch(searchText);
       }
+
     });
 
     add(searchButton, c);
+  }
+  
+  
+  public void doSearch(final String searchText) {
+    // Get the search results of the query
+    List<IResource> queryResults = searchItems(searchText);
+    
+    // Fire the search for each listener
+    fireSearchFinished(searchText, queryResults);
   }
 
   /**
@@ -103,7 +109,7 @@ public class SearchView extends JPanel implements ContentSearchProvider {
    */
   protected void fireSearchFinished(String searchText, List<IResource> queryResults) {
     for (SearchListener l : listeners) {
-      l.searchFinished(searchText, queryResults, this);
+      l.searchFinished(searchText, queryResults);
     }
   }
 
@@ -112,7 +118,7 @@ public class SearchView extends JPanel implements ContentSearchProvider {
    * 
    * @param searchListener
    */
-  void addSearchListener(SearchListener searchListener) {
+  public void addSearchListener(SearchListener searchListener) {
     listeners.add(searchListener);
   }
 

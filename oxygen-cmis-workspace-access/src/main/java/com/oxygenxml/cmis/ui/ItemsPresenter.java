@@ -35,4 +35,5 @@ public interface ItemsPresenter {
   void presentFolderItems(IFolder folder);
   
   void presentResources(IResource parentResource);
+
 }

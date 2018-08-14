@@ -69,8 +69,7 @@ public class ControlComponents extends JPanel {
     // Initialization of the search
     searchPanel = new SearchView(itemsPanel);
     
-    //Add a listener for the itemsPanel 
-    searchPanel.addSearchListener(itemsPanel);
+    itemsPanel.setContentProvider(searchPanel);
 
     // Initialization of the repositories
     repoComboBox = new RepoComboBoxView(itemsPanel, breadcrumbList);

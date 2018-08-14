@@ -65,8 +65,13 @@ public class DeleteDocumentAction extends AbstractAction {
       CMISAccess.getInstance().createResourceController().deleteOneVersionDocument(doc.getDoc());
 
       // Present the new content of the parent resource
-      currentParent.refresh();
-      itemsPresenter.presentResources(currentParent);
+      if (currentParent.getId().equals("#search.results")) {
+        currentParent.refresh();
+
+      } else {
+        currentParent.refresh();
+        itemsPresenter.presentResources(currentParent);
+      }
 
     } catch (Exception ev) {
 

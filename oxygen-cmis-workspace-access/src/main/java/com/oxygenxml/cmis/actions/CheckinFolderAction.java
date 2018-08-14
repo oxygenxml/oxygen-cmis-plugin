@@ -61,8 +61,13 @@ public class CheckinFolderAction extends AbstractAction {
 
     checkinFolder(resource);
 
-    currentParent.refresh();
-    itemsPresenter.presentResources(currentParent);
+    if (currentParent.getId().equals("#search.results")) {
+      currentParent.refresh();
+
+    } else {
+      currentParent.refresh();
+      itemsPresenter.presentResources(currentParent);
+    }
   }
 
   /**

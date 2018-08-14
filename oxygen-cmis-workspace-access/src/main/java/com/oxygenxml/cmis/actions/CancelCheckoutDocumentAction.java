@@ -59,8 +59,14 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
 
       // Commit the <Code>cancelCheckOut</Code>
       doc.cancelCheckOut();
-      currentParent.refresh();
-      itemsPresenter.presentResources(currentParent);
+      
+      if (currentParent.getId().equals("#search.results")) {
+        currentParent.refresh();
+
+      } else {
+        currentParent.refresh();
+        itemsPresenter.presentResources(currentParent);
+      }
 
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException ev) {
 

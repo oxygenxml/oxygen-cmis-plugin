@@ -59,8 +59,13 @@ public class CheckoutFolderAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
     checkoutFolder(resource);
-    currentParent.refresh();
-    itemsPresenter.presentResources(currentParent);
+    if (currentParent.getId().equals("#search.results")) {
+      currentParent.refresh();
+
+    } else {
+      currentParent.refresh();
+      itemsPresenter.presentResources(currentParent);
+    }
   }
 
   /**

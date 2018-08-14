@@ -67,8 +67,13 @@ public class CheckinDocumentAction extends AbstractAction {
       // Commit the <Code>checkIn</Code> andgGet the ObjectId
       res = (ObjectId) doc.checkIn();
 
-      currentParent.refresh();
-      itemsPresenter.presentResources(currentParent);
+      if (currentParent.getId().equals("#search.results")) {
+        currentParent.refresh();
+
+      } else {
+        currentParent.refresh();
+        itemsPresenter.presentResources(currentParent);
+      }
 
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
 

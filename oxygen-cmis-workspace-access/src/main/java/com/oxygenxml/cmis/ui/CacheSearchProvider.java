@@ -77,7 +77,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
         }
       };
 
-      timer.schedule(task, 0);
+      timer.schedule(task, 60);
     }
 
     return lineDoc;
@@ -146,11 +146,21 @@ public class CacheSearchProvider implements ContentSearchProvider {
         }
       };
 
-      timer.schedule(task, 0);
+      timer.schedule(task, 60);
 
     }
 
     return pathDoc;
+  }
+
+  @Override
+  public void addSearchListener(SearchListener searchListener) {
+    searchProvider.addSearchListener(searchListener);
+  }
+
+  @Override
+  public void doSearch(String searchText) {
+    searchProvider.doSearch(searchText);
   }
 
 }

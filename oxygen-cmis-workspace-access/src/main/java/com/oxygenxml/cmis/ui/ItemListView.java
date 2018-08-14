@@ -68,11 +68,19 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   // Current folder inside
   private IResource currentParent;
   private DefaultListCellRenderer regularRenderer;
+  private SearchResultCellRenderer seachRenderer;
+  
+  ContentSearchProvider contentProvider;
 
   /**
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(ItemListView.class);
+  
+  public void setContentProvider(ContentSearchProvider contentProvider) {
+    this.contentProvider = contentProvider;
+    contentProvider.addSearchListener(this);
+  }
 
   /**
    * Constructor that gets the tabPresenter to show documents in tabs and
@@ -81,7 +89,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param tabsPresenter
    * @param breadcrumbPresenter
    */
-  ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+  ItemListView(
+      TabsPresenter tabsPresenter, 
+      BreadcrumbPresenter breadcrumbPresenter) {
+    
 
     // Create the listItem
     resourceList = new JList<IResource>();
@@ -369,6 +380,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param parentResource
    */
   private void presentResourcesInternal(IResource parentResource) {
+
     this.currentParent = parentResource;
 
     System.out.println("Current item=" + parentResource.getDisplayName());
@@ -399,6 +411,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   }
 
   @Override
+
   public void presentFolderItems(String folderID) {
 
     installRenderer(folderID);
@@ -417,19 +430,26 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   }
 
   private void installRenderer(String id) {
-    resourceList.setCellRenderer(regularRenderer);
+
+    if (id.equals("#search.results")) {
+      System.out.println("Search?");
+      resourceList.setCellRenderer(seachRenderer);
+    } else {
+      resourceList.setCellRenderer(regularRenderer);
+
+    }
   }
 
   @Override
-  public void searchFinished(String filter, final List<IResource> resources, ContentSearchProvider contentProvider) {
+  public void searchFinished(String filter, final List<IResource> resources) {
 
     // Provides the threads needed for async response
     CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
-    
+
     // Create a rendered by using the custom renderer with the resources from
     // cache (data gotten and the filter(text to search))
-    SearchResultCellRenderer cellRenderer = new SearchResultCellRenderer(csp, filter);
-    resourceList.setCellRenderer(cellRenderer);
+    seachRenderer = new SearchResultCellRenderer(csp, filter);
+    resourceList.setCellRenderer(seachRenderer);
 
     IResource parentResource = new IFolder() {
       @Override
@@ -459,6 +479,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       @Override
       public void refresh() {
+       contentProvider.doSearch(filter);
       }
 
       @Override

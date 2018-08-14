@@ -70,7 +70,13 @@ public class DeleteFolderAction extends AbstractAction {
       CMISAccess.getInstance().createResourceController().deleteFolderTree(folderToDelete.getFolder());
 
       // Present the newly updated content of the parent folder
-      itemsPresenter.presentFolderItems(currentParent.getId());
+      if (currentParent.getId().equals("#search.results")) {
+        currentParent.refresh();
+
+      } else {
+        currentParent.refresh();
+        itemsPresenter.presentResources(currentParent);
+      }
 
     } catch (Exception ev) {
 
