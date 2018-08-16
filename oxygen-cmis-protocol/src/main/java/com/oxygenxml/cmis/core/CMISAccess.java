@@ -24,10 +24,12 @@ public class CMISAccess {
 	 * Singleton instance.
 	 */
 	private static CMISAccess instance;
+
 	/**
 	 * Session factory.
 	 */
 	private SessionFactoryImpl factory;
+
 	/**
 	 * A session to the CMIS server. As as far as I can tell, this object can be
 	 * kept and reused:
@@ -37,9 +39,9 @@ public class CMISAccess {
 	 */
 	private Session session;
 	private Map<String, String> parameters;
+
 	/**
-	 * Private constructor.
-	 * For Web-Author we need more instances of CMISAccess
+	 * Private constructor. For Web-Author we need more instances of CMISAccess
 	 */
 	public CMISAccess() {
 		factory = SessionFactoryImpl.newInstance();
@@ -52,18 +54,16 @@ public class CMISAccess {
 		return instance;
 	}
 
-	
 	public CMISAccess clone() {
-		  CMISAccess cmisAccess = new CMISAccess();
-		  
-		  cmisAccess.parameters = parameters;
-	    // create session
-		  cmisAccess.session = factory.createSession(parameters);
-	    
-		  return cmisAccess;
-		}
-	
-	
+		CMISAccess cmisAccess = new CMISAccess();
+
+		cmisAccess.parameters = parameters;
+		// create session
+		cmisAccess.session = factory.createSession(parameters);
+
+		return cmisAccess;
+	}
+
 	/**
 	 * "http://localhost:8080/atom11 http://localhost:8080/B/atom11"
 	 * 
@@ -116,7 +116,7 @@ public class CMISAccess {
 
 		return factory.getRepositories(parameters);
 	}
-	
+
 	/**
 	 * @return A controller to work with resources.
 	 */

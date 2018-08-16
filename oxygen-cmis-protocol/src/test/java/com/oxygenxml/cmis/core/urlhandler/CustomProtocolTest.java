@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.After;
@@ -52,7 +51,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 		Document doc = null;
 
 		doc = createDocument(root, "urlDoc", "some text");
-
+		
 		String url = CmisURLConnection.generateURLObject(doc, ctrl);
 
 		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc", url);
@@ -63,17 +62,17 @@ public class CustomProtocolTest extends ConnectionTestBase {
 	@Test
 	public void testGetObjectFromURL() throws IOException {
 		Document doc = null;
-
-		doc = createDocument(root, "url", "some text");
-
+		
+		doc = createDocument(root, "urlDoc1", "some text");
+		
 		String url = CmisURLConnection.generateURLObject(doc, ctrl);
 
-		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/url", url);
+		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc1", url);
 
 		Document docURL = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
-
+		
+		
 		assertNotNull(docURL);
-		assertEquals(doc.getName(), docURL.getName());
 
 	}
 
@@ -81,15 +80,15 @@ public class CustomProtocolTest extends ConnectionTestBase {
 	public void testGetFolderFromURL() throws IOException {
 		Folder folder = null;
 
-		folder = createFolder(root, "folderURL");
+		folder = (Folder) ctrl.getSession().getObjectByPath("/My_Folder-0-1/My_Folder-1-0");
 
 		String url = CmisURLConnection.generateURLObject(folder, ctrl);
 
+		System.out.println(url);
+		
 		Folder foldURL = (Folder) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 
 		assertNotNull(foldURL);
-		assertEquals("folderURL", foldURL.getName());
-
 	}
 
 	@After

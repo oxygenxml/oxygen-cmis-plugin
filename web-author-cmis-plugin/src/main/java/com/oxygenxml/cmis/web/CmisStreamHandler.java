@@ -32,33 +32,27 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		// Getting credentials and another information
 		UserCredentials credentials = sessionStore.get(contextId, "credentials");
 		CMISAccess cmisAccess = new CMISAccess();
-		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess);
+		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
 		URL serverUrl = CmisURLConnection.getServerURL(url.toExternalForm(), null);
-		
+
 		logger.info("Server URL = " + serverUrl.toExternalForm());
-		
+
 		WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 
 		if (credentials != null) {
 			logger.info(credentials.toString());
-			
+
 			try {
 				cmisAccess.connectToServerGetRepositories(serverUrl, credentials);
 			} catch (CmisUnauthorizedException e) {
-				logger.info("getInputStream() ---> " + e.toString()); 	
+				logger.info("getInputStream() ---> " + e.toString());
 				throw new UserActionRequiredException(webappMessage);
 			}
 		} else {
 			throw new UserActionRequiredException(webappMessage);
 		}
-		
 
-		/* logger.info("CmisStreamHandler.openConnectionInContext() ---> " +
-		 url.toExternalForm() + " -- " + credentials != null ? credentials.toString() : "Is NULL" );*/
-		 
-		// Creating URLConnection with credentials
-
-		return new CmisBrowsingURLConnection(cuc, credentials, serverUrl);
+		return new CmisBrowsingURLConnection(cuc, serverUrl);
 	}
 
 }

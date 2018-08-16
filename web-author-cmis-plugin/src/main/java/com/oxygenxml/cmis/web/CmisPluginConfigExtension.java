@@ -29,7 +29,6 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 
 	@Override
 	public String getOptionsForm() {
-
 		String enforcedUrl = getOption(ENFORCED_URL, "");
 		StringBuilder optionsForm = new StringBuilder();
 		PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace())

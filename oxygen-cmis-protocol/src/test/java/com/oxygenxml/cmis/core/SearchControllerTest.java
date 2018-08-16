@@ -28,14 +28,10 @@ public class SearchControllerTest extends ConnectionTestBase {
   public void testQueringFolders() {
     SearchController search = new SearchController(ctrl);
 
-    List<IResource> folds = search.queryFolderName("Fold");
+    List<IResource> folds = search.queryFolderName("Folder-1-0");
 
     assertNotNull(folds);
 
-    /*
-     * for (IResource folder : folds) {
-     * System.out.println(folder.getDisplayName()); }
-     */
   }
 
   @Test

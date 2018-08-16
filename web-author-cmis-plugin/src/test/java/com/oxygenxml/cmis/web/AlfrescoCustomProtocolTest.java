@@ -34,6 +34,7 @@ public class AlfrescoCustomProtocolTest {
 
 	private ResourceController ctrl;
 	Logger logger = Logger.getLogger(AlfrescoCustomProtocolTest.class.getName());
+	
 	private final static String serverUrl = "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom";
 	private CMISAccess access;
 
@@ -75,8 +76,7 @@ public class AlfrescoCustomProtocolTest {
 		Document doc = ((IDocument) docs.get(0)).getDoc();
 		assertNotNull(doc);
 		
-		System.out.println(URLConnection.guessContentTypeFromName(".dita"));
-		
+
 		String url = CmisURLConnection.generateURLObject(doc, ctrl);
 		System.out.println("URL: " + URLEncoder.encode(url, "UTF-8"));
 		System.out.println(url);
@@ -122,8 +122,8 @@ public class AlfrescoCustomProtocolTest {
 		url = URLDecoder.decode(url, "UTF-8");
 		List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
 
-		CmisURLConnection cuc = new CmisURLConnection(new URL(url), CMISAccess.getInstance());
-		cuc.setCredentials(new UserCredentials("admin", "admin"));
+		CmisURLConnection cuc = new CmisURLConnection(new URL(url), CMISAccess.getInstance(),
+				new UserCredentials("admin", "admin"));
 		FileableCmisObject object = (FileableCmisObject) cuc.getCMISObject(url);
 
 		if (ctrl == null) {
@@ -153,12 +153,12 @@ public class AlfrescoCustomProtocolTest {
 
 	@Test
 	public void testReposList() throws IOException {
-		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance());
-		cuc.setCredentials(new UserCredentials("admin", "admin"));
+		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance(),
+				new UserCredentials("admin", "admin"));
 		String sURL = "https://http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/";
 
-		List<Repository> reposList = cuc.getAccess().connectToServerGetRepositories(CmisURLConnection.getServerURL(sURL, null),
-				new UserCredentials("admin", "admin"));
+		List<Repository> reposList = cuc.getCMISAccess().connectToServerGetRepositories(
+				CmisURLConnection.getServerURL(sURL, null), new UserCredentials("admin", "admin"));
 
 		for (Repository repos : reposList) {
 			System.out.println(repos.getName() + " " + repos.getId());
@@ -188,8 +188,8 @@ public class AlfrescoCustomProtocolTest {
 		if (url == null) {
 			throw new NullPointerException();
 		}
-		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance());
-		cuc.setCredentials(new UserCredentials("admin", "admin"));
+		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance(),
+				new UserCredentials("admin", "admin"));
 
 		return cuc.getCMISObject(url);
 	}

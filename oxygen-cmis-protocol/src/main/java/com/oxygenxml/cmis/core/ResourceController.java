@@ -20,225 +20,225 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 
 public class ResourceController {
 
-  private Session session;
+	private Session session;
 
-  /**
-   * 
-   * @param session
-   */
-  public ResourceController(Session session) {
-    this.session = session;
-  }
+	/**
+	 * 
+	 * @param session
+	 */
+	public ResourceController(Session session) {
+		this.session = session;
+	}
 
-  /**
-   * @return The root folder.
-   */
-  public Folder getRootFolder() {
-    return session.getRootFolder();
-  }
+	/**
+	 * @return The root folder.
+	 */
+	public Folder getRootFolder() {
+		return session.getRootFolder();
+	}
 
-  /**
-   * CREATE DOCUMENT METHOD
-   * 
-   * @param path
-   * @param filename
-   * @param content
-   * @return
-   * @throws UnsupportedEncodingException
-   */
-  public Document createDocument(Folder path, String filename, String content, String mimeType, String state)
-      throws UnsupportedEncodingException, CmisConstraintException {
-    // TODO Pass a Reader instead of a String as content.
+	/**
+	 * CREATE DOCUMENT METHOD
+	 * 
+	 * @param path
+	 * @param filename
+	 * @param content
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	public Document createDocument(Folder path, String filename, String content, String mimeType, String state)
+			throws UnsupportedEncodingException, CmisConstraintException {
+		// TODO Pass a Reader instead of a String as content.
 
-    String mimetype = mimeType.concat("; charset=UTF-8");
+		String mimetype = mimeType.concat("; charset=UTF-8");
 
-    byte[] contentBytes = content.getBytes("UTF-8");
-    ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
+		byte[] contentBytes = content.getBytes("UTF-8");
+		ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
 
-    ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
-        mimetype, stream);
+		ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
+				mimetype, stream);
 
-    // prepare properties
-    Map<String, Object> properties = new HashMap<String, Object>();
+		// prepare properties
+		Map<String, Object> properties = new HashMap<String, Object>();
 
-    properties.put(PropertyIds.NAME, filename);
-    properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+		properties.put(PropertyIds.NAME, filename);
+		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
 
-    // create the document
-    return path.createDocument(properties, contentStream, VersioningState.fromValue(state));
-  }
+		// create the document
+		return path.createDocument(properties, contentStream, VersioningState.fromValue(state));
+	}
 
-  /**
-   * CREATE DOCUMENT METHOD
-   * 
-   * @param path
-   * @param filename
-   * @param content
-   * @param versioningState
-   * @return
-   * @throws UnsupportedEncodingException
-   *           Necessary VersionableType in order to get many versions
-   */
-  public Document createVersionedDocument(Folder path, String filename, String content, VersioningState versioningState)
-      throws UnsupportedEncodingException {
+	/**
+	 * CREATE DOCUMENT METHOD
+	 * 
+	 * @param path
+	 * @param filename
+	 * @param content
+	 * @param versioningState
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 *             Necessary VersionableType in order to get many versions
+	 */
+	public Document createVersionedDocument(Folder path, String filename, String content,
+			VersioningState versioningState) throws UnsupportedEncodingException {
 
-    // TODO Pass a Reader instead of a String as content.
+		// TODO Pass a Reader instead of a String as content.
 
-    String mimetype = "text/plain; charset=UTF-8";
+		String mimetype = "text/plain; charset=UTF-8";
 
-    byte[] contentBytes = content.getBytes("UTF-8");
-    ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
+		byte[] contentBytes = content.getBytes("UTF-8");
+		ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
 
-    ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
-        mimetype, stream);
+		ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
+				mimetype, stream);
 
-    // prepare properties
-    Map<String, Object> properties = new HashMap<String, Object>();
+		// prepare properties
+		Map<String, Object> properties = new HashMap<String, Object>();
 
-    properties.put(PropertyIds.NAME, filename);
-    properties.put(PropertyIds.OBJECT_TYPE_ID, "VersionableType");
-   
-    properties.put(PropertyIds.VERSION_LABEL, null);
-    properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);
+		properties.put(PropertyIds.NAME, filename);
+		properties.put(PropertyIds.OBJECT_TYPE_ID, "VersionableType");
 
-    // create the document
-    return path.createDocument(properties, contentStream, versioningState);
-  }
+		properties.put(PropertyIds.VERSION_LABEL, null);
+		properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);
 
-  /**
-   * MOVE DOCUMENTE FROM SOURCE FOLDER TO TARGET FOLDER
-   * 
-   * @param sourceFolder
-   * @param targetFolder
-   * @param doc
-   * @return
-   */
-  public boolean move(Folder sourceFolder, Folder targetFolder, Document doc) {
-    return doc.move(sourceFolder, targetFolder) != null;
-  }
+		// create the document
+		return path.createDocument(properties, contentStream, versioningState);
+	}
 
-  /**
-   * ADD DOCUMENT TO FOLDER
-   * 
-   * @param folder
-   * @param doc
-   */
-  public void addToFolder(Folder folder, Document doc) {
-    doc.addToFolder(folder, true);
-  }
+	/**
+	 * MOVE DOCUMENTE FROM SOURCE FOLDER TO TARGET FOLDER
+	 * 
+	 * @param sourceFolder
+	 * @param targetFolder
+	 * @param doc
+	 * @return
+	 */
+	public boolean move(Folder sourceFolder, Folder targetFolder, Document doc) {
+		return doc.move(sourceFolder, targetFolder) != null;
+	}
 
-  /**
-   * REMOVE DOCUMENT FROM FOLDER
-   * 
-   * @param folder
-   * @param doc
-   */
-  public void removeFromFolder(Folder folder, Document doc) {
-    doc.removeFromFolder(folder);
-  }
+	/**
+	 * ADD DOCUMENT TO FOLDER
+	 * 
+	 * @param folder
+	 * @param doc
+	 */
+	public void addToFolder(Folder folder, Document doc) {
+		doc.addToFolder(folder, true);
+	}
 
-  /**
-   * 
-   * @param doc
-   */
-  public void deleteAllVersionsDocument(Document doc) {
-    if (doc != null) {
-      doc.delete(true);
-    }
-  }
+	/**
+	 * REMOVE DOCUMENT FROM FOLDER
+	 * 
+	 * @param folder
+	 * @param doc
+	 */
+	public void removeFromFolder(Folder folder, Document doc) {
+		doc.removeFromFolder(folder);
+	}
 
-  /**
-   * DELETE ONE VERSION
-   */
-  public void deleteOneVersionDocument(Document doc) {
-    doc.delete(false);
-  }
+	/**
+	 * 
+	 * @param doc
+	 */
+	public void deleteAllVersionsDocument(Document doc) {
+		if (doc != null) {
+			doc.delete(true);
+		}
+	}
 
-  /**
-   * CREATE FOLDER
-   * 
-   * @param path
-   * @param name
-   * @return
-   */
-  public Folder createFolder(Folder parent, String name) {
-    Map<String, Object> properties = new HashMap<String, Object>();
+	/**
+	 * DELETE ONE VERSION
+	 */
+	public void deleteOneVersionDocument(Document doc) {
+		doc.delete(false);
+	}
 
-    properties.put(PropertyIds.NAME, name);
-    properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+	/**
+	 * CREATE FOLDER
+	 * 
+	 * @param path
+	 * @param name
+	 * @return
+	 */
+	public Folder createFolder(Folder parent, String name) {
+		Map<String, Object> properties = new HashMap<String, Object>();
 
-    // create the folder
-    return parent.createFolder(properties);
-  }
+		properties.put(PropertyIds.NAME, name);
+		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
 
-  /**
-   * DELETE
-   * 
-   * @param folder
-   * @return
-   */
-  public List<String> deleteFolderTree(Folder folder) {
-    if (folder != null) {
-      return folder.deleteTree(true, UnfileObject.DELETE, true);
-    }
+		// create the folder
+		return parent.createFolder(properties);
+	}
 
-    return null;
-  }
+	/**
+	 * DELETE
+	 * 
+	 * @param folder
+	 * @return
+	 */
+	public List<String> deleteFolderTree(Folder folder) {
+		if (folder != null) {
+			return folder.deleteTree(true, UnfileObject.DELETE, true);
+		}
 
-  /**
-   * RENAME
-   * 
-   * @param folder
-   * @param newName
-   * @return
-   */
-  public CmisObject renameFolder(Folder folder, String newName) {
-    return folder.rename(newName);
-  }
+		return null;
+	}
 
-  /**
-   * GET DOC
-   * 
-   * @param id
-   * @return
-   */
-  public Document getDocument(String id) {
-    return (Document) session.getObject(id);
-  }
+	/**
+	 * RENAME
+	 * 
+	 * @param folder
+	 * @param newName
+	 * @return
+	 */
+	public CmisObject renameFolder(Folder folder, String newName) {
+		return folder.rename(newName);
+	}
 
-  /**
-   * GET DOC
-   * 
-   * @param id
-   * @return
-   */
-  public Folder getFolder(String id) {
-    return (Folder) session.getObject(id);
-  }
+	/**
+	 * GET DOC
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Document getDocument(String id) {
+		return (Document) session.getObject(id);
+	}
 
-  public Session getSession() {
-    return session;
-  }
+	/**
+	 * GET DOC
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Folder getFolder(String id) {
+		return (Folder) session.getObject(id);
+	}
 
-  /**
-   * GET DOCUMENT CONTENT
-   * 
-   * @param docID
-   * @return
-   * @throws UnsupportedEncodingException
-   */
-  public Reader getDocumentContent(String docID) throws UnsupportedEncodingException {
-    Document document = (Document) session.getObject(docID);
-    ContentStream contentStream = document.getContentStream();
+	public Session getSession() {
+		return session;
+	}
 
-    java.io.InputStream stream = contentStream.getStream();
+	/**
+	 * GET DOCUMENT CONTENT
+	 * 
+	 * @param docID
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	public Reader getDocumentContent(String docID) throws UnsupportedEncodingException {
+		Document document = (Document) session.getObject(docID);
+		ContentStream contentStream = document.getContentStream();
 
-    // TODO Get the encoding dynamically.
-    return new InputStreamReader(stream, "UTF-8");
-  }
+		java.io.InputStream stream = contentStream.getStream();
 
-  public CmisObject getCmisObj(String objectID) {
-    return session.getObject(objectID);
-  }
+		// TODO Get the encoding dynamically.
+		return new InputStreamReader(stream, "UTF-8");
+	}
+
+	public CmisObject getCmisObj(String objectID) {
+		return session.getObject(objectID);
+	}
 
 }
