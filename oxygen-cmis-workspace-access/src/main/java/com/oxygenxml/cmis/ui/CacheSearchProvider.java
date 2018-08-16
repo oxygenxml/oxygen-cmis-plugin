@@ -62,7 +62,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
           String line = searchProvider.getLineDoc(doc, matchPattern);
 
           // Put it in the hashmap or put 'Empty'
-          cacheLine.put(doc.getId(), line != null ? line : "");
+          cacheLine.put(doc.getId(), line != null ? line : "Empty");
 
           // Repaint later the component
           SwingUtilities.invokeLater(new Runnable() {
@@ -130,7 +130,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
           }
 
           // Put it in the hashmap or put 'Empty'
-          cachePath.put(resource.getId(), path != null ? path : "");
+          cachePath.put(resource.getId(), path != null ? path : "Empty");
 
           // Repaint later the component
           SwingUtilities.invokeLater(new Runnable() {

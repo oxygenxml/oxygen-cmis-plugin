@@ -1,11 +1,14 @@
 package com.oxygenxml.cmis.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -59,6 +62,9 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    * @param breadcrumbPresenter
    */
   RepoComboBoxView(ItemsPresenter itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+    setOpaque(true);
+    setBackground(Color.cyan);
+
     this.itemsPresenter = itemsPresenter;
     this.breadcrumbPresenter = breadcrumbPresenter;
 
@@ -71,9 +77,10 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.gridx = 0;
     c.gridy = 0;
     c.weightx = 0.0;
-    c.ipadx = 10;
-    c.insets = new Insets(1, 5, 1, 5);
+    c.insets = new Insets(1, 10, 1, 10);
     JLabel serverUrlLabel = new JLabel("Repository:");
+    serverUrlLabel.setOpaque(true);
+    serverUrlLabel.setBackground(Color.red);
     add(serverUrlLabel, c);
 
     // Url http JComboBox constraints
@@ -81,12 +88,14 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.gridy = 0;
     c.weightx = 1;
     c.gridwidth = 2;
-    c.ipadx = 40;
     c.fill = GridBagConstraints.HORIZONTAL;
+    repoItems.setOpaque(true);
+    repoItems.setBackground(Color.blue);
 
+    repoItems.setEnabled(false);
     repoItems.setEditable(false);
-    add(repoItems, c);
 
+    add(repoItems, c);
     /**
      * Gets the current selected url from combo box
      */
@@ -114,6 +123,8 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    */
   @Override
   public void presentRepositories(URL serverURL) {
+    repoItems.setEnabled(true);
+
     this.serverURL = serverURL;
 
     // Create the listRepo of repos.
@@ -148,7 +159,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
       // If there some put them in the model to be shown
       if (serverReposList != null && !serverReposList.isEmpty()) {
-        
+
         // Present the items with the URL and repository
         itemsPresenter.presentItems(serverURL, serverReposList.get(0).getId());
 

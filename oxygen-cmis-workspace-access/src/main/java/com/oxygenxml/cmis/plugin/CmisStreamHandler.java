@@ -19,18 +19,15 @@ public class CmisStreamHandler extends URLStreamHandler {
     try {
       System.out.println("URL=" + url);
       URL serverURL = CmisURLConnection.getServerURL(url.toExternalForm(), new HashMap<String, String>());
-      UserCredentials uc = AuthenticatorUtil.getUserCredentials(serverURL );
-      
-      CmisURLConnection urlConn= new CmisURLConnection(url, CMISAccess.getInstance());
-      urlConn.setCredentials(uc);
-      
-      return urlConn;
+      UserCredentials uc = AuthenticatorUtil.getUserCredentials(serverURL);
+
+      return new CmisURLConnection(url, CMISAccess.getInstance(), uc);
+
     } catch (UserCanceledException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;
   }
-
 
 }

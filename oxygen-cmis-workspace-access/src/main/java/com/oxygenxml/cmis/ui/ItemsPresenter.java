@@ -12,6 +12,7 @@ import com.oxygenxml.cmis.core.model.IResource;
  *
  */
 public interface ItemsPresenter {
+
   /**
    * Present the items inside the folder
    * 
@@ -26,14 +27,14 @@ public interface ItemsPresenter {
    * @param folderID
    */
   void presentFolderItems(String folderID);
-  
+
   /**
    * use the folder id to present the items inside
    * 
    * @param folderID
    */
   void presentFolderItems(IFolder folder);
-  
+
   void presentResources(IResource parentResource);
 
 }

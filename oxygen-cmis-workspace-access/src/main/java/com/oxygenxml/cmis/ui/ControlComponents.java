@@ -52,14 +52,14 @@ public class ControlComponents extends JPanel {
 
       @Override
       public void presentFolderItems(IFolder folder) {
-       
+
         itemsPanel.presentFolderItems(folder);
       }
 
       @Override
       public void presentResources(IResource parentResource) {
         itemsPanel.presentResources(parentResource);
-        
+
       }
     });
 
@@ -68,14 +68,14 @@ public class ControlComponents extends JPanel {
 
     // Initialization of the search
     searchPanel = new SearchView(itemsPanel);
-    
+
     itemsPanel.setContentProvider(searchPanel);
 
     // Initialization of the repositories
     repoComboBox = new RepoComboBoxView(itemsPanel, breadcrumbList);
 
     // initialization of the server
-    serverPanel = new ServerView(repoComboBox);
+    serverPanel = new ServerView(repoComboBox, searchPanel);
 
     // Visual configuration
     setMinimumSize(new Dimension(200, 250));
@@ -108,7 +108,7 @@ public class ControlComponents extends JPanel {
 
     // breadcrumbList
     c.gridy++;
-    c.insets = new Insets(10, 0, 5, 0);
+    c.insets = new Insets(5, 0, 5, 0);
     add(breadcrumbList, c);
 
     // itemList

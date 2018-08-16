@@ -99,7 +99,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     add(iconPanel, BorderLayout.WEST);
     add(descriptionPanel, BorderLayout.CENTER);
     add(notifierPanel, BorderLayout.EAST);
-
+    setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.oxygenxml.cmis.ui;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 
 import java.awt.GridBagLayout;
@@ -36,7 +37,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
  * @author bluecc
  *
  */
-public class SearchView extends JPanel implements ContentSearchProvider {
+public class SearchView extends JPanel implements ContentSearchProvider, SearchPresenter {
   /**
    * Objects interested in search events.
    */
@@ -45,11 +46,14 @@ public class SearchView extends JPanel implements ContentSearchProvider {
   private List<SearchListener> listeners = new ArrayList<>();
 
   private JTextField searchField = null;
+  private JButton searchButton = null;
 
   // Option of the search (name, title)
   private String option = null;
 
   public SearchView(ItemsPresenter itemsPresenter) {
+    setOpaque(true);
+    setBackground(Color.CYAN);
 
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -60,9 +64,11 @@ public class SearchView extends JPanel implements ContentSearchProvider {
     c.gridwidth = 3;
     c.gridx = 0;
     c.gridy = 0;
-    c.ipadx = 40;
-    c.insets = new Insets(1, 5, 1, 5);
+    c.insets = new Insets(1, 10, 1, 10);
     searchField = new JTextField("Search");
+    searchField.setOpaque(true);
+    searchField.setBackground(Color.red);
+    searchField.setEnabled(false);
     add(searchField, c);
 
     // Search JButton constraints
@@ -71,7 +77,8 @@ public class SearchView extends JPanel implements ContentSearchProvider {
     c.gridy = 0;
     c.weightx = 0.0;
 
-    JButton searchButton = new JButton("Search");
+    searchButton = new JButton("Search");
+    searchButton.setEnabled(false);
 
     /**
      * This is where the fireSearch will occur when the button is pressed
@@ -80,6 +87,7 @@ public class SearchView extends JPanel implements ContentSearchProvider {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+        // The option will be orderer
         option = "null";
         // Get the entered text and trim of white space from both sides
         final String searchText = searchField.getText().trim();
@@ -88,15 +96,15 @@ public class SearchView extends JPanel implements ContentSearchProvider {
       }
 
     });
-
+    searchButton.setOpaque(true);
+    searchButton.setBackground(Color.blue);
     add(searchButton, c);
   }
-  
-  
+
   public void doSearch(final String searchText) {
     // Get the search results of the query
     List<IResource> queryResults = searchItems(searchText);
-    
+
     // Fire the search for each listener
     fireSearchFinished(searchText, queryResults);
   }
@@ -158,6 +166,13 @@ public class SearchView extends JPanel implements ContentSearchProvider {
   public String getPath(IResource doc, ResourceController ctrl) {
 
     return ((DocumentImpl) doc).getDocumentPath(ctrl);
+  }
+
+  @Override
+  public void activateSearch() {
+    // TODO Auto-generated method stub
+    searchField.setEnabled(true);
+    searchButton.setEnabled(true);
   }
 
   // @Override

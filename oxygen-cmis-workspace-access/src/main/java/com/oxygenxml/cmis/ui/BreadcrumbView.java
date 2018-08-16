@@ -1,10 +1,12 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -42,12 +44,19 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   private Stack<JButton> hiddenItems;
 
   BreadcrumbView(ItemsPresenter itemsPresenter) {
+    setOpaque(true);
+    setBackground(Color.green);
+    
     // Initialize data
     this.itemsPresenter = itemsPresenter;
     parentResources = new Stack<IResource>();
     hiddenItems = new Stack<JButton>();
 
     toolBar = new JToolBar();
+    toolBar.setOpaque(true);
+    toolBar.setBackground(Color.blue);
+    
+    
     breadcrumbPanel = new JPanel();
     goUpIcon = new JLabel();
 
@@ -64,9 +73,10 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     });
 
-    // Set up the icon
-    goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
-
+//    // Set up the icon
+//    goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
+    goUpIcon.setOpaque(true);
+    goUpIcon.setBackground(Color.red);
     // Add the tooltip
     goUpIcon.setToolTipText("Go back");
 
@@ -137,12 +147,14 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
     c.gridx = 0;
     c.gridy = 0;
     c.weightx = 0.0;
-
+    c.insets = new Insets(1, 10, 1, 5);
     breadcrumbPanel.add(goUpIcon, c);
 
     c.gridx = 1;
     c.gridy = 0;
     c.weightx = 1.0;
+    c.insets = new Insets(1, 5, 1, 10);
+
     c.fill = GridBagConstraints.HORIZONTAL;
 
     breadcrumbPanel.add(toolBar, c);
@@ -264,6 +276,9 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
    */
   @Override
   public void presentBreadcrumb(IResource resource) {
+    // Set up the icon
+    goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
+    
     // Set currentFolder
     currentFolder = (FolderImpl) resource;
 

@@ -1,6 +1,8 @@
 package com.oxygenxml.cmis.ui;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -42,7 +44,7 @@ public class ServerView extends JPanel {
    * @param repoPresenter
    * @exception MalformedURLException
    */
-  public ServerView(RepositoriesPresenter repoPresenter) {
+  public ServerView(RepositoriesPresenter repoPresenter, SearchPresenter searchPresenter) {
     /*
      * TESTING in comments Arrays.assList has a fixed range no add allowed
      */
@@ -58,7 +60,8 @@ public class ServerView extends JPanel {
     if (elements != null) {
       Collections.addAll(serversList, elements.toArray(new String[0]));
     }
-
+    setOpaque(true);
+    setBackground(Color.CYAN);
     // Present them
     presentServers(serversList);
 
@@ -69,10 +72,13 @@ public class ServerView extends JPanel {
     c.gridx = 0;
     c.gridy = 0;
     c.weightx = 0.0;
-    c.ipadx = 10;
-    c.insets = new Insets(1, 5, 1, 5);
+    c.insets = new Insets(1, 10, 1, 10);
     c.fill = GridBagConstraints.NONE;
     JLabel serverUrlLabel = new JLabel("Server URL:");
+
+    serverUrlLabel.setOpaque(true);
+    serverUrlLabel.setBackground(Color.red);
+
     add(serverUrlLabel, c);
 
     // Url http JComboBox constraints
@@ -85,7 +91,8 @@ public class ServerView extends JPanel {
 
     serverItemsCombo.setEditable(true);
     serverItemsCombo.setEnabled(true);
-
+    serverItemsCombo.setOpaque(true);
+    serverItemsCombo.setBackground(Color.yellow);
     // Load JButton constraints constraints
     add(serverItemsCombo, c);
     c.gridx = 3;
@@ -114,11 +121,12 @@ public class ServerView extends JPanel {
             // Add to the serves list
             serversList.add(currentServerURL);
             try {
-              
+
               repoPresenter.presentRepositories(serverURL);
-              
+              searchPresenter.activateSearch();
+
             } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException ev) {
-              
+
               // Show an exception if there is one
               JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
             }
@@ -134,6 +142,8 @@ public class ServerView extends JPanel {
 
       }
     });
+    loadButton.setOpaque(true);
+    loadButton.setBackground(new Color(0, 0, 255));
     add(loadButton, c);
   }
 
