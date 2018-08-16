@@ -40,9 +40,9 @@ public class OpenDocumentAction extends AbstractAction {
 
     this.resource = resource;
     if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
-      
+
       this.enabled = true;
-      
+
     } else {
       this.enabled = false;
     }

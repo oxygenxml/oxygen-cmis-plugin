@@ -1,17 +1,10 @@
 package com.oxygenxml.cmis.plugin;
 
 import java.net.URLStreamHandler;
-import java.util.List;
+import java.util.logging.Logger;
 
-import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
-import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.log4j.Logger;
-
-import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
-import ro.sync.basic.util.URLUtil;
 import ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension;
 
 public class CmisURLExtension implements URLStreamHandlerPluginExtension {
@@ -57,7 +50,4 @@ public class CmisURLExtension implements URLStreamHandlerPluginExtension {
 				}
 			}
 		}
-		return urlb.toString();
-	}
-
 }

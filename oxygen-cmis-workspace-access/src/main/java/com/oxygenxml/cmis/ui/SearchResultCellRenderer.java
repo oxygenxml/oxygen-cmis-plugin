@@ -147,7 +147,13 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       // TODO: use breadcrumb view for the path
 
       System.out.println("Line=" + contentProv.getLineDoc(doc, matchPattern));
-      lineResource.setText("<html><font  color=blue>" + contentProv.getLineDoc(doc, matchPattern) + "</font></html>");
+      String resultContext = contentProv.getLineDoc(doc, matchPattern);
+
+      if (resultContext != null) {
+        resultContext = escapeHTML(resultContext);
+      }
+      
+      lineResource.setText("<html><h4 bgcolor=yellow  color=blue>" + resultContext + "</h4></html>");
 
     } else if (value instanceof FolderImpl && value != null) {
 
@@ -206,5 +212,20 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         setForegroundC(child, foreground);
       }
     }
+  }
+
+  public static String escapeHTML(String s) {
+    StringBuilder out = new StringBuilder(Math.max(16, s.length()));
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+        out.append("&#");
+        out.append((int) c);
+        out.append(';');
+      } else {
+        out.append(c);
+      }
+    }
+    return out.toString();
   }
 }

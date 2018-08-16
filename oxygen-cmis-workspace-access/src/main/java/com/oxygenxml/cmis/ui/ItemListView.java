@@ -161,6 +161,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
         IResource currentItem = null;
         // Get the location of the item using location of the click
         int itemIndex = resourceList.locationToIndex(e.getPoint());
+        
         if (itemIndex != -1) {
 
           // Get the current item
@@ -198,8 +199,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             }
 
             // Bounds of the click
-            menu.show(ItemListView.this, e.getX(), e.getY());
-
+            menu.show(listItemScrollPane, e.getX(), e.getY());
+            
           }
         }
         // Check if user clicked two times
