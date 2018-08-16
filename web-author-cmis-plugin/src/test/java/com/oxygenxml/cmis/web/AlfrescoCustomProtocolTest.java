@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -28,18 +27,16 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+
 import ro.sync.net.protocol.FolderEntryDescriptor;
 
 public class AlfrescoCustomProtocolTest {
 
 	private ResourceController ctrl;
 	Logger logger = Logger.getLogger(AlfrescoCustomProtocolTest.class.getName());
-	
+
 	private final static String serverUrl = "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom";
 	private CMISAccess access;
-
-	// private String serverUrl =
-	// "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom";
 
 	/**
 	 * Conection to Alfresco Server
@@ -75,16 +72,11 @@ public class AlfrescoCustomProtocolTest {
 
 		Document doc = ((IDocument) docs.get(0)).getDoc();
 		assertNotNull(doc);
-		
 
-		String url = CmisURLConnection.generateURLObject(doc, ctrl);
+		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/-default-/");
 		System.out.println("URL: " + URLEncoder.encode(url, "UTF-8"));
-		System.out.println(url);
 
-		System.out.println("TUT " + CMISAccess.getInstance().getSession().toString());
-
-		Document doc1 = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
-		System.out.println(doc1.getName());
+		
 	}
 
 	@Test
@@ -93,7 +85,7 @@ public class AlfrescoCustomProtocolTest {
 
 		System.out.println(root.getName());
 
-		String url = CmisURLConnection.generateURLObject(root, ctrl);
+		String url = CmisURLConnection.generateURLObject(root, ctrl, "/-default-/");
 
 		System.out.println(url);
 	}
@@ -140,7 +132,7 @@ public class AlfrescoCustomProtocolTest {
 		logger.info("PARENT NAME ---> " + parent.getName());
 
 		for (CmisObject obj : parent.getChildren()) {
-			String entryUrl = CmisURLConnection.generateURLObject(obj, ctrl);
+			String entryUrl = CmisURLConnection.generateURLObject(obj, ctrl, "/-default-/");
 			entryUrl = entryUrl.concat((obj instanceof Folder) ? "/" : "");
 			list.add(new FolderEntryDescriptor(entryUrl));
 		}

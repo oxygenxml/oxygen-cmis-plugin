@@ -52,8 +52,9 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 		doc = createDocument(root, "urlDoc", "some text");
 		
-		String url = CmisURLConnection.generateURLObject(doc, ctrl);
+		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/A1/");
 
+		
 		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc", url);
 		assertNotNull(url);
 
@@ -65,7 +66,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 		
 		doc = createDocument(root, "urlDoc1", "some text");
 		
-		String url = CmisURLConnection.generateURLObject(doc, ctrl);
+		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/A1/");
 
 		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc1", url);
 
@@ -82,7 +83,7 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 		folder = (Folder) ctrl.getSession().getObjectByPath("/My_Folder-0-1/My_Folder-1-0");
 
-		String url = CmisURLConnection.generateURLObject(folder, ctrl);
+		String url = CmisURLConnection.generateURLObject(folder, ctrl, "/");
 
 		System.out.println(url);
 		

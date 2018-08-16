@@ -152,7 +152,7 @@ var cmisTimeOut = 5000;
       // rootURLChangedCallback(rootUrl, rootUrl); // TODO: bug in web author.
       }
       }
-      div.textContent = 'CMIS'; // TODO: use the CMIS server host name
+      div.textContent = sync.options.PluginsOptions.getClientOption("cmis.enforced_name"); // TODO: use the CMIS server host name
   
     } else {
       div.textContent = 'Please set the CMIS API URL in the Admin Page Configuration.'; // TODO link to documentation.
@@ -170,15 +170,15 @@ cmisFileRepo.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallba
   // -------- Initialize the file browser information ------------
 var cmisFileRepositoryDescriptor = {
     'id' : 'cmis',
-    'name' : 'CMIS',
-    'icon' : sync.util.computeHdpiIcon('../plugin-resources/cmis/cmis.png'), // the large icon url, hidpi enabled.
+    'name' : sync.options.PluginsOptions.getClientOption('cmis.enforced_name'),
+    'icon' : sync.util.computeHdpiIcon(sync.options.PluginsOptions.getClientOption('cmis.enforced_icon')), 
     'matches' : function matches(url) {
       return url.match('cmis'); // Check if the provided URL points to a file or folder from Cmis file repository
     },
     'repository' : cmisFileRepo
 };
 
-
+//'../plugin-resources/cmis/cmis.png'
  
 workspace.getFileRepositoriesManager().registerRepository(cmisFileRepositoryDescriptor);
 

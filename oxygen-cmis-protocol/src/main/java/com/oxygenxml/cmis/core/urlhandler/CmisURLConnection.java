@@ -68,37 +68,45 @@ public class CmisURLConnection extends URLConnection {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String generateURLObject(CmisObject object, ResourceController _ctrl) {
-		ResourceController ctrl = _ctrl;
+	public static String generateURLObject(CmisObject object, ResourceController ctrl, String parentPath) {
+
 		// Builder for building custom URL
 		StringBuilder urlb = new StringBuilder();
 
 		// Get server URL
 		String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
-
+		String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
 		// Encode server URL
 		originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
 
 		// Generate first part of custom URL
-		urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
-		urlb.append(ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID));
-
+		urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append("/").append(repository);
+		
 		// Get path of Cmis Object
 		List<String> objectPath = ((FileableCmisObject) object).getPaths();
-
-		// TODO: if (!parentURL.isEmpty()) {
-		// !!!!!!!!!!!!
-		// Appeding file path to URL and encode spaces
+		
+		parentPath = URLUtil.decodeURIComponent(parentPath);
+		if(parentPath.contains(repository)) {
+			parentPath = parentPath.replace(repository + "/", "");
+		}
+		
+		// Append object path to URL
 		for (int i = 0; i < objectPath.size(); i++) {
-			// TODO: if (objectPath.startsWith(parentURL)) {
-			for (String pth : objectPath.get(i).split("/")) {
-				if (!pth.isEmpty()) {
-					urlb.append("/").append(URLUtil.encodeURIComponent(pth));
+			logger.info("=> " + parentPath + " " + objectPath.get(i));
+			// Check if path(i) start with path of parent folder
+			if (objectPath.get(i).startsWith(parentPath)) {
+				logger.info("here");
+				for (String pth : objectPath.get(i).split("/")) {
+					if (!pth.isEmpty()) {
+						urlb.append("/").append(URLUtil.encodeURIComponent(pth));
+					}
 				}
+			} else {
+				urlb.append("/").append(object.getName());
+				break;
 			}
 		}
-		// } else { /* The file should be in the root folder - there is no path to
-		// append. Only the file name*/ }
+
 		return urlb.toString();
 	}
 
@@ -115,8 +123,8 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UnsupportedEncodingException
 	 * @throws UserActionRequiredException
 	 */
-	public CmisObject getCMISObject(String url) throws MalformedURLException, UnsupportedEncodingException,
-			CmisUnauthorizedException, CmisObjectNotFoundException {
+	public CmisObject getCMISObject(String url) throws 
+			CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
 		// Decompose the custom URL in query elements
 		Map<String, String> param = new HashMap<>();
 
@@ -161,8 +169,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 */
-	public static URL getServerURL(String customURL, Map<String, String> param)
-			throws MalformedURLException, UnsupportedEncodingException {
+	public static URL getServerURL(String customURL, Map<String, String> param) throws MalformedURLException {
 		logger.info("getServerURL() => " + customURL);
 		// Replace CMIS part
 		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
@@ -179,18 +186,11 @@ public class CmisURLConnection extends URLConnection {
 		customURL = customURL.replaceFirst(originalProtocol, "");
 		customURL = customURL.replaceFirst("/", "");
 
-		// Save Repository
+		// Save Repository and object path in HashMap
 		if (param != null) {
 			param.put(REPOSITORY_PARAM, customURL.substring(0, customURL.indexOf("/")));
-		}
-
-		if (param != null) {
 			customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
-		}
-
-		customURL = URLUtil.decodeURIComponent(customURL);
-		// Save file path
-		if (param != null) {
+			customURL = URLUtil.decodeURIComponent(customURL);
 			param.put(PATH_PARAM, customURL);
 		}
 
@@ -228,7 +228,7 @@ public class CmisURLConnection extends URLConnection {
 					document = (Document) getCMISObject(docUrl);
 				} catch (CmisObjectNotFoundException e) {
 					// If created document doesn't exist we create one
-					docUrl = handleOutputStream(document);
+					docUrl = createDocument();
 					// Getting this document from returned URL to update it with new content
 					document = (Document) getCMISObject(docUrl);
 				}
@@ -253,7 +253,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public String handleOutputStream(Document document) throws MalformedURLException, UnsupportedEncodingException {
+	public String createDocument() throws MalformedURLException, UnsupportedEncodingException {
 		HashMap<String, String> param = new HashMap<>();
 		getServerURL(url.toExternalForm(), param);
 
@@ -267,8 +267,15 @@ public class CmisURLConnection extends URLConnection {
 			mimeType = "text/xml";
 		}
 
+		/**
+		 * Differences between Alfresco & Jetty.
+		 * 
+		 * Sometimes Jetty server don't get object from
+		 * path which have at the end backslash.
+		 * In this case I catch the CmisObjectNotFoundException
+		 * and remove invalid part of path.
+		 */
 		Folder rootFolder = null;
-
 		try {
 			rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
 		} catch (CmisObjectNotFoundException e) {
@@ -278,13 +285,23 @@ public class CmisURLConnection extends URLConnection {
 			}
 		}
 
+		/**
+		 * Differences between Alfresco & Jetty.
+		 * 
+		 * I noticed the Alfresco keep all object like "Versionable"
+		 * and Jetty like "None-Versionable".
+		 * In this case I create a none-ver. object and if the server support only
+		 * "Versionable" objects I catch the CmisConstraintException to handle this
+		 * exception.
+		 */
+		Document document;
 		try {
 			document = bigCtrl.createDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType, NONE_STATE);
 		} catch (CmisConstraintException e) {
 			document = bigCtrl.createDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType, MAJOR_STATE);
 		}
 
-		return generateURLObject(document, bigCtrl);
+		return generateURLObject(document, bigCtrl, path);
 	}
 
 	/**
@@ -296,7 +313,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UserActionRequiredException
 	 */
 	public ResourceController getResourceController(URL url1)
-			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
+			throws MalformedURLException {
 		getCMISObject(url1.toExternalForm());
 		return bigCtrl;
 	}
