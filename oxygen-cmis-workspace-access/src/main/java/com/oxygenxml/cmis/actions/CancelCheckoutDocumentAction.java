@@ -39,8 +39,8 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
-    
-    if (((DocumentImpl) resource).isCheckedOut()) {
+
+    if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
 
       this.enabled = true;
 

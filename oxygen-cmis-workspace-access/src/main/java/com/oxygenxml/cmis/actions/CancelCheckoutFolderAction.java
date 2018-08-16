@@ -116,7 +116,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
           try {
 
             // Commit the <Code>cancelCheckOout()</Code>
-            if (((DocumentImpl) iResource).isCheckedOut()) {
+            if (((DocumentImpl) iResource).isCheckedOut() && ((DocumentImpl) iResource).isPrivateWorkingCopy()) {
               ((DocumentImpl) iResource).cancelCheckOut();
             }
           } catch (Exception ev) {
@@ -129,8 +129,9 @@ public class CancelCheckoutFolderAction extends AbstractAction {
     }
   }
 
-  private boolean checkCanCancelCheckoutFolder(IResource resource) {
+  boolean checkStatus = false;
 
+  private boolean checkCanCancelCheckoutFolder(IResource resource) {
     // Get all the children of the item in an iterator
     Iterator<IResource> childrenIterator = resource.iterator();
 
@@ -149,13 +150,14 @@ public class CancelCheckoutFolderAction extends AbstractAction {
           checkCanCancelCheckoutFolder(iResource);
 
         } else if (iResource instanceof DocumentImpl) {
-
+          System.out.println("Trying to verify a document name=" + ((DocumentImpl) iResource).getDisplayName());
           // If it is a document type of custom interface
           try {
 
             if (((DocumentImpl) iResource).isCheckedOut()) {
               // return true if a document was found checked out so
-              return true;
+              return checkStatus = true;
+
             }
 
           } catch (Exception ev) {
@@ -166,6 +168,6 @@ public class CancelCheckoutFolderAction extends AbstractAction {
         }
       }
     }
-    return false;
+    return checkStatus;
   }
 }

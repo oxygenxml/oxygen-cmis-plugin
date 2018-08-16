@@ -167,7 +167,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           currentItem = resourceList.getModel().getElementAt(itemIndex);
 
           // If right click was pressed
-          if (SwingUtilities.isRightMouseButton(e)) {
+          if (e.getClickCount() == 1 && SwingUtilities.isRightMouseButton(e)) {
             menu = new JPopupMenu();
 
             // Get the bounds of the item

@@ -41,6 +41,15 @@ public class CheckinFolderAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+
+    if (checkCanCheckinFolder(resource)) {
+
+      this.enabled = true;
+
+    } else {
+      this.enabled = false;
+
+    }
   }
 
   /**
@@ -101,8 +110,9 @@ public class CheckinFolderAction extends AbstractAction {
         } else if (iResource instanceof DocumentImpl) {
           // If it's a document try <Code>checkIn</Code>
           try {
-            ((DocumentImpl) iResource).checkIn();
-
+            if (((DocumentImpl) iResource).isCheckedOut() && ((DocumentImpl) iResource).isPrivateWorkingCopy()) {
+              ((DocumentImpl) iResource).checkIn();
+            }
           } catch (Exception ev) {
 
             // Show the exception if there is one
@@ -112,5 +122,47 @@ public class CheckinFolderAction extends AbstractAction {
         }
       }
     }
+  }
+
+  boolean checkStatus = false;
+
+  private boolean checkCanCheckinFolder(IResource resource) {
+    // Get all the children of the item in an iterator
+    Iterator<IResource> childrenIterator = resource.iterator();
+
+    if (childrenIterator != null) {
+
+      // While has a child, add to the model
+      while (childrenIterator.hasNext()) {
+
+        // Get the next child
+        IResource iResource = (IResource) childrenIterator.next();
+
+        // Check if it's a custom type interface FolderImpl
+        if (iResource instanceof FolderImpl) {
+
+          // Call the helper method used for recursion
+          checkCanCheckinFolder(iResource);
+
+        } else if (iResource instanceof DocumentImpl) {
+          System.out.println("Trying to verify a document name=" + ((DocumentImpl) iResource).getDisplayName());
+          // If it is a document type of custom interface
+          try {
+
+            if (((DocumentImpl) iResource).isCheckedOut()) {
+              // return true if a document was found checked out so
+              return checkStatus = true;
+
+            }
+
+          } catch (Exception ev) {
+
+            // Show the exception if there is one
+            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+          }
+        }
+      }
+    }
+    return checkStatus;
   }
 }
