@@ -1,6 +1,3 @@
-var cmisTimeOut = 5000;
-
-
 (function () {
   var initialUrl = decodeURIComponent(sync.util.getURLParameter('url'));
   var prefix = 'cmis://';
@@ -10,17 +7,11 @@ var cmisTimeOut = 5000;
   
   // goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
   //   console.log('Plugin loaded successfully');
-  
   //   var url = e.options.url;
   //   // If the URL has 'rest' protocol we use the rest protocol handler.
   //   if (url.match('cmis')) {
-      
-    
-
   //     // initialUrl = initialUrl.replace('/' + repoId);
-
   //     // console.log('RepoID ' + repoId);
-
   //     console.log('Initial URL ' + initialUrl);
   //     console.log('Root URL ' + rootUrl);
   //     // set the workspace UrlChooser
@@ -39,7 +30,7 @@ var cmisTimeOut = 5000;
       rootUrl += '/';
     } 
   }
-   // 'cmis://http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/'; 
+
   var cmisFileRepo = {};
   
   /**
@@ -115,8 +106,6 @@ var cmisTimeOut = 5000;
       userInput.value = lastUser;
       userInput.select();
     }
-
-    
 }
 
 	window.login = login;
@@ -135,8 +124,6 @@ var cmisTimeOut = 5000;
       }, this),
       'POST');
 };
-
-
 
   cmisFileRepo.createRepositoryAddressComponent = function (rootUrlParam, currentBrowseUrl, rootURLChangedCallback) {
     var div = document.createElement('div');
@@ -160,12 +147,9 @@ var cmisTimeOut = 5000;
     return div;
   };
 
-  
-
 cmisFileRepo.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
   urlInfoCallback(rootUrl, url);
 };
-
 
   // -------- Initialize the file browser information ------------
 var cmisFileRepositoryDescriptor = {
@@ -178,12 +162,89 @@ var cmisFileRepositoryDescriptor = {
     'repository' : cmisFileRepo
 };
 
-//'../plugin-resources/cmis/cmis.png'
- 
 workspace.getFileRepositoriesManager().registerRepository(cmisFileRepositoryDescriptor);
+})();
 
+/**
+ * Check Out Action
+ */
+var CmisCheckOutAction = function(editor){
+  this.editor = editor;
+};
+CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
+CmisCheckOutAction.prototype.getDisplayName = function() {
+  return 'Check Out';
+};
 
-  })();
+CmisCheckOutAction.prototype.actionPerformed = function(callback) {
+    this.editor.getActionsManager().invokeOperation(
+      'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+        action: 'cmisCheckout',
+        url: decodeURIComponent(sync.util.getURLParameter('url'))
+      }, callback);
+};
 
+/**
+ * Check In Action
+ */
+var CmisCheckInAction = function(editor){
+  this.editor = editor;
+};
+CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+CmisCheckInAction.prototype.constructor = CmisCheckOutAction;
+CmisCheckInAction.prototype.getDisplayName = function() {
+  return 'Check In';
+};
 
-  
+CmisCheckInAction.prototype.actionPerformed = function(callback) {
+    this.editor.getActionsManager().invokeOperation(
+      'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+        action: 'cmisCheckin',
+        url: decodeURIComponent(sync.util.getURLParameter('url'))
+      }, callback);
+};
+
+//-------------------------------------------------------------------------------------------------
+goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
+  var editor = e.editor;
+  // Register the newly created action.
+  editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
+  editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
+
+  addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link');
+});
+
+function addToDitaToolbar(editor, checkOutId, checkInId) {
+  goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
+    var actionsConfig = e.actionsConfiguration;
+
+    var builtinToolbar = null;
+    if (actionsConfig.toolbars) {
+      for (var i = 0; i < actionsConfig.toolbars.length; i++) {
+        var toolbar = actionsConfig.toolbars[i];
+        if (toolbar.name == "Builtin") {
+          builtinToolbar = toolbar;
+          //console.log('TOOLBAR ', builtinToolbar);
+        }
+      }
+    }
+
+   if(builtinToolbar) {
+        builtinToolbar.children.push({
+          displayName : 'CMIS',
+          type: 'list',
+          children: [
+            {
+              id: checkOutId,
+              type: 'action'
+            },
+           {
+              id: checkInId,
+              type: 'action'
+            }
+          ]
+        });
+      }
+  });
+}

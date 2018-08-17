@@ -21,6 +21,8 @@
 		class="com.oxygenxml.cmis.web.CmisLoginServlet" />
 	<extension type="URLHandler"
 		class="com.oxygenxml.cmis.web.CmisURLExtension" />
+	<extension type="WebappServlet"
+		class="com.oxygenxml.cmis.web.cmisactions.CmisActionsBase" />
 
 	<!-- You can access static files at XML_WEB_AUTHOR/plugin-resources/cmis 
 		(change PLUGIN_NAME_STATIC to whatever you need) -->

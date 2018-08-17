@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.cmisactions.CmisActionsBase;
 
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
@@ -35,6 +36,9 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
 		URL serverUrl = CmisURLConnection.getServerURL(url.toExternalForm(), null);
 
+		//Connection Cmis Actions
+		CmisActionsBase.connection = cuc;
+		
 		logger.info("Server URL = " + serverUrl.toExternalForm());
 
 		WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
@@ -51,7 +55,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		} else {
 			throw new UserActionRequiredException(webappMessage);
 		}
-
+		
 		return new CmisBrowsingURLConnection(cuc, serverUrl);
 	}
 
