@@ -46,7 +46,7 @@ public class ResourceController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	public Document createDocument(Folder path, String filename, String content, String mimeType, String state)
+	public Document createDocument(Folder path, String filename, String content, String mimeType)
 			throws UnsupportedEncodingException, CmisConstraintException {
 		// TODO Pass a Reader instead of a String as content.
 
@@ -65,7 +65,7 @@ public class ResourceController {
 		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
 
 		// create the document
-		return path.createDocument(properties, contentStream, VersioningState.fromValue(state));
+		return path.createDocument(properties, contentStream, VersioningState.NONE);
 	}
 
 	/**
@@ -79,12 +79,8 @@ public class ResourceController {
 	 * @throws UnsupportedEncodingException
 	 *             Necessary VersionableType in order to get many versions
 	 */
-	public Document createVersionedDocument(Folder path, String filename, String content,
-			VersioningState versioningState) throws UnsupportedEncodingException {
-
-		// TODO Pass a Reader instead of a String as content.
-
-		String mimetype = "text/plain; charset=UTF-8";
+	public Document createVersionedDocument(Folder path, String filename, String content, String mimetype,
+			String objectType, VersioningState versioningState) throws UnsupportedEncodingException {
 
 		byte[] contentBytes = content.getBytes("UTF-8");
 		ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
@@ -96,7 +92,7 @@ public class ResourceController {
 		Map<String, Object> properties = new HashMap<String, Object>();
 
 		properties.put(PropertyIds.NAME, filename);
-		properties.put(PropertyIds.OBJECT_TYPE_ID, "VersionableType");
+		properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
 
 		properties.put(PropertyIds.VERSION_LABEL, null);
 		properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);

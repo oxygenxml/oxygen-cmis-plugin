@@ -1,6 +1,10 @@
 package com.oxygenxml.cmis.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -12,7 +16,6 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,43 +54,42 @@ public class ResourceControllerDocumentTest extends ConnectionTestBase {
 	 * @throws IOException
 	 *             If it fails.
 	 */
-	@Test(timeout = 10000)
+	@Test
 	public void testDocumentDelete() throws IOException {
-		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain", "none");
-		debugPrint(testFolder);
+		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
 
-		if (documentExists(document, testFolder)) {
-			ctrl.deleteAllVersionsDocument(document);
-		}
+		ctrl.deleteAllVersionsDocument(document);
+		document = null;
 
-		Assert.assertFalse(documentExists(document, testFolder));
+		assertFalse("The file wasn't deleted", documentExists(document, testFolder));
+		assertNull("Document isn't null" ,document);
 	}
 
-	@Test(timeout = 10000)
+	@Test
 	public void testMoveDocument() throws IOException {
-		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(PropertyIds.NAME, "testFolderMove");
-		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
-
 		Folder sourceFolder = testFolder;
-		Folder targetFolder = testFolder.createFolder(properties);
-
-		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain", "none");
+		Folder targetFolder = ctrl.createFolder(sourceFolder, "testFolderMove");
+		Document document = ctrl.createDocument(testFolder, "test1.txt", "test content", "text/plain");
 
 		ctrl.move(sourceFolder, targetFolder, document);
 
-		Assert.assertTrue("The file wasn't moved", documentExists(document, targetFolder));
-
+		assertTrue("The file wasn't moved", documentExists(document, targetFolder));
+		assertNotNull("Document is null", document);
+		assertNotNull("Source folder is null", sourceFolder);
+		assertNotNull("Target folder is null", targetFolder);
+		
 		ctrl.deleteFolderTree(targetFolder);
 	}
 
-	@Test(timeout = 10000)
+	@Test
 	public void testDocumentContent() throws IOException {
-		Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text", "text/plain", "none");
-
+		Document doc = ctrl.createDocument(testFolder, "contentDoc.doc", "some test text", "text/plain");
 		Reader docContent = ctrl.getDocumentContent(doc.getId());
-
+		
+		assertNotNull("Document is null", doc);
+		assertNotNull("Reader is null", docContent);
 		assertEquals("some test text", read(docContent));
+		
 		ctrl.deleteAllVersionsDocument(doc);
 	}
 

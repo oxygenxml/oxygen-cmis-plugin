@@ -20,7 +20,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 		super.init();
 		HashMap<String, String> defaultOptions = new HashMap<String, String>();
 		defaultOptions.put(ENFORCED_URL, "");
-
+		defaultOptions.put(ENFORCED_ICON, "../plugin-resources/cmis/cmis.png");
 		setDefaultOptions(defaultOptions);
 	}
 
@@ -33,7 +33,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 	public String getOptionsForm() {
 		String enforcedUrl = getOption(ENFORCED_URL, "");
 		String enforcedName = getOption(ENFORCED_NAME, "");
-		String enforcedIcon = getOption(ENFORCED_ICON, "../plugin-resources/cmis/cmis.png");
+		String enforcedIcon = getOption(ENFORCED_ICON, "");
 		
 		StringBuilder optionsForm = new StringBuilder();
 		PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace())

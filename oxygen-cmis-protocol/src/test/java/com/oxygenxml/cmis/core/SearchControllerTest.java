@@ -31,7 +31,6 @@ public class SearchControllerTest extends ConnectionTestBase {
     List<IResource> folds = search.queryFolderName("Folder-1-0");
 
     assertNotNull(folds);
-
   }
 
   @Test
@@ -41,10 +40,6 @@ public class SearchControllerTest extends ConnectionTestBase {
     List<IResource> docs = search.queryDocName("Document");
 
     assertNotNull(docs);
-
-    /*
-     * for (IResource doc : docs) { System.out.println(doc.getDisplayName()); }
-     */
   }
 
   @Test
@@ -54,12 +49,6 @@ public class SearchControllerTest extends ConnectionTestBase {
     List<IDocument> docs = search.queryDocContent("At justo in urna");
 
     assertNotNull(docs);
-
-    for (IDocument doc : docs) {
-      
-      System.out.println(doc.getDoc().getProperties());
-    }
-
   }
 
   @Test
@@ -69,12 +58,6 @@ public class SearchControllerTest extends ConnectionTestBase {
     List<IResource> docs = search.queryDoc("Document");
 
     assertNotNull(docs);
-
-    for (IResource doc : docs) {
-     
-      System.out.println(doc.getDisplayName());
-    }
-
   }
 
   @After

@@ -48,48 +48,45 @@ public class CustomProtocolTest extends ConnectionTestBase {
 
 	@Test
 	public void testGenerateURLObject() throws UnsupportedEncodingException {
-		Document doc = null;
-
-		doc = createDocument(root, "urlDoc", "some text");
-		
+		Document doc = ctrl.createDocument(root, "Doc", "some text", "text/plain");
 		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/A1/");
 
-		
-		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc", url);
-		assertNotNull(url);
+		assertNotNull("Document is null", doc);
+		assertNotNull("URL is null", url);
+		assertEquals("Invalid URL", "cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/Doc", url);
 
+		ctrl.deleteAllVersionsDocument(doc);
 	}
 
 	@Test
 	public void testGetObjectFromURL() throws IOException {
-		Document doc = null;
-		
-		doc = createDocument(root, "urlDoc1", "some text");
-		
+		Document doc = ctrl.createDocument(root, "urlDoc1", "some text", "text/plain");
 		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/A1/");
-
-		assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc1", url);
-
+		
+		assertNotNull("Document is null", doc);
+		assertNotNull("URL is null", url);
+		assertEquals("Ivalid URL", "cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/urlDoc1", url);
+		
 		Document docURL = (Document) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
-		
-		
-		assertNotNull(docURL);
 
+		assertNotNull("Object is null", docURL);
+		assertEquals("Invalid object name", "urlDoc1", docURL.getName());
+		
+		ctrl.deleteAllVersionsDocument(doc);
 	}
 
 	@Test
 	public void testGetFolderFromURL() throws IOException {
-		Folder folder = null;
-
-		folder = (Folder) ctrl.getSession().getObjectByPath("/My_Folder-0-1/My_Folder-1-0");
-
+		Folder folder = (Folder) ctrl.getSession().getObjectByPath("/My_Folder-0-1/My_Folder-1-0");
 		String url = CmisURLConnection.generateURLObject(folder, ctrl, "/");
-
-		System.out.println(url);
+		
+		assertNotNull("Folder is null", folder);
+		assertNotNull("URL is null", url);
+		assertEquals("Invalid URL", "cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-1/My_Folder-1-0", url);
 		
 		Folder foldURL = (Folder) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
 
-		assertNotNull(foldURL);
+		assertNotNull("Null folder", foldURL);
 	}
 
 	@After

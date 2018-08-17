@@ -75,7 +75,6 @@ public class AlfrescoCustomProtocolTest {
 
 		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/-default-/");
 		System.out.println("URL: " + URLEncoder.encode(url, "UTF-8"));
-
 		
 	}
 

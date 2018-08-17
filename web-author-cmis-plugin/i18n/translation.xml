@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<translation>
+    <languageList>
+        <language description="English" lang="en_US"/>
+    </languageList>
+    <key value="AUTHENTICATION_REQUIRED_FOR_" distribution="webauthor">
+        <comment>Title of login dialog.</comment>
+        <val lang="en_US">Authentication required for {$PROD}</val>
+    </key>
+    <key value="SET_SERVER_URL_" distribution="webauthor">
+        <comment>Tooltip on button for setting server URL</comment>
+        <val lang="en_US">Set server URL</val>
+    </key>
+    <key value="Server_URL">
+        <comment>Open URL dialog. Input for the server URL.</comment>
+        <val lang="en_US">Server URL</val>
+    </key>
+    <key value="Enforced_server" distribution="webauthor">
+        <comment>Label for input setting the enforced server URL.</comment>
+        <val lang="en_US">Connection URL</val>
+    </key>
+	<key value="Server_name" distribution="webauthor">
+		<comment>Label for input Server Name</comment>
+		<val lang="en_US">Server name</val>
+	</key>
+	<key value="Icon_URL" distribution="webauthor">
+		<comment>Label for input icon URL</comment>
+		<val lang="en_US">Icon URL</val>
+	</key>
+    <key value="Enforced_server_note" distribution="webauthor">
+        <comment>Warning for the 'Enforce server' setting.</comment>
+        <val lang="en_US">Note: Once a server is enforced, the user will only be able to browse this enforced server. 
+		Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
+    </key>
+    <key value="Anonymous" distribution="webauthor">
+        <comment>Default author name for comments</comment>
+        <val lang="en_US">Anonymous</val>
+    </key>
+    <key distribution="webauthor" value="EDIT_SERVER_URL_">
+        <comment>Tooltip on button for editing server URL</comment>
+        <val lang="en_US">Edit server URL</val>
+    </key>
+    <key distribution="webauthor" value="CANNOT_OPEN_URL_">
+        <comment>Error shown if URL could not be opened.</comment>
+        <val lang="en_US">Cannot open this URL</val>
+    </key>
+    <key distribution="webauthor" value="UNSAVED_CHANGES_WILL_BE_LOST_">
+        <comment>Warning shown when the user tries to logout while having unsaved changes</comment>
+        <val lang="en_US">All your unsaved changes will be lost</val>
+    </key>
+    <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
+        <comment>Title of login dialog.</comment>
+        <val lang="en_US">Authentication required</val>
+    </key>
+    <key value="INVALID_URL_">
+        <comment>The input URL was not valid.</comment>
+        <val lang="en_US">Invalid URL</val>
+    </key>
+    <key value="NAME_">
+        <comment>Like in "name and value"</comment>
+        <val lang="en_US">Name</val>
+    </key>
+    <key value="PASSWORD_">
+        <comment>Open URL dialog. The password for the connection.</comment>
+        <val lang="en_US">Password</val>
+    </key>
+</translation>

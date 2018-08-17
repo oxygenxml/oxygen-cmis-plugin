@@ -37,10 +37,10 @@ public interface TranslationTags {
 	/**
 	 * 
 	 */
-	String SERVER_NAME = "Server name";
+	String SERVER_NAME = "Server_name";
 	
 	/**
 	 * 
 	 */
-	String ICON_URL = "Icon URL";
+	String ICON_URL = "Icon_URL";
 }

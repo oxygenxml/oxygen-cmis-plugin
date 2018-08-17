@@ -112,7 +112,8 @@ public class ConnectionTestBase {
 		}
 		docs.add(docName);
 
-		return ctrl.createVersionedDocument(parent, docName, content, VersioningState.MINOR);
+		return ctrl.createVersionedDocument(parent, docName, content, "plain/text", "VersionableType",
+				VersioningState.MINOR);
 	}
 
 	/*
