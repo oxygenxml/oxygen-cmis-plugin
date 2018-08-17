@@ -39,13 +39,14 @@ public class OpenDocumentAction extends AbstractAction {
     super("Open document", UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
-    if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
-
-      this.enabled = true;
-
-    } else {
-      this.enabled = false;
-    }
+    // if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl)
+    // resource).isPrivateWorkingCopy()) {
+    //
+    // this.enabled = true;
+    //
+    // } else {
+    // this.enabled = false;
+    // }
   }
 
   /**
@@ -87,7 +88,10 @@ public class OpenDocumentAction extends AbstractAction {
 
       // Try opening in the Oxygen the URL
       try {
-        pluginWorkspace.open(new URL(urlAsTring));
+        if (pluginWorkspace.open(new URL(urlAsTring))) {
+          pluginWorkspace.getEditorAccess(new URL(urlAsTring), pluginWorkspace.MAIN_EDITING_AREA).setEditable(false);
+          ;
+        }
 
       } catch (MalformedURLException e1) {
 

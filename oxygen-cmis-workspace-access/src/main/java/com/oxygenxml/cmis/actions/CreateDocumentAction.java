@@ -76,7 +76,7 @@ public class CreateDocumentAction extends AbstractAction {
 
       // Create a versioned document with the state of MAJOR
       documentCreated = CMISAccess.getInstance().createResourceController()
-          .createVersionedDocument(((FolderImpl) resource).getFolder(), getInput, "", VersioningState.MAJOR);
+          .createVersionedDocument(((FolderImpl) resource).getFolder(), getInput, "", "plain/text", "VersionableType", VersioningState.MAJOR);
 
     } catch (UnsupportedEncodingException e1) {
 

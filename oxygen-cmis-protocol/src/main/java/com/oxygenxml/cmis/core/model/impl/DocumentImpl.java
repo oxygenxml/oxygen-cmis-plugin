@@ -129,7 +129,7 @@ public class DocumentImpl implements IDocument {
   public boolean isCheckedOut() {
     // A property needed to be set on creation of the document in order to get
     // this property
-    System.out.println("Checked out ="+doc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
+    //System.out.println("Checked out ="+doc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
     return doc.isVersionSeriesCheckedOut();
   }
 
@@ -142,7 +142,7 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public boolean isPrivateWorkingCopy() {
-    System.out.println("CPWC ="+doc.getProperty("cmis:isPrivateWorkingCopy").getValuesAsString());
+   // System.out.println("CPWC ="+doc.getProperty("cmis:isPrivateWorkingCopy").getValuesAsString());
     return doc.isPrivateWorkingCopy();
   }
 

@@ -22,6 +22,7 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
+import ro.sync.exml.view.graphics.Dimension;
 import sun.swing.DefaultLookup;
 
 public class SearchResultCellRenderer extends JPanel implements ListCellRenderer<IResource> {
@@ -29,7 +30,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   private JLabel iconLabel;
 
   private JPanel descriptionPanel;
-  private JLabel nameRsource;
+  private JLabel nameResource;
   private JLabel pathResource;
   private JLabel lineResource;
 
@@ -66,8 +67,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     c.anchor = GridBagConstraints.BASELINE_LEADING;
     c.weightx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
-    nameRsource = new JLabel();
-    descriptionPanel.add(nameRsource, c);
+    nameResource = new JLabel();
+    descriptionPanel.add(nameResource, c);
 
     c.gridx = 0;
     c.gridy = 1;
@@ -83,7 +84,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     c.insets = new Insets(5, 10, 5, 10);
     c.anchor = GridBagConstraints.CENTER;
     c.weightx = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weighty = 1;
+    c.gridheight = 2;
+    c.fill = GridBagConstraints.BOTH;
     lineResource = new JLabel();
     descriptionPanel.add(lineResource, c);
 
@@ -142,7 +145,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     Color bg = null;
     Color fg = null;
 
-    nameRsource.setText(value.getDisplayName());
+    nameResource.setText(value.getDisplayName());
 
     if (value instanceof DocumentImpl && value != null) {
 
@@ -181,7 +184,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         }
       }
 
-      lineResource.setText("<html>" + (resultContext != null ? resultContext : "Loading...") + "</html>");
+      lineResource.setText(
+          "<html><div style='word-wrap: break-word; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
+              + (resultContext != null ? resultContext : "Loading...") + "</div></html>");
 
     } else if (value instanceof FolderImpl && value != null) {
 
@@ -244,6 +249,108 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     }
   }
 
+  // public ApplicationListResizeSensitive(boolean forwardSelection) {
+  // super(forwardSelection);
+  //
+  // // The HTML content of the renderers may wrap to the list viewport
+  // bounds, leading to
+  // // a different height for the same value
+  //
+  // // Receives resize events and invalidates the list.
+  // final ComponentAdapter parentComponentListener = new
+  // ComponentAdapter() {
+  //
+  // @Override
+  // public void componentResized(ComponentEvent e) {
+  // size = e.getComponent().getSize();
+  // clearRendererAllocationCache();
+  // }
+  // };
+  //
+  // addHierarchyListener(new HierarchyListener() {
+  // /**
+  // * A reference to the previous linked caret. Used to avoid
+  // clearing the cache too often.
+  // */
+  // private Container oldParent = null;
+  // @Override
+  // public void hierarchyChanged(HierarchyEvent e) {
+  // // Such events can be fired quite often. For example when
+  //// changing the selected tab in a tabbed pane.
+  //
+  // Container parent = getParent();
+  // if (parent != null
+  // // A new parent.
+  // && (parent != oldParent
+  // // Just a precaution. The size of the parent changed. Maybe
+  //// it can happen if inside
+  // // a tabbed pane when switching.
+  // || !ro.sync.basic.util.Equaler.verifyEquals(size,
+  // parent.getSize()))) {
+  // // Avoid linking multiple times.
+  // parent.removeComponentListener(parentComponentListener);
+  // parent.addComponentListener(parentComponentListener);
+  // clearRendererAllocationCache();
+  //
+  // oldParent = parent;
+  // }
+  // }
+  // });
+  // }
+
+  /**
+   * Invalidates the bounds of the cells.
+   */
+  // public void clearRendererAllocationCache() {
+  //
+  // ListCellRenderer cellRenderer = getOriginalCellRenderer();
+  // setCellRenderer(null);
+  // setCellRenderer(cellRenderer);
+  // }
+  // protected void update(String htmlContent, boolean selected, boolean
+  // isHovered, int htmlWidth) {
+  // this.isSelected = selected;
+  // this.isHovered = isHovered;
+  // // Update the colors.
+  //
+  // StringBuilder html = new StringBuilder();
+  // html.append("<html><body>");
+  //
+  // if (htmlWidth == -1) {
+  // htmlWidth = getVisibleListWidth(0);
+  // }
+  //
+  // html.append(" <table cellspacing='" + getRendererTableCellSpacing() + "'
+  // cellpadding='0' width='")
+  // .append(htmlWidth).append("'>");
+  // html.append(htmlContent);
+  // html.append("</table></body></html>");
+  //
+  // // Update the dimensions of the text label.
+  // this.setBackground(UIManager.getColor("TextArea.background"));
+  // this.setText(html.toString());
+  //
+  // View view = (View) this.getClientProperty(BasicHTML.propertyKey);
+  // if (view != null) {
+  // double w = view.getPreferredSpan(View.X_AXIS);
+  // double h = view.getPreferredSpan(View.Y_AXIS);
+  //
+  // // Do not force label size beyond minimum size.
+  // double minimumWidth = this.getMinimumSize().getWidth();
+  // double minimumHeight = this.getMinimumSize().getHeight();
+  // if (w < minimumWidth) {
+  // w = minimumWidth;
+  // }
+  // if (h < minimumHeight) {
+  // h = minimumHeight;
+  // }
+  //
+  // this.setPreferredSize(new Dimension((int) w, (int) h));
+  // } else {
+  // this.setPreferredSize(new Dimension(10, 10));
+  // }
+  // }
+
   static String getReadyHTMLSplit(String context, String matchPattern) {
     String toReturn = "";
 
@@ -256,7 +363,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       String styledContext = splits[index];
       String styledMatch = "";
       if (index != splits.length - 1) {
-        styledMatch = "<nobr style='background-color:yellow; color:gray'>" + matchPattern + "</nobr>";
+        styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + matchPattern + "</nobr>";
       }
       toReturn += (styledContext + styledMatch);
     }
