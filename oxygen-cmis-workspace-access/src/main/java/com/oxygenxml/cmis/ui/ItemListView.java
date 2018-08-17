@@ -199,7 +199,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             }
 
             // Bounds of the click
-            menu.show(listItemScrollPane, e.getX(), e.getY());
+            menu.show(resourceList, e.getX(), e.getY());
             
           }
         }

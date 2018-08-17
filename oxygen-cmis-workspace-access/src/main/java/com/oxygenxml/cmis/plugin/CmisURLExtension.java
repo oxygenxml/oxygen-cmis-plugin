@@ -24,30 +24,4 @@ public class CmisURLExtension implements URLStreamHandlerPluginExtension {
 		return null;
 	}
 
-	public static String generateURLObject(CmisObject object, ResourceController ctrl) {
-		// Builder for building custom URL
-		StringBuilder urlb = new StringBuilder();
-
-		// Get server URL
-		String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
-		String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
-		// Encode server URL
-		originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
-
-		// Generate first part of custom URL
-		urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append("/").append(repository);
-
-		// Get path of Cmis Object
-		List<String> objectPath = ((FileableCmisObject) object).getPaths();
-
-		// Append object path to URL
-		for (int i = 0; i < objectPath.size(); i++) {
-
-			logger.info("here");
-			for (String pth : objectPath.get(i).split("/")) {
-				if (!pth.isEmpty()) {
-					urlb.append("/").append(URLUtil.encodeURIComponent(pth));
-				}
-			}
-		}
 }

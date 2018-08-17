@@ -113,7 +113,7 @@ public class CheckoutFolderAction extends AbstractAction {
             boolean checkedOutStatus = ((DocumentImpl) iResource).isCheckedOut();
             boolean privateCopyStatus = ((DocumentImpl) iResource).isPrivateWorkingCopy();
 
-            if (!(checkedOutStatus && privateCopyStatus)) {
+            if (!(checkedOutStatus || privateCopyStatus)) {
               ((DocumentImpl) iResource).checkOut(((DocumentImpl) iResource).getDocType());
             }
           } catch (Exception ev) {
@@ -126,16 +126,15 @@ public class CheckoutFolderAction extends AbstractAction {
     }
   }
 
-  boolean checkStatus = false;
-
   private boolean checkCanCheckoutFolder(IResource resource) {
+    boolean checkStatus = false;
     // Get all the children of the item in an iterator
     Iterator<IResource> childrenIterator = resource.iterator();
 
     if (childrenIterator != null) {
 
       // While has a child, add to the model
-      while (childrenIterator.hasNext()) {
+      while (childrenIterator.hasNext() && !checkStatus) {
 
         // Get the next child
         IResource iResource = (IResource) childrenIterator.next();
@@ -144,7 +143,7 @@ public class CheckoutFolderAction extends AbstractAction {
         if (iResource instanceof FolderImpl) {
 
           // Call the helper method used for recursion
-          checkCanCheckoutFolder(iResource);
+          checkStatus = checkStatus || checkCanCheckoutFolder(iResource);
 
         } else if (iResource instanceof DocumentImpl) {
           System.out.println("Trying to verify a document name=" + ((DocumentImpl) iResource).getDisplayName());
@@ -155,7 +154,7 @@ public class CheckoutFolderAction extends AbstractAction {
 
             if (!(checkedOutStatus || privateCopyStatus)) {
               // return true if a document was found checked out so
-              return checkStatus = true;
+              return true;
 
             }
 

@@ -129,16 +129,16 @@ public class CancelCheckoutFolderAction extends AbstractAction {
     }
   }
 
-  boolean checkStatus = false;
 
   private boolean checkCanCancelCheckoutFolder(IResource resource) {
+    boolean checkStatus = false;
     // Get all the children of the item in an iterator
     Iterator<IResource> childrenIterator = resource.iterator();
 
     if (childrenIterator != null) {
 
       // While has a child, add to the model
-      while (childrenIterator.hasNext()) {
+      while (childrenIterator.hasNext() && !checkStatus) {
 
         // Get the next child
         IResource iResource = (IResource) childrenIterator.next();
@@ -147,7 +147,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
         if (iResource instanceof FolderImpl) {
 
           // Call the helper method used for recursion
-          checkCanCancelCheckoutFolder(iResource);
+          checkStatus = checkStatus || checkCanCancelCheckoutFolder(iResource);
 
         } else if (iResource instanceof DocumentImpl) {
           System.out.println("Trying to verify a document name=" + ((DocumentImpl) iResource).getDisplayName());
@@ -156,7 +156,8 @@ public class CancelCheckoutFolderAction extends AbstractAction {
 
             if (((DocumentImpl) iResource).isCheckedOut()) {
               // return true if a document was found checked out so
-              return checkStatus = true;
+              checkStatus = true;
+
 
             }
 

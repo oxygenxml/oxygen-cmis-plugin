@@ -4,7 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -54,14 +57,35 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     // Description panel
     descriptionPanel = new JPanel();
-    descriptionPanel.setLayout(new GridLayout(3, 1, 1, 0));
+    descriptionPanel.setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
 
+    c.gridx = 0;
+    c.gridy = 0;
+    c.insets = new Insets(5, 10, 5, 10);
+    c.anchor = GridBagConstraints.BASELINE_LEADING;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
     nameRsource = new JLabel();
+    descriptionPanel.add(nameRsource, c);
+
+    c.gridx = 0;
+    c.gridy = 1;
+    c.insets = new Insets(5, 10, 5, 10);
+    c.anchor = GridBagConstraints.BASELINE_LEADING;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
     pathResource = new JLabel();
-    lineResource = new JLabel("Empty");
-    descriptionPanel.add(nameRsource);
-    descriptionPanel.add(pathResource);
-    descriptionPanel.add(lineResource);
+    descriptionPanel.add(pathResource, c);
+
+    c.gridx = 0;
+    c.gridy = 2;
+    c.insets = new Insets(5, 10, 5, 10);
+    c.anchor = GridBagConstraints.CENTER;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    lineResource = new JLabel();
+    descriptionPanel.add(lineResource, c);
 
     // Notification panel
     notifierPanel = new JPanel(new BorderLayout());
@@ -151,9 +175,13 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       if (resultContext != null) {
         resultContext = escapeHTML(resultContext);
+
+        if (matchPattern != null) {
+          resultContext = getReadyHTMLSplit(resultContext, matchPattern);
+        }
       }
-      
-      lineResource.setText("<html><h4 bgcolor=yellow  color=blue>" + resultContext + "</h4></html>");
+
+      lineResource.setText("<html>" + (resultContext != null ? resultContext : "Loading...") + "</html>");
 
     } else if (value instanceof FolderImpl && value != null) {
 
@@ -162,6 +190,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       notifyValue = "By:" + folder.getCreatedBy();
       pathValue = contentProv.getPath(folder, ctrl);
+
+      lineResource.setText("");
 
     }
 
@@ -212,6 +242,26 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         setForegroundC(child, foreground);
       }
     }
+  }
+
+  static String getReadyHTMLSplit(String context, String matchPattern) {
+    String toReturn = "";
+
+    System.out.println("COntext=" + context);
+    System.out.println("Pattern=" + matchPattern);
+    String[] splits = context.split(matchPattern);
+
+    for (int index = 0; index < splits.length; index += 1) {
+
+      String styledContext = splits[index];
+      String styledMatch = "";
+      if (index != splits.length - 1) {
+        styledMatch = "<nobr style='background-color:yellow; color:gray'>" + matchPattern + "</nobr>";
+      }
+      toReturn += (styledContext + styledMatch);
+    }
+
+    return toReturn;
   }
 
   public static String escapeHTML(String s) {
