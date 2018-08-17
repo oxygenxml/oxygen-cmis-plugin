@@ -101,8 +101,10 @@ public class SearchController {
       scope += "cmis:folder";
     }
 
-    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, "cmis:name LIKE '%" + content
-        + "%' OR cmis:description LIKE '%" + content + "%' OR cmis:createdBy LIKE '%" + content + "%'", false, oc);
+    String where = "cmis:name LIKE '%" + content
+        + "%' OR cmis:description LIKE '%" + content + "%' OR cmis:createdBy LIKE '%" + content + "%'" +  "OR CONTAINS ('" + content + "')";
+    
+    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, where, false, oc);
 
     for (CmisObject cmisObject : results) {
       IResource res = null;
