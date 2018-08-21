@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Repository;
@@ -103,10 +104,17 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		logger.info("entryMethod() => " + parent.getName());
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
+			if(obj instanceof Document) {
+				if(((Document) obj).isPrivateWorkingCopy() || ((Document) obj).isVersionSeriesPrivateWorkingCopy()) {
+					continue;
+				}
+			}
+			
 			String parentPath = this.getURL().getPath();
 			String entryUrl = CmisURLConnection.generateURLObject(obj, cuc.getResourceController(url), parentPath);
 			entryUrl = entryUrl.concat((obj instanceof Folder) ? "/" : "");
 			list.add(new FolderEntryDescriptor(entryUrl));
+			
 		}
 		folderEntryLogger(list);
 	}

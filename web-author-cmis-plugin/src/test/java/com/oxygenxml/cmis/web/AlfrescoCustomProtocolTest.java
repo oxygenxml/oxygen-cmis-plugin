@@ -57,6 +57,8 @@ public class AlfrescoCustomProtocolTest {
 		access.connectToRepo(url, repository.getId(), new UserCredentials("admin", "admin"));
 
 		ctrl = CMISAccess.getInstance().createResourceController();
+		
+		
 
 	}
 
@@ -76,6 +78,8 @@ public class AlfrescoCustomProtocolTest {
 		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/-default-/");
 		System.out.println("URL: " + URLEncoder.encode(url, "UTF-8"));
 		
+		
+		System.out.println("cmis://****@http%3A%2F%2F127.0.0.1%3A8098%2Falfresco%2Fapi%2F-default-%2Fpublic%2Fcmis%2Fversions%2F1.1%2Fatom/-default-/Article.xml".replaceAll("[\\*\\@]", ""));
 	}
 
 	@Test

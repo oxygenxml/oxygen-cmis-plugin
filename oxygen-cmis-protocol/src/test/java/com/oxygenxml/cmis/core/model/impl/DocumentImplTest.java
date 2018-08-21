@@ -57,6 +57,7 @@ public class DocumentImplTest extends ConnectionTestBase {
 		pwc = doc.checkOut();
 		doc.refresh();
 
+		
 		CmisObject pwcDoc = CMISAccess.getInstance().getSession().getObject(pwc);
 
 		List<Property<?>> properties = doc.getProperties();

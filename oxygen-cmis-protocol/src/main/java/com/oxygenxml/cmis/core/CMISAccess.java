@@ -11,15 +11,11 @@ import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
-import org.apache.log4j.Logger;
 
 /**
  * Entry point to access a CMIS server.
  */
 public class CMISAccess {
-
-	private static final Logger logger = Logger.getLogger(CMISAccess.class.getName());
-
 	/**
 	 * Singleton instance.
 	 */
@@ -78,15 +74,11 @@ public class CMISAccess {
 			throws CmisUnauthorizedException {
 		parameters = new HashMap<>();
 
-		logger.info("Before try to connect to repo");
-
 		populateParameters(connectionInfo, parameters, uc);
 		parameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
 
 		// create session
 		session = factory.createSession(parameters);
-
-		logger.info("After try to connect to repo");
 	}
 
 	private void populateParameters(URL connectionInfo, Map<String, String> parameters, UserCredentials uc) {
@@ -114,10 +106,24 @@ public class CMISAccess {
 		HashMap<String, String> parameters = new HashMap<>();
 		populateParameters(connectionInfo, parameters, uc);
 
-		
 		return factory.getRepositories(parameters);
 	}
-
+	
+	/**
+	 * 
+	 * @param connectionInfo
+	 * @param uc
+	 */
+	public void pureConnectToServer(URL connectionInfo, UserCredentials uc) {
+		HashMap<String, String> parameters = new HashMap<>();
+		populateParameters(connectionInfo, parameters, uc);
+		
+		String repositoryID = factory.getRepositories(parameters).get(0).getId();
+		parameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
+		
+		session = factory.createSession(parameters);
+	}
+	
 	/**
 	 * @return A controller to work with resources.
 	 */

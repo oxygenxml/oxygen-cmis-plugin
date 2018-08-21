@@ -4,35 +4,19 @@
 
   var limit = initialUrl.substring(prefix.length).indexOf('/') + prefix.length;
   var rootUrl = initialUrl.substring(0, limit);
-  
-  // goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
-  //   console.log('Plugin loaded successfully');
-  //   var url = e.options.url;
-  //   // If the URL has 'rest' protocol we use the rest protocol handler.
-  //   if (url.match('cmis')) {
-  //     // initialUrl = initialUrl.replace('/' + repoId);
-  //     // console.log('RepoID ' + repoId);
-  //     console.log('Initial URL ' + initialUrl);
-  //     console.log('Root URL ' + rootUrl);
-  //     // set the workspace UrlChooser
-  //     workspace.setUrlChooser(new sync.api.FileBrowsingDialog({
-  //       initialUrl: initialUrl,
-  //       rootUrl: rootUrl
-  //     }));
-  //   }
-  // });
-  
+
   var urlFromOptions = sync.options.PluginsOptions.getClientOption("cmis.enforced_url");
   var rootUrl = null;
+
   if (urlFromOptions) {
     rootUrl = 'cmis://' + encodeURIComponent(urlFromOptions);
     if (urlFromOptions.lastIndexOf('/') !== urlFromOptions.length) {
       rootUrl += '/';
-    } 
+    }
   }
 
   var cmisFileRepo = {};
-  
+
   /**
    * Login the user and call this callback at the end.
    *
@@ -48,12 +32,12 @@
 
       var cD = goog.dom.createDom;
 
-      cmisNameInput = cD('input', {id: 'cmis-name', type: 'text'});
+      cmisNameInput = cD('input', { id: 'cmis-name', type: 'text' });
       cmisNameInput.setAttribute('autocorrect', 'off');
       cmisNameInput.setAttribute('autocapitalize', 'none');
       cmisNameInput.setAttribute('autofocus', '');
 
-      cmisPasswordInput = cD('input', {id: 'cmis-passwd', type: 'password'});
+      cmisPasswordInput = cD('input', { id: 'cmis-passwd', type: 'password' });
 
       goog.dom.appendChild(loginDialog_.getElement(),
         cD('div', 'cmis-login-dialog',
@@ -62,7 +46,7 @@
             cmisNameInput
           ),
           cD('label', '',
-            tr(msgs.PASSWORD_)+ ': ',
+            tr(msgs.PASSWORD_) + ': ',
             cmisPasswordInput
           )
         )
@@ -71,7 +55,7 @@
       loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
       loginDialog_.setPreferredSize(300, null);
     }
-    loginDialog_.onSelect(function(key) {
+    loginDialog_.onSelect(function (key) {
       if (key === 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
         var userField = cmisNameInput || document.getElementById('cmis-name');
@@ -101,14 +85,14 @@
 
     loginDialog_.show();
     var lastUser = localStorage.getItem('cmis.user');
-    if(lastUser) {
+    if (lastUser) {
       var userInput = cmisNameInput || loginDialog_.getElement().querySelector('#cmis-name');
       userInput.value = lastUser;
       userInput.select();
     }
-}
+  }
 
-	window.login = login;
+  window.login = login;
 
   cmisFileRepo.login = login;
   cmisFileRepo.logout = function (logoutCallback) {
@@ -123,7 +107,7 @@
         logoutCallback();
       }, this),
       'POST');
-};
+  };
 
   cmisFileRepo.createRepositoryAddressComponent = function (rootUrlParam, currentBrowseUrl, rootURLChangedCallback) {
     var div = document.createElement('div');
@@ -131,92 +115,233 @@
     if (rootUrl) {
       console.log(rootUrl, rootUrlParam, currentBrowseUrl);
       if (!rootUrlParam) {
-      if (!this.rootUrlSet) {
-        this.rootUrlSet = true;
-        setTimeout(function() {
-          rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
-        }, 0)
-      // rootURLChangedCallback(rootUrl, rootUrl); // TODO: bug in web author.
-      }
+        if (!this.rootUrlSet) {
+          this.rootUrlSet = true;
+          setTimeout(function () {
+            rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
+          }, 0)
+          // rootURLChangedCallback(rootUrl, rootUrl); // TODO: bug in web author.
+        }
       }
       div.textContent = sync.options.PluginsOptions.getClientOption("cmis.enforced_name"); // TODO: use the CMIS server host name
-  
+
     } else {
       div.textContent = 'Please set the CMIS API URL in the Admin Page Configuration.'; // TODO link to documentation.
     }
     return div;
   };
 
-cmisFileRepo.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
-  urlInfoCallback(rootUrl, url);
-};
+  cmisFileRepo.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
+    urlInfoCallback(rootUrl, url);
+  };
 
   // -------- Initialize the file browser information ------------
-var cmisFileRepositoryDescriptor = {
-    'id' : 'cmis',
-    'name' : sync.options.PluginsOptions.getClientOption('cmis.enforced_name'),
-    'icon' : sync.util.computeHdpiIcon(sync.options.PluginsOptions.getClientOption('cmis.enforced_icon')), 
-    'matches' : function matches(url) {
+  var cmisFileRepositoryDescriptor = {
+    'id': 'cmis',
+    'name': sync.options.PluginsOptions.getClientOption('cmis.enforced_name'),
+    'icon': sync.util.computeHdpiIcon(sync.options.PluginsOptions.getClientOption('cmis.enforced_icon')),
+    'matches': function matches(url) {
       return url.match('cmis'); // Check if the provided URL points to a file or folder from Cmis file repository
     },
-    'repository' : cmisFileRepo
-};
+    'repository': cmisFileRepo
+  };
 
-workspace.getFileRepositoriesManager().registerRepository(cmisFileRepositoryDescriptor);
+  workspace.getFileRepositoriesManager().registerRepository(cmisFileRepositoryDescriptor);
 })();
 
 /**
- * Check Out Action
+ * Check Out Action--------------------------------------------------------------------------------------------
  */
-var CmisCheckOutAction = function(editor){
+var checkedOut = ''; // 'pending';
+
+var CmisCheckOutAction = function (editor) {
+  sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
 };
+
+
 CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
-CmisCheckOutAction.prototype.getDisplayName = function() {
+CmisCheckOutAction.prototype.getDisplayName = function () {
   return 'Check Out';
 };
 
-CmisCheckOutAction.prototype.actionPerformed = function(callback) {
-    this.editor.getActionsManager().invokeOperation(
-      'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
-        action: 'cmisCheckout',
-        url: decodeURIComponent(sync.util.getURLParameter('url'))
-      }, callback);
+CmisCheckOutAction.prototype.actionPerformed = function (callback) {
+  this.editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+      action: 'cmisCheckout',
+      url: this.editor.getUrl()
+    }, goog.bind(this.afterCheckout_, this, callback));
 };
+
+CmisCheckOutAction.prototype.afterCheckout_ = function (callback, err, data) {
+  this.editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+      action: ''
+    }, function (err, data) {
+      checkedOut = JSON.parse(data).isCheckedOut;
+      console.log(checkedOut);
+    });
+
+  callback();
+}
+
+/**
+ * Cancel Check Out Action
+ */
+var cancelCmisCheckOutAction = function (editor) {
+  sync.actions.AbstractAction.call(this, '');
+  this.editor = editor;
+};
+
+cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+cancelCmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
+cancelCmisCheckOutAction.prototype.getDisplayName = function () {
+  return 'Cancel Check Out';
+};
+
+cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
+  this.editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+      action: 'cancelCmisCheckout',
+      url: this.editor.getUrl()
+    }, goog.bind(this.afterCancel_, this, callback));
+
+  location.reload();
+};
+
+cancelCmisCheckOutAction.prototype.afterCancel_ = function (callback, err, data) {
+  this.editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+      action: ''
+    }, function (err, data) {
+      checkedOut = JSON.parse(data).isCheckedOut;
+      console.log(checkedOut);
+    });
+
+  callback();
+}
 
 /**
  * Check In Action
  */
-var CmisCheckInAction = function(editor){
+var CmisCheckInAction = function (editor) {
+  sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
 };
 CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 CmisCheckInAction.prototype.constructor = CmisCheckOutAction;
-CmisCheckInAction.prototype.getDisplayName = function() {
+CmisCheckInAction.prototype.getDisplayName = function () {
   return 'Check In';
 };
 
-CmisCheckInAction.prototype.actionPerformed = function(callback) {
-    this.editor.getActionsManager().invokeOperation(
+CmisCheckInAction.prototype.actionPerformed = function (callback) {
+  if (!this.dialog) {
+    this.dialog = workspace.createDialog();
+    this.dialog.setTitle('Check In');
+    this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.OK_CANCEL);
+    this.dialog.getElement().innerHTML = "<p> Enter the commit message: </p>";
+
+    var input = document.createElement("input");
+    input.setAttribute('type', 'text');
+    this.dialog.getElement().appendChild(input);
+  }
+
+  this.dialog.show();
+
+  var editor = this.editor;
+  this.dialog.onSelect(goog.bind(function () {
+    var commitMessage = this.dialog.getElement().querySelector('input').value;
+    editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
         action: 'cmisCheckin',
-        url: decodeURIComponent(sync.util.getURLParameter('url'))
-      }, callback);
+        url: editor.getUrl(),
+        comment: commitMessage
+      }, goog.bind(this.afterCheckIn_, this, callback));
+  }, this));
 };
 
+CmisCheckInAction.prototype.afterCheckIn_ = function (callback, err, data) {
+  this.editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+      action: ''
+    }, function (err, data) {
+      checkedOut = JSON.parse(data).isCheckedOut;
+      console.log(checkedOut);
+      location.reload();
+    });
+
+  callback();
+}
+
+
 //-------------------------------------------------------------------------------------------------
-goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
+CmisCheckOutAction.prototype.isEnabled = function () {
+  if (checkedOut === 'pending') {
+    return false;
+  }
+  if (checkedOut) {
+    return false;
+  }
+  return true;
+}
+
+CmisCheckInAction.prototype.isEnabled = function () {
+  if (checkedOut === 'pending') {
+    return false;
+  }
+  if (checkedOut) {
+    return true;
+  }
+  return false;
+}
+
+cancelCmisCheckOutAction.prototype.isEnabled = function () {
+  if (checkedOut === 'pending') {
+    return false;
+  }
+  if (checkedOut) {
+    return true;
+  }
+  return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function (e) {
   var editor = e.editor;
+
+  editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+      action: ''
+    }, function (err, data) {
+      console.log(data);
+      checkedOut = JSON.parse(data).isCheckedOut;
+
+      if (checkedOut && JSON.parse(data).isEditBy !== localStorage.getItem('cmis.user')) {
+        this.dialog = workspace.createDialog();
+        this.dialog.setTitle('Warning!');
+        this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.OK);
+        this.dialog.getElement().innerHTML = "<p> This document is checked-out by " + JSON.parse(data).isEditBy + "</p>";
+        this.dialog.show();
+        checkedOut = 'pending';
+      }
+
+    });
+
+  console.log(localStorage.getItem('cmis.user'));
+
+  console.log(checkedOut);
+
   // Register the newly created action.
   editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
+  editor.getActionsManager().registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
   editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
 
-  addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link');
+  addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link');
 });
 
-function addToDitaToolbar(editor, checkOutId, checkInId) {
-  goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
+function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId) {
+  goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function (e) {
     var actionsConfig = e.actionsConfiguration;
 
     var builtinToolbar = null;
@@ -225,26 +350,26 @@ function addToDitaToolbar(editor, checkOutId, checkInId) {
         var toolbar = actionsConfig.toolbars[i];
         if (toolbar.name == "Builtin") {
           builtinToolbar = toolbar;
-          //console.log('TOOLBAR ', builtinToolbar);
         }
       }
     }
 
-   if(builtinToolbar) {
-        builtinToolbar.children.push({
-          displayName : 'CMIS',
-          type: 'list',
-          children: [
-            {
-              id: checkOutId,
-              type: 'action'
-            },
-           {
-              id: checkInId,
-              type: 'action'
-            }
-          ]
-        });
-      }
+    if (builtinToolbar) {
+      builtinToolbar.children.push({
+        displayName: 'CMIS',
+        type: 'list',
+
+        children: [{
+          id: checkOutId,
+          type: 'action'
+        }, {
+          id: cancelCheckOutId,
+          type: 'action'
+        }, {
+          id: checkInId,
+          type: 'action'
+        }]
+      });
+    }
   });
 }

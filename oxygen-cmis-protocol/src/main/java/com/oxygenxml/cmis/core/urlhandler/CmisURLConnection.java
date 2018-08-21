@@ -81,7 +81,7 @@ public class CmisURLConnection extends URLConnection {
 
 		// Get path of Cmis Object
 		List<String> objectPath = ((FileableCmisObject) object).getPaths();
-		
+
 		parentPath = URLUtil.decodeURIComponent(parentPath);
 		if (parentPath.contains(repository)) {
 			parentPath = parentPath.replace(repository + "/", "");
@@ -100,13 +100,13 @@ public class CmisURLConnection extends URLConnection {
 				}
 				logger.info("=> " + parentPath + " " + objectPath.get(i));
 				break;
-			} 
+			}
 		}
 
-		if(invalidPath) {
+		if (invalidPath) {
 			urlb.append("/").append(object.getName());
 		}
-		
+
 		return urlb.toString();
 	}
 
@@ -200,7 +200,6 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws UnsupportedEncodingException
 	 */
 	public static URL getServerURL(String customURL, Map<String, String> param) throws MalformedURLException {
-		logger.info("getServerURL() => " + customURL);
 		// Replace CMIS part
 		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			customURL = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
