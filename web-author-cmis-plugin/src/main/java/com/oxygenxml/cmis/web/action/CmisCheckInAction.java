@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.web.cmisactions;
+package com.oxygenxml.cmis.web.action;
 
 import java.net.MalformedURLException;
 
@@ -7,13 +7,11 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-
 public class CmisCheckInAction {
 
 	private static final Logger logger = Logger.getLogger(CmisCheckInAction.class.getName());
 
-	public static void checkInDocument(Document document, String comment, CmisURLConnection connection)
+	public static void checkInDocument(Document document, String comment)
 			throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
 		logger.info("tut=>" + comment);
 		

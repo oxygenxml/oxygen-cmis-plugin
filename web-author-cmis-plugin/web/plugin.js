@@ -150,9 +150,11 @@
 })();
 
 /**
- * Check Out Action--------------------------------------------------------------------------------------------
+ * Cmis check-out action.
  */
-var checkedOut = ''; // 'pending';
+
+//Button's state variable.
+var checkedOut = '';
 
 var CmisCheckOutAction = function (editor) {
   sync.actions.AbstractAction.call(this, '');
@@ -168,7 +170,7 @@ CmisCheckOutAction.prototype.getDisplayName = function () {
 
 CmisCheckOutAction.prototype.actionPerformed = function (callback) {
   this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+    'com.oxygenxml.cmis.web.action.CmisActions', {
       action: 'cmisCheckout',
       url: this.editor.getUrl()
     }, goog.bind(this.afterCheckout_, this, callback));
@@ -176,7 +178,7 @@ CmisCheckOutAction.prototype.actionPerformed = function (callback) {
 
 CmisCheckOutAction.prototype.afterCheckout_ = function (callback, err, data) {
   this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+    'com.oxygenxml.cmis.web.action.CmisActions', {
       action: ''
     }, function (err, data) {
       checkedOut = JSON.parse(data).isCheckedOut;
@@ -187,7 +189,7 @@ CmisCheckOutAction.prototype.afterCheckout_ = function (callback, err, data) {
 }
 
 /**
- * Cancel Check Out Action
+ * Cmis cancel check-out action.
  */
 var cancelCmisCheckOutAction = function (editor) {
   sync.actions.AbstractAction.call(this, '');
@@ -202,7 +204,7 @@ cancelCmisCheckOutAction.prototype.getDisplayName = function () {
 
 cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
   this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+    'com.oxygenxml.cmis.web.action.CmisActions', {
       action: 'cancelCmisCheckout',
       url: this.editor.getUrl()
     }, goog.bind(this.afterCancel_, this, callback));
@@ -212,7 +214,7 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
 
 cancelCmisCheckOutAction.prototype.afterCancel_ = function (callback, err, data) {
   this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+    'com.oxygenxml.cmis.web.action.CmisActions', {
       action: ''
     }, function (err, data) {
       checkedOut = JSON.parse(data).isCheckedOut;
@@ -223,7 +225,7 @@ cancelCmisCheckOutAction.prototype.afterCancel_ = function (callback, err, data)
 }
 
 /**
- * Check In Action
+ * Cmis check-in action.
  */
 var CmisCheckInAction = function (editor) {
   sync.actions.AbstractAction.call(this, '');
@@ -253,7 +255,7 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
   this.dialog.onSelect(goog.bind(function () {
     var commitMessage = this.dialog.getElement().querySelector('input').value;
     editor.getActionsManager().invokeOperation(
-      'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+      'com.oxygenxml.cmis.web.action.CmisActions', {
         action: 'cmisCheckin',
         url: editor.getUrl(),
         comment: commitMessage
@@ -263,7 +265,7 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
 
 CmisCheckInAction.prototype.afterCheckIn_ = function (callback, err, data) {
   this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+    'com.oxygenxml.cmis.web.action.CmisActions', {
       action: ''
     }, function (err, data) {
       checkedOut = JSON.parse(data).isCheckedOut;
@@ -274,8 +276,9 @@ CmisCheckInAction.prototype.afterCheckIn_ = function (callback, err, data) {
   callback();
 }
 
-
-//-------------------------------------------------------------------------------------------------
+/**
+ * Enabling buttons with state dependece.
+ */
 CmisCheckOutAction.prototype.isEnabled = function () {
   if (checkedOut === 'pending') {
     return false;
@@ -306,31 +309,31 @@ cancelCmisCheckOutAction.prototype.isEnabled = function () {
   return false;
 }
 
-//-------------------------------------------------------------------------------------------------
+/**
+ * Actions when editor is loaded.
+ */
 goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function (e) {
   var editor = e.editor;
 
+  //Check if document is checked out and if is checked out by another user.
   editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.cmisactions.CmisActionsBase', {
+    'com.oxygenxml.cmis.web.action.CmisActions', {
       action: ''
     }, function (err, data) {
       console.log(data);
+      //Saving checked out state
       checkedOut = JSON.parse(data).isCheckedOut;
-
-      if (checkedOut && JSON.parse(data).isEditBy !== localStorage.getItem('cmis.user')) {
+      //If this document is checked out by another user we show the dialog and suspend all buttons.
+      if (checkedOut && JSON.parse(data).isCheckedOutBy !== localStorage.getItem('cmis.user')) {
         this.dialog = workspace.createDialog();
         this.dialog.setTitle('Warning!');
         this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.OK);
-        this.dialog.getElement().innerHTML = "<p> This document is checked-out by " + JSON.parse(data).isEditBy + "</p>";
+        this.dialog.getElement().innerHTML = "<p> This document is checked-out by " + JSON.parse(data).isCheckedOutBy + "</p>";
         this.dialog.show();
         checkedOut = 'pending';
       }
 
     });
-
-  console.log(localStorage.getItem('cmis.user'));
-
-  console.log(checkedOut);
 
   // Register the newly created action.
   editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));

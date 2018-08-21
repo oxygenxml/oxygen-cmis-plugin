@@ -41,16 +41,12 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 								.getPluginWorkspace();
 						SessionStore sessionStore = workspace.getSessionStore();
 
-						// Get URL and ContextID
+						// Get URL and ContextID for CmisURLConnection
 						URL url = authorAccess.getEditorAccess().getEditorLocation();
 						String contextId = url.getUserInfo();
 						String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance()
 								.toStrippedExternalForm(url);
-
-						// Use Session Store to get User Credentials from ContextID
 						UserCredentials credentials = sessionStore.get(contextId, "credentials");
-
-						// Create new connection instance for CmisActionBase
 						CmisURLConnection connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
 						// TODO: make editor read-only.

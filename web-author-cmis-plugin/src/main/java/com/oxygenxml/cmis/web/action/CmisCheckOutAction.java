@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.web.cmisactions;
+package com.oxygenxml.cmis.web.action;
 
 import java.net.MalformedURLException;
 
@@ -16,7 +16,6 @@ public class CmisCheckOutAction {
 	public static Boolean checkOutDocument(Document document, CmisURLConnection connection)
 			throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
 
-
 		if (!document.isLatestMajorVersion()) {
 			document = document.getObjectOfLatestVersion(true);
 		}
@@ -28,7 +27,7 @@ public class CmisCheckOutAction {
 			logger.info("Document is checked-out!");
 
 		} else {
-			
+
 			document.checkOut();
 			document.refresh();
 
@@ -41,7 +40,6 @@ public class CmisCheckOutAction {
 
 	public static void cancelCheckOutDocument(Document document, CmisURLConnection connection)
 			throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
-		
 
 		if (!document.isLatestMajorVersion()) {
 			document = document.getObjectOfLatestVersion(true);

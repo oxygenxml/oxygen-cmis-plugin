@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.web.cmisactions;
+package com.oxygenxml.cmis.web.action;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,13 +22,13 @@ import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
-import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 @WebappRestSafe
-public class CmisActionsBase extends AuthorOperationWithResult {
-	private static final Logger logger = Logger.getLogger(CmisActionsBase.class.getName());
+public class CmisActions extends AuthorOperationWithResult {
+	private static final Logger logger = Logger.getLogger(CmisActions.class.getName());
 
 	private CmisURLConnection connection;
+	private Document document;
 
 	private static final String CHECK_OUT = "cmisCheckout";
 	private static final String CHECK_IN = "cmisCheckin";
@@ -41,15 +41,36 @@ public class CmisActionsBase extends AuthorOperationWithResult {
 		return "";
 	}
 
-	public String generateJson(Boolean isCheckedOut, String lastEditBy) {
+	public String generateJson(Boolean isCheckedOut, String isCheckedOutBy) {
 		StringBuilder json = new StringBuilder();
 
-		json.append("{").append("\"isCheckedOut\"" + ":" + isCheckedOut + ",");
-		json.append("\"isCheckedOutBy\"" + ":" + "\"" + lastEditBy + "\"" + "}");
+		json.append("{");
+		json.append("\"isCheckedOut\"" + ":" + isCheckedOut + ",");
+		json.append("\"isCheckedOutBy\"" + ":" + "\"" + isCheckedOutBy + "\"");
+		json.append("}");
 
 		return json.toString();
 	}
 
+	public void actionManipulator(String actualAction, String comment, AuthorDocumentModel model) {
+		try {
+			if (actualAction.equals(CHECK_OUT)) {
+				CmisCheckOutAction.checkOutDocument(document, connection);
+			}
+			if (actualAction.equals(CHECK_IN)) {
+				CmisCheckInAction.checkInDocument(document, comment);
+				model.getAuthorAccess().getEditorAccess().setEditable(true);
+			}
+			if (actualAction.equals(CANCEL_CHECK_OUT)) {
+				CmisCheckOutAction.cancelCheckOutDocument(document, connection);
+				model.getAuthorAccess().getEditorAccess().setEditable(true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("Invalid object or object URL!");
+		}
+	}
+	
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
 			throws IllegalArgumentException, AuthorOperationException {
@@ -68,8 +89,6 @@ public class CmisActionsBase extends AuthorOperationWithResult {
 		UserCredentials credentials = sessionStore.get(contextId, "credentials");
 		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
-		Document document = null;
-
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException e1) {
@@ -80,27 +99,13 @@ public class CmisActionsBase extends AuthorOperationWithResult {
 			e1.printStackTrace();
 		}
 
-		Boolean isCheckedOut = document.isVersionSeriesCheckedOut();
-		String lastEditBy = document.getLastModifiedBy();
-		
 		String actualAction = (String) args.getArgumentValue(ACTION);
-
-		try {
-			if (actualAction.equals(CHECK_OUT)) {
-				CmisCheckOutAction.checkOutDocument(document, connection);
-			}
-			if (actualAction.equals(CHECK_IN)) {
-				CmisCheckInAction.checkInDocument(document, (String) args.getArgumentValue(COMMENT), connection);
-				model.getAuthorAccess().getEditorAccess().setEditable(true);
-			}
-			if (actualAction.equals(CANCEL_CHECK_OUT)) {
-				CmisCheckOutAction.cancelCheckOutDocument(document, connection);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info("Invalid object or object URL!");
-		}
-
-		return generateJson(isCheckedOut, lastEditBy);
+		String comment = (String) args.getArgumentValue(COMMENT);
+		actionManipulator(actualAction, comment, model);
+		
+		Boolean isCheckedOut = document.isVersionSeriesCheckedOut();
+		String isCheckedOutBy = document.getLastModifiedBy();
+		
+		return generateJson(isCheckedOut, isCheckedOutBy);
 	}
 }
