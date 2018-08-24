@@ -29,6 +29,16 @@ public class UserCredentials {
 		this.password = password;
 	}
 
+	public boolean isEmpty() {
+		if(username.isEmpty() && password.isEmpty()) {
+			return true;
+		}
+		if(!username.isEmpty() && password.isEmpty()) {
+			return false;
+		}
+		return false;
+	}
+	
 	String username;
 	String password;
 

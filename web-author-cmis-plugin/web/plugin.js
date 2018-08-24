@@ -170,19 +170,10 @@ CmisCheckOutAction.prototype.actionPerformed = function (callback) {
   this.editor.getActionsManager().invokeOperation(
     'com.oxygenxml.cmis.web.action.CmisActions', {
       action: 'cmisCheckout'
-    }, goog.bind(this.afterCheckout_, this, callback));
-};
+    }, callback);
 
-CmisCheckOutAction.prototype.afterCheckout_ = function (callback, err, data) {
-  this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: ''
-    }, function (err, data) {
-      checkedOut = JSON.parse(data).isCheckedOut;
-      console.log(checkedOut);
-    });
-  callback();
-}
+    checkedOut = true;
+};
 
 //------------------- Cmis cancel check-out action. -----------------------
 var cancelCmisCheckOutAction = function (editor) {
@@ -200,19 +191,10 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
   this.editor.getActionsManager().invokeOperation(
     'com.oxygenxml.cmis.web.action.CmisActions', {
       action: 'cancelCmisCheckout'
-    }, goog.bind(this.afterCancel_, this, callback));
-};
+    }, callback);
 
-cancelCmisCheckOutAction.prototype.afterCancel_ = function (callback, err, data) {
-  this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: ''
-    }, function (err, data) {
-      checkedOut = JSON.parse(data).isCheckedOut;
-      console.log(checkedOut);
-    });
-  callback();
-}
+    checkedOut = false;
+};
 
 //------------------- Cmis check-in action. -----------------------
 var CmisCheckInAction = function (editor) {
@@ -229,36 +211,73 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
   if (!this.dialog) {
     this.dialog = workspace.createDialog();
     this.dialog.setTitle('Check In');
-    this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.OK_CANCEL);
-    this.dialog.getElement().innerHTML = "<p> Enter the commit message: </p>";
+    this.dialog.getElement().innerHTML = " Enter the commit message: <br>";
+    
+    var form = document.createElement('form');
+    var input = document.createElement('input');
 
-    var input = document.createElement("input");
+    var text1 = document.createElement('label');
+    var text2 = document.createElement('label');
+
     input.setAttribute('type', 'text');
+    input.setAttribute('id', 'commit');
+    
     this.dialog.getElement().appendChild(input);
+    
+    form.setAttribute('action', '');
+    radioButtonsCreator(form, text1, text2);
+
+    this.dialog.getElement().appendChild(form);
   }
 
   this.dialog.show();
 
   var editor = this.editor;
-  this.dialog.onSelect(goog.bind(function () {
-    var commitMessage = this.dialog.getElement().querySelector('input').value;
+  this.dialog.onSelect(goog.bind(function (key, e) {
+    if(key === 'ok'){
+    var commitMessage = this.dialog.getElement().querySelector('#commit').value;
+    var verstate;
+
+    if(this.dialog.getElement().querySelector('#radio1').checked) {
+      verstate = this.dialog.getElement().querySelector('#radio1').value;
+    } else if(this.dialog.getElement().querySelector('#radio2').checked) {
+      verstate = this.dialog.getElement().querySelector('#radio2').value;
+    }
+
     editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisActions', {
         action: 'cmisCheckin',
-        comment: commitMessage
-      }, goog.bind(this.afterCheckIn_, this, callback));
-  }, this));
+        commit: commitMessage,
+        state: verstate
+      }, callback);
+      checkedOut = false;
+    }
+  }, 
+  this));
 };
 
-CmisCheckInAction.prototype.afterCheckIn_ = function (callback, err, data) {
-  this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: ''
-    }, function (err, data) {
-      checkedOut = JSON.parse(data).isCheckedOut;
-      console.log(checkedOut);
-    });
-  callback();
+function radioButtonsCreator(form, text1, text2){
+  var radio1 = document.createElement('input');
+  radio1.setAttribute('type', 'radio');
+  radio1.setAttribute('name', 'state');
+  radio1.setAttribute('id', 'radio1');
+  radio1.setAttribute('value', 'major');
+  radio1.setAttribute('checked', '');
+  form.appendChild(radio1);
+
+  text1.innerHTML = 'Major Version';
+  text1.appendChild(document.createElement('br'));
+  form.appendChild(text1);
+
+  var radio2 = document.createElement('input');
+  radio2.setAttribute('type', 'radio');
+  radio2.setAttribute('name', 'state');
+  radio2.setAttribute('id', 'radio2');
+  radio2.setAttribute('value', 'minor');
+  form.appendChild(radio2);
+
+  text2.innerHTML = 'Minor Version';
+  form.appendChild(text2);
 }
 
 //------------------- Enable buttons with state dependence. -----------------------
@@ -301,6 +320,8 @@ goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, functi
   var doccheckedout = root.getAttribute('data-pseudoclass-checkedout');
   var anotheruser = root.getAttribute('data-pseudoclass-anotheruser')
  
+  console.log(doccheckedout);
+
   if(doccheckedout === 'true'){
     checkedOut = true;
   } else {

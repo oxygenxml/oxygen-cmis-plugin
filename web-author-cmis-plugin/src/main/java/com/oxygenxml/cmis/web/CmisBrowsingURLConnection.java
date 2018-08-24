@@ -113,9 +113,12 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			String parentPath = this.getURL().getPath();
 			String entryUrl = CmisURLConnection.generateURLObject(obj, cuc.getResourceController(url.toExternalForm()),
 					parentPath);
-			entryUrl = entryUrl.concat((obj instanceof Folder) ? "/" : "");
+			
+			if(obj instanceof Folder) {
+				entryUrl = entryUrl.concat("/");
+			}
+			
 			list.add(new FolderEntryDescriptor(entryUrl));
-
 		}
 		folderEntryLogger(list);
 	}

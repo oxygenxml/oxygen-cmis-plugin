@@ -10,20 +10,22 @@ import org.apache.log4j.Logger;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.EditorListener;
 
+import ro.sync.ecss.extensions.api.ArgumentDescriptor;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
+import ro.sync.ecss.extensions.api.AuthorOperation;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
-import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
-import ro.sync.ecss.extensions.api.webapp.AuthorOperationWithResult;
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
+import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 @WebappRestSafe
-public class CmisActions extends AuthorOperationWithResult {
+public class CmisActions implements AuthorOperation {
 	private static final Logger logger = Logger.getLogger(CmisActions.class.getName());
 
 	private CmisURLConnection connection;
@@ -33,34 +35,36 @@ public class CmisActions extends AuthorOperationWithResult {
 	private static final String CHECK_OUT = "cmisCheckout";
 	private static final String CHECK_IN = "cmisCheckin";
 	private static final String CANCEL_CHECK_OUT = "cancelCmisCheckout";
-	private static final String COMMENT = "comment";
+	private static final String COMMIT_MESSAGE = "commit";
 	private static final String ACTION = "action";
+	private static final String STATE = "state";
 
 	@Override
 	public String getDescription() {
 		return "";
 	}
 
-	private String generateJson(Boolean isCheckedOut) {
-		StringBuilder json = new StringBuilder();
+	private void actionManipulator(String actualAction, String actualState, String commitMessage,
+			AuthorAccess authorAccess) {
 
-		json.append("{");
-		json.append("\"isCheckedOut\"" + ":" + isCheckedOut);
-		json.append("}");
-
-		return json.toString();
-	}
-
-	private void actionManipulator(String actualAction, String comment, AuthorDocumentModel model) {
 		try {
 			if (actualAction.equals(CHECK_OUT)) {
 				CmisCheckOutAction.checkOutDocument(document, connection);
-			}
-			if (actualAction.equals(CHECK_IN)) {
-				CmisCheckInAction.checkInDocument(document, connection, comment);
+				if (EditorListener.isCheckOutRequired()) {
+					authorAccess.getEditorAccess().setEditable(true);
+				}
 			}
 			if (actualAction.equals(CANCEL_CHECK_OUT)) {
 				CmisCheckOutAction.cancelCheckOutDocument(document, connection);
+				if (EditorListener.isCheckOutRequired()) {
+					authorAccess.getEditorAccess().setReadOnly(new ReadOnlyReason("Check-out required!"));
+				}
+			}
+			if (actualAction.equals(CHECK_IN)) {
+				CmisCheckInAction.checkInDocument(document, connection, actualState, commitMessage);
+				if (EditorListener.isCheckOutRequired()) {
+					authorAccess.getEditorAccess().setReadOnly(new ReadOnlyReason("Check-out required!"));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -70,10 +74,9 @@ public class CmisActions extends AuthorOperationWithResult {
 	}
 
 	@Override
-	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
+	public void doOperation(AuthorAccess authorAccess, ArgumentsMap args)
 			throws IllegalArgumentException, AuthorOperationException {
-
-		AuthorAccess authorAccess = model.getAuthorAccess();
+		
 		authorAccess.getWorkspaceAccess();
 
 		// Get Session Store
@@ -100,16 +103,20 @@ public class CmisActions extends AuthorOperationWithResult {
 		logger.info("Is versionable: " + document.isVersionable());
 
 		String actualAction = (String) args.getArgumentValue(ACTION);
-		String actualComment = (String) args.getArgumentValue(COMMENT);
+		String commitMessage = (String) args.getArgumentValue(COMMIT_MESSAGE);
+		String actualState = (String) args.getArgumentValue(STATE);
 
 		logger.info(" actualAction: " + actualAction);
+		logger.info(" actualState: " + actualState);
 
 		if (!actualAction.isEmpty()) {
-			actionManipulator(actualAction, actualComment, model);
+			actionManipulator(actualAction, actualState, commitMessage, authorAccess);
 		}
 
-		Boolean isCheckedOut = document.isVersionSeriesCheckedOut();
+	}
 
-		return generateJson(isCheckedOut);
+	@Override
+	public ArgumentDescriptor[] getArguments() {
+		return null;
 	}
 }

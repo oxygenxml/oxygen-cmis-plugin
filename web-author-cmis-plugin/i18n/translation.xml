@@ -2,12 +2,20 @@
 <translation>
     <languageList>
         <language description="English" lang="en_US"/>
+        <language description="German" lang="de_DE"/>
+        <language description="French" lang="fr_FR"/>
+        <language description="Japanese" lang="ja_JP"/>
+        <language description="Dutch" lang="nl_NL"/>
     </languageList>
     <key value="AUTHENTICATION_REQUIRED_FOR_" distribution="webauthor">
         <comment>Title of login dialog.</comment>
         <val lang="en_US">Authentication required for {$PROD}</val>
+        <val lang="de_DE">Authentication required for {$PROD}</val>
+        <val lang="fr_FR">Authentication required for {$PROD}</val>
+        <val lang="ja_JP">Authentication required for {$PROD}</val>
+        <val lang="nl_NL">Authentication required for {$PROD}</val>
     </key>
-    <key value="SET_SERVER_URL_" distribution="webauthor">
+   <key value="SET_SERVER_URL_" distribution="webauthor">
         <comment>Tooltip on button for setting server URL</comment>
         <val lang="en_US">Set server URL</val>
     </key>
@@ -15,6 +23,10 @@
         <comment>Open URL dialog. Input for the server URL.</comment>
         <val lang="en_US">Server URL</val>
     </key>
+	<key value="Checkout_required" distribution="webauthor">
+		<comment>Label for required checkbox.</comment>
+		<val lang="en_US">Check-out required</val>
+	</key>
     <key value="Enforced_server" distribution="webauthor">
         <comment>Label for input setting the enforced server URL.</comment>
         <val lang="en_US">Connection URL</val>
@@ -35,33 +47,65 @@
     <key value="Anonymous" distribution="webauthor">
         <comment>Default author name for comments</comment>
         <val lang="en_US">Anonymous</val>
+        <val lang="de_DE">Anonym</val>
+        <val lang="fr_FR">Anonyme</val>
+        <val lang="ja_JP">匿名</val>
+        <val lang="nl_NL">Anoniem</val>
     </key>
     <key distribution="webauthor" value="EDIT_SERVER_URL_">
         <comment>Tooltip on button for editing server URL</comment>
         <val lang="en_US">Edit server URL</val>
+        <val lang="de_DE">Server-URL bearbeiten</val>
+        <val lang="fr_FR">Éditer l'URL du serveur</val>
+        <val lang="ja_JP">サーバーURLを編集する</val>
+        <val lang="nl_NL">Server-URL bewerken</val>
     </key>
     <key distribution="webauthor" value="CANNOT_OPEN_URL_">
         <comment>Error shown if URL could not be opened.</comment>
         <val lang="en_US">Cannot open this URL</val>
+        <val lang="de_DE">Konnte diese URL nicht öffnen</val>
+        <val lang="fr_FR">Impossible d'ouvrir cette URL</val>
+        <val lang="ja_JP">このURLを開くことができません</val>
+        <val lang="nl_NL">Cannot open this URL</val>
     </key>
     <key distribution="webauthor" value="UNSAVED_CHANGES_WILL_BE_LOST_">
         <comment>Warning shown when the user tries to logout while having unsaved changes</comment>
         <val lang="en_US">All your unsaved changes will be lost</val>
+        <val lang="de_DE">Alle ungespeicherten Änderungen werden verloren gehen</val>
+        <val lang="fr_FR">Toutes vos modifications non enregistrées seront perdues</val>
+        <val lang="ja_JP">未保存のすべての変更が失われます</val>
+        <val lang="nl_NL">All your unsaved changes will be lost</val>
     </key>
     <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
         <comment>Title of login dialog.</comment>
         <val lang="en_US">Authentication required</val>
+        <val lang="de_DE">Authentifikation erforderlich</val>
+        <val lang="fr_FR">Authentification requise</val>
+        <val lang="ja_JP">認証が必要です</val>
+        <val lang="nl_NL">Verificatie vereist</val>
     </key>
     <key value="INVALID_URL_">
         <comment>The input URL was not valid.</comment>
         <val lang="en_US">Invalid URL</val>
+        <val lang="de_DE">Ungültige URL</val>
+        <val lang="fr_FR">URL invalide</val>
+        <val lang="ja_JP">不正なURL</val>
+        <val lang="nl_NL">Ongeldige URL</val>
     </key>
     <key value="NAME_">
         <comment>Like in "name and value"</comment>
         <val lang="en_US">Name</val>
+        <val lang="de_DE">Name</val>
+        <val lang="fr_FR">Nom</val>
+        <val lang="ja_JP">名前</val>
+        <val lang="nl_NL">Naam</val>
     </key>
     <key value="PASSWORD_">
         <comment>Open URL dialog. The password for the connection.</comment>
         <val lang="en_US">Password</val>
+        <val lang="de_DE">Passwort:</val>
+        <val lang="fr_FR">Mot de passe</val>
+        <val lang="ja_JP">パスワード</val>
+        <val lang="nl_NL">Wachtwoord</val>
     </key>
 </translation>

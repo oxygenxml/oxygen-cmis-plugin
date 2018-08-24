@@ -1,19 +1,19 @@
 package com.oxygenxml.cmis.core.model.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.After;
@@ -51,35 +51,22 @@ public class DocumentImplTest extends ConnectionTestBase {
 	 */
 	@Test
 	public void testIsCheckedOut() throws UnsupportedEncodingException {
-		Document doc = null;
-		ObjectId pwc = null;
-		doc = createDocument(root, "que2ryTestFile", "some text");
-		pwc = doc.checkOut();
+		Document doc = createDocument(root, "que2ryTestFile", "some text");
+		ObjectId pwc = doc.checkOut();;
 		doc.refresh();
 
+		assertNotNull(doc);
+		assertNotNull(pwc);
+		assertTrue(doc.isVersionable());
+		assertTrue(doc.isVersionSeriesCheckedOut());
+		assertEquals("admin", doc.getVersionSeriesCheckedOutBy());
 		
-		CmisObject pwcDoc = CMISAccess.getInstance().getSession().getObject(pwc);
+		Document PWC = (Document) CMISAccess.getInstance().getSession().getObject(pwc);
+		
+		assertNotNull(PWC);
+		assertTrue(PWC.isPrivateWorkingCopy());
 
-		List<Property<?>> properties = doc.getProperties();
-		for (Property<?> property : properties) {
-			System.out.println(property.getId() + " -> " + property.getValues());
-		}
-
-		System.out.println(
-				"this is the document:" + doc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
-		System.out.println(
-				"this is the private :" + pwcDoc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
-
-		System.out.println("Is it checkout:" + doc.isVersionSeriesCheckedOut());
-
-		Boolean isCheckedOut = doc.isVersionSeriesCheckedOut();
-		// cmis:versionSeriesCheckedOutBy
-		String checkedOutBy = doc.getVersionSeriesCheckedOutBy();
-
-		assertEquals(true, isCheckedOut);
-		System.out.println(isCheckedOut + " checkout by " + checkedOutBy);
 	}
-
 	/*
 	 * Check in the document
 	 */
@@ -96,6 +83,8 @@ public class DocumentImplTest extends ConnectionTestBase {
 		assertNotNull(pwc);
 		assertNotNull(idDoc);
 
+		assertFalse(doc.isVersionSeriesCheckedOut());
+		
 		ctrl.deleteAllVersionsDocument(doc);
 	}
 

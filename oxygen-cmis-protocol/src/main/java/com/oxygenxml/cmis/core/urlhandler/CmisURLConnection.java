@@ -19,7 +19,6 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -47,8 +46,7 @@ public class CmisURLConnection extends URLConnection {
 	private static final String REPOSITORY_PARAM = "repo";
 	private static final String PATH_PARAM = "path";
 	private static final String CONTENT_SAMPLE = "Empty";
-	private static final String DOC_TYPE1 = "VersionableType";
-	private static final String DOC_TYPE2 = "cmis:document";
+	private static final String DOC_TYPE = "VersionableType";
 
 	// CONSTRUCTOR
 	public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
@@ -171,17 +169,8 @@ public class CmisURLConnection extends URLConnection {
 		String path = param.get(PATH_PARAM);
 
 		// Get and return from server cmis object
-		CmisObject objectFromURL = null;
-		try {
-			objectFromURL = resourceController.getSession().getObjectByPath(path);
-		} catch (CmisObjectNotFoundException e) {
-			if (path.lastIndexOf("/") == path.length() - 1) {
-				path = path.substring(0, path.lastIndexOf("/"));
-				objectFromURL = resourceController.getSession().getObjectByPath(path);
-			} else {
-				throw new CmisObjectNotFoundException();
-			}
-		}
+		CmisObject objectFromURL = resourceController.getSession().getObjectByPath(path);
+
 		return objectFromURL;
 	}
 
@@ -227,8 +216,7 @@ public class CmisURLConnection extends URLConnection {
 	}
 
 	@Override
-	public void connect() throws IOException {
-	}
+	public void connect() throws IOException {}
 
 	@Override
 	public InputStream getInputStream() throws IOException {
@@ -242,7 +230,6 @@ public class CmisURLConnection extends URLConnection {
 			@Override
 			public void close() throws IOException {
 				Document document = null;
-				Boolean typeOfDocument = false;
 				String docUrl = null;
 
 				try {
@@ -250,7 +237,7 @@ public class CmisURLConnection extends URLConnection {
 					document = (Document) getCMISObject(docUrl);
 				} catch (CmisObjectNotFoundException e) {
 					// If created document doesn't exist we create one
-					docUrl = createDocument(toByteArray(), typeOfDocument);
+					docUrl = createDocument();
 					document = (Document) getCMISObject(docUrl);
 				}
 
@@ -265,21 +252,16 @@ public class CmisURLConnection extends URLConnection {
 				} else {
 					Document PWC = null;
 					document = document.getObjectOfLatestVersion(false);
-					
+
 					if (document.isVersionSeriesCheckedOut()) {
 						String pwc = document.getVersionSeriesCheckedOutId();
 						PWC = (Document) resourceController.getSession().getObject(pwc);
 					} else {
 						PWC = (Document) resourceController.getSession().getObject(document.checkOut());
 					}
-					
+
 					PWC.setContentStream(contentStream, true);
 					PWC.checkIn(false, null, null, null);
-
-					logger.info("DOCUMENT: ");
-					for (Document doc : document.getAllVersions()) {
-						logger.info(doc.getVersionLabel());
-					}
 				}
 			}
 		};
@@ -297,8 +279,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public String createDocument(byte[] byteArray, Boolean typeOfDocument)
-			throws MalformedURLException, UnsupportedEncodingException {
+	public String createDocument() throws MalformedURLException, UnsupportedEncodingException {
 		HashMap<String, String> param = new HashMap<>();
 		getServerURL(url.toExternalForm(), param);
 
@@ -311,32 +292,9 @@ public class CmisURLConnection extends URLConnection {
 			mimeType = "text/xml";
 		}
 
-		/**
-		 * Differences between Alfresco & Jetty.
-		 * 
-		 * Sometimes Jetty server don't get object from path which have at the end
-		 * backslash. In this case I catch the CmisObjectNotFoundException and remove
-		 * invalid part of path.
-		 */
-		Folder rootFolder = null;
-		try {
-			rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
-		} catch (CmisObjectNotFoundException e) {
-			if (path.lastIndexOf("/") == path.length() - 1) {
-				path = path.substring(0, path.lastIndexOf("/"));
-				rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
-			}
-		}
-
-		Document document = null;
-		try {
-			// Set VersionableType for Jetty versionable document.
-			document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType, DOC_TYPE1, VersioningState.MAJOR);
-			typeOfDocument = true;
-		} catch (CmisObjectNotFoundException e) {
-			// Set cmis:document for Alfresco versionable document.
-			document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType, DOC_TYPE2, VersioningState.MAJOR);
-		}
+		Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
+		Document document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType,
+				DOC_TYPE, VersioningState.MINOR);
 
 		return generateURLObject(document, resourceController, path);
 	}

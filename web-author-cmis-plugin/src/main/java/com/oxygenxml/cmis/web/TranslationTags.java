@@ -4,6 +4,7 @@ public interface TranslationTags {
 	
 	String SERVER_URL = "Server_URL";
 
+	String CHECKOUT_REQUIRED_RESOURCE = "Checkout_required";
 	/**
 	 * Label for input. Used in WebDAV plugin configuration.
 	 * 

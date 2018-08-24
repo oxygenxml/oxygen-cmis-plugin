@@ -38,12 +38,15 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 
 		WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 
-		if (credentials != null && !credentials.getUsername().isEmpty()) {
+		if (credentials != null && !credentials.isEmpty()) {
 			logger.info(credentials.toString());
 
 			try {
 				cmisAccess.pureConnectToServer(serverUrl, credentials);
 			} catch (CmisUnauthorizedException e) {
+				logger.info("getInputStream() ---> " + e.toString());
+				throw new UserActionRequiredException(webappMessage);
+			} catch (Exception e) {
 				logger.info("getInputStream() ---> " + e.toString());
 				throw new UserActionRequiredException(webappMessage);
 			}
