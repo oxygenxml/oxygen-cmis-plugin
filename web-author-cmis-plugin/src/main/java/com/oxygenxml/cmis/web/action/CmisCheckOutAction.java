@@ -13,47 +13,39 @@ public class CmisCheckOutAction {
 
 	private static final Logger logger = Logger.getLogger(CmisCheckOutAction.class.getName());
 
-	public static Boolean checkOutDocument(Document document, CmisURLConnection connection)
+	public static void checkOutDocument(Document document, CmisURLConnection connection)
 			throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
 
-		if (!document.isLatestMajorVersion()) {
-			document = document.getObjectOfLatestVersion(true);
-		}
+		document = document.getObjectOfLatestVersion(false);
 
-		Boolean isCheckedOut = document.isVersionSeriesCheckedOut();
-
-		if (isCheckedOut) {
-			// TODO: check without if | try to edit working copy
+		if (document.isVersionSeriesCheckedOut()) {
 			logger.info("Document is checked-out!");
 
 		} else {
-
 			document.checkOut();
 			document.refresh();
 
 			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
-
 		}
-
-		return isCheckedOut;
 	}
 
 	public static void cancelCheckOutDocument(Document document, CmisURLConnection connection)
 			throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
 
-		if (!document.isLatestMajorVersion()) {
-			document = document.getObjectOfLatestVersion(true);
-		}
-
 		if (!document.isVersionSeriesCheckedOut()) {
-
 			logger.info("Document isn's checked-out!");
-
 		} else {
+			document = document.getObjectOfLatestVersion(false);
 
-			document.cancelCheckOut();
+			String pwc = document.getVersionSeriesCheckedOutId();
+			
+			if(pwc != null) {
+				Document PWC = (Document) connection.getCMISAccess().getSession().getObject(pwc);
+				PWC.cancelCheckOut();
+			}
+			
 			document.refresh();
-
+			
 			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		}
 

@@ -55,6 +55,7 @@
       loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
       loginDialog_.setPreferredSize(300, null);
     }
+
     loginDialog_.onSelect(function (key) {
       if (key === 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
@@ -120,10 +121,9 @@
           setTimeout(function () {
             rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
           }, 0)
-          // rootURLChangedCallback(rootUrl, rootUrl); // TODO: bug in web author.
         }
       }
-      div.textContent = sync.options.PluginsOptions.getClientOption("cmis.enforced_name"); // TODO: use the CMIS server host name
+      div.textContent = sync.options.PluginsOptions.getClientOption("cmis.enforced_name");
 
     } else {
       div.textContent = 'Please set the CMIS API URL in the Admin Page Configuration.'; // TODO link to documentation.
@@ -149,12 +149,10 @@
   workspace.getFileRepositoriesManager().registerRepository(cmisFileRepositoryDescriptor);
 })();
 
-/**
- * Cmis check-out action.
- */
+//------------------- Cmis check-out action. -----------------------
 
 //Button's state variable.
-var checkedOut = '';
+var checkedOut = 'checkedoutby';
 
 var CmisCheckOutAction = function (editor) {
   sync.actions.AbstractAction.call(this, '');
@@ -171,8 +169,7 @@ CmisCheckOutAction.prototype.getDisplayName = function () {
 CmisCheckOutAction.prototype.actionPerformed = function (callback) {
   this.editor.getActionsManager().invokeOperation(
     'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: 'cmisCheckout',
-      url: this.editor.getUrl()
+      action: 'cmisCheckout'
     }, goog.bind(this.afterCheckout_, this, callback));
 };
 
@@ -184,13 +181,10 @@ CmisCheckOutAction.prototype.afterCheckout_ = function (callback, err, data) {
       checkedOut = JSON.parse(data).isCheckedOut;
       console.log(checkedOut);
     });
-
   callback();
 }
 
-/**
- * Cmis cancel check-out action.
- */
+//------------------- Cmis cancel check-out action. -----------------------
 var cancelCmisCheckOutAction = function (editor) {
   sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
@@ -205,11 +199,8 @@ cancelCmisCheckOutAction.prototype.getDisplayName = function () {
 cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
   this.editor.getActionsManager().invokeOperation(
     'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: 'cancelCmisCheckout',
-      url: this.editor.getUrl()
+      action: 'cancelCmisCheckout'
     }, goog.bind(this.afterCancel_, this, callback));
-
-  location.reload();
 };
 
 cancelCmisCheckOutAction.prototype.afterCancel_ = function (callback, err, data) {
@@ -220,13 +211,10 @@ cancelCmisCheckOutAction.prototype.afterCancel_ = function (callback, err, data)
       checkedOut = JSON.parse(data).isCheckedOut;
       console.log(checkedOut);
     });
-
   callback();
 }
 
-/**
- * Cmis check-in action.
- */
+//------------------- Cmis check-in action. -----------------------
 var CmisCheckInAction = function (editor) {
   sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
@@ -257,7 +245,6 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
     editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisActions', {
         action: 'cmisCheckin',
-        url: editor.getUrl(),
         comment: commitMessage
       }, goog.bind(this.afterCheckIn_, this, callback));
   }, this));
@@ -270,17 +257,13 @@ CmisCheckInAction.prototype.afterCheckIn_ = function (callback, err, data) {
     }, function (err, data) {
       checkedOut = JSON.parse(data).isCheckedOut;
       console.log(checkedOut);
-      location.reload();
     });
-
   callback();
 }
 
-/**
- * Enabling buttons with state dependece.
- */
+//------------------- Enable buttons with state dependence. -----------------------
 CmisCheckOutAction.prototype.isEnabled = function () {
-  if (checkedOut === 'pending') {
+  if (checkedOut === 'checkedoutby') {
     return false;
   }
   if (checkedOut) {
@@ -290,7 +273,7 @@ CmisCheckOutAction.prototype.isEnabled = function () {
 }
 
 CmisCheckInAction.prototype.isEnabled = function () {
-  if (checkedOut === 'pending') {
+  if (checkedOut === 'checkedoutby') {
     return false;
   }
   if (checkedOut) {
@@ -300,7 +283,7 @@ CmisCheckInAction.prototype.isEnabled = function () {
 }
 
 cancelCmisCheckOutAction.prototype.isEnabled = function () {
-  if (checkedOut === 'pending') {
+  if (checkedOut === 'checkedoutby') {
     return false;
   }
   if (checkedOut) {
@@ -309,38 +292,32 @@ cancelCmisCheckOutAction.prototype.isEnabled = function () {
   return false;
 }
 
-/**
- * Actions when editor is loaded.
- */
+//------------------- Actions when editor is loaded. -----------------------
 goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function (e) {
   var editor = e.editor;
 
-  //Check if document is checked out and if is checked out by another user.
-  editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: ''
-    }, function (err, data) {
-      console.log(data);
-      //Saving checked out state
-      checkedOut = JSON.parse(data).isCheckedOut;
-      //If this document is checked out by another user we show the dialog and suspend all buttons.
-      if (checkedOut && JSON.parse(data).isCheckedOutBy !== localStorage.getItem('cmis.user')) {
-        this.dialog = workspace.createDialog();
-        this.dialog.setTitle('Warning!');
-        this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.OK);
-        this.dialog.getElement().innerHTML = "<p> This document is checked-out by " + JSON.parse(data).isCheckedOutBy + "</p>";
-        this.dialog.show();
-        checkedOut = 'pending';
-      }
-
-    });
+  var root = document.querySelector('[data-root="true"]');
+  var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
+  var doccheckedout = root.getAttribute('data-pseudoclass-checkedout');
+  var anotheruser = root.getAttribute('data-pseudoclass-anotheruser')
+ 
+  if(doccheckedout === 'true'){
+    checkedOut = true;
+  } else {
+    checkedOut = false;
+  } 
+  if(anotheruser === 'true'){
+    checkedOut = 'checkedoutby';
+  }
 
   // Register the newly created action.
+  if(nonversionable !== 'true'){
   editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
   editor.getActionsManager().registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
   editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
 
   addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link');
+  }
 });
 
 function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId) {
@@ -361,7 +338,6 @@ function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId) {
       builtinToolbar.children.push({
         displayName: 'CMIS',
         type: 'list',
-
         children: [{
           id: checkOutId,
           type: 'action'

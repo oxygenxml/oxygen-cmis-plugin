@@ -20,7 +20,8 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 		super.init();
 		HashMap<String, String> defaultOptions = new HashMap<String, String>();
 		defaultOptions.put(ENFORCED_URL, "");
-		defaultOptions.put(ENFORCED_ICON, "../plugin-resources/cmis/cmis.png");
+		defaultOptions.put(ENFORCED_NAME, "Local");
+		defaultOptions.put(ENFORCED_ICON, "");
 		setDefaultOptions(defaultOptions);
 	}
 

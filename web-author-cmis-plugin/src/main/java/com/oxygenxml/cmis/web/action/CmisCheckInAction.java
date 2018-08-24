@@ -7,28 +7,31 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+
 public class CmisCheckInAction {
 
 	private static final Logger logger = Logger.getLogger(CmisCheckInAction.class.getName());
 
-	public static void checkInDocument(Document document, String comment)
+	public static void checkInDocument(Document document, CmisURLConnection connection, String comment)
 			throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
 		logger.info("tut=>" + comment);
 		
-		if(!document.isLatestMajorVersion()) {
-			document = document.getObjectOfLatestVersion(true);
-		}
-		
-		if(!document.isVersionSeriesCheckedOut()) {
-			
-			logger.info("Document isn't checked-out!");
-			
+		if (!document.isVersionSeriesCheckedOut()) {
+			logger.info("Document isn's checked-out!");
 		} else {
+			document = document.getObjectOfLatestVersion(false);
+
+			String pwc = document.getVersionSeriesCheckedOutId();
 			
-			document.checkIn(true, null, document.getContentStream(), comment);
+			if(pwc != null) {
+				Document PWC = (Document) connection.getCMISAccess().getSession().getObject(pwc);
+				PWC.checkIn(true, null, null, comment);
+			}
+			
 			document.refresh();
-			logger.info(document.getName() + " is checked-out: " + document.isVersionSeriesCheckedOut());
 			
+			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		}
 	}
 }

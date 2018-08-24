@@ -19,10 +19,9 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
@@ -35,16 +34,12 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 
-// Auth - URLStreamHandlerWithContext
-// File Browsing
-// Checkin / Checkout
-
 public class CmisURLConnection extends URLConnection {
 
 	private static final Logger logger = Logger.getLogger(CmisURLConnection.class.getName());
 
 	private CMISAccess cmisAccess;
-	private ResourceController bigCtrl;
+	private ResourceController resourceController;
 	private UserCredentials credentials;
 
 	// KEYWORDS
@@ -52,7 +47,8 @@ public class CmisURLConnection extends URLConnection {
 	private static final String REPOSITORY_PARAM = "repo";
 	private static final String PATH_PARAM = "path";
 	private static final String CONTENT_SAMPLE = "Empty";
-	private static final String DOC_TYPE = "cmis:document";
+	private static final String DOC_TYPE1 = "VersionableType";
+	private static final String DOC_TYPE2 = "cmis:document";
 
 	// CONSTRUCTOR
 	public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
@@ -169,7 +165,7 @@ public class CmisURLConnection extends URLConnection {
 
 		// Accessing the server using params which we gets
 		cmisAccess.connectToRepo(serverURL, repoID, credentials);
-		bigCtrl = cmisAccess.createResourceController();
+		resourceController = cmisAccess.createResourceController();
 
 		// Get the object path
 		String path = param.get(PATH_PARAM);
@@ -177,16 +173,15 @@ public class CmisURLConnection extends URLConnection {
 		// Get and return from server cmis object
 		CmisObject objectFromURL = null;
 		try {
-			objectFromURL = bigCtrl.getSession().getObjectByPath(path);
+			objectFromURL = resourceController.getSession().getObjectByPath(path);
 		} catch (CmisObjectNotFoundException e) {
 			if (path.lastIndexOf("/") == path.length() - 1) {
 				path = path.substring(0, path.lastIndexOf("/"));
-				objectFromURL = bigCtrl.getSession().getObjectByPath(path);
+				objectFromURL = resourceController.getSession().getObjectByPath(path);
 			} else {
 				throw new CmisObjectNotFoundException();
 			}
 		}
-
 		return objectFromURL;
 	}
 
@@ -203,9 +198,6 @@ public class CmisURLConnection extends URLConnection {
 		// Replace CMIS part
 		if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			customURL = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
-		} else {
-			// Test only!
-			customURL = customURL.replaceFirst(customURL.substring(0, customURL.indexOf("://") + "://".length()), "");
 		}
 
 		String originalProtocol = customURL;
@@ -250,6 +242,7 @@ public class CmisURLConnection extends URLConnection {
 			@Override
 			public void close() throws IOException {
 				Document document = null;
+				Boolean typeOfDocument = false;
 				String docUrl = null;
 
 				try {
@@ -257,19 +250,37 @@ public class CmisURLConnection extends URLConnection {
 					document = (Document) getCMISObject(docUrl);
 				} catch (CmisObjectNotFoundException e) {
 					// If created document doesn't exist we create one
-					docUrl = createDocument();
-					// Getting this document from returned URL to update it with new content
+					docUrl = createDocument(toByteArray(), typeOfDocument);
 					document = (Document) getCMISObject(docUrl);
 				}
 
 				// All bytes have been written.
 				byte[] byteArray = toByteArray();
-				ContentStream contentStream = new ContentStreamImpl(document.getName(),
+				ContentStreamImpl contentStream = new ContentStreamImpl(document.getName(),
 						BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
 						new ByteArrayInputStream(byteArray));
 
-				document.setContentStream(contentStream, true);
+				if (!document.isVersionable()) {
+					document.setContentStream(contentStream, true);
+				} else {
+					Document PWC = null;
+					document = document.getObjectOfLatestVersion(false);
+					
+					if (document.isVersionSeriesCheckedOut()) {
+						String pwc = document.getVersionSeriesCheckedOutId();
+						PWC = (Document) resourceController.getSession().getObject(pwc);
+					} else {
+						PWC = (Document) resourceController.getSession().getObject(document.checkOut());
+					}
+					
+					PWC.setContentStream(contentStream, true);
+					PWC.checkIn(false, null, null, null);
 
+					logger.info("DOCUMENT: ");
+					for (Document doc : document.getAllVersions()) {
+						logger.info(doc.getVersionLabel());
+					}
+				}
 			}
 		};
 	}
@@ -277,17 +288,21 @@ public class CmisURLConnection extends URLConnection {
 	/**
 	 * Create new document and generate URL if doesn't exist
 	 * 
+	 * @param byteArray
+	 * @param typeOfDocument
+	 * 
 	 * @param document
+	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public String createDocument() throws MalformedURLException, UnsupportedEncodingException {
+	public String createDocument(byte[] byteArray, Boolean typeOfDocument)
+			throws MalformedURLException, UnsupportedEncodingException {
 		HashMap<String, String> param = new HashMap<>();
 		getServerURL(url.toExternalForm(), param);
 
 		String path = param.get(PATH_PARAM);
-
 		String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
 		path = path.replace(fileName, "");
 
@@ -313,36 +328,30 @@ public class CmisURLConnection extends URLConnection {
 			}
 		}
 
-		/**
-		 * Differences between Alfresco & Jetty.
-		 * 
-		 * I noticed the Alfresco keep all object like "Versionable" and Jetty like
-		 * "None-Versionable". In this case I create a none-ver. object and if the
-		 * server support only "Versionable" objects I catch the CmisConstraintException
-		 * to handle this exception.
-		 */
 		Document document = null;
 		try {
-			document = bigCtrl.createDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType);
-		} catch (CmisConstraintException e) {
-			document = bigCtrl.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType, DOC_TYPE,
-					VersioningState.MAJOR);
+			// Set VersionableType for Jetty versionable document.
+			document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType, DOC_TYPE1, VersioningState.MAJOR);
+			typeOfDocument = true;
+		} catch (CmisObjectNotFoundException e) {
+			// Set cmis:document for Alfresco versionable document.
+			document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType, DOC_TYPE2, VersioningState.MAJOR);
 		}
 
-		return generateURLObject(document, bigCtrl, path);
+		return generateURLObject(document, resourceController, path);
 	}
 
 	/**
 	 * 
-	 * @param url1
+	 * @param connectionUrl
 	 * @return ResourceController
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 * @throws UserActionRequiredException
 	 */
-	public ResourceController getResourceController(URL url1) throws MalformedURLException {
-		getCMISObject(url1.toExternalForm());
-		return bigCtrl;
+	public ResourceController getResourceController(String connectionUrl) throws MalformedURLException {
+		getCMISObject(connectionUrl);
+		return resourceController;
 	}
 
 	/**

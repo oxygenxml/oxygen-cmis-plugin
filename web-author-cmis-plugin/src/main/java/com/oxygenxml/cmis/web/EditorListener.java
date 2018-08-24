@@ -18,7 +18,6 @@ import ro.sync.ecss.extensions.api.webapp.access.WebappEditingSessionLifecycleLi
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
 import ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension;
-import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 
@@ -27,47 +26,53 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	@Override
 	public void applicationStarted(StandalonePluginWorkspace pluginWorkspaceAccess) {
 
-		((WebappPluginWorkspace) pluginWorkspaceAccess)
-				.addEditingSessionLifecycleListener(new WebappEditingSessionLifecycleListener() {
+		WebappPluginWorkspace webappPluginWorkspace = (WebappPluginWorkspace) pluginWorkspaceAccess;
+		webappPluginWorkspace.addEditingSessionLifecycleListener(new WebappEditingSessionLifecycleListener() {
 
-					@Override
-					public void editingSessionStarted(String sessionId, AuthorDocumentModel documentModel) {
+			@Override
+			public void editingSessionStarted(String sessionId, AuthorDocumentModel documentModel) {
+				utilityMethod(webappPluginWorkspace, documentModel);
+			}
+		});
+	}
 
-						AuthorAccess authorAccess = documentModel.getAuthorAccess();
-						authorAccess.getWorkspaceAccess();
+	private void utilityMethod(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
+		AuthorAccess authorAccess = documentModel.getAuthorAccess();
+		authorAccess.getWorkspaceAccess();
 
-						// Get Session Store
-						WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider
-								.getPluginWorkspace();
-						SessionStore sessionStore = workspace.getSessionStore();
+		SessionStore sessionStore = webappPluginWorkspace.getSessionStore();
 
-						// Get URL and ContextID for CmisURLConnection
-						URL url = authorAccess.getEditorAccess().getEditorLocation();
-						String contextId = url.getUserInfo();
-						String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance()
-								.toStrippedExternalForm(url);
-						UserCredentials credentials = sessionStore.get(contextId, "credentials");
-						CmisURLConnection connection = new CmisURLConnection(url, new CMISAccess(), credentials);
+		// Get URL and ContextID for CmisURLConnection
+		URL url = authorAccess.getEditorAccess().getEditorLocation();
+		String contextId = url.getUserInfo();
+		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
+		UserCredentials credentials = sessionStore.get(contextId, "credentials");
+		CmisURLConnection connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
-						// TODO: make editor read-only.
-						try {
-							Document document = (Document) connection.getCMISObject(urlWithoutContextId);
-
-							if (document.isVersionSeriesCheckedOut()) {
-								documentModel.getAuthorAccess().getEditorAccess().setReadOnly(
-										new ReadOnlyReason("Document is checked out by " + document.getLastModifiedBy()
-												+ " " + document.getLastModificationDate().getTime().toString()));
-							}
-						} catch (CmisUnauthorizedException e1) {
-							e1.printStackTrace();
-						} catch (CmisObjectNotFoundException e1) {
-							e1.printStackTrace();
-						} catch (MalformedURLException e1) {
-							e1.printStackTrace();
-						}
-					}
-				});
-
+		// TODO: make editor read-only.
+		try {
+			Document document = (Document) connection.getCMISObject(urlWithoutContextId);
+			if(!document.isVersionable()) {
+				documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement().setPseudoClass("nonversionable");
+			}
+			if (document.isVersionSeriesCheckedOut()) {
+				String versionSeriesCheckedOutBy = document.getVersionSeriesCheckedOutBy();
+				if (!credentials.getUsername().equals(versionSeriesCheckedOutBy)) {
+					documentModel.getAuthorAccess().getEditorAccess()
+							.setReadOnly(new ReadOnlyReason("Document is checked out by " + versionSeriesCheckedOutBy
+									+ " " + document.getLastModificationDate().getTime().toString()));
+					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement().setPseudoClass("anotheruser");
+				} else {
+					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement().setPseudoClass("checkedout");
+				}
+			}
+		} catch (CmisUnauthorizedException e1) {
+			e1.printStackTrace();
+		} catch (CmisObjectNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	@Override

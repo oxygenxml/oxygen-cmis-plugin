@@ -38,7 +38,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 
 		WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 
-		if (credentials != null && !credentials.getPassword().isEmpty() && !credentials.getUsername().isEmpty()) {
+		if (credentials != null && !credentials.getUsername().isEmpty()) {
 			logger.info(credentials.toString());
 
 			try {

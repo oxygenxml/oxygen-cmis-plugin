@@ -2,7 +2,6 @@ package com.oxygenxml.cmis.web.action;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
@@ -28,6 +27,7 @@ public class CmisActions extends AuthorOperationWithResult {
 	private static final Logger logger = Logger.getLogger(CmisActions.class.getName());
 
 	private CmisURLConnection connection;
+	private UserCredentials credentials;
 	private Document document;
 
 	private static final String CHECK_OUT = "cmisCheckout";
@@ -41,36 +41,34 @@ public class CmisActions extends AuthorOperationWithResult {
 		return "";
 	}
 
-	public String generateJson(Boolean isCheckedOut, String isCheckedOutBy) {
+	private String generateJson(Boolean isCheckedOut) {
 		StringBuilder json = new StringBuilder();
 
 		json.append("{");
-		json.append("\"isCheckedOut\"" + ":" + isCheckedOut + ",");
-		json.append("\"isCheckedOutBy\"" + ":" + "\"" + isCheckedOutBy + "\"");
+		json.append("\"isCheckedOut\"" + ":" + isCheckedOut);
 		json.append("}");
 
 		return json.toString();
 	}
 
-	public void actionManipulator(String actualAction, String comment, AuthorDocumentModel model) {
+	private void actionManipulator(String actualAction, String comment, AuthorDocumentModel model) {
 		try {
 			if (actualAction.equals(CHECK_OUT)) {
 				CmisCheckOutAction.checkOutDocument(document, connection);
 			}
 			if (actualAction.equals(CHECK_IN)) {
-				CmisCheckInAction.checkInDocument(document, comment);
-				model.getAuthorAccess().getEditorAccess().setEditable(true);
+				CmisCheckInAction.checkInDocument(document, connection, comment);
 			}
 			if (actualAction.equals(CANCEL_CHECK_OUT)) {
 				CmisCheckOutAction.cancelCheckOutDocument(document, connection);
-				model.getAuthorAccess().getEditorAccess().setEditable(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info("Invalid object or object URL!");
 		}
+
 	}
-	
+
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
 			throws IllegalArgumentException, AuthorOperationException {
@@ -86,7 +84,7 @@ public class CmisActions extends AuthorOperationWithResult {
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
 		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
 		String contextId = url.getUserInfo();
-		UserCredentials credentials = sessionStore.get(contextId, "credentials");
+		credentials = sessionStore.get(contextId, "credentials");
 		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
 		try {
@@ -99,13 +97,19 @@ public class CmisActions extends AuthorOperationWithResult {
 			e1.printStackTrace();
 		}
 
+		logger.info("Is versionable: " + document.isVersionable());
+
 		String actualAction = (String) args.getArgumentValue(ACTION);
-		String comment = (String) args.getArgumentValue(COMMENT);
-		actionManipulator(actualAction, comment, model);
-		
+		String actualComment = (String) args.getArgumentValue(COMMENT);
+
+		logger.info(" actualAction: " + actualAction);
+
+		if (!actualAction.isEmpty()) {
+			actionManipulator(actualAction, actualComment, model);
+		}
+
 		Boolean isCheckedOut = document.isVersionSeriesCheckedOut();
-		String isCheckedOutBy = document.getLastModifiedBy();
-		
-		return generateJson(isCheckedOut, isCheckedOutBy);
+
+		return generateJson(isCheckedOut);
 	}
 }

@@ -97,24 +97,25 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		// After connection we get ResourceController for generate URL!
 		parent = (FileableCmisObject) cuc.getCMISObject(url.toExternalForm());
 
-		if (cuc.getResourceController(url) == null) {
+		if (cuc.getResourceController(url.toExternalForm()) == null) {
 			logger.info("entryMethod() => ResourceController is null!");
 		}
 
 		logger.info("entryMethod() => " + parent.getName());
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
-			if(obj instanceof Document) {
-				if(((Document) obj).isPrivateWorkingCopy() || ((Document) obj).isVersionSeriesPrivateWorkingCopy()) {
+			if (obj instanceof Document) {
+				if (((Document) obj).isPrivateWorkingCopy() || ((Document) obj).isVersionSeriesPrivateWorkingCopy()) {
 					continue;
 				}
 			}
-			
+
 			String parentPath = this.getURL().getPath();
-			String entryUrl = CmisURLConnection.generateURLObject(obj, cuc.getResourceController(url), parentPath);
+			String entryUrl = CmisURLConnection.generateURLObject(obj, cuc.getResourceController(url.toExternalForm()),
+					parentPath);
 			entryUrl = entryUrl.concat((obj instanceof Folder) ? "/" : "");
 			list.add(new FolderEntryDescriptor(entryUrl));
-			
+
 		}
 		folderEntryLogger(list);
 	}
@@ -129,7 +130,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 */
 	public void rootEntryMethod(List<FolderEntryDescriptor> list)
 			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
-		List<Repository> reposList = cuc.getCMISAccess().connectToServerGetRepositories(serverUrl, cuc.getUserCredentials());
+		List<Repository> reposList = cuc.getCMISAccess().connectToServerGetRepositories(serverUrl,
+				cuc.getUserCredentials());
 
 		for (Repository repos : reposList) {
 			String reposUrl = generateRepoUrl(repos);
@@ -150,11 +152,12 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	public String generateRepoUrl(Repository repo)
 			throws UnsupportedEncodingException, MalformedURLException, CmisUnauthorizedException {
 		StringBuilder urlb = new StringBuilder();
-		
+
 		// Connecting to Server to get host
 		cuc.getCMISAccess().connectToRepo(serverUrl, repo.getId(), cuc.getUserCredentials());
 		// Get server URL
-		String originalProtocol = cuc.getCMISAccess().getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
+		String originalProtocol = cuc.getCMISAccess().getSession().getSessionParameters()
+				.get(SessionParameter.ATOMPUB_URL);
 
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
 		urlb.append((CmisURLConnection.CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
