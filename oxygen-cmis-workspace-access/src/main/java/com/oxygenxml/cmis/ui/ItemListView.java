@@ -223,11 +223,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
               // Present the document in tabs
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
-
-              if (((DocumentImpl) currentItem).isCheckedOut() && ((DocumentImpl) currentItem).isPrivateWorkingCopy()) {
+              
                 // Present document in Oxygen
                 new OpenDocumentAction(currentItem).openDocumentPath();
-              }
+              
 
             } else {
 

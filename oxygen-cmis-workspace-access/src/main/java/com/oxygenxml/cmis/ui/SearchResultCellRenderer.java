@@ -4,17 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.Border;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -33,6 +39,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   private JLabel nameResource;
   private JLabel pathResource;
   private JLabel lineResource;
+  private JPanel lineResourcePanel;
 
   private JPanel notifierPanel;
   private JLabel notification;
@@ -79,6 +86,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     pathResource = new JLabel();
     descriptionPanel.add(pathResource, c);
 
+    lineResourcePanel = new JPanel(new BorderLayout());
+    lineResourcePanel.setPreferredSize(new java.awt.Dimension(100, 80));
     c.gridx = 0;
     c.gridy = 2;
     c.insets = new Insets(5, 10, 5, 10);
@@ -88,7 +97,36 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     c.gridheight = 2;
     c.fill = GridBagConstraints.BOTH;
     lineResource = new JLabel();
-    descriptionPanel.add(lineResource, c);
+
+    // lineResource.setContentType("text/html");
+    lineResourcePanel.add(lineResource, BorderLayout.CENTER);
+    lineResource.addComponentListener(new ComponentListener() {
+      
+      @Override
+      public void componentShown(ComponentEvent e) {
+        // TODO Auto-generated method stub
+      //  lineResource.setFont(new Font("Serif", style, size));
+      }
+      
+      @Override
+      public void componentResized(ComponentEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public void componentMoved(ComponentEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public void componentHidden(ComponentEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+    });
+    descriptionPanel.add(lineResourcePanel, c);
 
     // Notification panel
     notifierPanel = new JPanel(new BorderLayout());
@@ -154,26 +192,27 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       if (doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
 
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/workingcopy.png")));
-        System.out.println("DocPWC:" + doc.getDisplayName());
+        // System.out.println("DocPWC:" + doc.getDisplayName());
 
       } else if (doc.isCheckedOut()) {
 
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/checkedout.png")));
-        System.out.println("Doc:" + doc.getDisplayName());
+        // System.out.println("Doc:" + doc.getDisplayName());
 
       } else {
 
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
 
       }
-      System.out.println();
+      // System.out.println();
 
       pathValue = contentProv.getPath(doc, ctrl);
 
       notifyValue = "By:" + doc.getCreatedBy();
       // TODO: use breadcrumb view for the path
 
-      System.out.println("Line=" + contentProv.getLineDoc(doc, matchPattern));
+      // System.out.println("Line=" + contentProv.getLineDoc(doc,
+      // matchPattern));
       String resultContext = contentProv.getLineDoc(doc, matchPattern);
 
       if (resultContext != null) {
@@ -185,7 +224,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       }
 
       lineResource.setText(
-          "<html><div style='word-wrap: break-word; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
+          "<html><div style='  word-wrap: break-word; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
               + (resultContext != null ? resultContext : "Loading...") + "</div></html>");
 
     } else if (value instanceof FolderImpl && value != null) {

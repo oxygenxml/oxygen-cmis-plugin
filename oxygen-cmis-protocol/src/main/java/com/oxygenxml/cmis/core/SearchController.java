@@ -101,9 +101,9 @@ public class SearchController {
       scope += "cmis:folder";
     }
 
-    String where = "cmis:name LIKE '%" + content
-        + "%' OR cmis:description LIKE '%" + content + "%' OR cmis:createdBy LIKE '%" + content + "%'" +  "OR CONTAINS ('" + content + "')";
-    
+    String where = "cmis:name LIKE '%" + content + "%' OR cmis:description LIKE '%" + content
+        + "%' OR cmis:createdBy LIKE '%" + content + "%'" + "OR CONTAINS ('" + content + "')";
+
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, where, false, oc);
 
     for (CmisObject cmisObject : results) {
@@ -220,7 +220,7 @@ public class SearchController {
   }
 
   public String queryFindLine(IResource resource, String content) {
-
+    final int STRING_LIMIT = 50;
     if (resource instanceof DocumentImpl) {
 
       IDocument iDocument = (IDocument) resource;
@@ -233,7 +233,7 @@ public class SearchController {
 
           if (line.contains(content)) {
             System.out.println("Content found=" + line);
-            return line;
+            return limitStringResult(line, content, STRING_LIMIT);
           }
         }
         scanner.close();
@@ -244,5 +244,40 @@ public class SearchController {
     }
 
     return null;
+  }
+
+  public String limitStringResult(String input, String pattern, int stringLimit) {
+    String limitedString = input;
+    int frontCounter = 0;
+    int backCounter = input.length() - 1;
+
+    int frontLimit = input.lastIndexOf(pattern);
+    int backLimit = input.lastIndexOf(pattern);
+    System.out.println("String length =" + input.length());
+    System.out.println("Front limit =" + frontLimit);
+    System.out.println("Back limit =" + backLimit);
+
+    while ((frontCounter != frontLimit) && (backCounter != backLimit)) {
+      limitedString = limitedString.substring(frontCounter);
+
+      System.out.println("The string after front cut = " + limitedString);
+      
+      if (limitedString.length() <= stringLimit) {
+
+        return limitedString;
+      }
+
+      limitedString = limitedString.substring(backLimit, backCounter);
+      System.out.println("The string after back cut = " + limitedString);
+      if (limitedString.length() <= stringLimit) {
+
+        return limitedString;
+      }
+
+      frontCounter++;
+      backCounter--;
+    }
+
+    return limitedString;
   }
 }

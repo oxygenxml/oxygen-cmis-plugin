@@ -39,14 +39,7 @@ public class OpenDocumentAction extends AbstractAction {
     super("Open document", UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
-    // if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl)
-    // resource).isPrivateWorkingCopy()) {
-    //
-    // this.enabled = true;
-    //
-    // } else {
-    // this.enabled = false;
-    // }
+
   }
 
   /**
@@ -71,12 +64,18 @@ public class OpenDocumentAction extends AbstractAction {
   }
 
   public void openDocumentPath() {
+    boolean editable = false;
+    DocumentImpl currResource = (DocumentImpl) resource;
+
+    if (currResource.isCheckedOut() && currResource.isPrivateWorkingCopy()) {
+      editable = true;
+    }
     // -------Oxygen
 
     // Initialize the URL
     String urlAsTring = null;
 
-    urlAsTring = CmisURLConnection.generateURLObject(((DocumentImpl) resource).getDoc(),
+    urlAsTring = CmisURLConnection.generateURLObject(currResource.getDoc(),
         CMISAccess.getInstance().createResourceController());
 
     System.out.println(urlAsTring);
@@ -89,7 +88,10 @@ public class OpenDocumentAction extends AbstractAction {
       // Try opening in the Oxygen the URL
       try {
         if (pluginWorkspace.open(new URL(urlAsTring))) {
-          pluginWorkspace.getEditorAccess(new URL(urlAsTring), pluginWorkspace.MAIN_EDITING_AREA).setEditable(false);
+
+          // if null - image preview opened
+          pluginWorkspace.getEditorAccess(new URL(urlAsTring), pluginWorkspace.MAIN_EDITING_AREA).setEditable(editable);
+
           ;
         }
 
