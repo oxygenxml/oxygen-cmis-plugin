@@ -34,7 +34,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
 		URL serverUrl = CmisURLConnection.getServerURL(url.toExternalForm(), null);
 
-		logger.info("Server URL = " + serverUrl.toExternalForm());
+		logger.info("Server URL: " + serverUrl.toExternalForm());
 
 		WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 
@@ -44,10 +44,10 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 			try {
 				cmisAccess.pureConnectToServer(serverUrl, credentials);
 			} catch (CmisUnauthorizedException e) {
-				logger.info("getInputStream() ---> " + e.toString());
+				logger.info("getInputStream: " + e.toString());
 				throw new UserActionRequiredException(webappMessage);
 			} catch (Exception e) {
-				logger.info("getInputStream() ---> " + e.toString());
+				logger.info("getInputStream: " + e.toString());
 				throw new UserActionRequiredException(webappMessage);
 			}
 		} else {

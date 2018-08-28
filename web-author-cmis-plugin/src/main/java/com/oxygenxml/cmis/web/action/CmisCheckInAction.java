@@ -17,12 +17,10 @@ public class CmisCheckInAction {
 		logger.info("Check-In commit: " + commitMessage);
 
 		if (!document.isVersionSeriesCheckedOut()) {
-
 			logger.info("Document isn't checked-out!");
 
 		} else {
 			document = document.getObjectOfLatestVersion(false);
-
 			String pwc = document.getVersionSeriesCheckedOutId();
 
 			if (pwc != null) {
@@ -31,6 +29,10 @@ public class CmisCheckInAction {
 
 				logger.info("Check-In actualState: " + actualState);
 
+				if(commitMessage == null || commitMessage == "null") {
+					commitMessage = "";
+				}
+				
 				if (actualState.equals(MAJOR_STATE)) {
 					PWC.checkIn(true, null, null, commitMessage);
 				} else {

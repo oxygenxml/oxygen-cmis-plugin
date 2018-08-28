@@ -100,7 +100,7 @@ public class CMISAccess {
 	 * Gets the available repositories in the server.
 	 * 
 	 * @param connectionInfo
-	 * @return
+	 * @return List<Repository>
 	 */
 	public List<Repository> connectToServerGetRepositories(URL connectionInfo, UserCredentials uc) {
 		HashMap<String, String> parameters = new HashMap<>();

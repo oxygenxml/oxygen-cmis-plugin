@@ -36,12 +36,38 @@ public interface TranslationTags {
 	String ANONYMOUS = "Anonymous";
 	
 	/**
+	 * Server name - set from configuration page.
 	 * 
+	 * en: Server name
 	 */
 	String SERVER_NAME = "Server_name";
 	
 	/**
+	 * Icon URL - set from configuration page.
 	 * 
+	 * en: Icon URL
 	 */
 	String ICON_URL = "Icon_URL";
+	
+	/**
+	 * Message if opened document is an old version of actual document.
+	 * 
+	 * en: Old version of document
+	 */
+	String OLD_VER_WARNING = "Old_version_of_document";
+	
+	/**
+	 * Message if document is checked out by another user.
+	 * 
+	 *en: Checked - out by
+	 */
+	String CHECKED_OUT_BY = "Checked_out_by";
+	
+	/**
+	 * Message if check out is required.
+	 * 
+	 * en: Check - out required
+	 */
+	String CHECK_OUT_REQ_EDITOR = "Check_out_requiered_editor";
+	
 }

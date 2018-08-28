@@ -43,7 +43,19 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	@Override
 	public InputStream getInputStream() throws IOException {
 		try {
+			if (this.url.getQuery() != null) {
+				String[] query = this.url.getQuery().split("=");
+				String id = query[query.length - 1];
+
+				String connectionUrl = this.url.toExternalForm().replace(this.url.getQuery(), "");
+				connectionUrl = connectionUrl.replace("?", "");
+				Document document = (Document) cuc.getResourceController(connectionUrl).getCmisObj(id);
+
+				return document.getContentStream().getStream();
+			} 
+			
 			return super.getInputStream();
+		
 		} catch (CmisUnauthorizedException e) {
 			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 			throw new UserActionRequiredException(webappMessage);
@@ -66,7 +78,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	@Override
 	public List<FolderEntryDescriptor> listFolder() throws IOException, UserActionRequiredException {
 		List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
-		logger.info("listFolder() => " + url);
+		logger.info("listFolder: " + url);
 
 		try {
 			if (this.url.getPath().isEmpty() || this.url.getPath().equals("/")) {
@@ -96,12 +108,6 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 		// After connection we get ResourceController for generate URL!
 		parent = (FileableCmisObject) cuc.getCMISObject(url.toExternalForm());
-
-		if (cuc.getResourceController(url.toExternalForm()) == null) {
-			logger.info("entryMethod() => ResourceController is null!");
-		}
-
-		logger.info("entryMethod() => " + parent.getName());
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
 			if (obj instanceof Document) {
@@ -176,7 +182,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	public void folderEntryLogger(List<FolderEntryDescriptor> list) {
 		int i = 0;
 		for (FolderEntryDescriptor fed : list) {
-			logger.info(++i + ") => " + fed.getAbsolutePath());
+			logger.info(++i + ": " + fed.getAbsolutePath());
 		}
 	}
 }

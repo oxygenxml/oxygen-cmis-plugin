@@ -9,7 +9,7 @@ public class CmisCheckOutAction {
 
 	private static final Logger logger = Logger.getLogger(CmisCheckOutAction.class.getName());
 
-	public static void checkOutDocument(Document document, CmisURLConnection connection) throws Exception {
+	public static void checkOutDocument(Document document) throws Exception {
 
 		document = document.getObjectOfLatestVersion(false);
 

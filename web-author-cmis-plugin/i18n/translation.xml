@@ -25,7 +25,7 @@
     </key>
 	<key value="Checkout_required" distribution="webauthor">
 		<comment>Label for required checkbox.</comment>
-		<val lang="en_US">Check-out required</val>
+		<val lang="en_US">Check - out required</val>
 	</key>
     <key value="Enforced_server" distribution="webauthor">
         <comment>Label for input setting the enforced server URL.</comment>
@@ -44,6 +44,18 @@
         <val lang="en_US">Note: Once a server is enforced, the user will only be able to browse this enforced server. 
 		Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
     </key>
+	<key value="Old_version_of_document" distribution="webauthor">
+		<comment>Message if opened document is an old version of actual document.</comment>
+		<val lang="en_US">Old version of document</val>
+	</key>
+	<key value="Checked_out_by" distribution="webauthor">
+		<comment>Message if document is checked out by another user.</comment>
+		<val lang="en_US">Checked - out byt</val>
+	</key>
+	<key value="Check_out_requiered_editor" distribution="webauthor">
+		<comment>Message if check out is required.</comment>
+		<val lang="en_US">Check - out required</val>
+	</key>
     <key value="Anonymous" distribution="webauthor">
         <comment>Default author name for comments</comment>
         <val lang="en_US">Anonymous</val>

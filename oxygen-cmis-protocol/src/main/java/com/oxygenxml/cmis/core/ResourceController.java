@@ -96,6 +96,7 @@ public class ResourceController {
 
 		properties.put(PropertyIds.NAME, filename);
 		properties.put(PropertyIds.VERSION_LABEL, null);
+		properties.put(PropertyIds.CHECKIN_COMMENT, null);
 		properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);
 
 		// create the document

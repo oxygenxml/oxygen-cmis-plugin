@@ -141,7 +141,7 @@
     'name': sync.options.PluginsOptions.getClientOption('cmis.enforced_name'),
     'icon': sync.util.computeHdpiIcon(sync.options.PluginsOptions.getClientOption('cmis.enforced_icon')),
     'matches': function matches(url) {
-      return url.match('cmis'); // Check if the provided URL points to a file or folder from Cmis file repository
+      return url.match('cmis'); // Check if the provided URL points to td file or folder from Cmis file repository
     },
     'repository': cmisFileRepo
   };
@@ -152,7 +152,7 @@
 //------------------- Cmis check-out action. -----------------------
 
 //Button's state variable.
-var checkedOut = 'checkedoutby';
+var checkedOut = false;
 
 var CmisCheckOutAction = function (editor) {
   sync.actions.AbstractAction.call(this, '');
@@ -235,6 +235,7 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
   var editor = this.editor;
   this.dialog.onSelect(goog.bind(function (key, e) {
     if(key === 'ok'){
+
     var commitMessage = this.dialog.getElement().querySelector('#commit').value;
     var verstate;
 
@@ -256,6 +257,90 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
   this));
 };
 
+//------------------- List old version of document action. -----------------------
+var listOldVersionsAction = function (editor) {
+  sync.actions.AbstractAction.call(this, '');
+  this.editor = editor;
+};
+
+listOldVersionsAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+listOldVersionsAction.prototype.constructor = CmisCheckOutAction;
+listOldVersionsAction.prototype.getDisplayName = function () {
+  return 'All versions';
+};
+
+listOldVersionsAction.prototype.actionPerformed = function (callback) {
+  this.editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.action.CmisActions', {
+      action: 'listOldVersions'
+    }, goog.bind(this.afterList_, this, callback));
+};
+
+listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
+  this.editor.getActionsManager().invokeOperation(
+    'com.oxygenxml.cmis.web.action.CmisActions', {
+      action: ''
+    }, function (err, data) {
+     
+      var jsonFile = JSON.parse(data);
+      
+      this.dialog = workspace.createDialog();
+      this.dialog.setTitle('All versions');
+      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+      this.dialog.setPreferredSize(500, 400);
+
+      let style = document.createElement('style');
+      style.innerHTML = "table,td,th{border:1px solid #ddd;text-align:left;}" + 
+            "table{border-collapse:collapse;width:96%;}th,td{padding:15px;}";
+
+      let table = document.createElement('table');
+
+      let tr = document.createElement('tr');
+      let th = document.createElement('th');
+      let th1 = document.createElement('th');
+
+      th.innerHTML = "Version";
+      tr.appendChild(th);
+
+      th1.innerHTML = "Commit";
+      tr.appendChild(th1);
+
+      table.appendChild(tr);
+
+      for(key in jsonFile){
+        let tr = document.createElement('tr');
+        let td = document.createElement('td');
+        let a = document.createElement('a');
+        let value = jsonFile[key];
+
+        let commit = document.createElement('td');
+        commit.setAttribute('style', 'margin-left:50px;');
+
+        if(value[1] !== "" || value[1] !== null){
+          commit.innerHTML = value[1];
+        } 
+
+        let hrefUrl = window.location.origin + window.location.pathname + value[0];
+
+        a.setAttribute('href', hrefUrl);
+        a.setAttribute('target','_blank');
+        a.setAttribute('style', 'margin-right:25px;color:#323233;text-decoration:none;');
+        a.innerHTML = key;
+
+        td.appendChild(a);
+        tr.appendChild(td);
+        tr.appendChild(commit);
+        table.appendChild(tr);
+      }
+
+      this.dialog.getElement().appendChild(style);
+      this.dialog.getElement().appendChild(table);
+      this.dialog.show();
+    });
+  callback();
+}
+
+//------------------- Radio buttons. -----------------------
 function radioButtonsCreator(form, text1, text2){
   var radio1 = document.createElement('input');
   radio1.setAttribute('type', 'radio');
@@ -318,30 +403,30 @@ goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, functi
   var root = document.querySelector('[data-root="true"]');
   var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
   var doccheckedout = root.getAttribute('data-pseudoclass-checkedout');
-  var anotheruser = root.getAttribute('data-pseudoclass-anotheruser')
+  var block = root.getAttribute('data-pseudoclass-block');
  
   console.log(doccheckedout);
 
   if(doccheckedout === 'true'){
     checkedOut = true;
-  } else {
-    checkedOut = false;
   } 
-  if(anotheruser === 'true'){
+
+  if(block === 'true'){
     checkedOut = 'checkedoutby';
   }
 
   // Register the newly created action.
   if(nonversionable !== 'true'){
-  editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
-  editor.getActionsManager().registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
-  editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
+    editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
+    editor.getActionsManager().registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
+    editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
+    editor.getActionsManager().registerAction('listOldVersion.link', new listOldVersionsAction(editor));
 
-  addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link');
+    addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link', 'listOldVersion.link');
   }
 });
 
-function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId) {
+function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId, listOldVersionsId) {
   goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function (e) {
     var actionsConfig = e.actionsConfiguration;
 
@@ -367,6 +452,9 @@ function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId) {
           type: 'action'
         }, {
           id: checkInId,
+          type: 'action'
+        },{
+          id: listOldVersionsId,
           type: 'action'
         }]
       });

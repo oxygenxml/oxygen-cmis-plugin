@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
@@ -34,8 +33,6 @@ import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 
 public class CmisURLConnection extends URLConnection {
-
-	private static final Logger logger = Logger.getLogger(CmisURLConnection.class.getName());
 
 	private CMISAccess cmisAccess;
 	private ResourceController resourceController;
@@ -92,7 +89,6 @@ public class CmisURLConnection extends URLConnection {
 						urlb.append("/").append(URLUtil.encodeURIComponent(pth));
 					}
 				}
-				logger.info("=> " + parentPath + " " + objectPath.get(i));
 				break;
 			}
 		}
@@ -232,6 +228,8 @@ public class CmisURLConnection extends URLConnection {
 				Document document = null;
 				String docUrl = null;
 
+				boolean newly = false;
+				
 				try {
 					docUrl = getURL().toExternalForm();
 					document = (Document) getCMISObject(docUrl);
@@ -239,10 +237,12 @@ public class CmisURLConnection extends URLConnection {
 					// If created document doesn't exist we create one
 					docUrl = createDocument();
 					document = (Document) getCMISObject(docUrl);
+					newly = true;
 				}
 
 				// All bytes have been written.
 				byte[] byteArray = toByteArray();
+				
 				ContentStreamImpl contentStream = new ContentStreamImpl(document.getName(),
 						BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
 						new ByteArrayInputStream(byteArray));
@@ -251,9 +251,12 @@ public class CmisURLConnection extends URLConnection {
 					document.setContentStream(contentStream, true);
 				} else {
 					Document PWC = null;
+					boolean wasCheckedOut = false;
+					
 					document = document.getObjectOfLatestVersion(false);
 
 					if (document.isVersionSeriesCheckedOut()) {
+						wasCheckedOut = true;
 						String pwc = document.getVersionSeriesCheckedOutId();
 						PWC = (Document) resourceController.getSession().getObject(pwc);
 					} else {
@@ -261,7 +264,17 @@ public class CmisURLConnection extends URLConnection {
 					}
 
 					PWC.setContentStream(contentStream, true);
-					PWC.checkIn(false, null, null, null);
+					
+					if(newly) {
+						PWC.checkIn(true, null, null, "Save");
+					} else {
+						PWC.checkIn(false, null, null, "Save");
+					}
+					
+					if(wasCheckedOut) {
+						document = document.getObjectOfLatestVersion(false);
+						document.checkOut();
+					}
 				}
 			}
 		};
@@ -279,7 +292,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public String createDocument() throws MalformedURLException, UnsupportedEncodingException {
+	private String createDocument() throws MalformedURLException, UnsupportedEncodingException {
 		HashMap<String, String> param = new HashMap<>();
 		getServerURL(url.toExternalForm(), param);
 
@@ -299,6 +312,8 @@ public class CmisURLConnection extends URLConnection {
 		return generateURLObject(document, resourceController, path);
 	}
 
+	
+	
 	/**
 	 * 
 	 * @param connectionUrl

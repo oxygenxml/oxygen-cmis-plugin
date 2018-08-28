@@ -6,17 +6,16 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
-
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.EditorListener;
 
-import ro.sync.ecss.extensions.api.ArgumentDescriptor;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
-import ro.sync.ecss.extensions.api.AuthorOperation;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
+import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
+import ro.sync.ecss.extensions.api.webapp.AuthorOperationWithResult;
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
@@ -25,16 +24,19 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 @WebappRestSafe
-public class CmisActions implements AuthorOperation {
+public class CmisActions extends AuthorOperationWithResult {
 	private static final Logger logger = Logger.getLogger(CmisActions.class.getName());
 
 	private CmisURLConnection connection;
 	private UserCredentials credentials;
 	private Document document;
+	
+	private String oldVersionJson = null;
 
 	private static final String CHECK_OUT = "cmisCheckout";
 	private static final String CHECK_IN = "cmisCheckin";
 	private static final String CANCEL_CHECK_OUT = "cancelCmisCheckout";
+	private static final String LIST_VERSIONS = "listOldVersions";
 	private static final String COMMIT_MESSAGE = "commit";
 	private static final String ACTION = "action";
 	private static final String STATE = "state";
@@ -45,11 +47,11 @@ public class CmisActions implements AuthorOperation {
 	}
 
 	private void actionManipulator(String actualAction, String actualState, String commitMessage,
-			AuthorAccess authorAccess) {
+			AuthorAccess authorAccess, String url) {
 
 		try {
 			if (actualAction.equals(CHECK_OUT)) {
-				CmisCheckOutAction.checkOutDocument(document, connection);
+				CmisCheckOutAction.checkOutDocument(document);
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess().setEditable(true);
 				}
@@ -66,6 +68,9 @@ public class CmisActions implements AuthorOperation {
 					authorAccess.getEditorAccess().setReadOnly(new ReadOnlyReason("Check-out required!"));
 				}
 			}
+			if(actualAction.equals(LIST_VERSIONS)) {
+				oldVersionJson = ListOldVersionsAction.listOldVersions(document, url);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info("Invalid object or object URL!");
@@ -74,9 +79,10 @@ public class CmisActions implements AuthorOperation {
 	}
 
 	@Override
-	public void doOperation(AuthorAccess authorAccess, ArgumentsMap args)
+	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
 			throws IllegalArgumentException, AuthorOperationException {
-		
+
+		AuthorAccess authorAccess = model.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 
 		// Get Session Store
@@ -110,13 +116,12 @@ public class CmisActions implements AuthorOperation {
 		logger.info(" actualState: " + actualState);
 
 		if (!actualAction.isEmpty()) {
-			actionManipulator(actualAction, actualState, commitMessage, authorAccess);
+			actionManipulator(actualAction, actualState, commitMessage, authorAccess, urlWithoutContextId);
 		}
-
-	}
-
-	@Override
-	public ArgumentDescriptor[] getArguments() {
+		
+		if(oldVersionJson != null) {
+			return oldVersionJson;
+		}
 		return null;
 	}
 }
