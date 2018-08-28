@@ -159,6 +159,7 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
   @Override
   public String getLineDoc(IResource doc, String matchPattern) {
     SearchController searchCtrl = new SearchController(CMISAccess.getInstance().clone().createResourceController());
+    
     return searchCtrl.queryFindLine(doc, matchPattern);
   }
 

@@ -219,8 +219,40 @@ public class SearchController {
     return peekContentList;
   }
 
+  // public String queryFindLine(IResource resource, String content) {
+  //
+  // final int STRING_LIMIT = 45;
+  // if (resource instanceof DocumentImpl) {
+  //
+  // IDocument iDocument = (IDocument) resource;
+  //
+  // try {
+  // scanner = new Scanner(ctrl.getDocumentContent(iDocument.getId()));
+  //
+  // while (scanner.hasNextLine()) {
+  // String line = scanner.nextLine().trim();
+  // System.out.println("Key="+content);
+  // if (line.contains(content)) {
+  //
+  // System.out.println("Content found=" + line);
+  // return limitStringResult(line, content, STRING_LIMIT);
+  //
+  // }
+  // }
+  // scanner.close();
+  //
+  // } catch (Exception e) {
+  // e.printStackTrace();
+  // }
+  // }
+  //
+  // return null;
+  // }
   public String queryFindLine(IResource resource, String content) {
-    final int STRING_LIMIT = 50;
+    String[] searchKeys = content.trim().split("\\s+");
+    String result = null;
+    System.out.println("Size=" + searchKeys.length);
+    final int STRING_LIMIT = 45;
     if (resource instanceof DocumentImpl) {
 
       IDocument iDocument = (IDocument) resource;
@@ -230,11 +262,17 @@ public class SearchController {
 
         while (scanner.hasNextLine()) {
           String line = scanner.nextLine().trim();
+          for (String key : searchKeys) {
 
-          if (line.contains(content)) {
-            System.out.println("Content found=" + line);
-            return limitStringResult(line, content, STRING_LIMIT);
+//            System.out.println("Key context =" + key);
+            if (line.contains(key)) {
+
+//              System.out.println("Content found=" + line);
+              return limitStringResult(line, key, STRING_LIMIT);
+
+            }
           }
+
         }
         scanner.close();
 
@@ -247,35 +285,46 @@ public class SearchController {
   }
 
   public String limitStringResult(String input, String pattern, int stringLimit) {
-    String limitedString = input;
-    int frontCounter = 0;
+    String limitedString = input.trim();
+    int frontCounter = 1;
     int backCounter = input.length() - 1;
 
     int frontLimit = input.lastIndexOf(pattern);
-    int backLimit = input.lastIndexOf(pattern);
+    int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
     System.out.println("String length =" + input.length());
     System.out.println("Front limit =" + frontLimit);
     System.out.println("Back limit =" + backLimit);
 
-    while ((frontCounter != frontLimit) && (backCounter != backLimit)) {
-      limitedString = limitedString.substring(frontCounter);
+    while (limitedString.length() > stringLimit) {
 
-      System.out.println("The string after front cut = " + limitedString);
-      
+      if (frontCounter != limitedString.indexOf(pattern)) {
+        System.out.println("front counter=" + frontCounter);
+        System.out.println("back counter=" + backCounter);
+        limitedString = limitedString.substring(frontCounter);
+        System.out.println("The string after front cut = " + limitedString);
+        System.out.println("String length =" + limitedString.length());
+        backCounter--;
+
+      }
+
       if (limitedString.length() <= stringLimit) {
-
         return limitedString;
       }
 
-      limitedString = limitedString.substring(backLimit, backCounter);
-      System.out.println("The string after back cut = " + limitedString);
-      if (limitedString.length() <= stringLimit) {
+      if (backCounter != limitedString.indexOf(pattern) + pattern.length() - 1) {
+        System.out.println("\nfront counter=" + frontCounter);
+        System.out.println("back counter=" + backCounter);
+        limitedString = limitedString.substring(0, backCounter);
+        System.out.println("The string after back cut = " + limitedString);
+        System.out.println("String length =" + limitedString.length());
+        backCounter--;
 
+      }
+
+      if (limitedString.length() <= stringLimit) {
         return limitedString;
       }
 
-      frontCounter++;
-      backCounter--;
     }
 
     return limitedString;

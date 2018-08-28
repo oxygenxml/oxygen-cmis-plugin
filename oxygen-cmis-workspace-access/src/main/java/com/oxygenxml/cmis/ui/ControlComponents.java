@@ -78,7 +78,7 @@ public class ControlComponents extends JPanel {
     serverPanel = new ServerView(repoComboBox, searchPanel);
 
     // Visual configuration
-    setMinimumSize(new Dimension(200, 250));
+    setMinimumSize(new Dimension(400, 250));
     setLayout(new GridBagLayout());
 
     /*

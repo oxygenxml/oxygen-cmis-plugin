@@ -71,7 +71,9 @@ public class CacheSearchProvider implements ContentSearchProvider {
               int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(doc);
               Rectangle cellBounds = list.getCellBounds(index, index);
 
-              list.repaint(cellBounds);
+              if (cellBounds != null) {
+                list.repaint(cellBounds);
+              }
             }
           });
         }

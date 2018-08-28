@@ -79,7 +79,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     c.gridx = 0;
     c.gridy = 1;
-    c.insets = new Insets(5, 10, 5, 10);
+    c.insets = new Insets(5, 10, 0, 10);
     c.anchor = GridBagConstraints.BASELINE_LEADING;
     c.weightx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -87,10 +87,10 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     descriptionPanel.add(pathResource, c);
 
     lineResourcePanel = new JPanel(new BorderLayout());
-    lineResourcePanel.setPreferredSize(new java.awt.Dimension(100, 80));
+    lineResourcePanel.setPreferredSize(new java.awt.Dimension(100, 70));
     c.gridx = 0;
     c.gridy = 2;
-    c.insets = new Insets(5, 10, 5, 10);
+    c.insets = new Insets(0, 10, 5, 10);
     c.anchor = GridBagConstraints.CENTER;
     c.weightx = 1;
     c.weighty = 1;
@@ -101,29 +101,29 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     // lineResource.setContentType("text/html");
     lineResourcePanel.add(lineResource, BorderLayout.CENTER);
     lineResource.addComponentListener(new ComponentListener() {
-      
+
       @Override
       public void componentShown(ComponentEvent e) {
         // TODO Auto-generated method stub
-      //  lineResource.setFont(new Font("Serif", style, size));
+        // lineResource.setFont(new Font("Serif", style, size));
       }
-      
+
       @Override
       public void componentResized(ComponentEvent e) {
         // TODO Auto-generated method stub
-        
+
       }
-      
+
       @Override
       public void componentMoved(ComponentEvent e) {
         // TODO Auto-generated method stub
-        
+
       }
-      
+
       @Override
       public void componentHidden(ComponentEvent e) {
         // TODO Auto-generated method stub
-        
+
       }
     });
     descriptionPanel.add(lineResourcePanel, c);
@@ -218,14 +218,24 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       if (resultContext != null) {
         resultContext = escapeHTML(resultContext);
 
+        System.out.println("Before split = " + resultContext);
         if (matchPattern != null) {
-          resultContext = getReadyHTMLSplit(resultContext, matchPattern);
+          String[] searchKeys = matchPattern.trim().split("\\s+");
+
+          String contextDelimiter = "";
+          
+          for (String key : searchKeys) {
+            contextDelimiter += "(" + key + ")";
+          }
+          resultContext = getReadyHTMLSplit(resultContext, contextDelimiter);
         }
-      }
+
+        System.out.println("After split = " + resultContext);
+      } 
 
       lineResource.setText(
-          "<html><div style='  word-wrap: break-word; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
-              + (resultContext != null ? resultContext : "Loading...") + "</div></html>");
+          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
+              + (resultContext != null ? resultContext : "No data") + "</code></html>");
 
     } else if (value instanceof FolderImpl && value != null) {
 
@@ -389,20 +399,42 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   // this.setPreferredSize(new Dimension(10, 10));
   // }
   // }
+  private int countOccurences(String str, String findStr) {
 
-  static String getReadyHTMLSplit(String context, String matchPattern) {
+    int lastIndex = 0;
+    int count = 0;
+
+    while (lastIndex != -1) {
+      // find the index of the first word
+      lastIndex = str.indexOf(findStr, lastIndex);
+
+      // if exists
+      if (lastIndex != -1) {
+        // count as one found
+        count++;
+        // move to the next part of the string after
+        lastIndex += findStr.length();
+      }
+    }
+    return count;
+  }
+
+  String getReadyHTMLSplit(String context, String matchPattern) {
     String toReturn = "";
+    int occurences = countOccurences(context, matchPattern);
 
     System.out.println("COntext=" + context);
     System.out.println("Pattern=" + matchPattern);
     String[] splits = context.split(matchPattern);
 
-    for (int index = 0; index < splits.length; index += 1) {
+    for (int index = 0; index < splits.length; index++) {
 
       String styledContext = splits[index];
       String styledMatch = "";
-      if (index != splits.length - 1) {
+
+      if (occurences != 0) {
         styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + matchPattern + "</nobr>";
+        occurences--;
       }
       toReturn += (styledContext + styledMatch);
     }

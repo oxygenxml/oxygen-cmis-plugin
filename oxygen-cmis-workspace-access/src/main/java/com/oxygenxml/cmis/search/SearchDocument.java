@@ -30,12 +30,18 @@ public class SearchDocument {
    */
   public SearchDocument(String toSearch, SearchController searchCtrl, String option) {
 
+    String[] searchKeys = toSearch.split("\\s+");
+
     this.resultsQueries = new ArrayList<>();
     this.tempFolder = new FolderImpl(CMISAccess.getInstance().createResourceController().getRootFolder());
 
     switch (option) {
+
     case "null":
-      resultsQueries.addAll(searchCtrl.queryDoc(toSearch));
+      for (String key : searchKeys) {
+        System.out.println("The key= "+key);
+        resultsQueries.addAll(searchCtrl.queryDoc(key));
+      }
       break;
 
     case "name":

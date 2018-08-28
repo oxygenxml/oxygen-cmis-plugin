@@ -27,13 +27,16 @@ public class SearchFolder {
    * @param options
    */
   public SearchFolder(String toSearch, SearchController searchCtrl, String option) {
-
+    String [] searchKeys= toSearch.split("\\s+");
     this.resultsQueries = new ArrayList<IResource>();
 
     switch (option) {
 
     case "null":
-      resultsQueries.addAll(searchCtrl.queryFolder(toSearch));
+      for (String key : searchKeys) {
+        System.out.println("The key= "+key);
+        resultsQueries.addAll(searchCtrl.queryFolder(key));
+      }
       break;
 
     case "name":
