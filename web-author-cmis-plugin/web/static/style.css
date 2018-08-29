@@ -1,0 +1,27 @@
+table, td, th {
+	border:1px solid #ddd;
+	text-align:left;
+}
+
+table {
+	border-collapse:collapse;
+	width:100%;
+}
+
+th, td {
+	padding:15px;
+}
+
+.oldlink {
+	margin-right:25px;
+	color:#323233;
+	text-decoration:none;
+}
+
+.divtitle {
+	width: 100%;
+	position: fixed;
+	display: inline-block;
+	background-color: rgb(255, 255, 255);
+	color: rgb(0, 0, 0);
+}

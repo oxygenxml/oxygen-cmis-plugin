@@ -251,29 +251,23 @@ public class CmisURLConnection extends URLConnection {
 					document.setContentStream(contentStream, true);
 				} else {
 					Document PWC = null;
-					boolean wasCheckedOut = false;
-					
+					boolean wasChecked = false;
 					document = document.getObjectOfLatestVersion(false);
 
 					if (document.isVersionSeriesCheckedOut()) {
-						wasCheckedOut = true;
 						String pwc = document.getVersionSeriesCheckedOutId();
 						PWC = (Document) resourceController.getSession().getObject(pwc);
 					} else {
 						PWC = (Document) resourceController.getSession().getObject(document.checkOut());
+						wasChecked = true;
 					}
 
 					PWC.setContentStream(contentStream, true);
 					
 					if(newly) {
-						PWC.checkIn(true, null, null, "Save");
-					} else {
-						PWC.checkIn(false, null, null, "Save");
-					}
-					
-					if(wasCheckedOut) {
-						document = document.getObjectOfLatestVersion(false);
-						document.checkOut();
+						PWC.checkIn(true, null, null, "");
+					} else if(wasChecked) {
+						PWC.checkIn(false, null, null, "");
 					}
 				}
 			}

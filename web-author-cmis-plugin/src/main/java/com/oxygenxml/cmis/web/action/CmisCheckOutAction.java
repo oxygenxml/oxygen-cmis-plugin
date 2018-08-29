@@ -30,7 +30,6 @@ public class CmisCheckOutAction {
 			logger.info("Document isn't checked-out!");
 		} else {
 			document = document.getObjectOfLatestVersion(false);
-
 			String pwc = document.getVersionSeriesCheckedOutId();
 
 			if (pwc != null) {

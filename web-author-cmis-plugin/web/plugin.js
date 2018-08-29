@@ -1,3 +1,5 @@
+sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
+
 (function () {
   var initialUrl = decodeURIComponent(sync.util.getURLParameter('url'));
   var prefix = 'cmis://';
@@ -163,7 +165,7 @@ var CmisCheckOutAction = function (editor) {
 CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
 CmisCheckOutAction.prototype.getDisplayName = function () {
-  return 'Check Out';
+  return tr(msgs.CHECK_OUT_);
 };
 
 CmisCheckOutAction.prototype.actionPerformed = function (callback) {
@@ -182,9 +184,9 @@ var cancelCmisCheckOutAction = function (editor) {
 };
 
 cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-cancelCmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
+cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
 cancelCmisCheckOutAction.prototype.getDisplayName = function () {
-  return 'Cancel Check Out';
+  return tr(msgs.CANCEL_CHECK_OUT_);
 };
 
 cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
@@ -202,15 +204,15 @@ var CmisCheckInAction = function (editor) {
   this.editor = editor;
 };
 CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-CmisCheckInAction.prototype.constructor = CmisCheckOutAction;
+CmisCheckInAction.prototype.constructor = CmisCheckInAction;
 CmisCheckInAction.prototype.getDisplayName = function () {
-  return 'Check In';
+  return tr(msgs.CHECK_IN_);
 };
 
 CmisCheckInAction.prototype.actionPerformed = function (callback) {
   if (!this.dialog) {
     this.dialog = workspace.createDialog();
-    this.dialog.setTitle('Check In');
+    this.dialog.setTitle(tr(msgs.CHECK_IN_));
     this.dialog.getElement().innerHTML = " Enter the commit message: <br>";
     
     var form = document.createElement('form');
@@ -266,7 +268,7 @@ var listOldVersionsAction = function (editor) {
 listOldVersionsAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 listOldVersionsAction.prototype.constructor = CmisCheckOutAction;
 listOldVersionsAction.prototype.getDisplayName = function () {
-  return 'All versions';
+  return tr(msgs.ALL_VERSIONS_);
 };
 
 listOldVersionsAction.prototype.actionPerformed = function (callback) {
@@ -285,19 +287,28 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
       var jsonFile = JSON.parse(data);
       
       this.dialog = workspace.createDialog();
-      this.dialog.setTitle('All versions');
+      this.dialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
       this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
       this.dialog.setPreferredSize(500, 400);
+      this.dialog.setResizable(true);
 
-      let style = document.createElement('style');
-      style.innerHTML = "table,td,th{border:1px solid #ddd;text-align:left;}" + 
-            "table{border-collapse:collapse;width:96%;}th,td{padding:15px;}";
 
       let table = document.createElement('table');
 
       let tr = document.createElement('tr');
       let th = document.createElement('th');
       let th1 = document.createElement('th');
+      let divtitle = document.createElement('div');
+      let par = document.createElement('p');
+
+      par.setAttribute('class', 'divtitle');
+      par.innerHTML = "TEXT ONE";
+
+
+      divtitle.appendChild(par);
+
+
+
 
       th.innerHTML = "Version";
       tr.appendChild(th);
@@ -314,7 +325,6 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
         let value = jsonFile[key];
 
         let commit = document.createElement('td');
-        commit.setAttribute('style', 'margin-left:50px;');
 
         if(value[1] !== "" || value[1] !== null){
           commit.innerHTML = value[1];
@@ -324,7 +334,7 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
 
         a.setAttribute('href', hrefUrl);
         a.setAttribute('target','_blank');
-        a.setAttribute('style', 'margin-right:25px;color:#323233;text-decoration:none;');
+        a.setAttribute('class', 'oldlink');
         a.innerHTML = key;
 
         td.appendChild(a);
@@ -333,7 +343,7 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
         table.appendChild(tr);
       }
 
-      this.dialog.getElement().appendChild(style);
+      this.dialog.getElement().appendChild(divtitle);
       this.dialog.getElement().appendChild(table);
       this.dialog.show();
     });

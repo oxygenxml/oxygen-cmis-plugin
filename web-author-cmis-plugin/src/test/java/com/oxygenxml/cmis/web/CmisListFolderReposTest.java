@@ -6,12 +6,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.Repository;
-import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +25,7 @@ public class CmisListFolderReposTest {
 	 */
 	private CMISAccess cmisAccess;
 	private URL serverUrl;
+	private CmisBrowsingURLConnection browsing;
 
 	@Before
 	public void setUp() throws Exception {
@@ -35,6 +33,8 @@ public class CmisListFolderReposTest {
 
 		cmisAccess = new CMISAccess();
 		cmisAccess.connectToRepo(serverUrl, "A1", new UserCredentials("admin", ""));
+		browsing = new CmisBrowsingURLConnection(new CmisURLConnection(serverUrl, cmisAccess, new UserCredentials()),
+				serverUrl);
 	}
 
 	@Test
@@ -43,40 +43,14 @@ public class CmisListFolderReposTest {
 		String testRepo = "cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/";
 
 		List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
-		rootEntryMethod(list);
+		browsing.rootEntryMethod(list);
 
+		assertNotNull(browsing);
 		assertNotNull(testRepo);
 		assertNotNull(list);
 
 		for (FolderEntryDescriptor fed : list) {
 			assertTrue(fed.getAbsolutePath().equals(testRepo));
 		}
-
-	}
-
-	public void rootEntryMethod(List<FolderEntryDescriptor> list)
-			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
-		List<Repository> reposList = cmisAccess.connectToServerGetRepositories(serverUrl,
-				new UserCredentials("admin", ""));
-
-		for (Repository repos : reposList) {
-			String reposUrl = generateRepoUrl(repos);
-			list.add(new FolderEntryDescriptor(reposUrl));
-		}
-	}
-
-	public String generateRepoUrl(Repository repo)
-			throws UnsupportedEncodingException, MalformedURLException, CmisUnauthorizedException {
-		StringBuilder urlb = new StringBuilder();
-		// Connecting to Server to get host
-		cmisAccess.connectToRepo(serverUrl, repo.getId(), new UserCredentials("admin", ""));
-		// Get server URL
-		String originalProtocol = cmisAccess.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
-
-		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
-		urlb.append((CmisURLConnection.CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
-		urlb.append(repo.getId()).append("/");
-
-		return urlb.toString();
 	}
 }

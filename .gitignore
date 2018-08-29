@@ -1,3 +1,5 @@
 target/
+web-author-cmis-plugin/node/
+web-author-cmis-plugin/node_modules/
 *.DS_Store
 *.log

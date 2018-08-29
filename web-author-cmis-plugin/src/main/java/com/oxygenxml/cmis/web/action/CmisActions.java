@@ -72,7 +72,7 @@ public class CmisActions extends AuthorOperationWithResult {
 				oldVersionJson = ListOldVersionsAction.listOldVersions(document, url);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 			logger.info("Invalid object or object URL!");
 		}
 
@@ -99,11 +99,11 @@ public class CmisActions extends AuthorOperationWithResult {
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException e1) {
-			e1.printStackTrace();
+			logger.info(e1.getMessage());
 		} catch (CmisObjectNotFoundException e1) {
-			e1.printStackTrace();
+			logger.info(e1.getMessage());
 		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+			logger.info(e1.getMessage());
 		}
 
 		logger.info("Is versionable: " + document.isVersionable());

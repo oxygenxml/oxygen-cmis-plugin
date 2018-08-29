@@ -19,6 +19,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
@@ -30,13 +31,13 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	private static final Logger logger = Logger.getLogger(CmisBrowsingURLConnection.class.getName());
 
 	// PRIVATE RESOURCES
-	private CmisURLConnection cuc;
+	private CmisURLConnection connection;
 	private URL serverUrl;
 
 	// CONSTRUCTOR
 	public CmisBrowsingURLConnection(URLConnection delegateConnection, URL serverUrl) {
 		super(delegateConnection);
-		this.cuc = (CmisURLConnection) delegateConnection;
+		this.connection = (CmisURLConnection) delegateConnection;
 		this.serverUrl = serverUrl;
 	}
 
@@ -49,7 +50,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 				String connectionUrl = this.url.toExternalForm().replace(this.url.getQuery(), "");
 				connectionUrl = connectionUrl.replace("?", "");
-				Document document = (Document) cuc.getResourceController(connectionUrl).getCmisObj(id);
+				Document document = (Document) connection.getResourceController(connectionUrl).getCmisObj(id);
 
 				return document.getContentStream().getStream();
 			} 
@@ -102,12 +103,13 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UnsupportedEncodingException
 	 * @throws UserActionRequiredException
 	 */
+	@VisibleForTesting
 	public void entryMethod(List<FolderEntryDescriptor> list)
 			throws MalformedURLException, CmisUnauthorizedException, UnsupportedEncodingException {
 		FileableCmisObject parent = null;
 
 		// After connection we get ResourceController for generate URL!
-		parent = (FileableCmisObject) cuc.getCMISObject(url.toExternalForm());
+		parent = (FileableCmisObject) connection.getCMISObject(url.toExternalForm());
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
 			if (obj instanceof Document) {
@@ -117,7 +119,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			}
 
 			String parentPath = this.getURL().getPath();
-			String entryUrl = CmisURLConnection.generateURLObject(obj, cuc.getResourceController(url.toExternalForm()),
+			String entryUrl = CmisURLConnection.generateURLObject(obj, connection.getResourceController(url.toExternalForm()),
 					parentPath);
 			
 			if(obj instanceof Folder) {
@@ -137,10 +139,11 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UnsupportedEncodingException
 	 * @throws UserActionRequiredException
 	 */
+	@VisibleForTesting
 	public void rootEntryMethod(List<FolderEntryDescriptor> list)
 			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
-		List<Repository> reposList = cuc.getCMISAccess().connectToServerGetRepositories(serverUrl,
-				cuc.getUserCredentials());
+		List<Repository> reposList = connection.getCMISAccess().connectToServerGetRepositories(serverUrl,
+				connection.getUserCredentials());
 
 		for (Repository repos : reposList) {
 			String reposUrl = generateRepoUrl(repos);
@@ -158,14 +161,14 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UnsupportedEncodingException
 	 * @throws MalformedURLException
 	 */
-	public String generateRepoUrl(Repository repo)
+	private String generateRepoUrl(Repository repo)
 			throws UnsupportedEncodingException, MalformedURLException, CmisUnauthorizedException {
 		StringBuilder urlb = new StringBuilder();
 
 		// Connecting to Server to get host
-		cuc.getCMISAccess().connectToRepo(serverUrl, repo.getId(), cuc.getUserCredentials());
+		connection.getCMISAccess().connectToRepo(serverUrl, repo.getId(), connection.getUserCredentials());
 		// Get server URL
-		String originalProtocol = cuc.getCMISAccess().getSession().getSessionParameters()
+		String originalProtocol = connection.getCMISAccess().getSession().getSessionParameters()
 				.get(SessionParameter.ATOMPUB_URL);
 
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
@@ -179,7 +182,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * 
 	 * @param list
 	 */
-	public void folderEntryLogger(List<FolderEntryDescriptor> list) {
+	private void folderEntryLogger(List<FolderEntryDescriptor> list) {
 		int i = 0;
 		for (FolderEntryDescriptor fed : list) {
 			logger.info(++i + ": " + fed.getAbsolutePath());

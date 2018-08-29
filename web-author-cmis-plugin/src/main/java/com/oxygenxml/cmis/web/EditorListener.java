@@ -8,6 +8,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
@@ -47,7 +48,8 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		});
 	}
 
-	private void utilityMethod(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
+	@VisibleForTesting
+	public void utilityMethod(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
 		AuthorAccess authorAccess = documentModel.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 
@@ -77,9 +79,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 				if (!document.isVersionable()) {
 					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 							.setPseudoClass(NON_VERSIONABLE);
-				}
-
-				if (document.isVersionSeriesCheckedOut()) {
+				} else if (document.isVersionSeriesCheckedOut()) {
 					String versionSeriesCheckedOutBy = document.getVersionSeriesCheckedOutBy();
 
 					if (!credentials.getUsername().equals(versionSeriesCheckedOutBy)) {
@@ -101,11 +101,11 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			}
 
 		} catch (CmisUnauthorizedException e1) {
-			e1.printStackTrace();
+			logger.info(e1.getMessage());
 		} catch (CmisObjectNotFoundException e1) {
-			e1.printStackTrace();
+			logger.info(e1.getMessage());
 		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+			logger.info(e1.getMessage());
 		}
 	}
 

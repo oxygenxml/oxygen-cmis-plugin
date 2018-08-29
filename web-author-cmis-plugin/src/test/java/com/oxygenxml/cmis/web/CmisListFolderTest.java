@@ -1,39 +1,53 @@
 package com.oxygenxml.cmis.web;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
-import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
+import ro.sync.basic.util.URLStreamHandlerFactorySetter;
 import ro.sync.net.protocol.FolderEntryDescriptor;
 
 public class CmisListFolderTest {
-	/**
-	 * Executes operations over the resources.
-	 */
-	private ResourceController ctrl;
 	private URL serverUrl;
+	private CMISAccess cmisAccess;
+	private CmisBrowsingURLConnection browsing;
+	private URLStreamHandlerFactorySetter setter;
 
 	@Before
 	public void setUp() throws Exception {
 		serverUrl = new URL("http://localhost:8080/B/atom11");
 
-		CMISAccess.getInstance().connectToRepo(serverUrl, "A1", new UserCredentials("admin", ""));
-		ctrl = CMISAccess.getInstance().createResourceController();
+		cmisAccess = new CMISAccess();
+		cmisAccess.connectToRepo(serverUrl, "A1", new UserCredentials("admin", ""));
+
+		setter = new URLStreamHandlerFactorySetter();
+		setter.setHandler("cmis", new URLStreamHandler() {
+
+			@Override
+			protected URLConnection openConnection(URL u) throws IOException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
+		
+		URL url = new URL("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0");
+		browsing = new CmisBrowsingURLConnection(new CmisURLConnection(url, cmisAccess, new UserCredentials()),
+				url);
 	}
 
 	@Test
@@ -41,39 +55,28 @@ public class CmisListFolderTest {
 			throws MalformedURLException, CmisUnauthorizedException, UnsupportedEncodingException {
 		
 		List<String> testList = new ArrayList<String>();
-		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Document-0-0");
-		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Document-0-1");
-		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Document-0-2");
-		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/");
-		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-1/");
+		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/My_Document-1-0");
+		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/My_Document-1-1");
+		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/My_Document-1-2");
+		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/My_Folder-1-0/");
+		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/My_Folder-1-1/");
 
 		List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
-		entryMethod(list);
+		browsing.entryMethod(list);
 
+		assertNotNull(browsing);
 		assertNotNull(list);
 		assertNotNull(testList);
-		
+
 		int index = 0;
 		for (FolderEntryDescriptor fed : list) {
-			assertTrue(fed.getAbsolutePath().equals(testList.get(index++)));
+			assertNotNull(fed);
+			assertEquals(fed.getAbsolutePath(), testList.get(index++));
 		}
 	}
 
-	public void entryMethod(List<FolderEntryDescriptor> list)
-			throws MalformedURLException, CmisUnauthorizedException, UnsupportedEncodingException {
-		Folder parent = ctrl.getSession().getRootFolder();
-		
-		for (CmisObject obj : parent.getChildren()) {
-
-			String parentPath = "/";
-			String entryUrl = CmisURLConnection.generateURLObject(obj, ctrl, parentPath);
-
-			if (obj instanceof Folder) {
-				entryUrl = entryUrl.concat("/");
-			}
-
-			list.add(new FolderEntryDescriptor(entryUrl));
-		}
+	@After
+	public void tearDown() throws Exception {
+		setter.tearDown();
 	}
-
 }

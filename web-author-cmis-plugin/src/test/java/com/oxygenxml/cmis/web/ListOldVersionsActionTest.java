@@ -42,9 +42,10 @@ public class ListOldVersionsActionTest {
 	}
 
 	@Test
-	public void testCheckOut() throws Exception {
+	public void testListOldVersions() throws Exception {
 		Document document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkout", "empty", "plain/xml",
 				"VersionableType", VersioningState.MINOR);
+
 		try {
 			CmisCheckOutAction.checkOutDocument(document);
 

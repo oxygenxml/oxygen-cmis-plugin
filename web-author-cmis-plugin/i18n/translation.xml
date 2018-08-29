@@ -18,43 +18,114 @@
    <key value="SET_SERVER_URL_" distribution="webauthor">
         <comment>Tooltip on button for setting server URL</comment>
         <val lang="en_US">Set server URL</val>
+		<val lang="de_DE">Set server URL</val>
+        <val lang="fr_FR">Set server URL</val>
+        <val lang="ja_JP">Set server URL</val>
+        <val lang="nl_NL">Set server URL</val>
     </key>
     <key value="Server_URL">
         <comment>Open URL dialog. Input for the server URL.</comment>
         <val lang="en_US">Server URL</val>
+		<val lang="de_DE">Server URL</val>
+        <val lang="fr_FR">Server URL</val>
+        <val lang="ja_JP">Server URL</val>
+        <val lang="nl_NL">Server URL</val>
     </key>
 	<key value="Checkout_required" distribution="webauthor">
 		<comment>Label for required checkbox.</comment>
 		<val lang="en_US">Check - out required</val>
+		<val lang="de_DE">Check - out required</val>
+        <val lang="fr_FR">Check - out required</val>
+        <val lang="ja_JP">Check - out required</val>
+        <val lang="nl_NL">Check - out required</val>
 	</key>
     <key value="Enforced_server" distribution="webauthor">
         <comment>Label for input setting the enforced server URL.</comment>
         <val lang="en_US">Connection URL</val>
+		<val lang="de_DE">Connection URL</val>
+        <val lang="fr_FR">Connection URL</val>
+        <val lang="ja_JP">Connection URL</val>
+        <val lang="nl_NL">Connection URL</val>
     </key>
 	<key value="Server_name" distribution="webauthor">
 		<comment>Label for input Server Name</comment>
 		<val lang="en_US">Server name</val>
+		<val lang="de_DE">Server name</val>
+        <val lang="fr_FR">Server name</val>
+        <val lang="ja_JP">Server name</val>
+        <val lang="nl_NL">Server name</val>
 	</key>
 	<key value="Icon_URL" distribution="webauthor">
 		<comment>Label for input icon URL</comment>
 		<val lang="en_US">Icon URL</val>
+		<val lang="de_DE">Icon URL</val>
+        <val lang="fr_FR">Icon URL</val>
+        <val lang="ja_JP">Icon URL</val>
+        <val lang="nl_NL">Icon URL</val>
 	</key>
     <key value="Enforced_server_note" distribution="webauthor">
         <comment>Warning for the 'Enforce server' setting.</comment>
-        <val lang="en_US">Note: Once a server is enforced, the user will only be able to browse this enforced server. 
-		Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
+        <val lang="en_US">Note: Once a server is enforced, the user will only be able to browse this enforced server. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
+		<val lang="de_DE">Note: Once a server is enforced, the user will only be able to browse this enforced server. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
+        <val lang="fr_FR">Note: Once a server is enforced, the user will only be able to browse this enforced server. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
+        <val lang="ja_JP">Note: Once a server is enforced, the user will only be able to browse this enforced server. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
+        <val lang="nl_NL">Note: Once a server is enforced, the user will only be able to browse this enforced server. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
     </key>
 	<key value="Old_version_of_document" distribution="webauthor">
 		<comment>Message if opened document is an old version of actual document.</comment>
 		<val lang="en_US">Old version of document</val>
+		<val lang="de_DE">Old version of document</val>
+        <val lang="fr_FR">Old version of document</val>
+        <val lang="ja_JP">Old version of document</val>
+        <val lang="nl_NL">Old version of document</val>
 	</key>
 	<key value="Checked_out_by" distribution="webauthor">
 		<comment>Message if document is checked out by another user.</comment>
-		<val lang="en_US">Checked - out byt</val>
+		<val lang="en_US">Checked - out by</val>
+		<val lang="de_DE">Checked - out by</val>
+        <val lang="fr_FR">Checked - out by</val>
+        <val lang="ja_JP">Checked - out by</val>
+        <val lang="nl_NL">Checked - out by</val>
 	</key>
 	<key value="Check_out_requiered_editor" distribution="webauthor">
 		<comment>Message if check out is required.</comment>
 		<val lang="en_US">Check - out required</val>
+		<val lang="de_DE">Check - out required</val>
+        <val lang="fr_FR">Check - out required</val>
+        <val lang="ja_JP">Check - out required</val>
+        <val lang="nl_NL">Check - out required</val>
+	</key>
+	<key value="ALL_VERSIONS_" distribution="webauthor">
+		<comment>Title for "All versions" button.</comment>
+		<val lang="en_US">All versions</val>
+		<val lang="de_DE">All versions</val>
+        <val lang="fr_FR">All versions</val>
+        <val lang="ja_JP">All versions</val>
+        <val lang="nl_NL">All versions</val>
+	</key>
+	<key value="CHECK_OUT_" distribution="webauthor">
+		<comment>Title for "All versions" button.</comment>
+		<val lang="en_US">Check - out</val>
+		<val lang="de_DE">Check - out</val>
+        <val lang="fr_FR">Check - out</val>
+        <val lang="ja_JP">Check - out</val>
+        <val lang="nl_NL">Check - out</val>
+	</key>
+	<key value="CANCEL_CHECK_OUT_" distribution="webauthor">
+		<comment>Title for "All versions" button.</comment>
+		<val lang="en_US">Cancel check - out</val>
+		<val lang="de_DE">Cancel check - out</val>
+        <val lang="fr_FR">Cancel check - out</val>
+        <val lang="ja_JP">Cancel check - out</val>
+        <val lang="nl_NL">Cancel check - out</val>
+	</key>
+	<key value="CHECK_IN_" distribution="webauthor">
+		<comment>Title for "All versions" button.</comment>
+		<val lang="en_US">Check - in</val>
+		<val lang="de_DE">Check - in</val>
+        <val lang="fr_FR">Check - in</val>
+        <val lang="ja_JP">Check - in</val>
+        <val lang="nl_NL">Check - in</val>
 	</key>
     <key value="Anonymous" distribution="webauthor">
         <comment>Default author name for comments</comment>
