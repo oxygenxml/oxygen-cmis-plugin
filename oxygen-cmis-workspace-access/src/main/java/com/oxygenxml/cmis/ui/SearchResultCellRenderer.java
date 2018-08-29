@@ -204,7 +204,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
 
       }
-      // System.out.println();
 
       pathValue = contentProv.getPath(doc, ctrl);
 
@@ -213,25 +212,28 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       // System.out.println("Line=" + contentProv.getLineDoc(doc,
       // matchPattern));
+
+      // Get the results from the server
       String resultContext = contentProv.getLineDoc(doc, matchPattern);
 
+      // Check if there is some data
       if (resultContext != null) {
+
+        // Escape the HTML
         resultContext = escapeHTML(resultContext);
 
         System.out.println("Before split = " + resultContext);
+        // Check if there is something in searchbar
         if (matchPattern != null) {
+          // Split the words entered as keys
           String[] searchKeys = matchPattern.trim().split("\\s+");
 
-          String contextDelimiter = "";
-          
-          for (String key : searchKeys) {
-            contextDelimiter += "(" + key + ")";
-          }
-          resultContext = getReadyHTMLSplit(resultContext, contextDelimiter);
+          // Get the styled HTML splitted
+          resultContext = getReadyHTMLSplit(resultContext, searchKeys);
         }
 
         System.out.println("After split = " + resultContext);
-      } 
+      }
 
       lineResource.setText(
           "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
@@ -245,7 +247,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       notifyValue = "By:" + folder.getCreatedBy();
       pathValue = contentProv.getPath(folder, ctrl);
 
-      lineResource.setText("");
+      lineResource.setText(
+          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
+              + "No data" + "</code></html>");
 
     }
 
@@ -399,6 +403,15 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   // this.setPreferredSize(new Dimension(10, 10));
   // }
   // }
+
+  /**
+   * Check the occurrences of a string in a string by checking the index and
+   * then move next up to the length of the findStr
+   * 
+   * @param str
+   * @param findStr
+   * @return
+   */
   private int countOccurences(String str, String findStr) {
 
     int lastIndex = 0;
@@ -419,29 +432,62 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     return count;
   }
 
-  String getReadyHTMLSplit(String context, String matchPattern) {
+  /**
+   * Count the occurrences of each key, splits the string for that specific key
+   * and sets a style in that string with HTML 4. As long as there are keys left
+   * the string will get updated values.
+   * 
+   * @param context
+   * @param searchKeys
+   * @return The styled string to be showed
+   */
+  String getReadyHTMLSplit(String context, String[] searchKeys) {
     String toReturn = "";
-    int occurences = countOccurences(context, matchPattern);
+    String contextToSplit = "";
 
-    System.out.println("COntext=" + context);
-    System.out.println("Pattern=" + matchPattern);
-    String[] splits = context.split(matchPattern);
+    // Iterate each key
+    for (String key : searchKeys) {
 
-    for (int index = 0; index < splits.length; index++) {
-
-      String styledContext = splits[index];
-      String styledMatch = "";
-
-      if (occurences != 0) {
-        styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + matchPattern + "</nobr>";
-        occurences--;
+      // Only for initialization at the first time because there is no previous
+      // data
+      if (toReturn.equals("")) {
+        contextToSplit = context;
       }
-      toReturn += (styledContext + styledMatch);
-    }
 
+      // Get the occurrences of that key in the context
+      int occurences = countOccurences(contextToSplit, key);
+
+      System.out.println("Occurences=" + occurences);
+      System.out.println("COntext=" + contextToSplit);
+      System.out.println("Pattern=" + key);
+
+      // Split the context
+      String[] splits = contextToSplit.split(key);
+
+      // Style each key in the spliced context by rebuilding the string back
+      for (int index = 0; index < splits.length; index++) {
+
+        String styledContext = splits[index];
+        String styledMatch = "";
+
+        if (occurences != 0) {
+          styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + key + "</nobr>";
+          occurences--;
+          toReturn += (styledContext + styledMatch);
+        }
+        // Set the updated context with styles
+        contextToSplit = toReturn;
+      }
+    }
     return toReturn;
   }
 
+  /**
+   * Escapes the HTML by replacing the signs with their codename
+   * 
+   * @param s
+   * @return
+   */
   public static String escapeHTML(String s) {
     StringBuilder out = new StringBuilder(Math.max(16, s.length()));
     for (int i = 0; i < s.length(); i++) {

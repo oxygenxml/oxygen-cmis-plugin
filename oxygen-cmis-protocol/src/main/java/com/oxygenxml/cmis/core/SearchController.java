@@ -250,8 +250,6 @@ public class SearchController {
   // }
   public String queryFindLine(IResource resource, String content) {
     String[] searchKeys = content.trim().split("\\s+");
-    String result = null;
-    System.out.println("Size=" + searchKeys.length);
     final int STRING_LIMIT = 45;
     if (resource instanceof DocumentImpl) {
 
