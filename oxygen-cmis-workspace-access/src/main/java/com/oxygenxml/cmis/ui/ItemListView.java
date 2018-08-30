@@ -254,7 +254,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private void createExternalListJMenu() {
 
     // Create a document in the current folder
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MAJOR"));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MINOR"));
     // Create a folder in the current folder
     menu.add(new CreateFolderAction(currentParent, this));
   }
@@ -287,7 +288,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     // CRUD Folder
 
-    menu.add(new CreateDocumentAction(selectedResource, currentParent, this));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MAJOR"));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MINOR"));
 
     // TODO copy all resources postponed
     menu.add(new CopyFolderAction(selectedResource));
@@ -484,6 +486,11 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       @Override
       public String getFolderPath() {
+        return null;
+      }
+
+      @Override
+      public String getDescription() {
         return null;
       }
     };

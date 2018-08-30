@@ -74,6 +74,11 @@ public class FolderImpl implements IFolder {
   }
 
   @Override
+  public String getDescription() {
+    return folder.getDescription();
+  }
+
+  @Override
   public String getId() {
     return folder.getId();
   }
@@ -120,6 +125,11 @@ public class FolderImpl implements IFolder {
     }
 
     @Override
+    public String getDescription() {
+      return object.getDescription();
+    }
+
+    @Override
     public String getDisplayName() {
       return object.getName() + " [" + object.getType() + "]";
     }
@@ -137,7 +147,7 @@ public class FolderImpl implements IFolder {
 
     @Override
     public boolean isCheckedOut() {
-      // TODO Auto-generated method stub
+
       return false;
     }
 
@@ -149,7 +159,7 @@ public class FolderImpl implements IFolder {
 
   @Override
   public boolean isCheckedOut() {
-    // TODO Auto-generated method stub
+
     return false;
   }
 

@@ -24,6 +24,8 @@ public interface IResource {
 
   String getCreatedBy();
 
+  String getDescription();
+
   boolean isCheckedOut();
 
   void refresh();

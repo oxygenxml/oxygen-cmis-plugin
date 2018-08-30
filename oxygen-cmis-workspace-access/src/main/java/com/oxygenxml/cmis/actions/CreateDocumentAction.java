@@ -36,6 +36,7 @@ public class CreateDocumentAction extends AbstractAction {
   private ItemsPresenter itemsPresenter;
   // New document created
   private Document documentCreated;
+  private String versioningState;
 
   /**
    * Constructor that receives data to process for the creation and presentation
@@ -45,14 +46,16 @@ public class CreateDocumentAction extends AbstractAction {
    * @param currentParent
    * @param itemsPresenter
    */
-  public CreateDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public CreateDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter,
+      String versioningState) {
 
     // Set a name and use a native icon
-    super("Create document", UIManager.getIcon("FileView.fileIcon"));
+    super("Create document"+ versioningState, UIManager.getIcon("FileView.fileIcon"));
 
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+    this.versioningState = versioningState;
   }
 
   /**
@@ -75,8 +78,8 @@ public class CreateDocumentAction extends AbstractAction {
     try {
 
       // Create a versioned document with the state of MAJOR
-      documentCreated = CMISAccess.getInstance().createResourceController()
-          .createVersionedDocument(((FolderImpl) resource).getFolder(), getInput, "", "plain/text", "VersionableType", VersioningState.MAJOR);
+      documentCreated = CMISAccess.getInstance().createResourceController().createVersionedDocument(
+          ((FolderImpl) resource).getFolder(), getInput, "", "plain/text", "VersionableType", VersioningState.valueOf(versioningState));
 
     } catch (UnsupportedEncodingException e1) {
 
@@ -111,11 +114,10 @@ public class CreateDocumentAction extends AbstractAction {
 
     }
     // --------
-    
-    
+
     // Presenter the updated content of the parent folder
     itemsPresenter.presentFolderItems(currentParent.getId());
- 
+
   }
 
 }

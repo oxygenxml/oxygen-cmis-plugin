@@ -24,7 +24,7 @@ public class CmisStreamHandler extends URLStreamHandler {
       return new CmisURLConnection(url, CMISAccess.getInstance(), uc);
 
     } catch (UserCanceledException e) {
-      // TODO Auto-generated catch block
+      
       e.printStackTrace();
     }
     return null;

@@ -55,7 +55,7 @@ public class PasteDocumentAction extends AbstractAction {
    * @return string
    */
 
-  private String getSysClipboardText() {
+  public static String getSysClipboardText() {
     // Initialize the returned text
     String ret = null;
 
@@ -128,7 +128,7 @@ public class PasteDocumentAction extends AbstractAction {
         itemsPresenter.presentFolderItems(currentParent.getId());
 
       } catch (Exception ev) {
-        
+
         // Show the exception if there is one
         JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
       }

@@ -4,31 +4,22 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
-import javax.swing.border.Border;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -36,7 +27,8 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
-import ro.sync.exml.view.graphics.Dimension;
+import ro.sync.exml.plugin.Plugin;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import sun.swing.DefaultLookup;
 
 public class SearchResultCellRenderer extends JPanel implements ListCellRenderer<IResource> {
@@ -45,7 +37,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
   private JPanel descriptionPanel;
   private JLabel nameResource;
-  private JLabel pathResource;
+  private JLabel propertiesResource;
   private JLabel lineResource;
   private JPanel lineResourcePanel;
 
@@ -91,8 +83,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     c.anchor = GridBagConstraints.BASELINE_LEADING;
     c.weightx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
-    pathResource = new JLabel();
-    descriptionPanel.add(pathResource, c);
+    propertiesResource = new JLabel();
+    descriptionPanel.add(propertiesResource, c);
 
     lineResourcePanel = new JPanel(new BorderLayout());
     lineResourcePanel.setPreferredSize(new java.awt.Dimension(100, 70));
@@ -108,32 +100,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     // lineResource.setContentType("text/html");
     lineResourcePanel.add(lineResource, BorderLayout.CENTER);
-    lineResource.addComponentListener(new ComponentListener() {
-
-      @Override
-      public void componentShown(ComponentEvent e) {
-        // TODO Auto-generated method stub
-        // lineResource.setFont(new Font("Serif", style, size));
-      }
-
-      @Override
-      public void componentResized(ComponentEvent e) {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void componentMoved(ComponentEvent e) {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void componentHidden(ComponentEvent e) {
-        // TODO Auto-generated method stub
-
-      }
-    });
     descriptionPanel.add(lineResourcePanel, c);
 
     // Notification panel
@@ -141,32 +107,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     notifierPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     // Will be drawn in paintComponent
-    notification = new JLabel() {
-      // @Override
-      // protected void paintComponent(Graphics g) {
-      // // TODO Auto-generated method stub
-      //
-      // Graphics2D g2d = (Graphics2D) g;
-      // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-      // RenderingHints.VALUE_ANTIALIAS_ON);
-      // super.paintComponent(g);
-      // g2d.setPaint(Color.BLUE);
-      // g2d.fill(new Ellipse2D.Double(getWidth() - 18 - 5, getHeight() / 2 - 9,
-      // 18, 18));
-      //
-      // final String text = "" + notification.getText();
-      // final Font oldFont = g2d.getFont();
-      //
-      // g2d.setFont(oldFont.deriveFont(oldFont.getSize() - 1f));
-      //
-      // final FontMetrics fm = g2d.getFontMetrics();
-      // g2d.setPaint(Color.WHITE);
-      // g2d.drawString(text, getWidth() - 9 - 5 - fm.stringWidth(text) / 2,
-      // getHeight() / 2 + (fm.getAscent() - fm.getLeading() - fm.getDescent())
-      // / 2);
-      // g2d.setFont(oldFont);
-      // }
-    };
+    notification = new JLabel();
     notifierPanel.add(notification);
 
     add(iconPanel, BorderLayout.WEST);
@@ -185,15 +126,13 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     String pathValue = null;
     String notifyValue = null;
+    String propertiesValues = null;
 
     setComponentOrientation(list.getComponentOrientation());
 
     Color bg = null;
     Color fg = null;
     String resourceText = styleString(value.getDisplayName());
-
-    nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word; background-color:red;'>"
-        + (resourceText != null ? resourceText : "No data") + "</div></html>");
 
     if (value instanceof DocumentImpl && value != null) {
 
@@ -211,14 +150,20 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       } else {
 
-        iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
+        try {
+          iconLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
+              .getIconDecoration(new URL("http://localhost/" + value.getDisplayName())));
+
+        } catch (MalformedURLException e) {
+
+          iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
+        }
 
       }
 
       pathValue = contentProv.getPath(doc, ctrl);
-
+      propertiesValues = contentProv.getProperties(doc);
       notifyValue = "By:" + doc.getCreatedBy();
-      // TODO: use breadcrumb view for the path
 
       // System.out.println("Line=" + contentProv.getLineDoc(doc,
       // matchPattern));
@@ -237,16 +182,20 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       FolderImpl folder = ((FolderImpl) value);
       iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
 
-      notifyValue = "By:" + folder.getCreatedBy();
       pathValue = contentProv.getPath(folder, ctrl);
+      propertiesValues = contentProv.getProperties(folder);
+      notifyValue = "By:" + folder.getCreatedBy();
 
       lineResource.setText(
           "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
               + "No data" + "</code></html>");
 
     }
+    nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word; background-color:red;'>"
+        + (resourceText != null ? resourceText : "No data") + "</div></html>");
 
-    pathResource.setText(pathValue);
+    propertiesResource.setText(propertiesValues);
+    nameResource.setToolTipText(pathValue);
     notification.setText(notifyValue);
 
     JList.DropLocation dropLocation = list.getDropLocation();
@@ -259,6 +208,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     }
 
     if (isSelected) {
+      setToolTipText(pathValue);
       setBackgroundC(this, bg == null ? list.getSelectionBackground() : bg);
       setForegroundC(this, fg == null ? list.getSelectionForeground() : fg);
     } else {
@@ -418,129 +368,68 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   // this.setPreferredSize(new Dimension(10, 10));
   // }
   // }
-  public static void printMatches(String text, String regex) {
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(text);
-    // Check all occurrences
-    while (matcher.find()) {
-      System.out.print("Start index: " + matcher.start());
-      System.out.print(" End index: " + matcher.end());
-      System.out.println(" Found: " + matcher.group());
-    }
-  }
 
   /**
-   * Check the occurrences of a string in a string by checking the index and
-   * then move next up to the length of the findStr
+   * Matcher used to get all the star and end indexes for replacing the original
+   * data
    * 
-   * @param str
-   * @param findStr
-   * @return
-   */
-  static ArrayList<String> keysOrder = new ArrayList<String>();
-
-  // static Stack<Integer> getOccurencesIndexes(String str, String[] findStr) {
-  // String regex = "";
-  // for (String string : findStr) {
-  // regex += string + "|";
-  // }
-  //
-  // keysOrder.clear();
-  //
-  // Stack<Integer> indexes = new Stack<Integer>();
-  //
-  // // Matters to preserve the order of the keys
-  // Pattern pattern = Pattern.compile(regex);
-  // Matcher matcher = pattern.matcher(str);
-  // // Check all occurrences
-  // while (matcher.find()) {
-  // String found = matcher.group();
-  //
-  // if (!found.equals("")) {
-  // System.out.print("Start index: " + matcher.start());
-  // System.out.print(" End index: " + matcher.end());
-  // System.out.println(" Found: " + found.trim());
-  // }
-  // }
-  //
-  // return indexes;
-  // }
-
-  /**
-   * Count the occurrences of each key, splits the string for that specific key
-   * and sets a style in that string with HTML 4. As long as there are keys left
-   * the string will get updated values.
    * 
    * @param context
    * @param searchKeys
    * @return The styled string to be showed
    */
   static String getReadyHTMLSplit(String context, String[] searchKeys) {
-    // String toReturn = "";
     String contextToSplit = context;
     StringBuffer stBuffer = new StringBuffer(contextToSplit);
     String styledMatch = "";
 
-    Stack<Integer> occurencesIndexes = new Stack<Integer>();
     System.out.println("COntext=" + stBuffer.toString() + " Size =" + (stBuffer.length() - 1));
 
-    // All the indexes of the keys
-    // occurencesIndexes = getOccurencesIndexes(stBuffer.toString(),
-    // searchKeys);
-    // // Collections.sort(occurencesIndexes);
-
+    // Concatenate all the keys from the search
     String regex = "";
     for (String string : searchKeys) {
       regex += string + "|";
     }
 
+    // Use a stack to store data because we will show them from the back in
+    // order to not destroy the original string
     Stack<ObjectFound> foundObjects = new Stack<ObjectFound>();
 
     // Matters to preserve the order of the keys
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(stBuffer.toString());
-    // Check all occurrences
+
+    // While some results are found
     while (matcher.find()) {
       String found = matcher.group();
 
+      // There is data
       if (!found.equals("")) {
         int startIndex = matcher.start();
         int endIndex = matcher.end();
 
+        // Create a new object
         foundObjects.push(new ObjectFound(startIndex, endIndex, found.trim()));
-        System.out.print("Start index: " + startIndex);
-        System.out.print(" End index: " + endIndex);
-        System.out.println(" Found: " + found.trim());
+
+//        System.out.print("Start index: " + startIndex);
+//        System.out.print(" End index: " + endIndex);
+//        System.out.println(" Found: " + found.trim());
       }
     }
 
-    System.out.println("Occurences=" + occurencesIndexes.size());
-
+    // Iterate all the objects from the stack
     while (!foundObjects.isEmpty()) {
+
       ObjectFound element = foundObjects.peek();
       styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + element.getContent() + "</nobr>";
-      System.out.println("Index from list=" + element.getStartIndex());
-      System.out.println("Till = " + element.getEndIndex() + " The key =" + element.getContent());
+//      System.out.println("Index from list=" + element.getStartIndex());
+//      System.out.println("Till = " + element.getEndIndex() + " The key =" + element.getContent());
 
       stBuffer.replace(element.getStartIndex(), element.getEndIndex(), styledMatch);
       foundObjects.pop();
-    }
 
-    // for (int index = 0; index < occurencesIndexes.size(); index++) {
-    //
-    // styledMatch = "<nobr style=' background-color:yellow; color:gray'>" +
-    // keysOrder.get(index) + "</nobr>";
-    // System.out.println("Index from list=" + occurencesIndexes.get(index));
-    // System.out.println("Till = " + (occurencesIndexes.get(index) +
-    // keysOrder.get(index).length() - 1) + " The key ="
-    // + keysOrder.get(index));
-    //
-    // stBuffer.replace(occurencesIndexes.get(index),
-    // occurencesIndexes.get(index) + keysOrder.get(index).length(),
-    // styledMatch);
-    //
-    // }
-    System.out.println(" FinalCOntext=" + stBuffer.toString());
+    }
+   // System.out.println(" FinalCOntext=" + stBuffer.toString());
 
     return stBuffer.toString();
   }
@@ -567,11 +456,24 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   }
 }
 
+/**
+ * Class use only for the sake of storing the start,endindex and the data fround
+ * 
+ * @author bluecc
+ *
+ */
 class ObjectFound {
   private int startIndex = 0;
   private int endIndex = 0;
   private String content = "";
 
+  /**
+   * Constructor
+   * 
+   * @param startIndex
+   * @param endIndex
+   * @param content
+   */
   public ObjectFound(int startIndex, int endIndex, String content) {
     this.startIndex = startIndex;
     this.endIndex = endIndex;

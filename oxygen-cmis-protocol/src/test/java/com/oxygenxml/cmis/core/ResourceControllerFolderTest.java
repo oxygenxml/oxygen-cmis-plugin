@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * TODO Cristian More tests for the folder level actions.
+ * 
  * 
  * Tests for operations over resources.
  * 

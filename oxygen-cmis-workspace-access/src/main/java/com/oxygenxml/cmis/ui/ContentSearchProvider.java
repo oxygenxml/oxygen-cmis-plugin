@@ -7,7 +7,7 @@ public interface ContentSearchProvider {
 
   String getLineDoc(IResource doc, String matchPattern);
   String getPath(IResource doc,ResourceController ctrl);
-  
+  String getProperties(IResource resource);
   /**
    * Add from outside those listeners here to be used for search
    * 

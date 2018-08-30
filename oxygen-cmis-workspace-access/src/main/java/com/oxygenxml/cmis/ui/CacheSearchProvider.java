@@ -10,6 +10,7 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import com.icl.saxon.exslt.Date;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
@@ -31,7 +32,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
 
   private HashMap<String, String> cacheLine;
   private HashMap<String, String> cachePath;
-
+  private HashMap<String, String> cacheProperties;
   private Timer timer = new Timer(false);
 
   /**
@@ -43,6 +44,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
   CacheSearchProvider(ContentSearchProvider searchProvider, JList<IResource> list) {
     cacheLine = new HashMap<>();
     cachePath = new HashMap<>();
+    cacheProperties = new HashMap<>();
     this.searchProvider = searchProvider;
     this.list = list;
 
@@ -165,4 +167,47 @@ public class CacheSearchProvider implements ContentSearchProvider {
     searchProvider.doSearch(searchText);
   }
 
+  @Override
+  public String getProperties(IResource resource) {
+    // Get the line found by ID
+    String propertiesToShow = cacheProperties.get(resource.getId());
+
+    if (propertiesToShow == null) {
+
+      TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+          // Get the line
+          String properties = null;
+          if (resource instanceof DocumentImpl) {
+            DocumentImpl doc = (DocumentImpl) resource;
+            properties = "Last version:" + doc.getLastVersionDocument().getVersionLabel();
+
+          } else if (resource instanceof FolderImpl) {
+            FolderImpl folder = (FolderImpl) resource;
+            properties = "Time created:" + folder.getTimeCreated();
+
+          }
+
+          // Put it in the hashmap or put 'Empty'
+          cacheProperties.put(resource.getId(), properties != null ? properties : "Empty");
+
+          // Repaint later the component
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(resource);
+              Rectangle cellBounds = list.getCellBounds(index, index);
+
+              list.repaint(cellBounds);
+            }
+          });
+
+        }
+      };
+
+      timer.schedule(task, 60);
+    }
+    return propertiesToShow;
+  }
 }
