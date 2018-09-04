@@ -87,7 +87,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     descriptionPanel.add(propertiesResource, c);
 
     lineResourcePanel = new JPanel(new BorderLayout());
-    lineResourcePanel.setPreferredSize(new java.awt.Dimension(100, 70));
+    lineResourcePanel.setPreferredSize(new java.awt.Dimension(100, 50));
     c.gridx = 0;
     c.gridy = 2;
     c.insets = new Insets(0, 10, 5, 10);
@@ -178,7 +178,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       resultContext = styleString(resultContext);
 
       lineResource.setText(
-          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
+          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
               + (resultContext != null ? resultContext : "No data") + "</code></html>");
 
     } else if (value instanceof FolderImpl && value != null) {
@@ -191,12 +191,12 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       notifyValue = "By:" + folder.getCreatedBy();
 
       lineResource.setText(
-          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; background-color:red;text-align: center;vertical-align: middle;'>"
+          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
               + "No data" + "</code></html>");
 
     }
 
-    nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word; background-color:red;'>"
+    nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word;'>"
         + (resourceText != null ? resourceText : "No data") + "</div></html>");
 
     propertiesResource.setText((propertiesValues != null ? propertiesValues : "No data"));

@@ -68,7 +68,7 @@ public class ControlComponents extends JPanel {
 
     // Initialization of the search
     searchPanel = new SearchView(itemsPanel);
-
+  
     itemsPanel.setContentProvider(searchPanel);
 
     // Initialization of the repositories

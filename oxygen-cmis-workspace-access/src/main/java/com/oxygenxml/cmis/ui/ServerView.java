@@ -8,12 +8,17 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.swing.ComboBoxEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -37,6 +42,7 @@ public class ServerView extends JPanel {
   private Set<String> serversList = new LinkedHashSet<>();
   // Combo box to choose from in-memory servers
   private JComboBox<String> serverItemsCombo = new JComboBox<>();
+  private JButton loadButton;
 
   /**
    * Constructor that creates the component
@@ -61,7 +67,7 @@ public class ServerView extends JPanel {
       Collections.addAll(serversList, elements.toArray(new String[0]));
     }
     setOpaque(true);
-    setBackground(Color.CYAN);
+    // setBackground(Color.CYAN);
     // Present them
     presentServers(serversList);
 
@@ -77,7 +83,7 @@ public class ServerView extends JPanel {
     JLabel serverUrlLabel = new JLabel("Server URL:");
 
     serverUrlLabel.setOpaque(true);
-    serverUrlLabel.setBackground(Color.red);
+    // serverUrlLabel.setBackground(Color.red);
 
     add(serverUrlLabel, c);
 
@@ -92,7 +98,47 @@ public class ServerView extends JPanel {
     serverItemsCombo.setEditable(true);
     serverItemsCombo.setEnabled(true);
     serverItemsCombo.setOpaque(true);
-    serverItemsCombo.setBackground(Color.yellow);
+    serverItemsCombo.addFocusListener(new FocusListener() {
+
+      @Override
+      public void focusLost(FocusEvent e) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void focusGained(FocusEvent e) {
+        // TODO Auto-generated method stub
+        serverItemsCombo.setFocusable(true);
+        ;
+      }
+    });
+    serverItemsCombo.validate();
+    serverItemsCombo.requestFocus();
+
+    serverItemsCombo.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          loadButton.doClick();
+        }
+      }
+    });
+    // serverItemsCombo.setBackground(Color.yellow);
     // Load JButton constraints constraints
     add(serverItemsCombo, c);
     c.gridx = 3;
@@ -100,7 +146,7 @@ public class ServerView extends JPanel {
     c.gridy = 0;
     c.weightx = 0.0;
     c.fill = GridBagConstraints.NONE;
-    JButton loadButton = new JButton("Connect");
+    loadButton = new JButton("Connect");
 
     loadButton.addActionListener(new ActionListener() {
 
@@ -143,7 +189,7 @@ public class ServerView extends JPanel {
       }
     });
     loadButton.setOpaque(true);
-    loadButton.setBackground(new Color(0, 0, 255));
+    // loadButton.setBackground(new Color(0, 0, 255));
     add(loadButton, c);
   }
 

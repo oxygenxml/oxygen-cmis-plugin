@@ -54,7 +54,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     toolBar = new JToolBar();
     toolBar.setOpaque(true);
-    toolBar.setBackground(Color.blue);
+    //toolBar.setBackground(Color.blue);
     
     
     breadcrumbPanel = new JPanel();

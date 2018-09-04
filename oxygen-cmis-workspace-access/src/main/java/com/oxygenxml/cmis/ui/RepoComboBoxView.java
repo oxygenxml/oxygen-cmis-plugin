@@ -63,7 +63,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    */
   RepoComboBoxView(ItemsPresenter itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
     setOpaque(true);
-    setBackground(Color.cyan);
+    //setBackground(Color.cyan);
 
     this.itemsPresenter = itemsPresenter;
     this.breadcrumbPresenter = breadcrumbPresenter;
@@ -80,7 +80,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.insets = new Insets(1, 10, 1, 10);
     JLabel serverUrlLabel = new JLabel("Repository:");
     serverUrlLabel.setOpaque(true);
-    serverUrlLabel.setBackground(Color.red);
+    //serverUrlLabel.setBackground(Color.red);
     add(serverUrlLabel, c);
 
     // Url http JComboBox constraints
@@ -90,7 +90,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.gridwidth = 2;
     c.fill = GridBagConstraints.HORIZONTAL;
     repoItems.setOpaque(true);
-    repoItems.setBackground(Color.blue);
+    //repoItems.setBackground(Color.blue);
 
     repoItems.setEnabled(false);
     repoItems.setEditable(false);

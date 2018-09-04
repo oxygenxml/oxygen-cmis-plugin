@@ -300,18 +300,18 @@ public class SearchController {
 
     int frontLimit = input.lastIndexOf(pattern);
     int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
-    System.out.println("String length =" + input.length());
-    System.out.println("Front limit =" + frontLimit);
-    System.out.println("Back limit =" + backLimit);
+//    System.out.println("String length =" + input.length());
+//    System.out.println("Front limit =" + frontLimit);
+//    System.out.println("Back limit =" + backLimit);
 
     while (limitedString.length() > stringLimit) {
 
       if (frontCounter != limitedString.indexOf(pattern)) {
-        System.out.println("front counter=" + frontCounter);
-        System.out.println("back counter=" + backCounter);
+//        System.out.println("front counter=" + frontCounter);
+//        System.out.println("back counter=" + backCounter);
         limitedString = limitedString.substring(frontCounter);
-        System.out.println("The string after front cut = " + limitedString);
-        System.out.println("String length =" + limitedString.length());
+//        System.out.println("The string after front cut = " + limitedString);
+//        System.out.println("String length =" + limitedString.length());
         backCounter--;
 
       }
@@ -321,11 +321,11 @@ public class SearchController {
       }
 
       if (backCounter != limitedString.indexOf(pattern) + pattern.length() - 1) {
-        System.out.println("\nfront counter=" + frontCounter);
-        System.out.println("back counter=" + backCounter);
+//        System.out.println("\nfront counter=" + frontCounter);
+//        System.out.println("back counter=" + backCounter);
         limitedString = limitedString.substring(0, backCounter);
-        System.out.println("The string after back cut = " + limitedString);
-        System.out.println("String length =" + limitedString.length());
+//        System.out.println("The string after back cut = " + limitedString);
+//        System.out.println("String length =" + limitedString.length());
         backCounter--;
 
       }

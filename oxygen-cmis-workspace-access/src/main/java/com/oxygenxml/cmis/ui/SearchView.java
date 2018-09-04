@@ -7,6 +7,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,7 +57,7 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
 
   public SearchView(ItemsPresenter itemsPresenter) {
     setOpaque(true);
-    setBackground(Color.CYAN);
+    // setBackground(Color.CYAN);
 
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -67,7 +71,46 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
     c.insets = new Insets(1, 10, 1, 10);
     searchField = new JTextField("Search");
     searchField.setOpaque(true);
-    searchField.setBackground(Color.red);
+    searchField.addFocusListener(new FocusListener() {
+
+      @Override
+      public void focusLost(FocusEvent e) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void focusGained(FocusEvent e) {
+        // TODO Auto-generated method stub
+        searchField.selectAll();
+      }
+    });
+    searchField.validate();
+    searchField.requestFocus();
+    searchField.addKeyListener(new KeyListener() {
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          searchButton.doClick();
+        }
+      }
+    });
+
+    // searchField.setBackground(Color.red);
     searchField.setEnabled(false);
     add(searchField, c);
 
@@ -97,7 +140,7 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
 
     });
     searchButton.setOpaque(true);
-    searchButton.setBackground(Color.blue);
+    // searchButton.setBackground(Color.blue);
     add(searchButton, c);
   }
 
@@ -148,7 +191,7 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
       System.out.println(" Doc name = " + iResource.getDisplayName());
       System.out.println();
     }
-    
+
     System.out.println("Documents=" + documentsResults.size());
 
     // The results from searching the folders
@@ -193,7 +236,6 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
   public String getName(IResource resource) {
     return resource.getDisplayName();
   }
-
   // @Override
   // public List<String> getLinesDocuments() {
   //
