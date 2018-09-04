@@ -90,7 +90,10 @@ public class FolderImpl implements IFolder {
   public String getCreatedBy() {
     return folder.getCreatedBy();
   }
-
+  public void addToModel(Document doc){
+   // doc.addToFolder(folder.getId(), false);
+  }
+  
   public Date getTimeCreated() {
     return folder.getCreationDate().getTime();
   }
@@ -166,5 +169,11 @@ public class FolderImpl implements IFolder {
   @Override
   public void refresh() {
     folder.refresh();
+  }
+
+  @Override
+  public void removeFromModel(IResource resource) {
+    // TODO Auto-generated method stub
+    
   }
 }

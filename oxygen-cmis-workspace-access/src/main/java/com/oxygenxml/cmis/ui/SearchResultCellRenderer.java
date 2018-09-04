@@ -127,12 +127,16 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     String pathValue = null;
     String notifyValue = null;
     String propertiesValues = null;
-
+    String resourceText = null;
     setComponentOrientation(list.getComponentOrientation());
 
     Color bg = null;
     Color fg = null;
-    String resourceText = styleString(value.getDisplayName());
+    resourceText = contentProv.getName(value);
+
+    if (resourceText != null) {
+      resourceText = styleString(resourceText);
+    }
 
     if (value instanceof DocumentImpl && value != null) {
 
@@ -191,11 +195,12 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
               + "No data" + "</code></html>");
 
     }
+
     nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word; background-color:red;'>"
         + (resourceText != null ? resourceText : "No data") + "</div></html>");
 
-    propertiesResource.setText(propertiesValues);
-    nameResource.setToolTipText(pathValue);
+    propertiesResource.setText((propertiesValues != null ? propertiesValues : "No data"));
+
     notification.setText(notifyValue);
 
     JList.DropLocation dropLocation = list.getDropLocation();
@@ -226,7 +231,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       // Escape the HTML
       resultContext = escapeHTML(resultContext);
 
-      System.out.println("Before split = " + resultContext);
+      // System.out.println("Before split = " + resultContext);
       // Check if there is something in searchbar
       if (matchPattern != null) {
         // Split the words entered as keys
@@ -236,7 +241,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         resultContext = getReadyHTMLSplit(resultContext, searchKeys);
       }
 
-      System.out.println("After split = " + resultContext);
+      // System.out.println("After split = " + resultContext);
     }
     return resultContext;
   }
@@ -383,7 +388,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     StringBuffer stBuffer = new StringBuffer(contextToSplit);
     String styledMatch = "";
 
-    System.out.println("COntext=" + stBuffer.toString() + " Size =" + (stBuffer.length() - 1));
+    // System.out.println("COntext=" + stBuffer.toString() + " Size =" +
+    // (stBuffer.length() - 1));
 
     // Concatenate all the keys from the search
     String regex = "";
@@ -411,9 +417,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         // Create a new object
         foundObjects.push(new ObjectFound(startIndex, endIndex, found.trim()));
 
-//        System.out.print("Start index: " + startIndex);
-//        System.out.print(" End index: " + endIndex);
-//        System.out.println(" Found: " + found.trim());
+        // System.out.print("Start index: " + startIndex);
+        // System.out.print(" End index: " + endIndex);
+        // System.out.println(" Found: " + found.trim());
       }
     }
 
@@ -422,14 +428,15 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       ObjectFound element = foundObjects.peek();
       styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + element.getContent() + "</nobr>";
-//      System.out.println("Index from list=" + element.getStartIndex());
-//      System.out.println("Till = " + element.getEndIndex() + " The key =" + element.getContent());
+      // System.out.println("Index from list=" + element.getStartIndex());
+      // System.out.println("Till = " + element.getEndIndex() + " The key =" +
+      // element.getContent());
 
       stBuffer.replace(element.getStartIndex(), element.getEndIndex(), styledMatch);
       foundObjects.pop();
 
     }
-   // System.out.println(" FinalCOntext=" + stBuffer.toString());
+    // System.out.println(" FinalCOntext=" + stBuffer.toString());
 
     return stBuffer.toString();
   }

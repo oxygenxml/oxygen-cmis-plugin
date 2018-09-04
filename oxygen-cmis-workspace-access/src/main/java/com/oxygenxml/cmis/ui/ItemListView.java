@@ -24,6 +24,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
@@ -161,7 +162,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
         IResource currentItem = null;
         // Get the location of the item using location of the click
         int itemIndex = resourceList.locationToIndex(e.getPoint());
-        
+
         if (itemIndex != -1) {
 
           // Get the current item
@@ -200,7 +201,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
             // Bounds of the click
             menu.show(resourceList, e.getX(), e.getY());
-            
+
           }
         }
         // Check if user clicked two times
@@ -223,10 +224,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
               // Present the document in tabs
               tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
-              
-                // Present document in Oxygen
-                new OpenDocumentAction(currentItem).openDocumentPath();
-              
+
+              // Present document in Oxygen
+              new OpenDocumentAction(currentItem).openDocumentPath();
 
             } else {
 
@@ -254,8 +254,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private void createExternalListJMenu() {
 
     // Create a document in the current folder
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MAJOR"));
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MINOR"));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MAJOR"));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MINOR"));
     // Create a folder in the current folder
     menu.add(new CreateFolderAction(currentParent, this));
   }
@@ -288,8 +288,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     // CRUD Folder
 
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MAJOR"));
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this,"MINOR"));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MAJOR"));
+    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MINOR"));
 
     // TODO copy all resources postponed
     menu.add(new CopyFolderAction(selectedResource));
@@ -492,6 +492,19 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       @Override
       public String getDescription() {
         return null;
+      }
+
+      @Override
+      public void addToModel(Document doc) {
+        // TODO: add
+        ((DefaultListModel<IResource>) resourceList.getModel()).addElement(new DocumentImpl(doc));
+      }
+
+      @Override
+      public void removeFromModel(IResource resource) {
+        int index = ((DefaultListModel<IResource>) resourceList.getModel()).indexOf(resource);
+        ((DefaultListModel<IResource>) resourceList.getModel()).remove(index);
+
       }
     };
 

@@ -59,6 +59,7 @@ public class DocumentImpl implements IDocument {
   public String getMimetype() {
     return doc.getContentStreamMimeType();
   }
+
   @Override
   public String getDescription() {
     return doc.getDescription();
@@ -87,7 +88,7 @@ public class DocumentImpl implements IDocument {
   public String getDocumentPath(ResourceController ctrl) {
     StringBuilder b = new StringBuilder();
     List<String> docPath = doc.getPaths();
-    System.out.println("Doc path:" + docPath);
+    // System.out.println("Doc path:" + docPath);
 
     b.append("/").append(ctrl.getRootFolder().getName());
 
@@ -163,8 +164,9 @@ public class DocumentImpl implements IDocument {
     if (Boolean.TRUE.equals(docType.isVersionable())) {
 
       ObjectId pwcId = doc.checkOut();
-
       Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
+      System.out.println("PWC ID=" + pwcId);
+      System.out.println("PWC name=" + pwc.getName());
 
       return pwc;
     }

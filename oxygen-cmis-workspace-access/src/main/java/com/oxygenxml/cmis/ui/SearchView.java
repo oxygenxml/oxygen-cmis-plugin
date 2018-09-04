@@ -143,6 +143,14 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
     // The results from searching the documents
     ArrayList<IResource> documentsResults = new SearchDocument(searchText, searchCtrl, option).getResultsFolder();
 
+    for (IResource iResource : documentsResults) {
+      System.out.println(" Doc id = " + iResource.getId());
+      System.out.println(" Doc name = " + iResource.getDisplayName());
+      System.out.println();
+    }
+    
+    System.out.println("Documents=" + documentsResults.size());
+
     // The results from searching the folders
     ArrayList<IResource> foldersResults = new SearchFolder(searchText, searchCtrl, option).getResultsFolder();
 
@@ -179,6 +187,11 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
   public String getProperties(IResource doc) {
 
     return ((DocumentImpl) doc).getDescription();
+  }
+
+  @Override
+  public String getName(IResource resource) {
+    return resource.getDisplayName();
   }
 
   // @Override

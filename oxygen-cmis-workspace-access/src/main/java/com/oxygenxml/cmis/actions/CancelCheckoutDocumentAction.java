@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.ui.ItemListView;
@@ -69,8 +70,9 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
       doc.cancelCheckOut();
 
       if (currentParent.getId().equals("#search.results")) {
-        currentParent.refresh();
-
+        // currentParent.refresh();
+        ((IFolder) currentParent).removeFromModel(resource);
+        
       } else {
         currentParent.refresh();
         itemsPresenter.presentResources(currentParent);

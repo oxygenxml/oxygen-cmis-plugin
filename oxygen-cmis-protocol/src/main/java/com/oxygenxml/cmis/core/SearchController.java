@@ -77,17 +77,28 @@ public class SearchController {
     return resources;
   }
 
+  private ArrayList<IResource> removeBlockedDocFromSearch(ArrayList<IResource> resources) {
+    for (int index = 0; index < resources.size(); index++) {
+      if (resources.get(index).isCheckedOut() && !((DocumentImpl) resources.get(index)).isPrivateWorkingCopy()) {
+        resources.remove(index);
+      }
+    }
+    return resources;
+  }
+
   /**
+   * Find all the resources and order by name depending on what to search a
+   * cmis:document or folder
    * 
-   * 
-   * @param cmisType
-   * @param name
-   * @param oc
+   * @param content
+   * @param searchObjectTypes
+   * @return
    */
   private List<IResource> queryResource(String content, int searchObjectTypes) {
     ArrayList<IResource> resources = new ArrayList<>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
+    oc.setOrderBy("cmis:name ASC");
     String scope = "";
 
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
@@ -116,7 +127,7 @@ public class SearchController {
 
       resources.add(res);
     }
-
+    resources = removeBlockedDocFromSearch(resources);
     return resources;
   }
 
@@ -262,10 +273,10 @@ public class SearchController {
           String line = scanner.nextLine().trim();
           for (String key : searchKeys) {
 
-//            System.out.println("Key context =" + key);
+            // System.out.println("Key context =" + key);
             if (line.contains(key)) {
 
-//              System.out.println("Content found=" + line);
+              // System.out.println("Content found=" + line);
               return limitStringResult(line, key, STRING_LIMIT);
 
             }

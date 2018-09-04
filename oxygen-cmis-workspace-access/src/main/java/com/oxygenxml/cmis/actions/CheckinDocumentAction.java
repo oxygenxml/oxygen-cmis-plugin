@@ -5,8 +5,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 
+import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.ui.ItemListView;
@@ -41,7 +44,7 @@ public class CheckinDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
-    if (((DocumentImpl) resource).isCheckedOut()) {
+    if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
 
       this.enabled = true;
 
@@ -75,8 +78,11 @@ public class CheckinDocumentAction extends AbstractAction {
       res = (ObjectId) doc.checkIn();
 
       if (currentParent.getId().equals("#search.results")) {
-        currentParent.refresh();
+        // currentParent.refresh();
+        ((IFolder) currentParent).removeFromModel(resource);
 
+        Document checkedInResource = CMISAccess.getInstance().createResourceController().getDocument(res.getId());
+        ((IFolder) currentParent).addToModel(checkedInResource);
       } else {
         currentParent.refresh();
         itemsPresenter.presentResources(currentParent);

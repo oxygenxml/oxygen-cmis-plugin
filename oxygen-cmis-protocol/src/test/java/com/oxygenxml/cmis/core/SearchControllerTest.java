@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
+import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 
 public class SearchControllerTest extends ConnectionTestBase {
 
@@ -19,8 +20,12 @@ public class SearchControllerTest extends ConnectionTestBase {
 
   @Before
   public void setUp() throws MalformedURLException {
-    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
-        new UserCredentials("admin", "admin"));
+    // CMISAccess.getInstance().connectToRepo(new
+    // URL("http://localhost:8080/B/atom11"), "A1",
+    // new UserCredentials("admin", "admin"));
+    CMISAccess.getInstance().connectToRepo(
+        new URL("http://localhost:8990/alfresco/api/-default-/cmis/versions/1.1/atom"), "-default-",
+        new UserCredentials("admin", "1234"));
     ctrl = CMISAccess.getInstance().createResourceController();
   }
 
@@ -57,7 +62,30 @@ public class SearchControllerTest extends ConnectionTestBase {
 
     List<IResource> docs = search.queryDoc("Document");
 
-    assertNotNull(docs);
+    // assertNotNull(docs);
+    // Will not work on jetty
+  }
+
+  @Test
+  public void testFindAllDocExceptBlocked() {
+    SearchController search = new SearchController(ctrl);
+
+    List<IResource> resources = search.queryDoc("dita");
+
+    assertNotNull(resources);
+//    for (int index = 0; index < resources.size(); index++) {
+//      if (resources.get(index).isCheckedOut() && !((DocumentImpl) resources.get(index)).isPrivateWorkingCopy()) {
+//        resources.remove(index);
+//      }
+//    }
+
+    for (IResource iResource : resources) {
+      System.out.println("Name:" + ((DocumentImpl) iResource).getDisplayName());
+      System.out.println("Chceckd out:" + ((DocumentImpl) iResource).isCheckedOut());
+      System.out.println("PWC:" + ((DocumentImpl) iResource).isPrivateWorkingCopy());
+    }
+
+    assertNotNull(resources);
   }
 
   @After

@@ -2,6 +2,7 @@ package com.oxygenxml.cmis.ui;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,6 +34,9 @@ public class CacheSearchProvider implements ContentSearchProvider {
   private HashMap<String, String> cacheLine;
   private HashMap<String, String> cachePath;
   private HashMap<String, String> cacheProperties;
+  private HashMap<String, String> cacheName;
+
+
   private Timer timer = new Timer(false);
 
   /**
@@ -45,6 +49,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
     cacheLine = new HashMap<>();
     cachePath = new HashMap<>();
     cacheProperties = new HashMap<>();
+    cacheName = new HashMap<>();
     this.searchProvider = searchProvider;
     this.list = list;
 
@@ -60,28 +65,31 @@ public class CacheSearchProvider implements ContentSearchProvider {
       TimerTask task = new TimerTask() {
         @Override
         public void run() {
-          // Get the line
-          String line = searchProvider.getLineDoc(doc, matchPattern);
 
-          // Put it in the hashmap or put 'Empty'
-          cacheLine.put(doc.getId(), line != null ? line : null);
+          if (doc != null) {
+            // Get the line
+            String line = searchProvider.getLineDoc(doc, matchPattern);
 
-          // Repaint later the component
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(doc);
-              Rectangle cellBounds = list.getCellBounds(index, index);
+            // Put it in the hashmap or put 'Empty'
+            cacheLine.put(doc.getId(), line != null ? line : null);
 
-              if (cellBounds != null) {
-                list.repaint(cellBounds);
+            // Repaint later the component
+            SwingUtilities.invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(doc);
+                Rectangle cellBounds = list.getCellBounds(index, index);
+
+                if (cellBounds != null) {
+                  list.repaint(cellBounds);
+                }
               }
-            }
-          });
+            });
+          }
         }
       };
 
-      timer.schedule(task, 60);
+      timer.schedule(task, 0);
     }
 
     return lineDoc;
@@ -142,15 +150,16 @@ public class CacheSearchProvider implements ContentSearchProvider {
             public void run() {
               int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(resource);
               Rectangle cellBounds = list.getCellBounds(index, index);
-
-              list.repaint(cellBounds);
+              if (cellBounds != null) {
+                list.repaint(cellBounds);
+              }
             }
           });
 
         }
       };
 
-      timer.schedule(task, 60);
+      timer.schedule(task, 0);
 
     }
 
@@ -199,15 +208,58 @@ public class CacheSearchProvider implements ContentSearchProvider {
               int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(resource);
               Rectangle cellBounds = list.getCellBounds(index, index);
 
-              list.repaint(cellBounds);
+              if (cellBounds != null) {
+                list.repaint(cellBounds);
+              }
             }
           });
 
         }
       };
 
-      timer.schedule(task, 60);
+      timer.schedule(task, 0);
     }
     return propertiesToShow;
+  }
+
+  @Override
+  public String getName(IResource resource) {
+    // Get the line found by ID
+
+    String id = resource.getId();
+
+    String name = cacheName.get(id);
+
+    if (name == null) {
+
+      TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+          // Get the name
+          String name = null;
+          name = resource.getDisplayName();
+
+          // Put it in the hashmap or put 'Empty'
+          cacheName.put(resource.getId(), name != null ? name : "Empty");
+
+          // Repaint later the component
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(resource);
+              Rectangle cellBounds = list.getCellBounds(index, index);
+
+              if (cellBounds != null) {
+                list.repaint(cellBounds);
+              }
+            }
+          });
+          
+        }
+      };
+
+      timer.schedule(task, 0);
+    }
+    return name;
   }
 }

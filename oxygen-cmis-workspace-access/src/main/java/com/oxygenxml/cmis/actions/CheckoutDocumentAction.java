@@ -8,8 +8,10 @@ import javax.swing.JOptionPane;
 import org.apache.chemistry.opencmis.client.api.Document;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
@@ -42,7 +44,7 @@ public class CheckoutDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
-    
+
     if (((DocumentImpl) resource).isCheckedOut()) {
 
       this.enabled = false;
@@ -75,9 +77,11 @@ public class CheckoutDocumentAction extends AbstractAction {
 
       // Get the document
       res = doc.checkOut(doc.getDocType());
-      if (currentParent.getId().equals("#search.results")) {
-        currentParent.refresh();
 
+      if (currentParent.getId().equals("#search.results")) {
+        // currentParent.refresh();
+        ((IFolder) currentParent).addToModel(res);
+        ((IFolder) currentParent).removeFromModel(resource);
       } else {
         currentParent.refresh();
         itemsPresenter.presentResources(currentParent);
