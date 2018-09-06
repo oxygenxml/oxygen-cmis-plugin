@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -20,6 +21,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -43,6 +45,8 @@ import com.oxygenxml.cmis.actions.DeleteDocumentAction;
 import com.oxygenxml.cmis.actions.DeleteFolderAction;
 import com.oxygenxml.cmis.actions.OpenDocumentAction;
 import com.oxygenxml.cmis.actions.PasteDocumentAction;
+import com.oxygenxml.cmis.actions.RenameDocumentAction;
+import com.oxygenxml.cmis.actions.RenameFolderAction;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
@@ -50,6 +54,8 @@ import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+
+
 
 /**
  * Describes how the folders and documents are: displayed, rendered, their
@@ -70,7 +76,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private IResource currentParent;
   private DefaultListCellRenderer regularRenderer;
   private SearchResultCellRenderer seachRenderer;
-
+  private int allowCopyAndMove = TransferHandler.MOVE;
   ContentSearchProvider contentProvider;
 
   /**
@@ -94,13 +100,20 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     // Create the listItem
     resourceList = new JList<IResource>();
-    resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     resourceList.setSelectedIndex(0);
     resourceList.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     resourceList.addListSelectionListener(this);
 
     // Scroller for the listRepo
     JScrollPane listItemScrollPane = new JScrollPane(resourceList);
+    
+    /*
+     *  Drag and drop move item
+     */
+    resourceList.setDragEnabled(true);
+    resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    resourceList.setTransferHandler(new ToTransferHandler(resourceList, allowCopyAndMove));
+    resourceList.setDropMode(DropMode.ON_OR_INSERT);
 
     /*
      * Render all the elements of the listItem when necessary
@@ -148,7 +161,6 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       }
     };
     resourceList.setCellRenderer(regularRenderer);
-
     /*
      * Add listener to the entire list
      * 
@@ -179,7 +191,11 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             if (!cellBounds.contains(e.getPoint())) {
 
               // Create de menu for the outside list
-              createExternalListJMenu();
+              if (!currentParent.getId().equals("#search.results")) {
+                System.out.println("ID item = " + ((IFolder) currentParent).getId());
+                System.out.println("Name item!!!! = " + currentParent.getDisplayName());
+                createExternalListJMenu();
+              }
 
             } else {
 
@@ -254,8 +270,8 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private void createExternalListJMenu() {
 
     // Create a document in the current folder
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MAJOR"));
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MINOR"));
+    menu.add(new CreateDocumentAction(currentParent, this, "MAJOR"));
+    menu.add(new CreateDocumentAction(currentParent, this, "MINOR"));
     // Create a folder in the current folder
     menu.add(new CreateFolderAction(currentParent, this));
   }
@@ -267,6 +283,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     // CRUD Document
     menu.add(new OpenDocumentAction(selectedResource));
+    menu.add(new RenameDocumentAction(selectedResource, currentParent, this));
     menu.add(new CopyDocumentAction(selectedResource));
     menu.add(new DeleteDocumentAction(selectedResource, currentParent, this));
     menu.add(new CheckinDocumentAction(selectedResource, currentParent, this));
@@ -288,9 +305,12 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     // CRUD Folder
 
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MAJOR"));
-    menu.add(new CreateDocumentAction(currentParent, currentParent, this, "MINOR"));
+    menu.add(new CreateDocumentAction(selectedResource, this, "MAJOR"));
+    menu.add(new CreateDocumentAction(selectedResource, this, "MINOR"));
+    // Create a folder in the current folder
+    menu.add(new CreateFolderAction(selectedResource, this));
 
+    menu.add(new RenameFolderAction(selectedResource, currentParent, this));
     // TODO copy all resources postponed
     menu.add(new CopyFolderAction(selectedResource));
 

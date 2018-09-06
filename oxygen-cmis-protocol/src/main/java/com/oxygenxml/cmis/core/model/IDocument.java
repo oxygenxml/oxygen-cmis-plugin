@@ -40,5 +40,6 @@ public interface IDocument extends IResource {
    */
   ObjectId checkIn();
 
+
   Document getDoc();
 }

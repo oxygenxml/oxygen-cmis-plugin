@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
@@ -200,5 +201,9 @@ public class DocumentImpl implements IDocument {
   @Override
   public void refresh() {
     doc.refresh();
+  }
+
+  public CmisObject rename(String newName) {
+    return doc.rename(newName);
   }
 }

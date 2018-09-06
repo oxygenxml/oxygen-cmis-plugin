@@ -28,8 +28,6 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class CreateDocumentAction extends AbstractAction {
-  // Resource to use for creation of the document
-  private IResource resource = null;
   // Parent of the resource
   private IResource currentParent;
   // Presenter to use to show the resources
@@ -46,13 +44,11 @@ public class CreateDocumentAction extends AbstractAction {
    * @param currentParent
    * @param itemsPresenter
    */
-  public CreateDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter,
-      String versioningState) {
+  public CreateDocumentAction(IResource currentParent, ItemsPresenter itemsPresenter, String versioningState) {
 
     // Set a name and use a native icon
-    super("Create document"+ versioningState, UIManager.getIcon("FileView.fileIcon"));
+    super("Create document " + versioningState, UIManager.getIcon("FileView.fileIcon"));
 
-    this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
     this.versioningState = versioningState;
@@ -79,12 +75,16 @@ public class CreateDocumentAction extends AbstractAction {
 
       // Create a versioned document with the state of MAJOR
       documentCreated = CMISAccess.getInstance().createResourceController().createVersionedDocument(
-          ((FolderImpl) resource).getFolder(), getInput, "", "plain/text", "VersionableType", VersioningState.valueOf(versioningState));
+          ((FolderImpl) currentParent).getFolder(), getInput, "", "plain/text", "VersionableType",
+          VersioningState.valueOf(versioningState));
 
     } catch (UnsupportedEncodingException e1) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
+      JOptionPane.showMessageDialog(null, "Unsupported encoding: " + e1.getMessage());
+    } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException e2) {
+      // Show the exception if there is one
+      JOptionPane.showMessageDialog(null, "Document already exists " + e2.getMessage());
     }
 
     // -------- Open into Oxygen

@@ -45,8 +45,8 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
   BreadcrumbView(ItemsPresenter itemsPresenter) {
     setOpaque(true);
-    setBackground(Color.green);
-    
+    // setBackground(Color.green);
+
     // Initialize data
     this.itemsPresenter = itemsPresenter;
     parentResources = new Stack<IResource>();
@@ -54,9 +54,8 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     toolBar = new JToolBar();
     toolBar.setOpaque(true);
-    //toolBar.setBackground(Color.blue);
-    
-    
+    // toolBar.setBackground(Color.blue);
+
     breadcrumbPanel = new JPanel();
     goUpIcon = new JLabel();
 
@@ -73,10 +72,10 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
     });
 
-//    // Set up the icon
-//    goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
+    // // Set up the icon
+    // goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
     goUpIcon.setOpaque(true);
-    goUpIcon.setBackground(Color.red);
+    // goUpIcon.setBackground(Color.red);
     // Add the tooltip
     goUpIcon.setToolTipText("Go back");
 
@@ -278,7 +277,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   public void presentBreadcrumb(IResource resource) {
     // Set up the icon
     goUpIcon.setIcon(UIManager.getIcon("FileChooser.upFolderIcon"));
-    
+
     // Set currentFolder
     currentFolder = (FolderImpl) resource;
 

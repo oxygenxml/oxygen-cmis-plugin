@@ -57,8 +57,8 @@ public class CreateFolderAction extends AbstractAction {
     System.out.println("The input=" + getInput);
 
     // Set current folder where we want a new folder
+    System.out.println("Current parrent=" + currentParent.getDisplayName());
     FolderImpl currentFolder = (FolderImpl) currentParent;
-
     // Try creating the folder in the currentParent using the input
     try {
       CMISAccess.getInstance().createResourceController().createFolder(((FolderImpl) currentParent).getFolder(),
