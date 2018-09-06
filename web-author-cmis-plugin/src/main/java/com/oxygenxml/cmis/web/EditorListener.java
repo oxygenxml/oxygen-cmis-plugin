@@ -2,6 +2,9 @@ package com.oxygenxml.cmis.web;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -68,8 +71,20 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			logger.info("EditorListener is loaded!");
 
 			if (urlWithoutContextId.contains(CHECK_IF_OLD_VERSION)) {
-				documentModel.getAuthorAccess().getEditorAccess()
-						.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.OLD_VER_WARNING)));
+
+				String connectionUrl = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf(CHECK_IF_OLD_VERSION));
+				String query = urlWithoutContextId.replace(connectionUrl, "");
+
+				String objectId = query.replace(CHECK_IF_OLD_VERSION, "");
+				Document oldDoc = (Document) connection.getResourceController(connectionUrl).getCmisObj(objectId);
+
+				String language = webappPluginWorkspace.getUserInterfaceLanguage();
+				SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", new Locale(language));
+				
+				Date lastMod = oldDoc.getLastModificationDate().getTime();
+
+				documentModel.getAuthorAccess().getEditorAccess().setReadOnly(
+						new ReadOnlyReason(rb.getMessage(TranslationTags.OLD_VER_WARNING) + " : " + df.format(lastMod)));
 				documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 						.setPseudoClass(TO_BLOCK);
 
@@ -119,5 +134,4 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	public boolean applicationClosing() {
 		return true;
 	}
-
 }

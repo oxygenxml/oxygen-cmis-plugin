@@ -33,13 +33,15 @@ public class CmisActions extends AuthorOperationWithResult {
 	
 	private String oldVersionJson = null;
 
-	private static final String CHECK_OUT = "cmisCheckout";
-	private static final String CHECK_IN = "cmisCheckin";
-	private static final String CANCEL_CHECK_OUT = "cancelCmisCheckout";
-	private static final String LIST_VERSIONS = "listOldVersions";
-	private static final String COMMIT_MESSAGE = "commit";
-	private static final String ACTION = "action";
-	private static final String STATE = "state";
+	public static final String OLD_VERSION = "?oldversion=";
+	
+	private static final String CHECK_OUT 	      = "cmisCheckout";
+	private static final String CHECK_IN 		  = "cmisCheckin";
+	private static final String CANCEL_CHECK_OUT  = "cancelCmisCheckout";
+	private static final String LIST_VERSIONS     = "listOldVersions";
+	private static final String COMMIT_MESSAGE    = "commit";
+	private static final String ACTION            = "action";
+	private static final String STATE             = "state";
 
 	@Override
 	public String getDescription() {
@@ -96,6 +98,10 @@ public class CmisActions extends AuthorOperationWithResult {
 		credentials = sessionStore.get(contextId, "credentials");
 		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
+		if(urlWithoutContextId.contains(OLD_VERSION)) {
+			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf("?oldversion"));
+		}
+		
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException e1) {
@@ -105,8 +111,6 @@ public class CmisActions extends AuthorOperationWithResult {
 		} catch (MalformedURLException e1) {
 			logger.info(e1.getMessage());
 		}
-
-		logger.info("Is versionable: " + document.isVersionable());
 
 		String actualAction = (String) args.getArgumentValue(ACTION);
 		String commitMessage = (String) args.getArgumentValue(COMMIT_MESSAGE);
@@ -118,7 +122,7 @@ public class CmisActions extends AuthorOperationWithResult {
 		if (!actualAction.isEmpty()) {
 			actionManipulator(actualAction, actualState, commitMessage, authorAccess, urlWithoutContextId);
 		}
-		
+				
 		if(oldVersionJson != null) {
 			return oldVersionJson;
 		}

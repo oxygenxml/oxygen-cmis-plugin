@@ -53,10 +53,10 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 				Document document = (Document) connection.getResourceController(connectionUrl).getCmisObj(id);
 
 				return document.getContentStream().getStream();
-			} 
-			
+			}
+
 			return super.getInputStream();
-		
+
 		} catch (CmisUnauthorizedException e) {
 			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
 			throw new UserActionRequiredException(webappMessage);
@@ -113,19 +113,24 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
 			if (obj instanceof Document) {
-				if (((Document) obj).isPrivateWorkingCopy() || ((Document) obj).isVersionSeriesPrivateWorkingCopy()) {
-					continue;
+				
+				Boolean isPrivateWorkingCopy = ((Document) obj).isPrivateWorkingCopy();
+				
+				if (isPrivateWorkingCopy != null) {
+					if (isPrivateWorkingCopy) {
+						continue;
+					}
 				}
 			}
 
 			String parentPath = this.getURL().getPath();
-			String entryUrl = CmisURLConnection.generateURLObject(obj, connection.getResourceController(url.toExternalForm()),
-					parentPath);
-			
-			if(obj instanceof Folder) {
+			String entryUrl = CmisURLConnection.generateURLObject(obj,
+					connection.getResourceController(url.toExternalForm()), parentPath);
+
+			if (obj instanceof Folder) {
 				entryUrl = entryUrl.concat("/");
 			}
-			
+
 			list.add(new FolderEntryDescriptor(entryUrl));
 		}
 		folderEntryLogger(list);

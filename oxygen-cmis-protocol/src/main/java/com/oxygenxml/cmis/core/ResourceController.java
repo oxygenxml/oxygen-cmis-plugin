@@ -17,7 +17,6 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 
 public class ResourceController {
 
@@ -93,25 +92,16 @@ public class ResourceController {
 
 		// prepare properties
 		Map<String, Object> properties = new HashMap<String, Object>();
-
 		properties.put(PropertyIds.NAME, filename);
-		properties.put(PropertyIds.VERSION_LABEL, null);
-		properties.put(PropertyIds.CHECKIN_COMMENT, null);
-		properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);
 
 		// create the document
 		Document document = null;
 		try {
 			properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
 			document = path.createDocument(properties, contentStream, versioningState);
-		} catch (CmisObjectNotFoundException e) {
-			if (e.getMessage().equals("Type 'VersionableType' is unknown!")) {
-				properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
-				document = path.createDocument(properties, contentStream, versioningState);
-			} else {
-				e.printStackTrace();
-			}
-
+		} catch (Exception e) {
+			properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
+			document = path.createDocument(properties, contentStream, versioningState);
 		}
 		return document;
 	}

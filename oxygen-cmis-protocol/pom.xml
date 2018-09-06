@@ -57,7 +57,7 @@
 					</contextHandlers>
 
 				</configuration>
-				<executions>
+			<!-- 	<executions>
 					<execution>
 						<id>start-jetty</id>
 						<phase>pre-integration-test</phase>
@@ -75,7 +75,7 @@
 							<goal>stop</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions> -->
 			</plugin>
 
 			<!-- Exclude the integration tests from the unit tests. -->
