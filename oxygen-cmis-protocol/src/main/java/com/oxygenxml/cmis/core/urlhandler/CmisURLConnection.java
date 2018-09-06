@@ -70,6 +70,7 @@ public class CmisURLConnection extends URLConnection {
 		// Generate first part of custom URL
 		urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append("/").append(repository);
 
+		Boolean invalidPath = true;
 		// Get path of Cmis Object
 		List<String> objectPath = ((FileableCmisObject) object).getPaths();
 
@@ -79,7 +80,6 @@ public class CmisURLConnection extends URLConnection {
 		}
 
 		// Append object path to URL
-		Boolean invalidPath = true;
 		for (int i = 0; i < objectPath.size(); i++) {
 			// Check if path(i) start with path of parent folder
 			if (objectPath.get(i).startsWith(parentPath)) {
@@ -94,7 +94,7 @@ public class CmisURLConnection extends URLConnection {
 		}
 
 		if (invalidPath) {
-			urlb.append("/").append(object.getName());
+			urlb.append("/").append(parentPath).append(object.getName());
 		}
 
 		return urlb.toString();
@@ -212,7 +212,8 @@ public class CmisURLConnection extends URLConnection {
 	}
 
 	@Override
-	public void connect() throws IOException {}
+	public void connect() throws IOException {
+	}
 
 	@Override
 	public InputStream getInputStream() throws IOException {
@@ -229,7 +230,7 @@ public class CmisURLConnection extends URLConnection {
 				String docUrl = null;
 
 				boolean newly = false;
-				
+
 				try {
 					docUrl = getURL().toExternalForm();
 					document = (Document) getCMISObject(docUrl);
@@ -242,7 +243,7 @@ public class CmisURLConnection extends URLConnection {
 
 				// All bytes have been written.
 				byte[] byteArray = toByteArray();
-				
+
 				ContentStreamImpl contentStream = new ContentStreamImpl(document.getName(),
 						BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
 						new ByteArrayInputStream(byteArray));
@@ -263,11 +264,11 @@ public class CmisURLConnection extends URLConnection {
 					}
 
 					PWC.setContentStream(contentStream, true);
-					
-					if(newly) {
-						PWC.checkIn(true, null, null, "");
-					} else if(wasChecked) {
-						PWC.checkIn(false, null, null, "");
+
+					if (newly) {
+						PWC.checkIn(true, null, null, " ");
+					} else if (wasChecked) {
+						PWC.checkIn(false, null, null, " ");
 					}
 				}
 			}
@@ -286,7 +287,7 @@ public class CmisURLConnection extends URLConnection {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	private String createDocument() throws MalformedURLException, UnsupportedEncodingException {
+	public String createDocument() throws MalformedURLException, UnsupportedEncodingException {
 		HashMap<String, String> param = new HashMap<>();
 		getServerURL(url.toExternalForm(), param);
 
@@ -306,8 +307,6 @@ public class CmisURLConnection extends URLConnection {
 		return generateURLObject(document, resourceController, path);
 	}
 
-	
-	
 	/**
 	 * 
 	 * @param connectionUrl

@@ -1,27 +1,65 @@
-table, td, th {
-	border:1px solid #ddd;
-	text-align:left;
+#table, .td {
+	text-align: left;
+	border: 1px solid lightgray;
 }
 
-table {
-	border-collapse:collapse;
-	width:100%;
+#table {
+	border-collapse: collapse;
+	display: block;
+	width: 100%;
+    margin-top: 40px;
+    overflow: auto;
+    height: calc(100% - 40px);
+    box-sizing: border-box;
+    line-height: 1.2;
 }
 
-th, td {
-	padding:15px;
+.td {
+	padding: 10px;
+	display: table-cell;
+    vertical-align: inherit;
 }
 
 .oldlink {
-	margin-right:25px;
-	color:#323233;
-	text-decoration:none;
+	text-align: center;
+	margin-right: 25px;
+	color: #323233;
+	text-decoration: underline;
 }
 
-.divtitle {
-	width: 100%;
-	position: fixed;
+.oldlink:hover {
+	text-decoration: none;
+	color: #485461;
+	font-weight: 400;
+}
+
+.headtitle {	
+	font-family: robotolight, Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	text-align: center;
 	display: inline-block;
-	background-color: rgb(255, 255, 255);
-	color: rgb(0, 0, 0);
+}
+
+#head {
+	width: 100%;
+	position: absolute;
+	background-color: white;
+	font-size: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#user {
+	width: 15%;
+    text-align: left;
+}
+
+#commit {
+	width: 100%;
+}
+
+#checkinarea {
+	margin: 0px; 
+	width: 250px; 
+	height: 125px;
 }

@@ -11,10 +11,13 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class CmisPluginConfigExtension extends PluginConfigExtension {
 
-	public static final String CHECKOUT_REQUIRED = "cmis.checkout_required";
-	private static final String ENFORCED_URL = "cmis.enforced_url";
-	private static final String ENFORCED_NAME = "cmis.enforced_name";
-	private static final String ENFORCED_ICON = "cmis.enforced_icon";
+	private static final String defaultAutoSaveInterval = "5";
+
+	public static final String 	CHECKOUT_REQUIRED  = "cmis.checkout_required";
+	private static final String ENFORCED_URL 	   = "cmis.enforced_url";
+	private static final String ENFORCED_NAME      = "cmis.enforced_name";
+	private static final String ENFORCED_ICON      = "cmis.enforced_icon";
+	private final static String AUTOSAVE_INTERVAL  = "cmis.autosave_interval";
 
 	@Override
 	public void init() throws ServletException {
@@ -35,12 +38,13 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 	@Override
 	public String getOptionsForm() {
 		String optionValue = getOption(CHECKOUT_REQUIRED, "");
-	    boolean isLockEnabled = "on".equals(optionValue);
-		
+		boolean isLockEnabled = "on".equals(optionValue);
+
 		String enforcedUrl = getOption(ENFORCED_URL, "");
 		String enforcedName = getOption(ENFORCED_NAME, "");
 		String enforcedIcon = getOption(ENFORCED_ICON, "");
-		
+		String autosaveInterval = getOption(AUTOSAVE_INTERVAL, defaultAutoSaveInterval);
+
 		StringBuilder optionsForm = new StringBuilder();
 		PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace())
 				.getResourceBundle();
@@ -60,12 +64,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 		optionsForm.append(
 				"<div style='background-color: lightyellow;border: 1px solid #dadab4; padding: 8px;margin-top: 5px;'>")
 				.append(rb.getMessage(TranslationTags.ENFORCED_SERVER_NOTE)).append("</div>");
-		// Check-out required.
-		optionsForm.append("<br><label style='margin-bottom:6px;overflow:hidden;font-size:120%;'>").append("<input name='")
-				.append(CHECKOUT_REQUIRED).append("' type=\"checkbox\" value=\"off\"")
-				.append((isLockEnabled ? "checked" : "")).append("> ")
-				.append(rb.getMessage(TranslationTags.CHECKOUT_REQUIRED_RESOURCE)).append("</label>");
-		//Server name
+		// Server name
 		optionsForm.append("<label style='margin-top:6px;display:block;font-size:120%'>")
 				.append(rb.getMessage(TranslationTags.SERVER_NAME)).append(": ").append("<input placeholder='")
 				.append(rb.getMessage(TranslationTags.SERVER_NAME)).append("' name='").append(ENFORCED_NAME)
@@ -73,7 +72,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 				.append("-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: block;")
 				.append("width:100%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='")
 				.append(enforcedName).append("'/>").append("</label>");
-		//Icon URL
+		// Icon URL
 		optionsForm.append("<label style='margin-top:6px;display:block;font-size:120%'>")
 				.append(rb.getMessage(TranslationTags.ICON_URL)).append(": ").append("<input placeholder='")
 				.append(rb.getMessage(TranslationTags.ICON_URL)).append("' name='").append(ENFORCED_ICON)
@@ -81,6 +80,20 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 				.append("-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: block;")
 				.append("width:100%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='")
 				.append(enforcedIcon).append("'/>").append("</label>");
+		// AutoSave interval
+		optionsForm.append("<label style='margin-top:6px;display:block;font-size:120%'>")
+				.append(rb.getMessage(TranslationTags.AUTOSAVE_INTERVAL)).append(" ")
+				.append("(" + rb.getMessage(TranslationTags.SECONDS) + ")").append(": ").append("<input placeholder='")
+				.append(rb.getMessage(TranslationTags.AUTOSAVE_INTERVAL)).append("' name='").append(AUTOSAVE_INTERVAL)
+				.append("' type='text' style='color:#606060;background-color:#FAFAFA;")
+				.append("-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: block;")
+				.append("width:100%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='")
+				.append(autosaveInterval).append("'/>").append("</label>");
+		// Check-out required.
+		optionsForm.append("<label style='margin-bottom:6px;margin-top:10px;overflow:hidden;font-size:120%;'>")
+				.append("<input name='").append(CHECKOUT_REQUIRED).append("' type=\"checkbox\" value=\"off\"")
+				.append((isLockEnabled ? "checked" : "")).append("> ")
+				.append(rb.getMessage(TranslationTags.CHECKOUT_REQUIRED_RESOURCE)).append("</label>");
 
 		optionsForm.append("</form>").append("</div>");
 
@@ -89,11 +102,10 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 
 	@Override
 	public String getOptionsJson() {
-		return "{" 
-				+ "\"" + ENFORCED_URL + "\":\"" + getOption(ENFORCED_URL, "") + "\"," 
-				+ "\"" + ENFORCED_NAME + "\":\"" + getOption(ENFORCED_NAME, "") + "\","
-				+ "\"" + ENFORCED_ICON + "\":\"" + getOption(ENFORCED_ICON, "") + "\""
-				+ "}";
+		return "{" + "\"" + AUTOSAVE_INTERVAL + "\":\"" + getOption(AUTOSAVE_INTERVAL, defaultAutoSaveInterval) + "\"," 
+				   + "\"" + ENFORCED_URL      + "\":\"" + getOption(ENFORCED_URL, "")   + "\"," 
+				   + "\"" + ENFORCED_NAME     + "\":\"" + getOption(ENFORCED_NAME, "")  + "\"," 
+				   + "\"" + ENFORCED_ICON     + "\":\"" + getOption(ENFORCED_ICON, "")  + "\"" + "}";
 	}
 
 }

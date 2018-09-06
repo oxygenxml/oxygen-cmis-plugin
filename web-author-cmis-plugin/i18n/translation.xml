@@ -7,6 +7,22 @@
         <language description="Japanese" lang="ja_JP"/>
         <language description="Dutch" lang="nl_NL"/>
     </languageList>
+	  <key value="Autosave_interval" distribution="webauthor">
+        <comment>Label for input for adjusting autosave interval.</comment>
+        <val lang="en_US">Autosave interval</val>
+        <val lang="de_DE">Intervall für automatisches Speichern</val>
+        <val lang="fr_FR">Intervalle de sauvegarde automatique</val>
+        <val lang="ja_JP">自動保存間隔</val>
+        <val lang="nl_NL">Interval voor automatisch opslaan</val>
+    </key>
+    <key value="Seconds">
+        <comment>Message used in document checking option page.</comment>
+        <val lang="en_US">seconds</val>
+        <val lang="de_DE">Sekunden</val>
+        <val lang="fr_FR">secondes</val>
+        <val lang="ja_JP">秒</val>
+        <val lang="nl_NL">seconden</val>
+    </key>
     <key value="AUTHENTICATION_REQUIRED_FOR_" distribution="webauthor">
         <comment>Title of login dialog.</comment>
         <val lang="en_US">Authentication required for {$PROD}</val>
@@ -104,7 +120,7 @@
         <val lang="nl_NL">All versions</val>
 	</key>
 	<key value="CHECK_OUT_" distribution="webauthor">
-		<comment>Title for "All versions" button.</comment>
+		<comment>Title for "Check - out" button.</comment>
 		<val lang="en_US">Check - out</val>
 		<val lang="de_DE">Check - out</val>
         <val lang="fr_FR">Check - out</val>
@@ -112,7 +128,7 @@
         <val lang="nl_NL">Check - out</val>
 	</key>
 	<key value="CANCEL_CHECK_OUT_" distribution="webauthor">
-		<comment>Title for "All versions" button.</comment>
+		<comment>Title for "Cancel check - out" button.</comment>
 		<val lang="en_US">Cancel check - out</val>
 		<val lang="de_DE">Cancel check - out</val>
         <val lang="fr_FR">Cancel check - out</val>
@@ -120,12 +136,68 @@
         <val lang="nl_NL">Cancel check - out</val>
 	</key>
 	<key value="CHECK_IN_" distribution="webauthor">
-		<comment>Title for "All versions" button.</comment>
+		<comment>Title for "Check - in" button.</comment>
 		<val lang="en_US">Check - in</val>
 		<val lang="de_DE">Check - in</val>
         <val lang="fr_FR">Check - in</val>
         <val lang="ja_JP">Check - in</val>
         <val lang="nl_NL">Check - in</val>
+	</key>
+	<key value="CHECK_IN_MESSAGE_" distribution="webauthor">
+		<comment>Check in message.</comment>
+		<val lang="en_US">Enter the commit message:</val>
+		<val lang="de_DE">Enter the commit message:</val>
+        <val lang="fr_FR">Enter the commit message:</val>
+        <val lang="ja_JP">Enter the commit message:</val>
+        <val lang="nl_NL">Enter the commit message:</val>
+	</key>
+	<key value="COMMIT_MESS_" distribution="webauthor">
+		<comment>Commit message</comment>
+		<val lang="en_US">Commit message</val>
+		<val lang="de_DE">Commit message</val>
+        <val lang="fr_FR">Commit message</val>
+        <val lang="ja_JP">Commit message</val>
+        <val lang="nl_NL">Commit message</val>
+	</key>
+	<key value="VERSION_" distribution="webauthor">
+		<comment>Version</comment>
+		<val lang="en_US">Version</val>
+		<val lang="de_DE">Version</val>
+        <val lang="fr_FR">Version</val>
+        <val lang="ja_JP">Version</val>
+        <val lang="nl_NL">Version</val>
+	</key>
+	<key value="MODIFIED_BY_" distribution="webauthor">
+		<comment>"Modified by" - label for ALL_VERSIONS_ button</comment>
+		<val lang="en_US">Modified by</val>
+		<val lang="de_DE">Modified by</val>
+        <val lang="fr_FR">Modified by</val>
+        <val lang="ja_JP">Modified by</val>
+        <val lang="nl_NL">Modified by</val>
+	</key>
+	<key value="MAJOR_VERSION_" distribution="webauthor">
+		<comment>Major version</comment>
+		<val lang="en_US">Major version</val>
+		<val lang="de_DE">Major version</val>
+        <val lang="fr_FR">Major version</val>
+        <val lang="ja_JP">Major version</val>
+        <val lang="nl_NL">Major version</val>
+	</key>
+	<key value="MINOR_VERSION_" distribution="webauthor">
+		<comment>Minor version</comment>
+		<val lang="en_US">Minor version</val>
+		<val lang="de_DE">Minor version</val>
+        <val lang="fr_FR">Minor version</val>
+        <val lang="ja_JP">Minor version</val>
+        <val lang="nl_NL">Minor version</val>
+	</key>
+	<key value="SET_CMIS_API_URL_" distribution="webauthor">
+		<comment>Set CMIS API URL in the Configuration Page</comment>
+		<val lang="en_US">Please set the CMIS API URL in the Admin Page Configuration.</val>
+		<val lang="de_DE">Please set the CMIS API URL in the Admin Page Configuration.</val>
+        <val lang="fr_FR">Please set the CMIS API URL in the Admin Page Configuration.</val>
+        <val lang="ja_JP">Please set the CMIS API URL in the Admin Page Configuration.</val>
+        <val lang="nl_NL">Please set the CMIS API URL in the Admin Page Configuration.</val>
 	</key>
     <key value="Anonymous" distribution="webauthor">
         <comment>Default author name for comments</comment>

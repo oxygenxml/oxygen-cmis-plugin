@@ -43,7 +43,7 @@ public class ListOldVersionsActionTest {
 
 	@Test
 	public void testListOldVersions() throws Exception {
-		Document document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkout", "empty", "plain/xml",
+		Document document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "check", "empty", "plain/xml",
 				"VersionableType", VersioningState.MINOR);
 
 		try {
@@ -61,14 +61,18 @@ public class ListOldVersionsActionTest {
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
 
 			assertNotNull(url);
-			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/checkout", url);
+			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/check", url);
 
 			String test = ListOldVersionsAction.listOldVersions(document, url);
 
+			
+			System.out.println(test);
 			assertNotNull(test);
-			assertTrue(test.startsWith("{\"checkout 1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Floca"
-					+ "lhost%253A8080%252FB%252Fatom11%2FA1%2Fcheckout?oldversion="));
+			assertTrue(test.startsWith("{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost"
+					+ "%253A8080%252FB%252Fatom11%2FA1%2Fcheck?oldversion"));
 
+			assertTrue(test.contains("admin"));
+			
 		} finally {
 			ctrl.deleteAllVersionsDocument(document);
 		}

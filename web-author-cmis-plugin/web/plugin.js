@@ -116,7 +116,6 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
     var div = document.createElement('div');
 
     if (rootUrl) {
-      console.log(rootUrl, rootUrlParam, currentBrowseUrl);
       if (!rootUrlParam) {
         if (!this.rootUrlSet) {
           this.rootUrlSet = true;
@@ -126,9 +125,8 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
         }
       }
       div.textContent = sync.options.PluginsOptions.getClientOption("cmis.enforced_name");
-
     } else {
-      div.textContent = 'Please set the CMIS API URL in the Admin Page Configuration.'; // TODO link to documentation.
+      div.textContent = tr(msgs.SET_CMIS_API_URL_); // TODO link to documentation.
     }
     return div;
   };
@@ -143,7 +141,7 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
     'name': sync.options.PluginsOptions.getClientOption('cmis.enforced_name'),
     'icon': sync.util.computeHdpiIcon(sync.options.PluginsOptions.getClientOption('cmis.enforced_icon')),
     'matches': function matches(url) {
-      return url.match('cmis'); // Check if the provided URL points to td file or folder from Cmis file repository
+      return url.match('cmis'); // Check if the provided URL points to version file or folder from Cmis file repository
     },
     'repository': cmisFileRepo
   };
@@ -212,17 +210,19 @@ CmisCheckInAction.prototype.getDisplayName = function () {
 CmisCheckInAction.prototype.actionPerformed = function (callback) {
   if (!this.dialog) {
     this.dialog = workspace.createDialog();
-    this.dialog.setTitle(tr(msgs.CHECK_IN_));
-    this.dialog.getElement().innerHTML = " Enter the commit message: <br>";
-    
+    this.dialog.setTitle(tr(msgs.CHECK_IN_MESSAGE_));
+    this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) +"<br>";
+    this.dialog.setPreferredSize(300, 350);
+
     var form = document.createElement('form');
-    var input = document.createElement('input');
+    var input = document.createElement('textarea');
+    input.setAttribute('style', 'margin:0px;width:250px;height:125px;resize:none;');
 
     var text1 = document.createElement('label');
     var text2 = document.createElement('label');
 
     input.setAttribute('type', 'text');
-    input.setAttribute('id', 'commit');
+    input.setAttribute('id', 'input');
     
     this.dialog.getElement().appendChild(input);
     
@@ -238,7 +238,7 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
   this.dialog.onSelect(goog.bind(function (key, e) {
     if(key === 'ok'){
 
-    var commitMessage = this.dialog.getElement().querySelector('#commit').value;
+    var commitMessage = this.dialog.getElement().querySelector('#input').value;
     var verstate;
 
     if(this.dialog.getElement().querySelector('#radio1').checked) {
@@ -283,70 +283,111 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
     'com.oxygenxml.cmis.web.action.CmisActions', {
       action: ''
     }, function (err, data) {
-     
+  
       var jsonFile = JSON.parse(data);
       
+      
+
+
       this.dialog = workspace.createDialog();
       this.dialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
       this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-      this.dialog.setPreferredSize(500, 400);
+      this.dialog.setPreferredSize(750, 550);
       this.dialog.setResizable(true);
 
+      this.dialog.show();
+
+      let div = document.createElement('div');
+      div.setAttribute('id', 'head');
+
+      let childDiv = document.createElement('div');
+      childDiv.setAttribute('id', 'versionDiv');
+      childDiv.setAttribute('class', 'headtitle');
+      childDiv.innerHTML = tr(msgs.VERSION_);
+      
+      let childDiv1 = document.createElement('div');
+      childDiv1.setAttribute('id', 'userDiv');
+      childDiv1.setAttribute('class', 'headtitle');
+      childDiv1.innerHTML = tr(msgs.MODIFIED_BY_);
+
+      let childDiv2 = document.createElement('div');
+      childDiv2.setAttribute('id', 'commitDiv');
+      childDiv2.setAttribute('class', 'headtitle');
+      childDiv2.innerHTML = tr(msgs.COMMIT_MESS_);
+
+      div.appendChild(childDiv);
+      div.appendChild(childDiv1);
+      div.appendChild(childDiv2);
 
       let table = document.createElement('table');
-
-      let tr = document.createElement('tr');
-      let th = document.createElement('th');
-      let th1 = document.createElement('th');
-      let divtitle = document.createElement('div');
-      let par = document.createElement('p');
-
-      par.setAttribute('class', 'divtitle');
-      par.innerHTML = "TEXT ONE";
-
-
-      divtitle.appendChild(par);
-
-
-
-
-      th.innerHTML = "Version";
-      tr.appendChild(th);
-
-      th1.innerHTML = "Commit";
-      tr.appendChild(th1);
-
-      table.appendChild(tr);
+      table.setAttribute('id', 'table');
 
       for(key in jsonFile){
         let tr = document.createElement('tr');
-        let td = document.createElement('td');
-        let a = document.createElement('a');
+      
+        let versionTd = document.createElement('td');
+        versionTd.setAttribute('id', 'version');
+        versionTd.setAttribute('class', 'td');
+
+        let versionLink = document.createElement('a');
         let value = jsonFile[key];
 
-        let commit = document.createElement('td');
+        let commitTd = document.createElement('td');
+        commitTd.setAttribute('id', 'commit');
+        commitTd.setAttribute('class', 'td');
 
         if(value[1] !== "" || value[1] !== null){
-          commit.innerHTML = value[1];
+          commitTd.innerHTML = value[1];
         } 
 
-        let hrefUrl = window.location.origin + window.location.pathname + value[0];
+        let href = window.location.origin + window.location.pathname + value[0];
 
-        a.setAttribute('href', hrefUrl);
-        a.setAttribute('target','_blank');
-        a.setAttribute('class', 'oldlink');
-        a.innerHTML = key;
+        let oldVer = value[0];
+        oldVer = oldVer.substring(oldVer.lastIndexOf('='), oldVer.length);
 
-        td.appendChild(a);
-        tr.appendChild(td);
-        tr.appendChild(commit);
+        versionLink.setAttribute('href', href);
+        versionLink.setAttribute('target','_blank');
+        versionLink.setAttribute('class', 'oldlink');
+        versionLink.innerHTML = key;
+        
+        let userTd = document.createElement('td');
+        userTd.setAttribute('id', 'user');
+        userTd.setAttribute('class', 'td');
+        userTd.innerHTML = value[2];
+        
+        if(window.location.search.includes(oldVer)) {
+          versionLink.setAttribute('href', '#');
+          versionLink.setAttribute('style', 'text-decoration:none;');
+
+          versionTd.style.backgroundColor = '#ededed';
+          commitTd.style.backgroundColor = '#ededed';
+          userTd.style.backgroundColor = '#ededed';
+        }
+        
+        versionTd.appendChild(versionLink);
+        tr.appendChild(versionTd);
+        tr.appendChild(userTd);
+        tr.appendChild(commitTd);
         table.appendChild(tr);
       }
 
-      this.dialog.getElement().appendChild(divtitle);
+      this.dialog.getElement().appendChild(div);
       this.dialog.getElement().appendChild(table);
-      this.dialog.show();
+     
+      var versionBarWidth = document.getElementById('version').offsetWidth;
+      var userBarWidth = document.getElementById('user').offsetWidth;
+      var commitBarWidth = document.getElementById('commit').offsetWidth;
+
+      document.getElementById('versionDiv').style.width = versionBarWidth + 'px';
+      document.getElementById('userDiv').style.width = userBarWidth + 'px';
+      document.getElementById('commitDiv').style.width = commitBarWidth + 'px';
+      
+      this.dialog.onSelect(goog.bind(function(e){
+        this.dialog.dispose();
+      }, this));
+
     });
+
   callback();
 }
 
@@ -360,7 +401,7 @@ function radioButtonsCreator(form, text1, text2){
   radio1.setAttribute('checked', '');
   form.appendChild(radio1);
 
-  text1.innerHTML = 'Major Version';
+  text1.innerHTML = tr(msgs.MAJOR_VERSION_);
   text1.appendChild(document.createElement('br'));
   form.appendChild(text1);
 
@@ -371,7 +412,7 @@ function radioButtonsCreator(form, text1, text2){
   radio2.setAttribute('value', 'minor');
   form.appendChild(radio2);
 
-  text2.innerHTML = 'Minor Version';
+  text2.innerHTML = tr(msgs.MINOR_VERSION_);
   form.appendChild(text2);
 }
 
@@ -414,8 +455,6 @@ goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, functi
   var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
   var doccheckedout = root.getAttribute('data-pseudoclass-checkedout');
   var block = root.getAttribute('data-pseudoclass-block');
- 
-  console.log(doccheckedout);
 
   if(doccheckedout === 'true'){
     checkedOut = true;
