@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -54,6 +56,8 @@ import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes how the folders and documents are: displayed, rendered, their
@@ -134,22 +138,29 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           String renderText = "";
 
           if (value != null) {
-
+            IResource resource = ((IResource) value);
             // Cast in order to use the methods from IResource interface
-            renderText = ((IResource) value).getDisplayName();
+            renderText = resource.getDisplayName();
             ((JLabel) component).setText(renderText);
 
             // If it's an instance of custom type of Folder
             if ((IResource) value instanceof FolderImpl) {
-
-              // Set the native icon to the component
-              ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
-
+            
+                ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
+              
             } else if ((IResource) value instanceof DocumentImpl) {
+              // ---------Use Oxygen Icons
+              try {
+                ((JLabel) component).setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
+                    .getIconDecoration(new URL("http://localhost/" + resource.getDisplayName())));
+              } catch (MalformedURLException e) {
+                // If it's an instance of custom type of Folder
+                // Set the native icon to the component
+                ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
 
-              // If it's an instance of custom type of Folder
-              // Set the native icon to the component
-              ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
+                e.printStackTrace();
+              }
+              // ---------
             }
 
           }

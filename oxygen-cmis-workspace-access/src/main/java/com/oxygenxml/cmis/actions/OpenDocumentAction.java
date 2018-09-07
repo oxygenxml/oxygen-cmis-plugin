@@ -16,6 +16,7 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
+import ro.sync.exml.workspace.api.editor.WSEditor;
 
 /**
  * Describes the delete folder action on a document by extending the
@@ -78,7 +79,7 @@ public class OpenDocumentAction extends AbstractAction {
     urlAsTring = CmisURLConnection.generateURLObject(currResource.getDoc(),
         CMISAccess.getInstance().createResourceController());
 
-    System.out.println("Open Action URL"+urlAsTring);
+    System.out.println("Open Action URL" + urlAsTring);
     // Get the workspace of the plugin
     PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
@@ -87,12 +88,21 @@ public class OpenDocumentAction extends AbstractAction {
 
       // Try opening in the Oxygen the URL
       try {
+      
         if (pluginWorkspace.open(new URL(urlAsTring))) {
 
           // if null - image preview opened
-          pluginWorkspace.getEditorAccess(new URL(urlAsTring), pluginWorkspace.MAIN_EDITING_AREA).setEditable(editable);
+          WSEditor editorAccess = pluginWorkspace.getEditorAccess(new URL(urlAsTring),
+              pluginWorkspace.MAIN_EDITING_AREA);
 
-          ;
+          if (editorAccess != null) {
+            editorAccess.setEditable(editable);
+          } else {
+
+            System.out.println("URL:" + new URL(urlAsTring));
+            pluginWorkspace.openInExternalApplication(new URL(urlAsTring), true);
+           
+          }
         }
 
       } catch (MalformedURLException e1) {

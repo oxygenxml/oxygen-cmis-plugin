@@ -11,6 +11,7 @@ import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -67,9 +68,9 @@ public class CreateDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    // Get input from user
-    String getInput = JOptionPane.showInputDialog(null, "Plase enter a name", "myfile");
-    System.out.println("The input=" + getInput);
+    // Get a file name from user
+    String fileName = JOptionPane.showInputDialog(null, "Please enter a file name", "myfile.txt");
+    System.out.println("The input=" + fileName);
     Document doc;
     Document pwc = null;
 
@@ -77,9 +78,12 @@ public class CreateDocumentAction extends AbstractAction {
     try {
       // Create a versioned document with the state of MAJOR
       doc = CMISAccess.getInstance().createResourceController().createVersionedDocument(
-          ((FolderImpl) currentParent).getFolder(), getInput, "", "text/plain", "VersionableType",
+          ((FolderImpl) currentParent).getFolder(), 
+          fileName, 
+          "", 
+          MimeTypes.getMIMEType(fileName), 
+          "VersionableType",
           VersioningState.valueOf(versioningState));
-
       // Checkout the document
       try {
 
@@ -131,7 +135,7 @@ public class CreateDocumentAction extends AbstractAction {
       JOptionPane.showMessageDialog(null, "Exception PWC is null");
     }
     // --------
-    
+
     currentParent.refresh();
     itemsPresenter.presentFolderItems(currentParent.getId());
   }
