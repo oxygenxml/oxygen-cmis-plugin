@@ -14,6 +14,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
+import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
@@ -33,7 +34,7 @@ public class CreateDocumentAction extends AbstractAction {
   // Presenter to use to show the resources
   private ItemsPresenter itemsPresenter;
   // New document created
-  private Document documentCreated;
+  private DocumentImpl documentCreated;
   private String versioningState;
 
   /**
@@ -69,19 +70,32 @@ public class CreateDocumentAction extends AbstractAction {
     // Get input from user
     String getInput = JOptionPane.showInputDialog(null, "Plase enter a name", "myfile");
     System.out.println("The input=" + getInput);
+    Document doc;
+    Document pwc = null;
 
     // Try creating the document with the string from the input
     try {
-
       // Create a versioned document with the state of MAJOR
-      documentCreated = CMISAccess.getInstance().createResourceController().createVersionedDocument(
-          ((FolderImpl) currentParent).getFolder(), getInput, "", "plain/text", "VersionableType",
+      doc = CMISAccess.getInstance().createResourceController().createVersionedDocument(
+          ((FolderImpl) currentParent).getFolder(), getInput, "", "text/plain", "VersionableType",
           VersioningState.valueOf(versioningState));
+
+      // Checkout the document
+      try {
+
+        documentCreated = new DocumentImpl(doc);
+        pwc = documentCreated.checkOut(documentCreated.getDocType());
+
+      } catch (Exception e2) {
+        // Show the exception if there is one
+        JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
+      }
 
     } catch (UnsupportedEncodingException e1) {
 
       // Show the exception if there is one
       JOptionPane.showMessageDialog(null, "Unsupported encoding: " + e1.getMessage());
+
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException e2) {
       // Show the exception if there is one
       JOptionPane.showMessageDialog(null, "Document already exists " + e2.getMessage());
@@ -89,35 +103,37 @@ public class CreateDocumentAction extends AbstractAction {
 
     // -------- Open into Oxygen
     String urlAsTring = null;
+    if (pwc != null) {
+      // Get the <Code>getCustomURL</Code> of the document created
+      urlAsTring = CmisURLConnection.generateURLObject(pwc, CMISAccess.getInstance().createResourceController());
 
-    // Get the <Code>getCustomURL</Code> of the document created
-    urlAsTring = CmisURLConnection.generateURLObject(documentCreated,
-        CMISAccess.getInstance().createResourceController());
+      System.out.println(urlAsTring);
 
-    System.out.println(urlAsTring);
+      // Get the workspace of the plugin
+      PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
-    // Get the workspace of the plugin
-    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+      // Check if it's not null
+      if (pluginWorkspace != null) {
 
-    // Check if it's not null
-    if (pluginWorkspace != null) {
+        // Try openning the url in the workspace
+        try {
+          pluginWorkspace.open(new URL(urlAsTring));
 
-      // Try openning the url in the workspace
-      try {
-        pluginWorkspace.open(new URL(urlAsTring));
+        } catch (MalformedURLException e1) {
 
-      } catch (MalformedURLException e1) {
+          // Show the exception if there is one
+          JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
+        }
 
-        // Show the exception if there is one
-        JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
       }
-
+    } else {
+      // Show the exception if there is one
+      JOptionPane.showMessageDialog(null, "Exception PWC is null");
     }
     // --------
-
-    // Presenter the updated content of the parent folder
+    
+    currentParent.refresh();
     itemsPresenter.presentFolderItems(currentParent.getId());
-
   }
 
 }

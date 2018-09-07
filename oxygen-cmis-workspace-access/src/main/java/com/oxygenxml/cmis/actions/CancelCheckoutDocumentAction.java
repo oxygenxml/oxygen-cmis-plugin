@@ -70,8 +70,8 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
       doc.cancelCheckOut();
 
       if (currentParent.getId().equals("#search.results")) {
-        // currentParent.refresh();
         ((IFolder) currentParent).removeFromModel(resource);
+         currentParent.refresh();
         
       } else {
         currentParent.refresh();

@@ -78,7 +78,7 @@ public class OpenDocumentAction extends AbstractAction {
     urlAsTring = CmisURLConnection.generateURLObject(currResource.getDoc(),
         CMISAccess.getInstance().createResourceController());
 
-    System.out.println(urlAsTring);
+    System.out.println("Open Action URL"+urlAsTring);
     // Get the workspace of the plugin
     PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 

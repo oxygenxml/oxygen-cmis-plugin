@@ -194,7 +194,6 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public ObjectId checkIn() {
-
     return doc.checkIn(true, null, doc.getContentStream(), "new version");
   }
 

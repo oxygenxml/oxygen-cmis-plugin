@@ -69,7 +69,7 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
    */
   @Override
   public void presentItem(Document doc) {
-
+    
     // The title
     String title = doc.getName();
 

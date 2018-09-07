@@ -141,59 +141,64 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     if (value instanceof DocumentImpl && value != null) {
 
       DocumentImpl doc = ((DocumentImpl) value);
+      if (doc.getId() != null) {
 
-      if (doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
+        if (doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
 
-        iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/workingcopy.png")));
-        // System.out.println("DocPWC:" + doc.getDisplayName());
+          iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/workingcopy.png")));
+          // System.out.println("DocPWC:" + doc.getDisplayName());
 
-      } else if (doc.isCheckedOut()) {
+        } else if (doc.isCheckedOut()) {
 
-        iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/checkedout.png")));
-        // System.out.println("Doc:" + doc.getDisplayName());
+          iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/checkedout.png")));
+          // System.out.println("Doc:" + doc.getDisplayName());
 
-      } else {
+        } else {
 
-        try {
-          iconLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
-              .getIconDecoration(new URL("http://localhost/" + value.getDisplayName())));
+          try {
+            iconLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
+                .getIconDecoration(new URL("http://localhost/" + value.getDisplayName())));
 
-        } catch (MalformedURLException e) {
+          } catch (MalformedURLException e) {
 
-          iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
+            iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
+          }
+
         }
 
+        pathValue = contentProv.getPath(doc, ctrl);
+        propertiesValues = contentProv.getProperties(doc);
+        notifyValue = "By:" + doc.getCreatedBy();
+
+        // System.out.println("Line=" + contentProv.getLineDoc(doc,
+        // matchPattern));
+
+        // Get the results from the server
+        String resultContext = contentProv.getLineDoc(doc, matchPattern);
+
+        resultContext = styleString(resultContext);
+
+        lineResource.setText(
+            "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
+                + (resultContext != null ? resultContext : "No data") + "</code></html>");
+
       }
-
-      pathValue = contentProv.getPath(doc, ctrl);
-      propertiesValues = contentProv.getProperties(doc);
-      notifyValue = "By:" + doc.getCreatedBy();
-
-      // System.out.println("Line=" + contentProv.getLineDoc(doc,
-      // matchPattern));
-
-      // Get the results from the server
-      String resultContext = contentProv.getLineDoc(doc, matchPattern);
-
-      resultContext = styleString(resultContext);
-
-      lineResource.setText(
-          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
-              + (resultContext != null ? resultContext : "No data") + "</code></html>");
-
     } else if (value instanceof FolderImpl && value != null) {
 
       FolderImpl folder = ((FolderImpl) value);
-      iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
+      
+      if (folder.getId() != null) {
+        iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
 
-      pathValue = contentProv.getPath(folder, ctrl);
-      propertiesValues = contentProv.getProperties(folder);
-      notifyValue = "By:" + folder.getCreatedBy();
+        pathValue = contentProv.getPath(folder, ctrl);
+        propertiesValues = contentProv.getProperties(folder);
+        notifyValue = "By:" + folder.getCreatedBy();
 
-      lineResource.setText(
-          "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
-              + "No data" + "</code></html>");
+        lineResource.setText(
+            "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
+                + "No data" + "</code></html>");
 
+      }
     }
 
     nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word;'>"

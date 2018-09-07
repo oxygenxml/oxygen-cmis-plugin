@@ -6,6 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
@@ -70,6 +71,7 @@ public class DeleteDocumentAction extends AbstractAction {
 
       } else {
         currentParent.refresh();
+      
         itemsPresenter.presentResources(currentParent);
       }
 

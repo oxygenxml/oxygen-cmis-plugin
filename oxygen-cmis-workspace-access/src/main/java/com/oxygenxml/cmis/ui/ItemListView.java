@@ -55,8 +55,6 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
-
-
 /**
  * Describes how the folders and documents are: displayed, rendered, their
  * actions.
@@ -106,9 +104,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     // Scroller for the listRepo
     JScrollPane listItemScrollPane = new JScrollPane(resourceList);
-    
+
     /*
-     *  Drag and drop move item
+     * Drag and drop move item
      */
     resourceList.setDragEnabled(true);
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -239,7 +237,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             if (currentItem instanceof DocumentImpl) {
 
               // Present the document in tabs
-              tabsPresenter.presentItem(((DocumentImpl) currentItem).getDoc());
+              // JUST FOR DEMO OUTSIDE OXYGEN
+              // tabsPresenter.presentItem(((DocumentImpl)
+              // currentItem).getDoc());
 
               // Present document in Oxygen
               new OpenDocumentAction(currentItem).openDocumentPath();

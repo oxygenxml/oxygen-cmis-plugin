@@ -36,7 +36,6 @@ public class CacheSearchProvider implements ContentSearchProvider {
   private HashMap<String, String> cacheProperties;
   private HashMap<String, String> cacheName;
 
-
   private Timer timer = new Timer(false);
 
   /**
@@ -60,13 +59,13 @@ public class CacheSearchProvider implements ContentSearchProvider {
     // Get the line found by ID
     String lineDoc = cacheLine.get(doc.getId());
 
-    if (lineDoc == null) {
+    if (lineDoc == null && doc.getId() != null) {
 
       TimerTask task = new TimerTask() {
         @Override
         public void run() {
 
-          if (doc != null) {
+          if (doc != null && doc.getId() != null) {
             // Get the line
             String line = searchProvider.getLineDoc(doc, matchPattern);
 
@@ -254,7 +253,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
               }
             }
           });
-          
+
         }
       };
 
