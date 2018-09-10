@@ -209,23 +209,32 @@ CmisCheckInAction.prototype.getDisplayName = function () {
 
 CmisCheckInAction.prototype.actionPerformed = function (callback) {
   if (!this.dialog) {
+
+    var root = document.querySelector('[data-root="true"]');
+    var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
+
     this.dialog = workspace.createDialog();
-    this.dialog.setTitle(tr(msgs.CHECK_IN_MESSAGE_));
-    this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) +"<br>";
-    this.dialog.setPreferredSize(300, 350);
+    this.dialog.setTitle(tr(msgs.CHECK_IN_));
+    this.dialog.setPreferredSize(200, 180);
 
     var form = document.createElement('form');
-    var input = document.createElement('textarea');
-    input.setAttribute('style', 'margin:0px;width:250px;height:125px;resize:none;');
+    
+    if(noSupport !== 'true') {
+      this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) +"<br>";
+      this.dialog.setPreferredSize(300, 350);
+
+      var input = document.createElement('textarea');
+     
+      input.setAttribute('style', 'margin:0px;width:250px;height:125px;resize:none;');
+      input.setAttribute('type', 'text');
+      input.setAttribute('id', 'input');
+
+      this.dialog.getElement().appendChild(input);
+    }
 
     var text1 = document.createElement('label');
     var text2 = document.createElement('label');
 
-    input.setAttribute('type', 'text');
-    input.setAttribute('id', 'input');
-    
-    this.dialog.getElement().appendChild(input);
-    
     form.setAttribute('action', '');
     radioButtonsCreator(form, text1, text2);
 
@@ -254,9 +263,10 @@ CmisCheckInAction.prototype.actionPerformed = function (callback) {
         state: verstate
       }, callback);
       checkedOut = false;
-    }
+    } 
   }, 
   this));
+
 };
 
 //------------------- List old version of document action. -----------------------
@@ -272,31 +282,40 @@ listOldVersionsAction.prototype.getDisplayName = function () {
 };
 
 listOldVersionsAction.prototype.actionPerformed = function (callback) {
+  var allVerDialog = this.dialog;
+  
+  var root = document.querySelector('[data-root="true"]');
+  var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
+
+  console.log(noSupport);
+
+  allVerDialog = workspace.createDialog();
+  allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));
+  allVerDialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+
+  if(noSupport !== 'true'){
+    allVerDialog.setPreferredSize(750, 550);
+    allVerDialog.setResizable(true);
+  } else {
+    allVerDialog.setPreferredSize(370, 350);
+  }
+
+  let loader = document.createElement('div');
+  loader.setAttribute('id', 'loader');
+  allVerDialog.getElement().appendChild(loader);
+
+  allVerDialog.show();
+
+  this.afterList_(callback, allVerDialog);
+};
+
+listOldVersionsAction.prototype.afterList_ = function (callback, allVerDialog) {
   this.editor.getActionsManager().invokeOperation(
     'com.oxygenxml.cmis.web.action.CmisActions', {
       action: 'listOldVersions'
-    }, goog.bind(this.afterList_, this, callback));
-};
-
-listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
-  this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: ''
     }, function (err, data) {
-  
       var jsonFile = JSON.parse(data);
       
-      
-
-
-      this.dialog = workspace.createDialog();
-      this.dialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
-      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-      this.dialog.setPreferredSize(750, 550);
-      this.dialog.setResizable(true);
-
-      this.dialog.show();
-
       let div = document.createElement('div');
       div.setAttribute('id', 'head');
 
@@ -324,7 +343,6 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
 
       for(key in jsonFile){
         let tr = document.createElement('tr');
-      
         let versionTd = document.createElement('td');
         versionTd.setAttribute('id', 'version');
         versionTd.setAttribute('class', 'td');
@@ -371,8 +389,10 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
         table.appendChild(tr);
       }
 
-      this.dialog.getElement().appendChild(div);
-      this.dialog.getElement().appendChild(table);
+      document.getElementById("loader").remove();
+
+      allVerDialog.getElement().appendChild(div);
+      allVerDialog.getElement().appendChild(table);
      
       var versionBarWidth = document.getElementById('version').offsetWidth;
       var userBarWidth = document.getElementById('user').offsetWidth;
@@ -382,10 +402,9 @@ listOldVersionsAction.prototype.afterList_ = function (callback, err, data) {
       document.getElementById('userDiv').style.width = userBarWidth + 'px';
       document.getElementById('commitDiv').style.width = commitBarWidth + 'px';
       
-      this.dialog.onSelect(goog.bind(function(e){
-        this.dialog.dispose();
-      }, this));
-
+      allVerDialog.onSelect(function(e){
+        allVerDialog.dispose();
+      });
     });
 
   callback();
@@ -494,16 +513,16 @@ function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId, listO
         displayName: 'CMIS',
         type: 'list',
         children: [{
-          id: checkOutId,
+          id: listOldVersionsId,
           type: 'action'
         }, {
-          id: cancelCheckOutId,
+          id: checkOutId,
           type: 'action'
         }, {
           id: checkInId,
           type: 'action'
         },{
-          id: listOldVersionsId,
+          id: cancelCheckOutId,
           type: 'action'
         }]
       });

@@ -301,8 +301,8 @@ public class SearchController {
     int frontCounter = 1;
     int backCounter = input.length() - 1;
 
-    int frontLimit = input.lastIndexOf(pattern);
-    int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
+//    int frontLimit = input.lastIndexOf(pattern);
+//    int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
     // System.out.println("String length =" + input.length());
     // System.out.println("Front limit =" + frontLimit);
     // System.out.println("Back limit =" + backLimit);

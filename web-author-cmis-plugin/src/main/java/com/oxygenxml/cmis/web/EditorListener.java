@@ -5,7 +5,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
@@ -33,10 +32,11 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 	private static final Logger logger = Logger.getLogger(EditorListener.class.getName());
 
-	private static final String CHECK_IF_OLD_VERSION = "?oldversion=";
-	private static final String NON_VERSIONABLE = "nonversionable";
-	private static final String IS_CHECKED_OUT = "checkedout";
-	private static final String TO_BLOCK = "block";
+	private static final String CHECK_IF_OLD_VERSION  = "?oldversion=";
+	private static final String NON_VERSIONABLE 	  = "nonversionable";
+	private static final String IS_CHECKED_OUT        = "checkedout";
+	private static final String TO_BLOCK              = "block";
+	private static final String NO_SUPPORT			  = "nosupportfor";
 
 	@Override
 	public void applicationStarted(StandalonePluginWorkspace pluginWorkspaceAccess) {
@@ -79,18 +79,25 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 				Document oldDoc = (Document) connection.getResourceController(connectionUrl).getCmisObj(objectId);
 
 				String language = webappPluginWorkspace.getUserInterfaceLanguage();
-				SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", new Locale(language));
+				SimpleDateFormat df = new SimpleDateFormat("d MMM yyyy HH:mm:ss", new Locale(language));
 				
 				Date lastMod = oldDoc.getLastModificationDate().getTime();
-
+				
 				documentModel.getAuthorAccess().getEditorAccess().setReadOnly(
 						new ReadOnlyReason(rb.getMessage(TranslationTags.OLD_VER_WARNING) + " : " + df.format(lastMod)));
 				documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 						.setPseudoClass(TO_BLOCK);
+				documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
+					.setPseudoClass(NO_SUPPORT);
 
 			} else {
 				Document document = (Document) connection.getCMISObject(urlWithoutContextId);
 
+				if(document.isPrivateWorkingCopy() == null || document.getCheckinComment() == null) {
+					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
+					.setPseudoClass(NO_SUPPORT);
+				}
+				
 				if (!document.isVersionable()) {
 					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 							.setPseudoClass(NON_VERSIONABLE);
