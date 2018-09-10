@@ -70,14 +70,10 @@ public class SearchControllerTest extends ConnectionTestBase {
   public void testFindAllDocExceptBlocked() {
     SearchController search = new SearchController(ctrl);
 
-    List<IResource> resources = search.queryDoc("dita");
+    List<IResource> resources = search.queryDoc("myfile");
 
     assertNotNull(resources);
-//    for (int index = 0; index < resources.size(); index++) {
-//      if (resources.get(index).isCheckedOut() && !((DocumentImpl) resources.get(index)).isPrivateWorkingCopy()) {
-//        resources.remove(index);
-//      }
-//    }
+   
 
     for (IResource iResource : resources) {
       System.out.println("Name:" + ((DocumentImpl) iResource).getDisplayName());

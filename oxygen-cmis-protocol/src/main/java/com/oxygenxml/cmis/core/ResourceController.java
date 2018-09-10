@@ -107,6 +107,36 @@ public class ResourceController {
   }
 
   /**
+   * CREATE DOCUMENT METHOD with the Content stream
+   * 
+   * @param path
+   * @param filename
+   * @param content
+   * @param versioningState
+   * @return
+   * @throws UnsupportedEncodingException
+   *           Necessary VersionableType in order to get many versions
+   */
+  public Document createVersionedDocument(Folder path, String filename, ContentStream contentStream, String mimetype,
+      String objectType, VersioningState versioningState) throws UnsupportedEncodingException {
+
+    // prepare properties
+    Map<String, Object> properties = new HashMap<String, Object>();
+    properties.put(PropertyIds.NAME, filename);
+
+    // create the document
+    Document document = null;
+    try {
+      properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
+      document = path.createDocument(properties, contentStream, versioningState);
+    } catch (Exception e) {
+      properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
+      document = path.createDocument(properties, contentStream, versioningState);
+    }
+    return document;
+  }
+
+  /**
    * MOVE DOCUMENTE FROM SOURCE FOLDER TO TARGET FOLDER
    * 
    * @param sourceFolder

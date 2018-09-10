@@ -40,7 +40,13 @@ public class OpenDocumentAction extends AbstractAction {
     super("Open document", UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
+    
+    if (((DocumentImpl) resource).canUserOpen()) {
+      this.enabled = true;
 
+    } else {
+      this.enabled = false;
+    }
   }
 
   /**
@@ -88,7 +94,7 @@ public class OpenDocumentAction extends AbstractAction {
 
       // Try opening in the Oxygen the URL
       try {
-      
+
         if (pluginWorkspace.open(new URL(urlAsTring))) {
 
           // if null - image preview opened
@@ -101,7 +107,7 @@ public class OpenDocumentAction extends AbstractAction {
 
             System.out.println("URL:" + new URL(urlAsTring));
             pluginWorkspace.openInExternalApplication(new URL(urlAsTring), true);
-           
+
           }
         }
 

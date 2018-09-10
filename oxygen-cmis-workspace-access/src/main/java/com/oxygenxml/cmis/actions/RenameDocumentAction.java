@@ -38,6 +38,13 @@ public class RenameDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+    
+    if (((DocumentImpl) resource).canUserCheckout()) {
+      this.enabled = true;
+      
+    } else {
+      this.enabled = false;
+    }
 
   }
 

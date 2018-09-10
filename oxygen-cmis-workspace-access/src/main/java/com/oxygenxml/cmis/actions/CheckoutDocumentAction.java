@@ -6,6 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IFolder;
@@ -44,13 +45,18 @@ public class CheckoutDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+    DocumentImpl doc = ((DocumentImpl) resource);
 
-    if (((DocumentImpl) resource).isCheckedOut()) {
+    if (doc.canUserCheckout()) {
+      if (doc.isCheckedOut()) {
 
+        this.enabled = false;
+
+      } else {
+        this.enabled = true;
+      }
+    }else{
       this.enabled = false;
-
-    } else {
-      this.enabled = true;
     }
   }
 

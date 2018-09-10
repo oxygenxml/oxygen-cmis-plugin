@@ -11,6 +11,7 @@ import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -53,8 +54,52 @@ public class DocumentImpl implements IDocument {
     return doc.getId();
   }
 
+  public String getContentStreamId() {
+    return doc.getContentStreamId();
+  }
+
   public DocumentType getDocType() {
     return doc.getDocumentType();
+  }
+
+  public boolean canUserDelete() {
+    return doc.hasAllowableAction(Action.CAN_DELETE_OBJECT);
+
+  }
+
+  public boolean canUserOpen() {
+    return doc.hasAllowableAction(Action.CAN_GET_CONTENT_STREAM);
+
+  }
+
+  /**
+   * Checks if current user can check out
+   * 
+   * @return boolean
+   */
+  public boolean canUserCheckout() {
+    return doc.hasAllowableAction(Action.CAN_CHECK_OUT);
+
+  }
+
+  /**
+   * Checks if the current user can check in
+   * 
+   * @return boolean
+   */
+  public boolean canUserCheckin() {
+    return doc.hasAllowableAction(Action.CAN_CHECK_IN);
+
+  }
+
+  /**
+   * Checks if the current user can cancel the checkout
+   * 
+   * @return boolean
+   */
+  public boolean canUserCancelCheckout() {
+    return doc.hasAllowableAction(Action.CAN_CANCEL_CHECK_OUT);
+
   }
 
   public String getMimetype() {

@@ -41,10 +41,16 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
-    if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
+    DocumentImpl doc = ((DocumentImpl) resource);
 
-      this.enabled = true;
+    if (doc.canUserCancelCheckout()) {
+      if (doc.isCheckedOut() && doc.isPrivateWorkingCopy()) {
 
+        this.enabled = true;
+
+      } else {
+        this.enabled = false;
+      }
     } else {
       this.enabled = false;
     }
@@ -71,8 +77,8 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
 
       if (currentParent.getId().equals("#search.results")) {
         ((IFolder) currentParent).removeFromModel(resource);
-         currentParent.refresh();
-        
+        currentParent.refresh();
+
       } else {
         currentParent.refresh();
         itemsPresenter.presentResources(currentParent);

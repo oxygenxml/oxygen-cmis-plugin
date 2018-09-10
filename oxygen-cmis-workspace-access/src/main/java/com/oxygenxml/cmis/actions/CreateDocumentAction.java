@@ -1,12 +1,21 @@
 package com.oxygenxml.cmis.actions;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -37,6 +46,11 @@ public class CreateDocumentAction extends AbstractAction {
   // New document created
   private DocumentImpl documentCreated;
   private String versioningState;
+  private JPanel inputPanel;
+  private JLabel inputLabel;
+  private JTextField filenameInput;
+  private JRadioButton radioItemMajor;
+  private JRadioButton radioItemMinor;
 
   /**
    * Constructor that receives data to process for the creation and presentation
@@ -54,6 +68,29 @@ public class CreateDocumentAction extends AbstractAction {
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
     this.versioningState = versioningState;
+
+    inputPanel = new JPanel();
+    filenameInput = new JTextField("myfile.txt");
+    inputLabel = new JLabel("Enter a filename with extension: ");
+
+    inputPanel.setLayout(new GridLayout(2, 2));
+    inputPanel.add(inputLabel);
+    inputPanel.add(filenameInput);
+
+    radioItemMajor = new JRadioButton("Major");
+    radioItemMajor.setActionCommand("MAJOR");
+    radioItemMajor.setMnemonic(KeyEvent.VK_LEFT);
+    // TODO: needs to be hanged into JPANEL
+    radioItemMajor.addActionListener(this);
+    radioItemMajor.setSelected(true);
+    inputPanel.add(radioItemMajor);
+
+    radioItemMinor = new JRadioButton("Minor");
+    radioItemMinor.setActionCommand("MINOR");
+    radioItemMinor.setMnemonic(KeyEvent.VK_RIGHT);
+    // TODO: needs to be hanged into JPANEL
+    radioItemMinor.addActionListener(this);
+    inputPanel.add(radioItemMinor);
   }
 
   /**
@@ -69,8 +106,9 @@ public class CreateDocumentAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
     // Get a file name from user
-    String fileName = JOptionPane.showInputDialog(null, "Please enter a file name", "myfile.txt");
-    System.out.println("The input=" + fileName);
+    JOptionPane.showInputDialog(null, inputPanel, null);
+    String fileName = "me.txt";
+
     Document doc;
     Document pwc = null;
 
@@ -78,11 +116,7 @@ public class CreateDocumentAction extends AbstractAction {
     try {
       // Create a versioned document with the state of MAJOR
       doc = CMISAccess.getInstance().createResourceController().createVersionedDocument(
-          ((FolderImpl) currentParent).getFolder(), 
-          fileName, 
-          "", 
-          MimeTypes.getMIMEType(fileName), 
-          "VersionableType",
+          ((FolderImpl) currentParent).getFolder(), fileName, "", MimeTypes.getMIMEType(fileName), "VersionableType",
           VersioningState.valueOf(versioningState));
       // Checkout the document
       try {

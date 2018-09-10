@@ -42,6 +42,12 @@ public class DeleteDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+
+    if (((DocumentImpl) resource).canUserDelete()) {
+      this.enabled = true;
+    } else {
+      this.enabled = false;
+    }
   }
 
   /**
@@ -71,7 +77,6 @@ public class DeleteDocumentAction extends AbstractAction {
 
       } else {
         currentParent.refresh();
-      
         itemsPresenter.presentResources(currentParent);
       }
 

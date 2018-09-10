@@ -11,6 +11,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -120,9 +124,19 @@ public class PasteDocumentAction extends AbstractAction {
         // Get the document
         Document docClipboard = CMISAccess.getInstance().createResourceController().getDocument(getSysClipboardText());
 
-        // Add the document from clipboard to the currentFolder
-        CMISAccess.getInstance().createResourceController().addToFolder(((FolderImpl) resource).getFolder(),
-            docClipboard);
+        String fileName = docClipboard.getName();
+        ContentStream content = docClipboard.getContentStream();
+        String mimetype = docClipboard.getContentStreamMimeType();
+        String objectTypeId = docClipboard.getType().getId();
+        // TODO: That's not how ypu do it!!
+        String versioningState = "MAJOR";
+
+        Document copiedDoc = CMISAccess.getInstance().createResourceController().createVersionedDocument(
+            ((FolderImpl) resource).getFolder(), fileName, content, mimetype, objectTypeId,
+            VersioningState.valueOf(versioningState));
+
+        // // Add the document from clipboard to the currentFolder
+        CMISAccess.getInstance().createResourceController().addToFolder(((FolderImpl) resource).getFolder(), copiedDoc);
 
         // Presenter the new content of the current parent
         itemsPresenter.presentFolderItems(currentParent.getId());

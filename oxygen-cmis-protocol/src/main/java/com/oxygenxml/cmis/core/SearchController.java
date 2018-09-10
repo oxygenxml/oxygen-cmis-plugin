@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.core;
 import java.io.FileInputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -79,12 +80,17 @@ public class SearchController {
   }
 
   private ArrayList<IResource> removeBlockedDocFromSearch(ArrayList<IResource> resources) {
-    for (int index = 0; index < resources.size(); index++) {
-      if (resources.get(index).isCheckedOut() && !((DocumentImpl) resources.get(index)).isPrivateWorkingCopy()) {
-        resources.remove(index);
+    Iterator<IResource> resIterator = resources.iterator();
+
+    while (resIterator.hasNext()) {
+
+      IResource resource = resIterator.next();
+      if (resource.isCheckedOut() && !((DocumentImpl) resource).isPrivateWorkingCopy()) {
+        resIterator.remove();
       }
     }
     return resources;
+
   }
 
   /**
@@ -100,6 +106,8 @@ public class SearchController {
 
     OperationContext oc = ctrl.getSession().createOperationContext();
     oc.setOrderBy("cmis:name ASC");
+    oc.setIncludeAllowableActions(true);
+
     String scope = "";
 
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
@@ -129,6 +137,7 @@ public class SearchController {
       resources.add(res);
     }
     resources = removeBlockedDocFromSearch(resources);
+
     return resources;
   }
 
@@ -301,8 +310,8 @@ public class SearchController {
     int frontCounter = 1;
     int backCounter = input.length() - 1;
 
-    int frontLimit = input.lastIndexOf(pattern);
-    int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
+    // int frontLimit = input.lastIndexOf(pattern);
+    // int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
     // System.out.println("String length =" + input.length());
     // System.out.println("Front limit =" + frontLimit);
     // System.out.println("Back limit =" + backLimit);

@@ -44,10 +44,16 @@ public class CheckinDocumentAction extends AbstractAction {
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
-    if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
 
-      this.enabled = true;
+    DocumentImpl doc = ((DocumentImpl) resource);
+    if (doc.canUserCheckin()) {
+      if (doc.isCheckedOut() && doc.isPrivateWorkingCopy()) {
 
+        this.enabled = true;
+
+      } else {
+        this.enabled = false;
+      }
     } else {
       this.enabled = false;
     }

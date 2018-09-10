@@ -34,6 +34,13 @@ public class CopyDocumentAction extends AbstractAction {
     super("Copy");
 
     this.resource = resource;
+    
+    if (((DocumentImpl) resource).canUserCheckout()) {
+      this.enabled = true;
+      
+    } else {
+      this.enabled = false;
+    }
   }
 
   /**
