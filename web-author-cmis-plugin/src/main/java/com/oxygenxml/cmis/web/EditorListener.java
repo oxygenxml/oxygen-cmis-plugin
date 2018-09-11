@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -14,13 +15,13 @@ import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.action.CmisActions;
 
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappEditingSessionLifecycleListener;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
-import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
 import ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -32,7 +33,6 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 	private static final Logger logger = Logger.getLogger(EditorListener.class.getName());
 
-	private static final String CHECK_IF_OLD_VERSION  = "?oldversion=";
 	private static final String NON_VERSIONABLE 	  = "nonversionable";
 	private static final String IS_CHECKED_OUT        = "checkedout";
 	private static final String TO_BLOCK              = "block";
@@ -60,9 +60,16 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 		// Get URL and ContextID for CmisURLConnection
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
+		String urlWithoutContextId = null;
+		
+		if(url != null) {
+			if(url.getProtocol() != null && url.getHost() != null && url.getPath() != null) {
+				urlWithoutContextId = url.getProtocol() + "://" + url.getHost() + url.getPath();
+			}
+		}
+		
 		String contextId = url.getUserInfo();
-		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
-		UserCredentials credentials = sessionStore.get(contextId, "credentials");
+		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
 		CmisURLConnection connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
 		PluginResourceBundle rb = webappPluginWorkspace.getResourceBundle();
@@ -70,13 +77,16 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		try {
 			logger.info("EditorListener is loaded!");
 
-			if (urlWithoutContextId.contains(CHECK_IF_OLD_VERSION)) {
-
-				String connectionUrl = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf(CHECK_IF_OLD_VERSION));
-				String query = urlWithoutContextId.replace(connectionUrl, "");
-
-				String objectId = query.replace(CHECK_IF_OLD_VERSION, "");
-				Document oldDoc = (Document) connection.getResourceController(connectionUrl).getCmisObj(objectId);
+			if (url.toExternalForm().contains(CmisActions.OLD_VERSION) && url.getQuery() != null) {
+				HashMap<String, String> queryPart = new HashMap<>();
+				
+				for(String pair : url.getQuery().split("&")) {
+					int index = pair.indexOf("=");
+					queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+				}
+				
+				String objectId = queryPart.get(CmisActions.OLD_VERSION);
+				Document oldDoc = (Document) connection.getResourceController(urlWithoutContextId).getCmisObj(objectId);
 
 				String language = webappPluginWorkspace.getUserInterfaceLanguage();
 				SimpleDateFormat df = new SimpleDateFormat("d MMM yyyy HH:mm:ss", new Locale(language));
@@ -87,8 +97,11 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 						new ReadOnlyReason(rb.getMessage(TranslationTags.OLD_VER_WARNING) + " : " + df.format(lastMod)));
 				documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 						.setPseudoClass(TO_BLOCK);
-				documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
+				
+				if(oldDoc.isPrivateWorkingCopy() == null || oldDoc.getCheckinComment() == null) {
+					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 					.setPseudoClass(NO_SUPPORT);
+				}
 
 			} else {
 				Document document = (Document) connection.getCMISObject(urlWithoutContextId);

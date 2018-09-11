@@ -11,7 +11,7 @@ public class ListOldVersionsAction {
 	public static String listOldVersions(Document document, String url) {
 
 		if (url.contains(CmisActions.OLD_VERSION)) {
-			url = url.substring(0, url.indexOf(CmisActions.OLD_VERSION));
+			url = url.substring(0, url.indexOf("?"));
 		}
 
 		document = document.getObjectOfLatestVersion(false);
@@ -22,7 +22,7 @@ public class ListOldVersionsAction {
 		StringBuilder oldBuilder = new StringBuilder();
 
 		oldBuilder.append("{");
-
+		
 		for (Document oldDoc : oldVersionsList) {
 			if(oldDoc.getVersionLabel().equals("pwc")) {
 				continue;
@@ -39,6 +39,7 @@ public class ListOldVersionsAction {
 				checkInComment = "";
 			} else {
 				checkInComment = oldDoc.getCheckinComment();
+				checkInComment = checkInComment.replaceAll("\\n", "<br/>");
 			}
 			
 			oldBuilder.append(",").append("\"").append(checkInComment).append("\"");

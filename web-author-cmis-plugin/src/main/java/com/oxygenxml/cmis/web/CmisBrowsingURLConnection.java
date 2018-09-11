@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -21,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.action.CmisActions;
 
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
@@ -45,12 +47,18 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	public InputStream getInputStream() throws IOException {
 		try {
 			if (this.url.getQuery() != null) {
-				String[] query = this.url.getQuery().split("=");
-				String id = query[query.length - 1];
+				HashMap<String, String> queryPart = new HashMap<>();
 
+				for (String pair : url.getQuery().split("&")) {
+					int index = pair.indexOf("=");
+					queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+				}
+
+				String objectId = queryPart.get(CmisActions.OLD_VERSION);
 				String connectionUrl = this.url.toExternalForm().replace(this.url.getQuery(), "");
+
 				connectionUrl = connectionUrl.replace("?", "");
-				Document document = (Document) connection.getResourceController(connectionUrl).getCmisObj(id);
+				Document document = (Document) connection.getResourceController(connectionUrl).getCmisObj(objectId);
 
 				return document.getContentStream().getStream();
 			}
@@ -68,7 +76,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		try {
 			return super.getOutputStream();
 		} catch (CmisUnauthorizedException e) {
-			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
+					"Invalid username or password!", true);
 			throw new UserActionRequiredException(webappMessage);
 		}
 	}
@@ -88,7 +97,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 				entryMethod(list);
 			}
 		} catch (CmisUnauthorizedException e) {
-			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
+					"Invalid username or password!", true);
 			throw new UserActionRequiredException(webappMessage);
 		}
 
@@ -113,9 +123,9 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
 			if (obj instanceof Document) {
-				
+
 				Boolean isPrivateWorkingCopy = ((Document) obj).isPrivateWorkingCopy();
-				
+
 				if (isPrivateWorkingCopy != null) {
 					if (isPrivateWorkingCopy) {
 						continue;

@@ -4,12 +4,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "userCredentials")
 public class UserCredentials {
+	
+	private String username;
+	private String password;
 
 	public UserCredentials() {
 	}
 
-	public UserCredentials(String username, String password) {
-		this.username = username;
+	public UserCredentials(String username, String password) {		
+		this.username = username;	
 		this.password = password;
 	}
 
@@ -25,7 +28,7 @@ public class UserCredentials {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(String password) {		
 		this.password = password;
 	}
 
@@ -38,20 +41,10 @@ public class UserCredentials {
 		}
 		return false;
 	}
-	
-	String username;
-	String password;
 
-	/*
-	 * User credentials shown
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-
-		String result = "Username=" + this.username + " " + "Password=" + this.password;
-		return result;
+		return "Username=" + this.username;
 	}
 
 }

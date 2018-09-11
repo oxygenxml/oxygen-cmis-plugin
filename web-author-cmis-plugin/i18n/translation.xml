@@ -97,19 +97,19 @@
 	</key>
 	<key value="Checked_out_by" distribution="webauthor">
 		<comment>Message if document is checked out by another user.</comment>
-		<val lang="en_US">Checked - out by</val>
-		<val lang="de_DE">Checked - out by</val>
-        <val lang="fr_FR">Checked - out by</val>
-        <val lang="ja_JP">Checked - out by</val>
-        <val lang="nl_NL">Checked - out by</val>
+		<val lang="en_US">Checked out by</val>
+		<val lang="de_DE">Checked out by</val>
+        <val lang="fr_FR">Checked out by</val>
+        <val lang="ja_JP">Checked out by</val>
+        <val lang="nl_NL">Checked out by</val>
 	</key>
 	<key value="Check_out_requiered_editor" distribution="webauthor">
 		<comment>Message if check out is required.</comment>
-		<val lang="en_US">Check - out required</val>
-		<val lang="de_DE">Check - out required</val>
-        <val lang="fr_FR">Check - out required</val>
-        <val lang="ja_JP">Check - out required</val>
-        <val lang="nl_NL">Check - out required</val>
+		<val lang="en_US">Check-out required</val>
+		<val lang="de_DE">Check-out required</val>
+        <val lang="fr_FR">Check-out required</val>
+        <val lang="ja_JP">Check-out required</val>
+        <val lang="nl_NL">Check-out required</val>
 	</key>
 	<key value="ALL_VERSIONS_" distribution="webauthor">
 		<comment>Title for "All versions" button.</comment>
@@ -120,28 +120,28 @@
         <val lang="nl_NL">All versions</val>
 	</key>
 	<key value="CHECK_OUT_" distribution="webauthor">
-		<comment>Title for "Check - out" button.</comment>
-		<val lang="en_US">Check - out</val>
-		<val lang="de_DE">Check - out</val>
-        <val lang="fr_FR">Check - out</val>
-        <val lang="ja_JP">Check - out</val>
-        <val lang="nl_NL">Check - out</val>
+		<comment>Title for "Check-out" button.</comment>
+		<val lang="en_US">Check-out</val>
+		<val lang="de_DE">Check-out</val>
+        <val lang="fr_FR">Check-out</val>
+        <val lang="ja_JP">Check-out</val>
+        <val lang="nl_NL">Check-out</val>
 	</key>
 	<key value="CANCEL_CHECK_OUT_" distribution="webauthor">
-		<comment>Title for "Cancel check - out" button.</comment>
-		<val lang="en_US">Cancel check - out</val>
-		<val lang="de_DE">Cancel check - out</val>
-        <val lang="fr_FR">Cancel check - out</val>
-        <val lang="ja_JP">Cancel check - out</val>
-        <val lang="nl_NL">Cancel check - out</val>
+		<comment>Title for "Cancel check-out" button.</comment>
+		<val lang="en_US">Cancel check-out</val>
+		<val lang="de_DE">Cancel check-out</val>
+        <val lang="fr_FR">Cancel check-out</val>
+        <val lang="ja_JP">Cancel check-out</val>
+        <val lang="nl_NL">Cancel check-out</val>
 	</key>
 	<key value="CHECK_IN_" distribution="webauthor">
-		<comment>Title for "Check - in" button.</comment>
-		<val lang="en_US">Check - in</val>
-		<val lang="de_DE">Check - in</val>
-        <val lang="fr_FR">Check - in</val>
-        <val lang="ja_JP">Check - in</val>
-        <val lang="nl_NL">Check - in</val>
+		<comment>Title for "Check-in" button.</comment>
+		<val lang="en_US">Check-in</val>
+		<val lang="de_DE">Check-in</val>
+        <val lang="fr_FR">Check-in</val>
+        <val lang="ja_JP">Check-in</val>
+        <val lang="nl_NL">Check-in</val>
 	</key>
 	<key value="CHECK_IN_MESSAGE_" distribution="webauthor">
 		<comment>Check in message.</comment>

@@ -150,382 +150,408 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
 })();
 
 //------------------- Cmis check-out action. -----------------------
+(function() {
+  //Button's state variable.
+  var checkedOut = false;
 
-//Button's state variable.
-var checkedOut = false;
+  var CmisCheckOutAction = function (editor) {
+    sync.actions.AbstractAction.call(this, '');
+    this.editor = editor;
+  };
 
-var CmisCheckOutAction = function (editor) {
-  sync.actions.AbstractAction.call(this, '');
-  this.editor = editor;
-};
+  CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+  CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
+  CmisCheckOutAction.prototype.getDisplayName = function () {
+    return tr(msgs.CHECK_OUT_);
+  };
 
+  CmisCheckOutAction.prototype.actionPerformed = function (callback) {
+    this.editor.getActionsManager().invokeOperation(
+      'com.oxygenxml.cmis.web.action.CmisActions', {
+        action: 'cmisCheckout'
+      }, callback);
 
-CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
-CmisCheckOutAction.prototype.getDisplayName = function () {
-  return tr(msgs.CHECK_OUT_);
-};
+      checkedOut = true;
+  };
 
-CmisCheckOutAction.prototype.actionPerformed = function (callback) {
-  this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: 'cmisCheckout'
-    }, callback);
+  //------------------- Cmis cancel check-out action. -----------------------
+  var cancelCmisCheckOutAction = function (editor) {
+    sync.actions.AbstractAction.call(this, '');
+    this.editor = editor;
+  };
 
-    checkedOut = true;
-};
+  cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+  cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
+  cancelCmisCheckOutAction.prototype.getDisplayName = function () {
+    return tr(msgs.CANCEL_CHECK_OUT_);
+  };
 
-//------------------- Cmis cancel check-out action. -----------------------
-var cancelCmisCheckOutAction = function (editor) {
-  sync.actions.AbstractAction.call(this, '');
-  this.editor = editor;
-};
+  cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
+    this.editor.getActionsManager().invokeOperation(
+      'com.oxygenxml.cmis.web.action.CmisActions', {
+        action: 'cancelCmisCheckout'
+      }, callback);
 
-cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
-cancelCmisCheckOutAction.prototype.getDisplayName = function () {
-  return tr(msgs.CANCEL_CHECK_OUT_);
-};
+      checkedOut = false;
+  };
 
-cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
-  this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: 'cancelCmisCheckout'
-    }, callback);
+  //------------------- Cmis check-in action. -----------------------
+  var CmisCheckInAction = function (editor) {
+    sync.actions.AbstractAction.call(this, '');
+    this.editor = editor;
+  };
+  CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+  CmisCheckInAction.prototype.constructor = CmisCheckInAction;
+  CmisCheckInAction.prototype.getDisplayName = function () {
+    return tr(msgs.CHECK_IN_);
+  };
 
-    checkedOut = false;
-};
+  CmisCheckInAction.prototype.actionPerformed = function (callback) {
+    if (!this.dialog) {
 
-//------------------- Cmis check-in action. -----------------------
-var CmisCheckInAction = function (editor) {
-  sync.actions.AbstractAction.call(this, '');
-  this.editor = editor;
-};
-CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-CmisCheckInAction.prototype.constructor = CmisCheckInAction;
-CmisCheckInAction.prototype.getDisplayName = function () {
-  return tr(msgs.CHECK_IN_);
-};
+      var root = document.querySelector('[data-root="true"]');
+      var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
-CmisCheckInAction.prototype.actionPerformed = function (callback) {
-  if (!this.dialog) {
+      this.dialog = workspace.createDialog();
+      this.dialog.setTitle(tr(msgs.CHECK_IN_));
+      this.dialog.setPreferredSize(200, 180);
 
+      var form = document.createElement('form');
+      
+      if(noSupport !== 'true') {
+        this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) +"<br>";
+        this.dialog.setPreferredSize(300, 350);
+
+        var input = document.createElement('textarea');
+      
+        input.setAttribute('style', 'margin:0px;width:250px;height:125px;resize:none;');
+        input.setAttribute('type', 'text');
+        input.setAttribute('id', 'input');
+
+        this.dialog.getElement().appendChild(input);
+      }
+
+      var text1 = document.createElement('label');
+      var text2 = document.createElement('label');
+
+      form.setAttribute('action', '');
+      radioButtonsCreator(form, text1, text2);
+
+      this.dialog.getElement().appendChild(form);
+    }
+
+    this.dialog.show();
+
+    var editor = this.editor;
+    this.dialog.onSelect(goog.bind(function (key, e) {
+      if(key === 'ok'){
+        var root = document.querySelector('[data-root="true"]');
+        var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
+
+        var commitMessage;
+        var verstate;
+
+        if(noSupport !== 'true'){
+          commitMessage = this.dialog.getElement().querySelector('#input').value;
+        }
+
+        if(this.dialog.getElement().querySelector('#radio1').checked) {
+          verstate = this.dialog.getElement().querySelector('#radio1').value;
+        } else if(this.dialog.getElement().querySelector('#radio2').checked) {
+          verstate = this.dialog.getElement().querySelector('#radio2').value;
+        }
+
+        editor.getActionsManager().invokeOperation(
+          'com.oxygenxml.cmis.web.action.CmisActions', {
+            action: 'cmisCheckin',
+            commit: commitMessage,
+            state: verstate
+          }, callback);
+
+          checkedOut = false;
+      } 
+    }, 
+    this));
+
+  };
+
+  //------------------- List old version of document action. -----------------------
+  var listOldVersionsAction = function (editor) {
+    sync.actions.AbstractAction.call(this, '');
+    this.editor = editor;
+  };
+
+  listOldVersionsAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+  listOldVersionsAction.prototype.constructor = CmisCheckOutAction;
+  listOldVersionsAction.prototype.getDisplayName = function () {
+    return tr(msgs.ALL_VERSIONS_);
+  };
+
+  listOldVersionsAction.prototype.actionPerformed = function (callback) {
+    var allVerDialog = this.dialog;
+    
     var root = document.querySelector('[data-root="true"]');
     var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
-    this.dialog = workspace.createDialog();
-    this.dialog.setTitle(tr(msgs.CHECK_IN_));
-    this.dialog.setPreferredSize(200, 180);
-
-    var form = document.createElement('form');
-    
-    if(noSupport !== 'true') {
-      this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) +"<br>";
-      this.dialog.setPreferredSize(300, 350);
-
-      var input = document.createElement('textarea');
-     
-      input.setAttribute('style', 'margin:0px;width:250px;height:125px;resize:none;');
-      input.setAttribute('type', 'text');
-      input.setAttribute('id', 'input');
-
-      this.dialog.getElement().appendChild(input);
+    if(noSupport === 'true'){
+      noSupport = true;
+    } else {
+      noSupport = false;
     }
 
-    var text1 = document.createElement('label');
-    var text2 = document.createElement('label');
+    allVerDialog = workspace.createDialog();
+    allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));
+    allVerDialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
 
-    form.setAttribute('action', '');
-    radioButtonsCreator(form, text1, text2);
-
-    this.dialog.getElement().appendChild(form);
-  }
-
-  this.dialog.show();
-
-  var editor = this.editor;
-  this.dialog.onSelect(goog.bind(function (key, e) {
-    if(key === 'ok'){
-
-    var commitMessage = this.dialog.getElement().querySelector('#input').value;
-    var verstate;
-
-    if(this.dialog.getElement().querySelector('#radio1').checked) {
-      verstate = this.dialog.getElement().querySelector('#radio1').value;
-    } else if(this.dialog.getElement().querySelector('#radio2').checked) {
-      verstate = this.dialog.getElement().querySelector('#radio2').value;
+    if(!noSupport){
+      allVerDialog.setPreferredSize(750, 550);
+      allVerDialog.setResizable(true);
+    } else {
+      allVerDialog.setPreferredSize(430, 500);
     }
 
-    editor.getActionsManager().invokeOperation(
+    var loader = document.createElement('div');
+    loader.setAttribute('id', 'loader');
+    allVerDialog.getElement().appendChild(loader);
+
+    allVerDialog.show();
+
+    this.afterList_(callback, allVerDialog, noSupport);
+  };
+
+  listOldVersionsAction.prototype.afterList_ = function (callback, allVerDialog, noSupport) {
+    this.editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisActions', {
-        action: 'cmisCheckin',
-        commit: commitMessage,
-        state: verstate
-      }, callback);
-      checkedOut = false;
-    } 
-  }, 
-  this));
-
-};
-
-//------------------- List old version of document action. -----------------------
-var listOldVersionsAction = function (editor) {
-  sync.actions.AbstractAction.call(this, '');
-  this.editor = editor;
-};
-
-listOldVersionsAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-listOldVersionsAction.prototype.constructor = CmisCheckOutAction;
-listOldVersionsAction.prototype.getDisplayName = function () {
-  return tr(msgs.ALL_VERSIONS_);
-};
-
-listOldVersionsAction.prototype.actionPerformed = function (callback) {
-  var allVerDialog = this.dialog;
-  
-  var root = document.querySelector('[data-root="true"]');
-  var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
-
-  console.log(noSupport);
-
-  allVerDialog = workspace.createDialog();
-  allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));
-  allVerDialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-
-  if(noSupport !== 'true'){
-    allVerDialog.setPreferredSize(750, 550);
-    allVerDialog.setResizable(true);
-  } else {
-    allVerDialog.setPreferredSize(370, 350);
-  }
-
-  let loader = document.createElement('div');
-  loader.setAttribute('id', 'loader');
-  allVerDialog.getElement().appendChild(loader);
-
-  allVerDialog.show();
-
-  this.afterList_(callback, allVerDialog);
-};
-
-listOldVersionsAction.prototype.afterList_ = function (callback, allVerDialog) {
-  this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: 'listOldVersions'
-    }, function (err, data) {
-      var jsonFile = JSON.parse(data);
-      
-      let div = document.createElement('div');
-      div.setAttribute('id', 'head');
-
-      let childDiv = document.createElement('div');
-      childDiv.setAttribute('id', 'versionDiv');
-      childDiv.setAttribute('class', 'headtitle');
-      childDiv.innerHTML = tr(msgs.VERSION_);
-      
-      let childDiv1 = document.createElement('div');
-      childDiv1.setAttribute('id', 'userDiv');
-      childDiv1.setAttribute('class', 'headtitle');
-      childDiv1.innerHTML = tr(msgs.MODIFIED_BY_);
-
-      let childDiv2 = document.createElement('div');
-      childDiv2.setAttribute('id', 'commitDiv');
-      childDiv2.setAttribute('class', 'headtitle');
-      childDiv2.innerHTML = tr(msgs.COMMIT_MESS_);
-
-      div.appendChild(childDiv);
-      div.appendChild(childDiv1);
-      div.appendChild(childDiv2);
-
-      let table = document.createElement('table');
-      table.setAttribute('id', 'table');
-
-      for(key in jsonFile){
-        let tr = document.createElement('tr');
-        let versionTd = document.createElement('td');
-        versionTd.setAttribute('id', 'version');
-        versionTd.setAttribute('class', 'td');
-
-        let versionLink = document.createElement('a');
-        let value = jsonFile[key];
-
-        let commitTd = document.createElement('td');
-        commitTd.setAttribute('id', 'commit');
-        commitTd.setAttribute('class', 'td');
-
-        if(value[1] !== "" || value[1] !== null){
-          commitTd.innerHTML = value[1];
-        } 
-
-        let href = window.location.origin + window.location.pathname + value[0];
-
-        let oldVer = value[0];
-        oldVer = oldVer.substring(oldVer.lastIndexOf('='), oldVer.length);
-
-        versionLink.setAttribute('href', href);
-        versionLink.setAttribute('target','_blank');
-        versionLink.setAttribute('class', 'oldlink');
-        versionLink.innerHTML = key;
+        action: 'listOldVersions'
+      }, function (err, data) {
+        var jsonFile = JSON.parse(data);
         
-        let userTd = document.createElement('td');
-        userTd.setAttribute('id', 'user');
-        userTd.setAttribute('class', 'td');
-        userTd.innerHTML = value[2];
-        
-        if(window.location.search.includes(oldVer)) {
-          versionLink.setAttribute('href', '#');
-          versionLink.setAttribute('style', 'text-decoration:none;');
+        if(allVerDialog){
+          var div = document.createElement('div');
+          div.setAttribute('id', 'head');
 
-          versionTd.style.backgroundColor = '#ededed';
-          commitTd.style.backgroundColor = '#ededed';
-          userTd.style.backgroundColor = '#ededed';
+          var childDiv = document.createElement('div');
+          childDiv.setAttribute('id', 'versionDiv');
+          childDiv.setAttribute('class', 'headtitle');
+          childDiv.innerHTML = this.tr(msgs.VERSION_);
+          div.appendChild(childDiv);
+          
+          var childDiv1 = document.createElement('div');
+          childDiv1.setAttribute('id', 'userDiv');
+          childDiv1.setAttribute('class', 'headtitle');
+          childDiv1.innerHTML = this.tr(msgs.MODIFIED_BY_);
+          div.appendChild(childDiv1);
+
+          if(!noSupport){
+            var childDiv2 = document.createElement('div');
+            childDiv2.setAttribute('id', 'commitDiv');
+            childDiv2.setAttribute('class', 'headtitle');
+            childDiv2.innerHTML = this.tr(msgs.COMMIT_MESS_);
+            div.appendChild(childDiv2);
+          }
+
+          var table = document.createElement('table');
+          table.setAttribute('id', 'table');
+
+          for(var key in jsonFile){
+            var tr = document.createElement('tr');
+            var versionTd = document.createElement('td');
+            versionTd.setAttribute('id', 'version');
+            versionTd.setAttribute('class', 'td');
+
+            var versionLink = document.createElement('a');
+            var value = jsonFile[key];
+
+            var commitTd = document.createElement('td');
+            commitTd.setAttribute('id', 'commit');
+            commitTd.setAttribute('class', 'td');
+
+            if(value[1] !== "" || value[1] !== null){
+              commitTd.innerHTML = value[1];
+            } 
+
+            var href = window.location.origin + window.location.pathname + value[0];
+
+            var oldVer = value[0];
+            oldVer = oldVer.substring(oldVer.lastIndexOf('='), oldVer.length);
+
+            versionLink.setAttribute('href', href);
+            versionLink.setAttribute('target','_blank');
+            versionLink.setAttribute('class', 'oldlink');
+            versionLink.innerHTML = key;
+            
+            var userTd = document.createElement('td');
+            userTd.setAttribute('id', 'user');
+            userTd.setAttribute('class', 'td');
+            userTd.innerHTML = value[2];
+            
+            if(window.location.search.indexOf(oldVer) + 1) {
+              versionLink.setAttribute('href', '#');
+              versionLink.setAttribute('style', 'text-decoration:none;');
+
+              versionTd.style.backgroundColor = '#ededed';
+              commitTd.style.backgroundColor = '#ededed';
+              userTd.style.backgroundColor = '#ededed';
+            }
+            
+            if(noSupport){
+              versionTd.style.width = '150px';
+              userTd.style.width = '60%';
+            }
+
+            versionTd.appendChild(versionLink);
+            tr.appendChild(versionTd);
+            tr.appendChild(userTd);
+
+            if(!noSupport){
+              tr.appendChild(commitTd);
+            }
+            
+            table.appendChild(tr);
+          }
+
+          document.getElementById("loader").remove();
+
+          allVerDialog.getElement().appendChild(div);
+          allVerDialog.getElement().appendChild(table);
+        
+          var versionBarWidth = document.getElementById('version').offsetWidth;
+          document.getElementById('versionDiv').style.width = versionBarWidth + 'px';
+        
+          var userBarWidth = document.getElementById('user').offsetWidth;
+          document.getElementById('userDiv').style.width = userBarWidth + 'px';
+        
+          if(!noSupport){
+            var commitBarWidth = document.getElementById('commit').offsetWidth;
+            document.getElementById('commitDiv').style.width = commitBarWidth + 'px';
+          }
+          
+          allVerDialog.onSelect(function(e){
+            allVerDialog.dispose();
+          });
         }
-        
-        versionTd.appendChild(versionLink);
-        tr.appendChild(versionTd);
-        tr.appendChild(userTd);
-        tr.appendChild(commitTd);
-        table.appendChild(tr);
-      }
-
-      document.getElementById("loader").remove();
-
-      allVerDialog.getElement().appendChild(div);
-      allVerDialog.getElement().appendChild(table);
-     
-      var versionBarWidth = document.getElementById('version').offsetWidth;
-      var userBarWidth = document.getElementById('user').offsetWidth;
-      var commitBarWidth = document.getElementById('commit').offsetWidth;
-
-      document.getElementById('versionDiv').style.width = versionBarWidth + 'px';
-      document.getElementById('userDiv').style.width = userBarWidth + 'px';
-      document.getElementById('commitDiv').style.width = commitBarWidth + 'px';
-      
-      allVerDialog.onSelect(function(e){
-        allVerDialog.dispose();
       });
-    });
 
-  callback();
-}
-
-//------------------- Radio buttons. -----------------------
-function radioButtonsCreator(form, text1, text2){
-  var radio1 = document.createElement('input');
-  radio1.setAttribute('type', 'radio');
-  radio1.setAttribute('name', 'state');
-  radio1.setAttribute('id', 'radio1');
-  radio1.setAttribute('value', 'major');
-  radio1.setAttribute('checked', '');
-  form.appendChild(radio1);
-
-  text1.innerHTML = tr(msgs.MAJOR_VERSION_);
-  text1.appendChild(document.createElement('br'));
-  form.appendChild(text1);
-
-  var radio2 = document.createElement('input');
-  radio2.setAttribute('type', 'radio');
-  radio2.setAttribute('name', 'state');
-  radio2.setAttribute('id', 'radio2');
-  radio2.setAttribute('value', 'minor');
-  form.appendChild(radio2);
-
-  text2.innerHTML = tr(msgs.MINOR_VERSION_);
-  form.appendChild(text2);
-}
-
-//------------------- Enable buttons with state dependence. -----------------------
-CmisCheckOutAction.prototype.isEnabled = function () {
-  if (checkedOut === 'checkedoutby') {
-    return false;
+    callback();
   }
-  if (checkedOut) {
-    return false;
-  }
-  return true;
-}
 
-CmisCheckInAction.prototype.isEnabled = function () {
-  if (checkedOut === 'checkedoutby') {
-    return false;
+  //------------------- Radio buttons. -----------------------
+  function radioButtonsCreator(form, text1, text2){
+    var radio1 = document.createElement('input');
+    radio1.setAttribute('type', 'radio');
+    radio1.setAttribute('name', 'state');
+    radio1.setAttribute('id', 'radio1');
+    radio1.setAttribute('value', 'major');
+    radio1.setAttribute('checked', '');
+    form.appendChild(radio1);
+
+    text1.innerHTML = tr(msgs.MAJOR_VERSION_);
+    text1.appendChild(document.createElement('br'));
+    form.appendChild(text1);
+
+    var radio2 = document.createElement('input');
+    radio2.setAttribute('type', 'radio');
+    radio2.setAttribute('name', 'state');
+    radio2.setAttribute('id', 'radio2');
+    radio2.setAttribute('value', 'minor');
+    form.appendChild(radio2);
+
+    text2.innerHTML = tr(msgs.MINOR_VERSION_);
+    form.appendChild(text2);
   }
-  if (checkedOut) {
+
+  //------------------- Enable buttons with state dependence. -----------------------
+  CmisCheckOutAction.prototype.isEnabled = function () {
+    if (checkedOut === 'checkedoutby') {
+      return false;
+    }
+    if (checkedOut) {
+      return false;
+    }
     return true;
   }
-  return false;
-}
 
-cancelCmisCheckOutAction.prototype.isEnabled = function () {
-  if (checkedOut === 'checkedoutby') {
+  CmisCheckInAction.prototype.isEnabled = function () {
+    if (checkedOut === 'checkedoutby') {
+      return false;
+    }
+    if (checkedOut) {
+      return true;
+    }
     return false;
   }
-  if (checkedOut) {
-    return true;
-  }
-  return false;
-}
 
-//------------------- Actions when editor is loaded. -----------------------
-goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function (e) {
-  var editor = e.editor;
-
-  var root = document.querySelector('[data-root="true"]');
-  var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
-  var doccheckedout = root.getAttribute('data-pseudoclass-checkedout');
-  var block = root.getAttribute('data-pseudoclass-block');
-
-  if(doccheckedout === 'true'){
-    checkedOut = true;
-  } 
-
-  if(block === 'true'){
-    checkedOut = 'checkedoutby';
+  cancelCmisCheckOutAction.prototype.isEnabled = function () {
+    if (checkedOut === 'checkedoutby') {
+      return false;
+    }
+    if (checkedOut) {
+      return true;
+    }
+    return false;
   }
 
-  // Register the newly created action.
-  if(nonversionable !== 'true'){
-    editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
-    editor.getActionsManager().registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
-    editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
-    editor.getActionsManager().registerAction('listOldVersion.link', new listOldVersionsAction(editor));
+  //------------------- Actions when editor is loaded. -----------------------
+  goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function (e) {
+    var editor = e.editor;
 
-    addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link', 'listOldVersion.link');
-  }
-});
+    var root = document.querySelector('[data-root="true"]');
+    var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
+    var doccheckedout = root.getAttribute('data-pseudoclass-checkedout');
+    var block = root.getAttribute('data-pseudoclass-block');
 
-function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId, listOldVersionsId) {
-  goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function (e) {
-    var actionsConfig = e.actionsConfiguration;
+    if(doccheckedout === 'true'){
+      checkedOut = true;
+    } 
 
-    var builtinToolbar = null;
-    if (actionsConfig.toolbars) {
-      for (var i = 0; i < actionsConfig.toolbars.length; i++) {
-        var toolbar = actionsConfig.toolbars[i];
-        if (toolbar.name == "Builtin") {
-          builtinToolbar = toolbar;
-        }
-      }
+    if(block === 'true'){
+      checkedOut = 'checkedoutby';
     }
 
-    if (builtinToolbar) {
-      builtinToolbar.children.push({
-        displayName: 'CMIS',
-        type: 'list',
-        children: [{
-          id: listOldVersionsId,
-          type: 'action'
-        }, {
-          id: checkOutId,
-          type: 'action'
-        }, {
-          id: checkInId,
-          type: 'action'
-        },{
-          id: cancelCheckOutId,
-          type: 'action'
-        }]
-      });
+    // Register the newly created action.
+    if(nonversionable !== 'true'){
+      editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
+      editor.getActionsManager().registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
+      editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
+      editor.getActionsManager().registerAction('listOldVersion.link', new listOldVersionsAction(editor));
+
+      addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link', 'listOldVersion.link');
     }
   });
-}
+
+  function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId, listOldVersionsId) {
+    goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function (e) {
+      var actionsConfig = e.actionsConfiguration;
+
+      var builtinToolbar = null;
+      if (actionsConfig.toolbars) {
+        for (var i = 0; i < actionsConfig.toolbars.length; i++) {
+          var toolbar = actionsConfig.toolbars[i];
+          if (toolbar.name == "Builtin") {
+            builtinToolbar = toolbar;
+          }
+        }
+      }
+
+      if (builtinToolbar) {
+        builtinToolbar.children.push({
+          displayName: 'CMIS',
+          type: 'list',
+          children: [{
+            id: listOldVersionsId,
+            type: 'action'
+          }, {
+            id: checkOutId,
+            type: 'action'
+          }, {
+            id: checkInId,
+            type: 'action'
+          },{
+            id: cancelCheckOutId,
+            type: 'action'
+          }]
+        });
+      }
+    });
+  }
+})();

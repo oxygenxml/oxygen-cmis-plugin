@@ -29,7 +29,8 @@ public class TESTforTESTING {
 		serverUrl = new URL("http://basil:9080/fncmis/resources/Service");
 
 		cmisAccess = new CMISAccess();
-		cmisAccess.connectToRepo(serverUrl, "TARGETOS", new UserCredentials("P8Admin", "Stil00"));
+		UserCredentials uc = new UserCredentials("P8Admin", "Stil00");
+		cmisAccess.connectToRepo(serverUrl, "TARGETOS", uc);
 		ctrl = cmisAccess.createResourceController();
 
 		connection = new CmisURLConnection(serverUrl, cmisAccess, new UserCredentials("P8Admin", "Stil00"));
