@@ -182,7 +182,9 @@ public class ResourceController {
    * DELETE ONE VERSION
    */
   public void deleteOneVersionDocument(Document doc) {
-    doc.delete(false);
+    if (doc != null) {
+      doc.delete(false);
+    }
   }
 
   /**

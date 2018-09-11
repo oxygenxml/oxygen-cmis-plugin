@@ -186,6 +186,7 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
     // The results from searching the documents
     ArrayList<IResource> documentsResults = new SearchDocument(searchText, searchCtrl, option).getResultsFolder();
 
+    // TODO: Catch exceptions
     for (IResource iResource : documentsResults) {
       System.out.println(" Doc id = " + iResource.getId());
       System.out.println(" Doc name = " + iResource.getDisplayName());
@@ -236,19 +237,5 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
   public String getName(IResource resource) {
     return resource.getDisplayName();
   }
-  // @Override
-  // public List<String> getLinesDocuments() {
-  //
-  // ResourceController ctrl =
-  // CMISAccess.getInstance().createResourceController();
-  // SearchController searchCtrl = new SearchController(ctrl);
-  //
-  // final String searchText = searchField.getText().trim();
-  //
-  // List<IResource> docList = searchItems(searchText);
-  //
-  // return searchCtrl.queryFindLineContent(docList, searchText);
-  //
-  // }
 
 }

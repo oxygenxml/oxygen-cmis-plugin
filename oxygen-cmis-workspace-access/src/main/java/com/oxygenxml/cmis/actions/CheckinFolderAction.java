@@ -111,7 +111,9 @@ public class CheckinFolderAction extends AbstractAction {
           // If it's a document try <Code>checkIn</Code>
           try {
             if (((DocumentImpl) iResource).isCheckedOut() && ((DocumentImpl) iResource).isPrivateWorkingCopy()) {
-              ((DocumentImpl) iResource).checkIn();
+              
+              //TODO: add input dialog
+              ((DocumentImpl) iResource).checkIn(true, "new comment");
             }
           } catch (Exception ev) {
 

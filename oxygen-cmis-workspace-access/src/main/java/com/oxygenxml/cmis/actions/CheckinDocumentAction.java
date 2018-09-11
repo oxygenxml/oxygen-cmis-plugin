@@ -1,9 +1,14 @@
 package com.oxygenxml.cmis.actions;
 
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -28,6 +33,8 @@ public class CheckinDocumentAction extends AbstractAction {
   private IResource resource = null;
   private IResource currentParent = null;
   private ItemsPresenter itemsPresenter = null;
+  private String versioningState;
+  private CheckInDocInputPanel inputPanel;
 
   /**
    * Constructor that receives the resource to process
@@ -57,6 +64,8 @@ public class CheckinDocumentAction extends AbstractAction {
     } else {
       this.enabled = false;
     }
+
+    inputPanel = new CheckInDocInputPanel();
   }
 
   /**
@@ -70,7 +79,11 @@ public class CheckinDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+    String message = JOptionPane.showInputDialog(null, inputPanel, "New comment here");
+    versioningState = inputPanel.getVersioningState();
 
+    boolean majorCheckin = versioningState.equals("MAJOR") ? true : false;
+    System.out.println("Version major?=" + majorCheckin);
     // The id received of the object after the check in
     ObjectId res = null;
 
@@ -80,8 +93,8 @@ public class CheckinDocumentAction extends AbstractAction {
     // Try to <Code>checkIn</Code>
     try {
 
-      // Commit the <Code>checkIn</Code> andgGet the ObjectId
-      res = (ObjectId) doc.checkIn();
+      // Commit the <Code>checkIn</Code> and Get the ObjectId
+      res = (ObjectId) doc.checkIn(majorCheckin, message);
 
       if (currentParent.getId().equals("#search.results")) {
         // currentParent.refresh();
@@ -99,5 +112,60 @@ public class CheckinDocumentAction extends AbstractAction {
       // Show the exception if there is one
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }
+  }
+}
+
+class CheckInDocInputPanel extends JPanel implements ActionListener {
+  private JLabel versionLabel;
+  private JRadioButton radioItemMajor;
+  private JRadioButton radioItemMinor;
+  private JPanel radioPanel;
+
+  private String versioningState;
+
+  public CheckInDocInputPanel() {
+    radioPanel = new JPanel(new GridLayout(1, 2));
+    versionLabel = new JLabel("Enter the message: ");
+
+    setLayout(new GridLayout(1, 2, 0, 0));
+    add(versionLabel);
+
+    // MAJOR
+    radioItemMajor = new JRadioButton("Major");
+    radioItemMajor.setActionCommand("MAJOR");
+    radioItemMajor.addActionListener(this);
+    // Set selected
+    radioItemMajor.setSelected(true);
+    versioningState = "MAJOR";
+
+    // MINOR
+    radioItemMinor = new JRadioButton("Minor");
+    radioItemMinor.setActionCommand("MINOR");
+    radioItemMinor.addActionListener(this);
+
+    radioPanel.add(radioItemMajor);
+    radioPanel.add(radioItemMinor);
+
+    add(radioPanel);
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+
+    if (e.getActionCommand().equals("MAJOR")) {
+      radioItemMinor.setSelected(false);
+
+      versioningState = e.getActionCommand();
+    }
+
+    if (e.getActionCommand().equals("MINOR")) {
+      radioItemMajor.setSelected(false);
+
+      versioningState = e.getActionCommand();
+    }
+  }
+
+  public String getVersioningState() {
+    return this.versioningState;
   }
 }

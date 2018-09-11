@@ -145,9 +145,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
             // If it's an instance of custom type of Folder
             if ((IResource) value instanceof FolderImpl) {
-            
-                ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
-              
+
+              ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
+
             } else if ((IResource) value instanceof DocumentImpl) {
               // ---------Use Oxygen Icons
               try {
@@ -196,16 +196,18 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             // Get the bounds of the item
             Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
 
-            // Check if the lick was outside the visible list
+            // Check if the click was outside the visible list
             if (!cellBounds.contains(e.getPoint())) {
 
-              // Create de menu for the outside list
-              if (!currentParent.getId().equals("#search.results")) {
-                System.out.println("ID item = " + ((IFolder) currentParent).getId());
-                System.out.println("Name item!!!! = " + currentParent.getDisplayName());
-                createExternalListJMenu();
+              // Check is has a parent folder for the creation
+              if (currentParent != null) {
+                // Create de menu for the outside list
+                if (!currentParent.getId().equals("#search.results")) {
+                  System.out.println("ID item = " + ((IFolder) currentParent).getId());
+                  System.out.println("Name item!!!! = " + currentParent.getDisplayName());
+                  createExternalListJMenu();
+                }
               }
-
             } else {
 
               // Set selected on right click
@@ -281,8 +283,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private void createExternalListJMenu() {
 
     // Create a document in the current folder
-    menu.add(new CreateDocumentAction(currentParent, this, "MAJOR"));
-    menu.add(new CreateDocumentAction(currentParent, this, "MINOR"));
+    menu.add(new CreateDocumentAction(currentParent, this));
     // Create a folder in the current folder
     menu.add(new CreateFolderAction(currentParent, this));
   }
@@ -315,9 +316,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private void createFolderJMenu(final IResource selectedResource) {
 
     // CRUD Folder
-
-    menu.add(new CreateDocumentAction(selectedResource, this, "MAJOR"));
-    menu.add(new CreateDocumentAction(selectedResource, this, "MINOR"));
+    menu.add(new CreateDocumentAction(selectedResource, this));
     // Create a folder in the current folder
     menu.add(new CreateFolderAction(selectedResource, this));
 

@@ -238,8 +238,8 @@ public class DocumentImpl implements IDocument {
    * opencmis.client.api.Document)
    */
   @Override
-  public ObjectId checkIn() {
-    return doc.checkIn(true, null, doc.getContentStream(), "new version");
+  public ObjectId checkIn(boolean major, String message) {
+    return doc.checkIn(major, null, doc.getContentStream(), message);
   }
 
   @Override

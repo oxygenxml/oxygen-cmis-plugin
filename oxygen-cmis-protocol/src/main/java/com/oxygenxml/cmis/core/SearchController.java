@@ -275,30 +275,31 @@ public class SearchController {
     if (resource instanceof DocumentImpl) {
 
       IDocument iDocument = (IDocument) resource;
+      if (iDocument != null) {
+        try {
+          Reader documentContent = ctrl.getDocumentContent(iDocument.getId());
+          if (documentContent != null) {
+            scanner = new Scanner(documentContent);
 
-      try {
-        Reader documentContent = ctrl.getDocumentContent(iDocument.getId());
-        if (documentContent != null) {
-          scanner = new Scanner(documentContent);
+            while (scanner.hasNextLine()) {
+              String line = scanner.nextLine().trim();
+              for (String key : searchKeys) {
 
-          while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
-            for (String key : searchKeys) {
+                // System.out.println("Key context =" + key);
+                if (line.contains(key)) {
 
-              // System.out.println("Key context =" + key);
-              if (line.contains(key)) {
+                  // System.out.println("Content found=" + line);
+                  return limitStringResult(line, key, STRING_LIMIT);
 
-                // System.out.println("Content found=" + line);
-                return limitStringResult(line, key, STRING_LIMIT);
-
+                }
               }
-            }
 
+            }
+            scanner.close();
           }
-          scanner.close();
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-      } catch (Exception e) {
-        e.printStackTrace();
       }
     }
 

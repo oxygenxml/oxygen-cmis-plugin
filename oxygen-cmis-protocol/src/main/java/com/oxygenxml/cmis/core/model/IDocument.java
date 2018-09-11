@@ -38,7 +38,7 @@ public interface IDocument extends IResource {
   /*
    * Check-in the document
    */
-  ObjectId checkIn();
+  ObjectId checkIn(boolean major, String message);
 
 
   Document getDoc();
