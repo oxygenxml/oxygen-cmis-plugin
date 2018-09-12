@@ -1,6 +1,5 @@
 package com.oxygenxml.cmis.core;
 
-import java.io.FileInputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;

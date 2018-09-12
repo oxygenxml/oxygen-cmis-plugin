@@ -165,6 +165,11 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
     return tr(msgs.CHECK_OUT_);
   };
 
+  // PROTOTYPE!!!
+  CmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation){
+    return 'https://static.thenounproject.com/png/978469-200.png';
+  }
+
   CmisCheckOutAction.prototype.actionPerformed = function (callback) {
     this.editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisActions', {
@@ -179,101 +184,129 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
     sync.actions.AbstractAction.call(this, '');
     this.editor = editor;
   };
-
+  
   cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
   cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
   cancelCmisCheckOutAction.prototype.getDisplayName = function () {
     return tr(msgs.CANCEL_CHECK_OUT_);
   };
-
+  
+  // PROTOTYPE!!!!
+  cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation){
+    return 'http://icons.iconarchive.com/icons/icons8/ios7/256/Very-Basic-Cancel-icon.png';
+  }
+  
   cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
-    this.editor.getActionsManager().invokeOperation(
-      'com.oxygenxml.cmis.web.action.CmisActions', {
-        action: 'cancelCmisCheckout'
-      }, callback);
-
-      checkedOut = false;
-  };
-
-  //------------------- Cmis check-in action. -----------------------
-  var CmisCheckInAction = function (editor) {
-    sync.actions.AbstractAction.call(this, '');
-    this.editor = editor;
-  };
-  CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-  CmisCheckInAction.prototype.constructor = CmisCheckInAction;
-  CmisCheckInAction.prototype.getDisplayName = function () {
-    return tr(msgs.CHECK_IN_);
-  };
-
-  CmisCheckInAction.prototype.actionPerformed = function (callback) {
-    if (!this.dialog) {
-
-      var root = document.querySelector('[data-root="true"]');
-      var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
-
+    if(!this.dialog){
       this.dialog = workspace.createDialog();
-      this.dialog.setTitle(tr(msgs.CHECK_IN_));
-      this.dialog.setPreferredSize(200, 180);
+      this.dialog.setTitle(tr(msgs.CANCEL_CHECK_OUT_));
+      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.YES_NO);
+      this.dialog.setPreferredSize(250, 180);
 
-      var form = document.createElement('form');
-      
-      if(noSupport !== 'true') {
-        this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) +"<br>";
-        this.dialog.setPreferredSize(300, 350);
+      var infoDiv = document.createElement('div');
+      infoDiv.setAttribute('id', 'info');
+      infoDiv.innerHTML = "Are you sure<br/>to cancel check-out?";
 
-        var input = document.createElement('textarea');
-      
-        input.setAttribute('style', 'margin:0px;width:250px;height:125px;resize:none;');
-        input.setAttribute('type', 'text');
-        input.setAttribute('id', 'input');
-
-        this.dialog.getElement().appendChild(input);
-      }
-
-      var text1 = document.createElement('label');
-      var text2 = document.createElement('label');
-
-      form.setAttribute('action', '');
-      radioButtonsCreator(form, text1, text2);
-
-      this.dialog.getElement().appendChild(form);
+      this.dialog.getElement().appendChild(infoDiv);
     }
-
+    
     this.dialog.show();
 
-    var editor = this.editor;
     this.dialog.onSelect(goog.bind(function (key, e) {
-      if(key === 'ok'){
+      if(key === 'yes'){
+        this.editor.getActionsManager().invokeOperation(
+          'com.oxygenxml.cmis.web.action.CmisActions', {
+            action: 'cancelCmisCheckout'
+          }, callback);
+          
+        checkedOut = false;
+        console.log('here');
+      }
+    }, this));
+  }
+    //------------------- Cmis check-in action. -----------------------
+    var CmisCheckInAction = function (editor) {
+      sync.actions.AbstractAction.call(this, '');
+      this.editor = editor;
+    };
+    CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+    CmisCheckInAction.prototype.constructor = CmisCheckInAction;
+    CmisCheckInAction.prototype.getDisplayName = function () {
+      return tr(msgs.CHECK_IN_);
+    };
+    
+    // PROTOTYPE!!!!
+    CmisCheckInAction.prototype.getSmallIcon = function(devicePixelRation){
+      return 'https://static.thenounproject.com/png/796161-200.png';
+    }
+
+    CmisCheckInAction.prototype.actionPerformed = function (callback) {
+      if (!this.dialog) {
         var root = document.querySelector('[data-root="true"]');
         var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
-        var commitMessage;
-        var verstate;
+        this.dialog = workspace.createDialog();
+        this.dialog.setTitle(tr(msgs.CHECK_IN_));
+        
+        if(noSupport !== 'true') {
+          this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) +"<br>";
+          this.dialog.setPreferredSize(300, 350);
+          
+          var input = document.createElement('textarea');
+          
+          input.setAttribute('style', 'margin:0px;width:255px;height:125px;resize:none;');
+          input.setAttribute('type', 'text');
+          input.setAttribute('id', 'input');
+          
+          this.dialog.getElement().appendChild(input);
 
-        if(noSupport !== 'true'){
-          commitMessage = this.dialog.getElement().querySelector('#input').value;
+        } else {
+          this.dialog.setPreferredSize(200, 180);
         }
+        
+        var form = document.createElement('form');
+        var text1 = document.createElement('label');
+        var text2 = document.createElement('label');
 
-        if(this.dialog.getElement().querySelector('#radio1').checked) {
-          verstate = this.dialog.getElement().querySelector('#radio1').value;
-        } else if(this.dialog.getElement().querySelector('#radio2').checked) {
-          verstate = this.dialog.getElement().querySelector('#radio2').value;
-        }
+        form.setAttribute('action', '');
+        radioButtonsCreator(form, text1, text2);
+        
+        this.dialog.getElement().appendChild(form);
+      }
 
-        editor.getActionsManager().invokeOperation(
-          'com.oxygenxml.cmis.web.action.CmisActions', {
-            action: 'cmisCheckin',
-            commit: commitMessage,
-            state: verstate
-          }, callback);
+      this.dialog.show();
 
-          checkedOut = false;
-      } 
-    }, 
-    this));
+      var editor = this.editor;
+      this.dialog.onSelect(goog.bind(function (key, e) {
+        if(key === 'ok'){
+          var root = document.querySelector('[data-root="true"]');
+          var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
-  };
+          var commitMessage;
+          var verstate;
+
+          if(noSupport !== 'true'){
+            commitMessage = this.dialog.getElement().querySelector('#input').value;
+          }
+
+          if(this.dialog.getElement().querySelector('#radio1').checked) {
+            verstate = this.dialog.getElement().querySelector('#radio1').value;
+          } else if(this.dialog.getElement().querySelector('#radio2').checked) {
+            verstate = this.dialog.getElement().querySelector('#radio2').value;
+          }
+
+          editor.getActionsManager().invokeOperation(
+            'com.oxygenxml.cmis.web.action.CmisActions', {
+              action: 'cmisCheckin',
+              commit: commitMessage,
+              state: verstate
+            }, callback);
+
+            checkedOut = false;
+        } 
+      }, 
+      this));
+    };
 
   //------------------- List old version of document action. -----------------------
   var listOldVersionsAction = function (editor) {
@@ -286,6 +319,11 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
   listOldVersionsAction.prototype.getDisplayName = function () {
     return tr(msgs.ALL_VERSIONS_);
   };
+
+  // PROTOTYPE!!!!!
+  listOldVersionsAction.prototype.getSmallIcon = function(devicePixelRation){
+    return 'http://icons.iconarchive.com/icons/icons8/windows-8/256/Data-View-Details-icon.png';
+  }
 
   listOldVersionsAction.prototype.actionPerformed = function (callback) {
     var allVerDialog = this.dialog;
@@ -535,7 +573,7 @@ sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
 
       if (builtinToolbar) {
         builtinToolbar.children.push({
-          displayName: 'CMIS',
+          displayName: tr(msgs.CMIS_ACTIONS_),
           type: 'list',
           children: [{
             id: listOldVersionsId,

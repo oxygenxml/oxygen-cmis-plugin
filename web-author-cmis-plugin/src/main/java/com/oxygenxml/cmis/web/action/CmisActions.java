@@ -123,6 +123,7 @@ public class CmisActions extends AuthorOperationWithResult {
 		}
 				
 		if(oldVersionJson != null) {
+			logger.info(oldVersionJson);
 			return oldVersionJson;
 		}
 		return null;

@@ -19,7 +19,7 @@ public interface TranslationTags {
 	 * this enforced server. However, it is possible for other plugins to add more
 	 * enforced servers for the user to choose from.
 	 */
-	String ENFORCED_SERVER_NOTE = "Enforced_server_note";
+	String CMIS_SERVER_NOTE = "Cmis_server_note";
 
 	/**
 	 * Title of login dialog.

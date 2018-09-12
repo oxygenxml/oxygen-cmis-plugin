@@ -43,7 +43,7 @@ public class CmisLoginServlet extends WebappServletPluginExtension {
 			String user = httpRequest.getParameter("user");
 			String passwd = httpRequest.getParameter("passwd");
 			
-			sessionStore.put(userId, "wa-cmis-plugin-credentials", new UserCredentials(user, passwd));
+			sessionStore.put(userId, "wa-cmis-plugin-credentials", new UserCredentials(user, passwd, true));
 		}
 	}
 }

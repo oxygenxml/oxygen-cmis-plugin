@@ -40,10 +40,16 @@
 	display: inline-block;
 }
 
+#info {
+	text-align: center;
+	font-weight: 400;
+	font-family: robotolight, Arial, Helvetica, sans-serif;
+	font-size: 18px;
+}
+
 #head {
 	width: 100%;
 	position: absolute;
-	background-color: white;
 	font-size: 100%;
 	white-space: nowrap;
 	overflow: hidden;
@@ -51,6 +57,7 @@
 
 #user {
 	width: 15%;
+	min-width: 80px;
     text-align: left;
 }
 

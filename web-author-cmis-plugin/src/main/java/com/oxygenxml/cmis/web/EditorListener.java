@@ -63,9 +63,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		String urlWithoutContextId = null;
 		
 		if(url != null) {
-			if(url.getProtocol() != null && url.getHost() != null && url.getPath() != null) {
-				urlWithoutContextId = url.getProtocol() + "://" + url.getHost() + url.getPath();
-			}
+			urlWithoutContextId = url.getProtocol() + "://" + url.getHost() + url.getPath();
 		}
 		
 		String contextId = url.getUserInfo();
@@ -77,7 +75,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		try {
 			logger.info("EditorListener is loaded!");
 
-			if (url.toExternalForm().contains(CmisActions.OLD_VERSION) && url.getQuery() != null) {
+			if (url.getQuery() != null && url.getQuery().contains(CmisActions.OLD_VERSION)) {
 				HashMap<String, String> queryPart = new HashMap<>();
 				
 				for(String pair : url.getQuery().split("&")) {

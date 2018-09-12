@@ -63,7 +63,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 		// Enforced server note
 		optionsForm.append(
 				"<div style='background-color: lightyellow;border: 1px solid #dadab4; padding: 8px;margin-top: 5px;'>")
-				.append(rb.getMessage(TranslationTags.ENFORCED_SERVER_NOTE)).append("</div>");
+				.append(rb.getMessage(TranslationTags.CMIS_SERVER_NOTE)).append("</div>");
 		// Server name
 		optionsForm.append("<label style='margin-top:6px;display:block;font-size:120%'>")
 				.append(rb.getMessage(TranslationTags.SERVER_NAME)).append(": ").append("<input placeholder='")
