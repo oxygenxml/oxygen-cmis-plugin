@@ -38,6 +38,7 @@ public class SearchController {
   }
 
   /**
+   * Returns the resources searched by name either is a document or a folder
    * 
    * 
    * @param cmisType
@@ -79,6 +80,12 @@ public class SearchController {
     return resources;
   }
 
+  /**
+   * Removes the blocked documents from search
+   * 
+   * @param resources
+   * @return
+   */
   private ArrayList<IResource> removeBlockedDocFromSearch(ArrayList<IResource> resources) {
     Iterator<IResource> resIterator = resources.iterator();
 
@@ -94,8 +101,8 @@ public class SearchController {
   }
 
   /**
-   * Find all the resources and order by name depending on what to search a
-   * cmis:document or folder
+   * Find all the resources and order by name ascending depending on what to
+   * search a cmis:document or folder
    * 
    * @param content
    * @param searchObjectTypes
@@ -109,7 +116,8 @@ public class SearchController {
     oc.setIncludeAllowableActions(true);
 
     String scope = "";
-
+    
+    // Binary trick 
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
       scope = "cmis:document";
     }
@@ -204,85 +212,35 @@ public class SearchController {
   }
 
   /**
+   * Finds the line where the keys where found and return it The limit is 45
    * 
-   * @param docList
+   * @param resource
    * @param content
-   * @return
+   * @return string the limited string
    */
-  public List<String> queryFindLineContent(List<IResource> docList, String content) {
 
-    List<String> peekContentList = new ArrayList<String>();
-
-    for (IResource iResource : docList) {
-      if (iResource instanceof DocumentImpl) {
-
-        IDocument iDocument = (IDocument) iResource;
-
-        try {
-          Scanner scanner = new Scanner(new FileInputStream(iDocument.getDocumentPath(ctrl)));
-
-          while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
-
-            // line, not scanner.
-            if (line.contains(content)) // tag in the txt to locate position
-            {
-              peekContentList.add(line);
-            }
-          }
-          scanner.close();
-
-        } catch (Exception e) {
-          System.out.println("File not found.");
-        }
-      }
-    }
-    return peekContentList;
-  }
-
-  // public String queryFindLine(IResource resource, String content) {
-  //
-  // final int STRING_LIMIT = 45;
-  // if (resource instanceof DocumentImpl) {
-  //
-  // IDocument iDocument = (IDocument) resource;
-  //
-  // try {
-  // scanner = new Scanner(ctrl.getDocumentContent(iDocument.getId()));
-  //
-  // while (scanner.hasNextLine()) {
-  // String line = scanner.nextLine().trim();
-  // System.out.println("Key="+content);
-  // if (line.contains(content)) {
-  //
-  // System.out.println("Content found=" + line);
-  // return limitStringResult(line, content, STRING_LIMIT);
-  //
-  // }
-  // }
-  // scanner.close();
-  //
-  // } catch (Exception e) {
-  // e.printStackTrace();
-  // }
-  // }
-  //
-  // return null;
-  // }
   public String queryFindLine(IResource resource, String content) {
     String[] searchKeys = content.trim().split("\\s+");
     final int STRING_LIMIT = 45;
+
+    // Check if it's a document
     if (resource instanceof DocumentImpl) {
 
       IDocument iDocument = (IDocument) resource;
       if (iDocument != null) {
         try {
+          // Use a reader for the content
           Reader documentContent = ctrl.getDocumentContent(iDocument.getId());
+
+          // If there is something
           if (documentContent != null) {
             scanner = new Scanner(documentContent);
 
+            // Iterare line by line
             while (scanner.hasNextLine()) {
               String line = scanner.nextLine().trim();
+
+              // Check for each key
               for (String key : searchKeys) {
 
                 // System.out.println("Key context =" + key);
@@ -306,24 +264,24 @@ public class SearchController {
     return null;
   }
 
+  /**
+   * Cuts the input until reaches the maximum limit of the string specified and
+   * makes sure not to cut the pattern. The pattern consists only of one keyword
+   * 
+   * @param input
+   * @param pattern
+   * @param stringLimit
+   * @return string the limited string
+   */
   public String limitStringResult(String input, String pattern, int stringLimit) {
     String limitedString = input.trim();
     int frontCounter = 1;
     int backCounter = input.length() - 1;
 
-<<<<<<< HEAD
-    // int frontLimit = input.lastIndexOf(pattern);
-    // int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
-=======
-//    int frontLimit = input.lastIndexOf(pattern);
-//    int backLimit = input.lastIndexOf(pattern) + pattern.length() - 1;
->>>>>>> cddd131eb3f578d139413c68cecd36a62e6b748d
-    // System.out.println("String length =" + input.length());
-    // System.out.println("Front limit =" + frontLimit);
-    // System.out.println("Back limit =" + backLimit);
-
+    // While the input is larger than limit
     while (limitedString.length() > stringLimit) {
 
+      // Not reached the front of the input
       if (frontCounter != limitedString.indexOf(pattern)) {
         // System.out.println("front counter=" + frontCounter);
         // System.out.println("back counter=" + backCounter);
@@ -338,6 +296,7 @@ public class SearchController {
         return limitedString;
       }
 
+      // Not reached the back of input
       if (backCounter != limitedString.indexOf(pattern) + pattern.length() - 1) {
         // System.out.println("\nfront counter=" + frontCounter);
         // System.out.println("back counter=" + backCounter);
