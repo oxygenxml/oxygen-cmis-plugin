@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -67,7 +69,13 @@ public class ResourceController {
     properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
 
     // create the document
-    return path.createDocument(properties, contentStream, VersioningState.NONE);
+    try {
+      return path.createDocument(properties, contentStream, VersioningState.NONE);
+    } catch (Exception e2) {
+      // Show the exception if there is one
+      JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
+    }
+    return null;
   }
 
   /**

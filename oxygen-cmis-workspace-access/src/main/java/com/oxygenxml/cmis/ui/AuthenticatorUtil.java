@@ -53,8 +53,6 @@ public class AuthenticatorUtil {
       // Initialize the Login Dialog
       LoginDialog loginDialog = new LoginDialog((JFrame) PluginWorkspaceProvider.getPluginWorkspace().getParentFrame());
 
-      loginDialog.setVisible(true);
-
       // Check whether user pressed ok
       if (loginDialog.getResult() == LoginDialog.RESULT_OK) {
 

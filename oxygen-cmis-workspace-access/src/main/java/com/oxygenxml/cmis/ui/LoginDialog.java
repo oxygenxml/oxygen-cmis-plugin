@@ -37,8 +37,6 @@ public class LoginDialog extends OKCancelDialog {
     // Get the parent container
     Container cont = getContentPane();
 
-    setSize(400, 200);
-
     // Initialize fields
     userField = new JTextField();
     passwordField = new JPasswordField();
@@ -96,7 +94,10 @@ public class LoginDialog extends OKCancelDialog {
       }
     });
 
+    pack();
     setModal(true);
+    setVisible(true);
+    setResizable(true);
   }
 
   /**

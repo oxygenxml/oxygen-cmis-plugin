@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -68,7 +69,6 @@ public class CreateDocumentAction extends AbstractAction {
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
-    inputDialog = new CreateDocDialog();
   }
 
   /**
@@ -83,23 +83,29 @@ public class CreateDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
     Document doc;
     Document pwc = null;
     Folder parentFolder;
     String mimeType;
-    
-    //TODO: use the name from inputDialog
-    // Get a file name from user
-    String fileName = "me.txt";
-    
- 
+    String fileName = null;
+    int result = 0;
+    do {
+      // Create the input dialog
+      inputDialog = new CreateDocDialog((JFrame) pluginWorkspace.getParentFrame());
+      fileName = inputDialog.getFileName();
+      result = inputDialog.getResult();
+
+    } while (fileName == null || result == 0);
+
     System.out.println("Filename = " + fileName);
-    
+
     // Get versioning state
     versioningState = inputDialog.getVersioningState();
     System.out.println("Versioning state =" + versioningState);
+    System.out.println("Result=" + result);
 
-    if (fileName != null) {
+    if (result == 1 && !fileName.equals("")) {
 
       // Try creating the document with the string from the input
       try {
@@ -108,26 +114,28 @@ public class CreateDocumentAction extends AbstractAction {
 
         // NON VERSIONABLE DOCUMENT
         if (versioningState.equals("NONE")) {
+          System.out.println("None");
           doc = CMISAccess.getInstance().createResourceController().createDocument(parentFolder, fileName, "",
               mimeType);
 
         } else {
-
+          System.out.println("Versionable");
           // Create a versioned document with the state of MAJOR
           doc = CMISAccess.getInstance().createResourceController().createVersionedDocument(parentFolder, fileName, "",
               mimeType, "VersionableType", VersioningState.valueOf(versioningState));
+
+          // Checkout the document
+          try {
+
+            documentCreated = new DocumentImpl(doc);
+            pwc = documentCreated.checkOut(documentCreated.getDocType());
+
+          } catch (Exception e2) {
+            // Show the exception if there is one
+            JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
+          }
         }
-        // Checkout the document
-        try {
-
-          documentCreated = new DocumentImpl(doc);
-          pwc = documentCreated.checkOut(documentCreated.getDocType());
-
-        } catch (Exception e2) {
-          // Show the exception if there is one
-          JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
-        }
-
+        
       } catch (UnsupportedEncodingException e1) {
 
         // Show the exception if there is one
@@ -137,7 +145,9 @@ public class CreateDocumentAction extends AbstractAction {
         // Show the exception if there is one
         JOptionPane.showMessageDialog(null, "Document already exists " + e2.getMessage());
       }
+
     }
+
     // -------- Open into Oxygen
     String urlAsTring = null;
     if (pwc != null) {
@@ -147,7 +157,6 @@ public class CreateDocumentAction extends AbstractAction {
       System.out.println(urlAsTring);
 
       // Get the workspace of the plugin
-      PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
       // Check if it's not null
       if (pluginWorkspace != null) {
@@ -174,4 +183,3 @@ public class CreateDocumentAction extends AbstractAction {
   }
 
 }
-
