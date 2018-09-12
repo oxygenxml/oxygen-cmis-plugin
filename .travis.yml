@@ -1,0 +1,31 @@
+language: java
+sudo: required
+addons: 
+ sonarcloud:
+    organization: "oxygenxml-github"
+    token:
+      secure: "${SONAR_TOKEN}"
+jdk:
+ - oraclejdk8
+matrix:
+  fast_finish: true
+install: true
+before_script:
+  
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+script:
+ - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+before_deploy:
+  
+deploy:
+  provider: releases
+  api_key: ${OXYGEN_PLUGIN_TOKEN}
+  file:
+    - target/git.support-${TRAVIS_TAG}-plugin.jar
+    - target/addon.xml
+  skip_cleanup: true
+  on:
+    tags: true
+    
