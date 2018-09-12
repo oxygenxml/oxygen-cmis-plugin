@@ -8,6 +8,15 @@ import ro.sync.basic.util.URLUtil;
 
 public class ListOldVersionsAction {
 
+	/**
+	 * Generate json string of old-version with user which
+	 * modified document, id's of version and check-in
+	 * comment if the repository support it.
+	 * 
+	 * @param document
+	 * @param url
+	 * @return
+	 */
 	public static String listOldVersions(Document document, String url) {
 
 		if (url.contains(CmisActions.OLD_VERSION)) {
@@ -34,7 +43,7 @@ public class ListOldVersionsAction {
 			oldBuilder.append("?oldversion=").append(oldDoc.getId()).append("\"");
 
 			String checkInComment = null;
-
+			
 			if (oldDoc.getCheckinComment() == null) {
 				checkInComment = "";
 			} else {

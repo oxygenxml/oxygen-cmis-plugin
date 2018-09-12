@@ -48,6 +48,15 @@ public class CmisActions extends AuthorOperationWithResult {
 		return "";
 	}
 
+	/**
+	 * Check which action was received and do operation.
+	 * 
+	 * @param actualAction
+	 * @param actualState
+	 * @param commitMessage
+	 * @param authorAccess
+	 * @param url
+	 */
 	private void actionManipulator(String actualAction, String actualState, String commitMessage,
 			AuthorAccess authorAccess, String url) {
 
@@ -79,6 +88,10 @@ public class CmisActions extends AuthorOperationWithResult {
 		}
 	}
 
+	/**
+	 * Get the action from ArgumentsMap, get connection with server
+	 * and call actionManipulator.
+	 */
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
 			throws IllegalArgumentException, AuthorOperationException {
@@ -123,7 +136,6 @@ public class CmisActions extends AuthorOperationWithResult {
 		}
 				
 		if(oldVersionJson != null) {
-			logger.info(oldVersionJson);
 			return oldVersionJson;
 		}
 		return null;

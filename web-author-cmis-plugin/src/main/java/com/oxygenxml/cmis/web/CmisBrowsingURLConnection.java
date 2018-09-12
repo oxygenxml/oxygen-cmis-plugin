@@ -32,45 +32,58 @@ import ro.sync.net.protocol.FolderEntryDescriptor;
 public class CmisBrowsingURLConnection extends FilterURLConnection {
 	private static final Logger logger = Logger.getLogger(CmisBrowsingURLConnection.class.getName());
 
-	// PRIVATE RESOURCES
 	private CmisURLConnection connection;
 	private URL serverUrl;
 
-	// CONSTRUCTOR
 	public CmisBrowsingURLConnection(URLConnection delegateConnection, URL serverUrl) {
 		super(delegateConnection);
 		this.connection = (CmisURLConnection) delegateConnection;
 		this.serverUrl = serverUrl;
 	}
 
+	/**
+	 * Get the InputStream of document.
+	 * If document is an old version, get this document
+	 * using Id which is stored in query part of URL.
+	 * 
+	 */
 	@Override
 	public InputStream getInputStream() throws IOException {
 		try {
 			if (this.url.getQuery() != null) {
-				HashMap<String, String> queryPart = new HashMap<>();
+				if(this.url.getQuery().contains(CmisActions.OLD_VERSION)) {
+					
+					HashMap<String, String> queryPart = new HashMap<>();
 
-				for (String pair : url.getQuery().split("&")) {
-					int index = pair.indexOf("=");
-					queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+					for (String pair : url.getQuery().split("&")) {
+						int index = pair.indexOf("=");
+						queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+					}
+
+					String objectId = queryPart.get(CmisActions.OLD_VERSION);
+					String connectionUrl = this.url.toExternalForm().replace(this.url.getQuery(), "");
+
+					connectionUrl = connectionUrl.replace("?", "");
+					Document document = (Document) connection.getResourceController(connectionUrl).getCmisObj(objectId);
+
+					return document.getContentStream().getStream();
 				}
-
-				String objectId = queryPart.get(CmisActions.OLD_VERSION);
-				String connectionUrl = this.url.toExternalForm().replace(this.url.getQuery(), "");
-
-				connectionUrl = connectionUrl.replace("?", "");
-				Document document = (Document) connection.getResourceController(connectionUrl).getCmisObj(objectId);
-
-				return document.getContentStream().getStream();
 			}
 
 			return super.getInputStream();
 
 		} catch (CmisUnauthorizedException e) {
-			WebappMessage webappMessage = new WebappMessage(2, "401", "Invalid username or password!", true);
+			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
+					"Invalid username or password!", true);
+			
 			throw new UserActionRequiredException(webappMessage);
 		}
 	}
 
+	/**
+	 * Get OutputStream of document.
+	 * 
+	 */
 	@Override
 	public OutputStream getOutputStream() throws IOException {
 		try {
@@ -78,12 +91,15 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		} catch (CmisUnauthorizedException e) {
 			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
 					"Invalid username or password!", true);
+			
 			throw new UserActionRequiredException(webappMessage);
 		}
 	}
 
 	/**
-	 * Overrided listFolder method for WebAuthor
+	 * Generate FolderEntryDescriptor for any object
+	 * in current depth.
+	 * 
 	 */
 	@Override
 	public List<FolderEntryDescriptor> listFolder() throws IOException, UserActionRequiredException {
@@ -99,6 +115,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		} catch (CmisUnauthorizedException e) {
 			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
 					"Invalid username or password!", true);
+			
 			throw new UserActionRequiredException(webappMessage);
 		}
 
@@ -194,6 +211,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	}
 
 	/**
+	 * Logger for EntryDescriptions
 	 * 
 	 * @param list
 	 */

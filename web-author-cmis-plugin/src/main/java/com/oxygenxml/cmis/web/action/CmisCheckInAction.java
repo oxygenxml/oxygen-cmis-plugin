@@ -11,10 +11,17 @@ public class CmisCheckInAction {
 
 	private static final String MAJOR_STATE = "major";
 
+	/**
+	 * Check in the last version of document.
+	 * 
+	 * @param document
+	 * @param connection
+	 * @param actualState
+	 * @param commitMessage
+	 * @throws Exception
+	 */
 	public static void checkInDocument(Document document, CmisURLConnection connection, String actualState,
 			String commitMessage) throws Exception {
-
-		logger.info("Check-In commit: " + commitMessage);
 
 		if (!document.isVersionSeriesCheckedOut()) {
 			logger.info("Document isn't checked-out!");
@@ -24,10 +31,7 @@ public class CmisCheckInAction {
 			String pwc = document.getVersionSeriesCheckedOutId();
 
 			if (pwc != null) {
-
 				Document PWC = (Document) connection.getCMISAccess().getSession().getObject(pwc);
-
-				logger.info("Check-In actualState: " + actualState);
 
 				if(commitMessage == null || commitMessage == "null") {
 					commitMessage = "";
@@ -41,7 +45,6 @@ public class CmisCheckInAction {
 			}
 
 			document.refresh();
-
 			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		}
 	}

@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.web;
 import java.net.URL;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class TESTforTESTING {
 
 	@Test
 	public void testListOldVersions() throws Exception {
-
+		
 		String url = "cmis://http%3A%2F%2Fbasil%3A9080%2Ffncmis%2Fresources%2FService/TARGETOS/UsingAutoClassify/SubFolder/ibm.dita";
 
 		Document document = (Document) connection.getCMISObject(url);

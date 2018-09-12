@@ -90,7 +90,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 				.append("width:100%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='")
 				.append(autosaveInterval).append("'/>").append("</label>");
 		// Check-out required.
-		optionsForm.append("<label style='margin-bottom:6px;margin-top:10px;overflow:hidden;font-size:120%;'>")
+		optionsForm.append("<br/><label style='margin-bottom:6px;margin-top:10px;overflow:hidden;font-size:120%;'>")
 				.append("<input name='").append(CHECKOUT_REQUIRED).append("' type=\"checkbox\" value=\"off\"")
 				.append((isLockEnabled ? "checked" : "")).append("> ")
 				.append(rb.getMessage(TranslationTags.CHECKOUT_REQUIRED_RESOURCE)).append("</label>");

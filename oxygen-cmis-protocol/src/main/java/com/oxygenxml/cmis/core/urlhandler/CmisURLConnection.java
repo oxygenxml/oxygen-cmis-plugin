@@ -194,12 +194,11 @@ public class CmisURLConnection extends URLConnection {
     }
 
     String originalProtocol = customURL;
-
     // Get server URL, put it into originalProtocol and replace from customURL
     originalProtocol = originalProtocol.substring(0, originalProtocol.indexOf("/"));
     customURL = customURL.replaceFirst(originalProtocol, "");
     customURL = customURL.replaceFirst("/", "");
-    System.out.println("CUstom URL=" + customURL);
+
     // Save Repository and object path in HashMap
     if (param != null) {
       param.put(REPOSITORY_PARAM, customURL.substring(0, customURL.indexOf("/")));
@@ -236,7 +235,6 @@ public class CmisURLConnection extends URLConnection {
       public void close() throws IOException {
         Document document = null;
         String docUrl = null;
-
         boolean newly = false;
 
         try {
@@ -256,6 +254,17 @@ public class CmisURLConnection extends URLConnection {
             BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
             new ByteArrayInputStream(byteArray));
 
+        /** 
+         * Here we check if document is versionable
+         * and do operation.
+         * For versionable document we get the PWC
+         * to save the new content stream.
+         * After this we check in (as minor) document if it
+         * wasn't check out.
+         * If document is newly we check-in it as major version
+         * and saving the template content stream from client-side.
+         * 	
+         */
         if (!document.isVersionable()) {
           document.setContentStream(contentStream, true);
         } else {
@@ -284,7 +293,7 @@ public class CmisURLConnection extends URLConnection {
   }
 
   /**
-   * Create new document and generate URL if doesn't exist
+   * Create new document as versionable and generate URL if doesn't exist.
    * 
    * @param byteArray
    * @param typeOfDocument
@@ -301,6 +310,7 @@ public class CmisURLConnection extends URLConnection {
 
     String path = param.get(PATH_PARAM);
     String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+    
     path = path.replace(fileName, "");
 
     String mimeType = MimeTypes.getMIMEType(fileName.substring(fileName.indexOf("."), fileName.length()));
@@ -309,6 +319,7 @@ public class CmisURLConnection extends URLConnection {
     }
 
     Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
+    
     Document document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType,
         DOC_TYPE, VersioningState.MINOR);
 

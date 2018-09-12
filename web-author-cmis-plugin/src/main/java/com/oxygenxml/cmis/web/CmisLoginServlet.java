@@ -26,6 +26,10 @@ public class CmisLoginServlet extends WebappServletPluginExtension {
 		return "cmis-login";
 	}
 
+	/**
+	 * Get UserCredentials and put it on sessionStore.
+	 * 
+	 */
 	@Override
 	public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
 			throws ServletException, IOException {

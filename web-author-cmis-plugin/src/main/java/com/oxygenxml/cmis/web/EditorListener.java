@@ -51,6 +51,12 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		});
 	}
 
+	/**
+	 * Receive some information about document to client-side code.
+	 * 
+	 * @param webappPluginWorkspace
+	 * @param documentModel
+	 */
 	@VisibleForTesting
 	public void utilityMethod(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
 		AuthorAccess authorAccess = documentModel.getAuthorAccess();

@@ -102,7 +102,13 @@ public class ResourceController {
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put(PropertyIds.NAME, filename);
 
-    // create the document
+    /**
+     * If repository or server doesn't support
+     * OBJECT_TYPE_ID like "VersionableType" we
+     * catch the error and try to put in properties
+     * default for open-cmis Object Id - "cmis:document".
+     * 
+     */
     Document document = null;
     try {
       properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
@@ -132,7 +138,13 @@ public class ResourceController {
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put(PropertyIds.NAME, filename);
 
-    // create the document
+    /**
+     * If repository or server doesn't support
+     * OBJECT_TYPE_ID like "VersionableType" we
+     * catch the error and try to put in properties
+     * default for open-cmis Object Id - "cmis:document".
+     * 
+     */
     Document document = null;
     try {
       properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);

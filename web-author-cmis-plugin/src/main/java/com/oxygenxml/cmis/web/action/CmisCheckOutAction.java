@@ -9,8 +9,14 @@ public class CmisCheckOutAction {
 
 	private static final Logger logger = Logger.getLogger(CmisCheckOutAction.class.getName());
 
+	/**
+	 * Check out the last version of document.
+	 * 
+	 * @param document
+	 * @throws Exception
+	 */
 	public static void checkOutDocument(Document document) throws Exception {
-
+		
 		document = document.getObjectOfLatestVersion(false);
 
 		if (document.isVersionSeriesCheckedOut()) {
@@ -19,11 +25,17 @@ public class CmisCheckOutAction {
 		} else {
 			document.checkOut();
 			document.refresh();
-
 			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		}
 	}
 
+	/**
+	 * Get the last version and cancel check-out.
+	 * 
+	 * @param document
+	 * @param connection
+	 * @throws Exception
+	 */
 	public static void cancelCheckOutDocument(Document document, CmisURLConnection connection) throws Exception {
 
 		if (!document.isVersionSeriesCheckedOut()) {
@@ -38,7 +50,6 @@ public class CmisCheckOutAction {
 			}
 
 			document.refresh();
-
 			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		}
 

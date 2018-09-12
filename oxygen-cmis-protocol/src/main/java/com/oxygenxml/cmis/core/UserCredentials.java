@@ -60,7 +60,6 @@ public class UserCredentials {
 		return password;
 	}
 
-
 	public boolean isEmpty() {
 		if(username.isEmpty() && password.isEmpty()) {
 			return true;
@@ -73,7 +72,7 @@ public class UserCredentials {
 
 	@Override
 	public String toString() {
-		return "Username=" + this.username;
+		return "Username: " + this.username;
 	}
 
 }
