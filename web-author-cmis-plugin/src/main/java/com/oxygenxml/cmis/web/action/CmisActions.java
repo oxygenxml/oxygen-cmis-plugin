@@ -33,7 +33,7 @@ public class CmisActions extends AuthorOperationWithResult {
 	
 	private String oldVersionJson = null;
 
-	public static final String OLD_VERSION = "?oldversion=";
+	public static final String OLD_VERSION = "oldversion";
 	
 	private static final String CHECK_OUT 	      = "cmisCheckout";
 	private static final String CHECK_IN 		  = "cmisCheckin";
@@ -77,7 +77,6 @@ public class CmisActions extends AuthorOperationWithResult {
 			logger.info(e.getMessage());
 			logger.info("Invalid object or object URL!");
 		}
-
 	}
 
 	@Override
@@ -95,11 +94,11 @@ public class CmisActions extends AuthorOperationWithResult {
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
 		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
 		String contextId = url.getUserInfo();
-		credentials = sessionStore.get(contextId, "credentials");
+		credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
 		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
-		if(urlWithoutContextId.contains(OLD_VERSION)) {
-			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf("?oldversion"));
+		if(urlWithoutContextId.contains(OLD_VERSION) || urlWithoutContextId.contains("?")) {
+			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf("?"));
 		}
 		
 		try {

@@ -84,8 +84,8 @@ public class CMISAccess {
 	private void populateParameters(URL connectionInfo, Map<String, String> parameters, UserCredentials uc) {
 		// TODO Ask for credentials. Different implementations SA/Web
 		if (uc != null) {
-			parameters.put(SessionParameter.USER, uc.username);
-			parameters.put(SessionParameter.PASSWORD, String.valueOf(uc.password));
+			parameters.put(SessionParameter.USER, uc.getUsername());
+			parameters.put(SessionParameter.PASSWORD, String.valueOf(uc.getPassword()));
 		}
 
 		// connection settings

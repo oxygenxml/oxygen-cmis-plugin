@@ -1,10 +1,5 @@
 package com.oxygenxml.cmis.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.net.URL;
 
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -17,9 +12,6 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.web.action.CmisCheckInAction;
-import com.oxygenxml.cmis.web.action.CmisCheckOutAction;
-import com.oxygenxml.cmis.web.action.ListOldVersionsAction;
 
 public class TESTforTESTING {
 	/**
@@ -37,7 +29,8 @@ public class TESTforTESTING {
 		serverUrl = new URL("http://basil:9080/fncmis/resources/Service");
 
 		cmisAccess = new CMISAccess();
-		cmisAccess.connectToRepo(serverUrl, "TARGETOS", new UserCredentials("P8Admin", "Stil00"));
+		UserCredentials uc = new UserCredentials("P8Admin", "Stil00");
+		cmisAccess.connectToRepo(serverUrl, "TARGETOS", uc);
 		ctrl = cmisAccess.createResourceController();
 
 		connection = new CmisURLConnection(serverUrl, cmisAccess, new UserCredentials("P8Admin", "Stil00"));

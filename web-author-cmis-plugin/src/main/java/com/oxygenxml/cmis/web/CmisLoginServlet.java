@@ -38,14 +38,12 @@ public class CmisLoginServlet extends WebappServletPluginExtension {
 		SessionStore sessionStore = workspace.getSessionStore();
 
 		if ("logout".equals(action)) {
-			sessionStore.remove(userId, "credentials");
+			sessionStore.remove(userId, "wa-cmis-plugin-credentials");
 		} else {
 			String user = httpRequest.getParameter("user");
 			String passwd = httpRequest.getParameter("passwd");
 			
-			logger.info("CmisLoginServlet.doPost() credentials ---> " + user + " " + passwd);
-			
-			sessionStore.put(userId, "credentials", new UserCredentials(user, passwd));
+			sessionStore.put(userId, "wa-cmis-plugin-credentials", new UserCredentials(user, passwd));
 		}
 	}
 }

@@ -62,7 +62,7 @@ public class SearchControllerTest extends ConnectionTestBase {
 
     List<IResource> docs = search.queryDoc("Document");
 
-    // assertNotNull(docs);
+    assertNotNull(docs);
     // Will not work on jetty
   }
 
