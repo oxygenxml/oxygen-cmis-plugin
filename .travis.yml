@@ -16,7 +16,7 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
 script:
- - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dmaven.test.skip=true
+ - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dmaven.test.skip=true -Dsonar.host.url=https://sonarcloud.io
 before_deploy:
   
 deploy:
