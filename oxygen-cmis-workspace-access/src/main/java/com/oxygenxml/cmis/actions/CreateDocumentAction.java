@@ -34,6 +34,7 @@ import com.oxygenxml.cmis.ui.CreateDocDialog;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 import ro.sync.ecss.extensions.commons.ui.OKCancelDialog;
+import ro.sync.exml.editor.re;
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
@@ -90,13 +91,18 @@ public class CreateDocumentAction extends AbstractAction {
     String mimeType;
     String fileName = null;
     int result = 0;
+
     do {
       // Create the input dialog
       inputDialog = new CreateDocDialog((JFrame) pluginWorkspace.getParentFrame());
       fileName = inputDialog.getFileName();
       result = inputDialog.getResult();
+      
+      if (result == 0) {
+        break;
+      }
 
-    } while (fileName == null || result == 0);
+    } while (fileName == null);
 
     System.out.println("Filename = " + fileName);
 
@@ -135,7 +141,7 @@ public class CreateDocumentAction extends AbstractAction {
             JOptionPane.showMessageDialog(null, "Exception " + e2.getMessage());
           }
         }
-        
+
       } catch (UnsupportedEncodingException e1) {
 
         // Show the exception if there is one
