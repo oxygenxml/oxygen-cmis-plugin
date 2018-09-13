@@ -15,6 +15,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -107,7 +108,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     resourceList.addListSelectionListener(this);
 
     // Scroller for the listRepo
-    JScrollPane listItemScrollPane = new JScrollPane(resourceList);
+    final JScrollPane listItemScrollPane = new JScrollPane(resourceList);
 
     /*
      * Drag and drop move item
@@ -131,36 +132,44 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
           boolean cellHasFocus) {
 
-        Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        final Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         if (component instanceof JLabel) {
 
           String renderText = "";
+          IResource resource;
 
           if (value != null) {
-            IResource resource = ((IResource) value);
+            resource = ((IResource) value);
             // Cast in order to use the methods from IResource interface
             renderText = resource.getDisplayName();
             ((JLabel) component).setText(renderText);
 
             // If it's an instance of custom type of Folder
-            if ((IResource) value instanceof FolderImpl) {
+            if (resource instanceof FolderImpl) {
 
               ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
 
-            } else if ((IResource) value instanceof DocumentImpl) {
-              // ---------Use Oxygen Icons
-              try {
-                ((JLabel) component).setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
-                    .getIconDecoration(new URL("http://localhost/" + resource.getDisplayName())));
-              } catch (MalformedURLException e) {
-                // If it's an instance of custom type of Folder
-                // Set the native icon to the component
-                ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
+            } else if (resource instanceof DocumentImpl) {
 
-                e.printStackTrace();
+              if (((DocumentImpl) resource).isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
+
+                ((JLabel) component).setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
+
+              } else {
+                // ---------Use Oxygen Icons
+                try {
+                  ((JLabel) component).setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
+                      .getIconDecoration(new URL("http://localhost/" + resource.getDisplayName())));
+                } catch (final MalformedURLException e) {
+                  // If it's an instance of custom type of Folder
+                  // Set the native icon to the component
+                  ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
+                  logger.error(e, e);
+
+                }
+                // ---------
               }
-              // ---------
             }
 
           }
@@ -182,7 +191,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       public void mouseClicked(final MouseEvent e) {
         IResource currentItem = null;
         // Get the location of the item using location of the click
-        int itemIndex = resourceList.locationToIndex(e.getPoint());
+        final int itemIndex = resourceList.locationToIndex(e.getPoint());
 
         if (itemIndex != -1) {
 
@@ -194,7 +203,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
             menu = new JPopupMenu();
 
             // Get the bounds of the item
-            Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
+            final Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
 
             // Check if the click was outside the visible list
             if (!cellBounds.contains(e.getPoint())) {
@@ -341,7 +350,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   public void presentItems(URL connectionInfo, String repositoryID) {
     try {
       // Get the instance
-      CMISAccess instance = CMISAccess.getInstance();
+      final CMISAccess instance = CMISAccess.getInstance();
 
       boolean connected = false;
       // Connect
@@ -353,16 +362,16 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
           instance.connectToRepo(connectionInfo, repositoryID, uc);
 
           // Get the rootFolder and set the model
-          ResourceController resourceController = instance.createResourceController();
+          final ResourceController resourceController = instance.createResourceController();
 
-          Folder rootFolder = resourceController.getRootFolder();
+          final Folder rootFolder = resourceController.getRootFolder();
 
           final FolderImpl origin = new FolderImpl(rootFolder);
           setFolder(origin);
 
           connected = true;
 
-        } catch (CmisUnauthorizedException e) {
+        } catch (final CmisUnauthorizedException e) {
 
           // Get the credentials and show login dialog if necessary
           uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
@@ -371,7 +380,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       } while (!connected);
 
-    } catch (UserCanceledException e1) {
+    } catch (final UserCanceledException e1) {
       logger.error(e1, e1);
 
       // Show the exception if there is one
@@ -386,7 +395,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param origin
    */
   private void setFolder(final FolderImpl origin) {
-    DefaultListModel<IResource> model = new DefaultListModel<>();
+    final DefaultListModel<IResource> model = new DefaultListModel<>();
 
     installRenderer(origin.getId());
     model.addElement(origin);
@@ -399,6 +408,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param resource
    *          the resource to present its children.
    */
+  @Override
   public void presentResources(IResource parentResource) {
     // Install a renderer
     installRenderer(parentResource.getId());
@@ -417,17 +427,17 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     System.out.println("Current item=" + parentResource.getDisplayName());
     // Get all the children of the item in an iterator
-    Iterator<IResource> childrenIterator = parentResource.iterator();
+    final Iterator<IResource> childrenIterator = parentResource.iterator();
 
     // Iterate them till it has a child
     if (childrenIterator != null) {
 
       // Define a model for the list in order to render the items
-      DefaultListModel<IResource> model = new DefaultListModel<>();
+      final DefaultListModel<IResource> model = new DefaultListModel<>();
 
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
-        IResource iResource = (IResource) childrenIterator.next();
+        final IResource iResource = childrenIterator.next();
         model.addElement(iResource);
 
       }
@@ -448,7 +458,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     installRenderer(folderID);
 
-    ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
     // Present the folder children
     presentResources(new FolderImpl(resourceController.getFolder(folderID)));
   }
@@ -476,14 +486,14 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   public void searchFinished(String filter, final List<IResource> resources) {
 
     // Provides the threads needed for async response
-    CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
+    final CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
 
     // Create a rendered by using the custom renderer with the resources from
     // cache (data gotten and the filter(text to search))
     seachRenderer = new SearchResultCellRenderer(csp, filter);
     resourceList.setCellRenderer(seachRenderer);
 
-    IResource parentResource = new IFolder() {
+    final IResource parentResource = new IFolder() {
       @Override
       public Iterator<IResource> iterator() {
         return resources.iterator();
@@ -532,7 +542,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       @Override
       public void removeFromModel(IResource resource) {
-        int index = ((DefaultListModel<IResource>) resourceList.getModel()).indexOf(resource);
+        final int index = ((DefaultListModel<IResource>) resourceList.getModel()).indexOf(resource);
         ((DefaultListModel<IResource>) resourceList.getModel()).remove(index);
 
       }
