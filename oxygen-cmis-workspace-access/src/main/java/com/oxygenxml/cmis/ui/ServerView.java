@@ -36,10 +36,10 @@ import com.oxygenxml.cmis.storage.SessionStorage;
  */
 public class ServerView extends JPanel {
   // Order shall be savedG
-  private Set<String> serversList = new LinkedHashSet<>();
+  private final Set<String> serversList = new LinkedHashSet<>();
   // Combo box to choose from in-memory servers
-  private JComboBox<String> serverItemsCombo = new JComboBox<>();
-  private JButton loadButton;
+  private final JComboBox<String> serverItemsCombo = new JComboBox<>();
+  private final JButton loadButton;
 
   /**
    * Constructor that creates the component

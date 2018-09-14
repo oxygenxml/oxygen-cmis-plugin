@@ -1,19 +1,11 @@
 package com.oxygenxml.cmis.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -34,7 +26,6 @@ import com.oxygenxml.cmis.core.UserCredentials;
  * Describes how the repositories a shown and their behaviors
  * 
  * @author bluecc
- *
  */
 public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
@@ -44,31 +35,24 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
   private static final Logger logger = Logger.getLogger(RepoComboBoxView.class);
 
   // Items to be shown
-  private JComboBox<Repository> repoItems;
-  // The list of the servers
-  private List<Repository> serverReposList;
-  // Current URL
+  private final JComboBox<Repository> repoItems;
+  /**
+   * Parties interested about the repository change events.
+   */
+  private final transient List<RepositoryListener> listeners = new ArrayList<>(2);
+
   private URL serverURL;
-  private ResourcesBrowser itemsPresenter;
-  private BreadcrumbPresenter breadcrumbPresenter;
 
   /**
    * Constructor that receives an items presenter to show the items inside the
    * server and update the breadcrumb with breadcrumbPresenter
    * 
    * Creates the repositories component visually
-   * 
-   * @param itemsPresenter
-   * @param breadcrumbPresenter
    */
-  RepoComboBoxView(ResourcesBrowser itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+  public RepoComboBoxView() {
     setOpaque(true);
-    //setBackground(Color.cyan);
 
-    this.itemsPresenter = itemsPresenter;
-    this.breadcrumbPresenter = breadcrumbPresenter;
-
-    repoItems = new JComboBox<Repository>();
+    repoItems = new JComboBox<>();
 
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -80,7 +64,6 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.insets = new Insets(1, 10, 1, 10);
     JLabel serverUrlLabel = new JLabel("Repository:");
     serverUrlLabel.setOpaque(true);
-    //serverUrlLabel.setBackground(Color.red);
     add(serverUrlLabel, c);
 
     // Url http JComboBox constraints
@@ -90,7 +73,6 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.gridwidth = 2;
     c.fill = GridBagConstraints.HORIZONTAL;
     repoItems.setOpaque(true);
-    //repoItems.setBackground(Color.blue);
 
     repoItems.setEnabled(false);
     repoItems.setEditable(false);
@@ -99,21 +81,47 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     /**
      * Gets the current selected url from combo box
      */
-    repoItems.addActionListener(new ActionListener() {
+    repoItems.addActionListener(e -> {
+      JComboBox<?> comboBox = (JComboBox<?>) e.getSource();
 
-      public void actionPerformed(ActionEvent e) {
-        JComboBox<?> comboBox = (JComboBox<?>) e.getSource();
+      Repository selected = (Repository) comboBox.getSelectedItem();
+      if (logger.isDebugEnabled()) {
+        logger.debug(selected.getId());
+      }
+      
+      fireRepositoryChangedEvent(serverURL, selected.getId());
+    });
+    
+    /*
+     * Render all the elements of the listRepo
+     */
+    repoItems.setRenderer(new DefaultListCellRenderer() {
+      @Override
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+          boolean cellHasFocus) {
+        String renderTex = "";
+        if (value != null) {
+          renderTex = ((Repository) value).getName();
+          
+          if (renderTex.length() == 0) {
+            renderTex = ((Repository) value).getId();
+          }
+        }
 
-        Repository selected = (Repository) comboBox.getSelectedItem();
-        System.out.println(selected.getId());
 
-        // Present the items with the URL and repository
-        itemsPresenter.presentResources(serverURL, selected.getId());
-
-        // Reset the breadcrumb to show new items from repository
-        breadcrumbPresenter.resetBreadcrumb(true);
+        return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
       }
     });
+  }
+
+  protected void fireRepositoryChangedEvent(URL serverURL2, String repositoryID) {
+    for (RepositoryListener repositoryListener : listeners) {
+      repositoryListener.repositoryConnected(serverURL2, repositoryID);
+    }
+  }
+  
+  public void addRepositoryListener(RepositoryListener repositoryListener) {
+    listeners.add(repositoryListener);
   }
 
   /**
@@ -123,12 +131,13 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    */
   @Override
   public void presentRepositories(URL serverURL) {
+    this.serverURL = serverURL;
     repoItems.setEnabled(true);
 
-    this.serverURL = serverURL;
-
     // Create the listRepo of repos.
-    System.out.println(serverURL);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Load repositories from: " + serverURL);
+    }
 
     // Check credentials for the URL
     UserCredentials userCredentials = null;
@@ -144,6 +153,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     if (userCredentials != null) {
       boolean loggedin = false;
 
+      List<Repository> serverReposList = null;
       // Check if is logged in and there repositories to present
       do {
 
@@ -155,16 +165,14 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
       } while (serverReposList == null && !loggedin);
 
-      System.out.println(serverReposList + "repos");
+      if (logger.isDebugEnabled()) {
+        logger.debug(serverReposList + "repos");
+      }
 
       // If there some put them in the model to be shown
       if (serverReposList != null && !serverReposList.isEmpty()) {
 
-        // Present the items with the URL and repository
-        itemsPresenter.presentResources(serverURL, serverReposList.get(0).getId());
-
-        // Reset the breadcrumb to show new items from repository
-        breadcrumbPresenter.resetBreadcrumb(true);
+        fireRepositoryChangedEvent(serverURL, serverReposList.get(0).getId());
 
         DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();
         // Iterate all the elements
@@ -173,28 +181,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
         }
 
         repoItems.setModel(model);
-
-        /*
-         * Render all the elements of the listRepo
-         */
-        repoItems.setRenderer(new DefaultListCellRenderer() {
-          @Override
-          public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-              boolean cellHasFocus) {
-            String renderTex = "";
-            if (value != null) {
-              renderTex = ((Repository) value).getName();
-            }
-
-            if (renderTex.length() == 0) {
-              renderTex = ((Repository) value).getId();
-            }
-
-            return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
-          }
-        });
       }
     }
-
   }
 }
