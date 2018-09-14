@@ -15,6 +15,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -84,8 +85,8 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
    * All the children to present.
    */
   private final JList<IResource> resourceList;
-  
-  private static final  int COPY_PERMISSIONS = TransferHandler.MOVE;
+
+  private static final int COPY_PERMISSIONS = TransferHandler.MOVE;
   /**
    * Search support.
    */
@@ -148,9 +149,9 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
     contentProvider.addSearchListener(this);
   }
 
-
   /**
-   * Populates the contextual menu with generic actions. Used when nothing is selected in the list.
+   * Populates the contextual menu with generic actions. Used when nothing is
+   * selected in the list.
    */
   private void addGenericActions(JPopupMenu menu) {
     // Create a document in the current folder
@@ -162,8 +163,10 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
   /**
    * Adds the actions that manipulate documents.
    * 
-   * @param selectedResource The selected resource. The actions must manipulate it.
-   * @param menu The menu to add the actions to.
+   * @param selectedResource
+   *          The selected resource. The actions must manipulate it.
+   * @param menu
+   *          The menu to add the actions to.
    */
   private void addDocumentActions(final IResource selectedResource, JPopupMenu menu) {
     // CRUD Document
@@ -174,7 +177,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
     menu.add(new CheckinDocumentAction(selectedResource, currentParent, this));
     menu.add(new CheckoutDocumentAction(selectedResource, currentParent, this));
     menu.add(new CancelCheckoutDocumentAction(selectedResource, currentParent, this));
-    
+
     // TODO Cristian Check if is removed one reference or all maybe use of
     // removeFromFolder
 
@@ -185,8 +188,10 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
   /**
    * Adds the actions that manipulate folders.
    * 
-   * @param selectedResource The selected resource. The actions must manipulate it.
-   * @param menu The menu to add the actions to.
+   * @param selectedResource
+   *          The selected resource. The actions must manipulate it.
+   * @param menu
+   *          The menu to add the actions to.
    */
   private void addFolderActions(final IResource selectedResource, JPopupMenu menu) {
     // CRUD Folder
@@ -233,18 +238,20 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
   }
 
   /**
-   * Checks the connection to the server. If the method returns without exception, the connection was successfull.
+   * Checks the connection to the server. If the method returns without
+   * exception, the connection was successfull.
    * 
-   * @param connectionInfo URL to the server.
-   * @param repositoryID The ID 
+   * @param connectionInfo
+   *          URL to the server.
+   * @param repositoryID
+   *          The ID
    * @param instance
    * 
-   * @throws UserCanceledException Unable to connect and the 
+   * @throws UserCanceledException
+   *           Unable to connect and the
    */
-  private void connectToRepository(
-      URL connectionInfo, 
-      String repositoryID, 
-      CMISAccess instance) throws UserCanceledException {
+  private void connectToRepository(URL connectionInfo, String repositoryID, CMISAccess instance)
+      throws UserCanceledException {
     boolean connected = false;
     // Connect
     UserCredentials uc = null;
@@ -316,7 +323,12 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
         IResource iResource = childrenIterator.next();
-        model.addElement(iResource);
+        // Only if it's not a locked document add to the model
+        if (!(iResource instanceof DocumentImpl && ((DocumentImpl) iResource).isCheckedOut()
+            && !((DocumentImpl) iResource).isPrivateWorkingCopy())) {
+
+          model.addElement(iResource);
+        }
 
       }
 
@@ -423,7 +435,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
     public ResourceMouseHandler(BreadcrumbPresenter breadcrumbPresenter) {
       this.breadcrumbPresenter = breadcrumbPresenter;
     }
-    
+
     @Override
     public void mouseClicked(final MouseEvent e) {
       // Get the location of the item using location of the click
@@ -443,8 +455,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
           // Check if the click was outside the visible list
           if (!cellBounds.contains(e.getPoint())) {
             // Check is has a parent folder for the creation
-            if (currentParent != null && 
-                !currentParent.getId().equals(SEARCH_RESULTS)) {
+            if (currentParent != null && !currentParent.getId().equals(SEARCH_RESULTS)) {
               if (logger.isDebugEnabled()) {
                 logger.debug("ID item = " + ((IFolder) currentParent).getId());
                 logger.debug("Name item!!!! = " + currentParent.getDisplayName());
@@ -473,13 +484,13 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
           menu.show(resourceList, e.getX(), e.getY());
 
         }
-        
+
         // Check if we have a double click.
         if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
           if (logger.isDebugEnabled()) {
             logger.debug("TO present breadcrumb=" + currentItem.getDisplayName());
           }
-          
+
           if (currentItem instanceof DocumentImpl) {
             // Open the document in Oxygen.
             new OpenDocumentAction(currentItem).openDocumentPath();
@@ -495,7 +506,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
   }
 
   /**
-   * Default renderer for resources. 
+   * Default renderer for resources.
    */
   private static final class DefaultListCellRendererExtension extends DefaultListCellRenderer {
     @Override
@@ -503,37 +514,47 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
         boolean cellHasFocus) {
 
       Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
       if (component instanceof JLabel) {
-
         String renderText = "";
 
         if (value != null) {
+          JLabel comLabel = ((JLabel) component);
           IResource resource = ((IResource) value);
+
           // Cast in order to use the methods from IResource interface
           renderText = resource.getDisplayName();
-          ((JLabel) component).setText(renderText);
+          
+          //All PWC has a space in the front of the string (Working Copy).
+          comLabel.setText(renderText.replace(" (Working Copy)", "").trim());
 
-          // If it's an instance of custom type of Folder
+          // If it's an instance of custom type of Folder.
           if ((IResource) value instanceof FolderImpl) {
 
-            ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
+            comLabel.setIcon(UIManager.getIcon("FileView.directoryIcon"));
 
-          } else if ((IResource) value instanceof DocumentImpl) {
-            // ---------Use Oxygen Icons
-            try {
-              ((JLabel) component).setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
-                  .getIconDecoration(new URL("http://localhost/" + resource.getDisplayName())));
-            } catch (MalformedURLException e) {
-              // If it's an instance of custom type of Folder
-              // Set the native icon to the component
-              ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
+          } else if (resource instanceof DocumentImpl) {
+            DocumentImpl doc = ((DocumentImpl) resource);
+            // Check if it's a Private Working Copy.
+            if (doc.isCheckedOut() && doc.isPrivateWorkingCopy()) {
 
-              logger.error(e, e);
+              comLabel.setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
+
+            } else {
+              // ---------Use Oxygen Icons.
+              try {
+                comLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
+                    .getIconDecoration(new URL("http://localhost/" + resource.getDisplayName())));
+
+              } catch (final MalformedURLException e) {
+                // If it's an instance of custom type of Folder.
+                // Set the native icon to the component.
+                comLabel.setIcon(UIManager.getIcon("FileView.fileIcon"));
+                logger.error(e, e);
+
+              }
+              // ---------
             }
-            // ---------
           }
-
         }
       }
 

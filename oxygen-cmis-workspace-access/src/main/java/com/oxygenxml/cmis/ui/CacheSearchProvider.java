@@ -96,32 +96,6 @@ public class CacheSearchProvider implements ContentSearcher {
 
     if (pathDoc == null) {
 
-      // Initialize a new thread
-      // new Thread(new Runnable() {
-      //
-      // public void run() {
-      // // Get the line
-      // String path = ((DocumentImpl) doc).getDocumentPath(ctrl);
-      //
-      // // Put it in the hashmap or put 'Empty'
-      // cachePath.put(doc.getId(), path != null ? path : "");
-      //
-      // // Repaint later the component
-      // SwingUtilities.invokeLater(new Runnable() {
-      // @Override
-      // public void run() {
-      // int index = ((DefaultListModel<IResource>)
-      // list.getModel()).indexOf(doc);
-      // Rectangle cellBounds = list.getCellBounds(index, index);
-      //
-      // list.repaint(cellBounds);
-      // }
-      // });
-      //
-      // }
-      // // Start the async thread
-      // }).start();
-
       TimerTask task = new TimerTask() {
         @Override
         public void run() {
@@ -180,11 +154,12 @@ public class CacheSearchProvider implements ContentSearcher {
       TimerTask task = new TimerTask() {
         @Override
         public void run() {
+          
           // Get the line
           String properties = null;
           if (resource instanceof DocumentImpl) {
             DocumentImpl doc = (DocumentImpl) resource;
-            properties = "Last version:" + doc.getLastVersionDocument().getVersionLabel();
+            properties = doc.getModifiedBy();
 
           } else if (resource instanceof FolderImpl) {
             FolderImpl folder = (FolderImpl) resource;
@@ -231,7 +206,7 @@ public class CacheSearchProvider implements ContentSearcher {
         public void run() {
           // Get the name
           String name = null;
-          name = resource.getDisplayName();
+          name = resource.getDisplayName().replace(" (Working Copy)", "").trim();
 
           // Put it in the hashmap or put 'Empty'
           cacheName.put(resource.getId(), name != null ? name : "Empty");

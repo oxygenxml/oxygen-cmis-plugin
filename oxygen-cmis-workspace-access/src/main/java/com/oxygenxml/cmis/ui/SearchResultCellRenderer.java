@@ -137,7 +137,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       resourceText = styleString(resourceText);
     }
 
-    if (value instanceof DocumentImpl && value != null) {
+    if (value instanceof DocumentImpl) {
 
       final DocumentImpl doc = ((DocumentImpl) value);
       if (doc.getId() != null) {
@@ -185,7 +185,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     } else if (value instanceof FolderImpl && value != null) {
 
       final FolderImpl folder = ((FolderImpl) value);
-      
+
       if (folder.getId() != null) {
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
 
@@ -203,6 +203,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word;'>"
         + (resourceText != null ? resourceText : "No data") + "</div></html>");
 
+    propertiesResource.setOpaque(true);
+    propertiesResource.setForeground(Color.GRAY);
     propertiesResource.setText((propertiesValues != null ? propertiesValues : "No data"));
 
     notification.setText(notifyValue);
@@ -275,8 +277,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       }
     }
   }
-
-
 
   /**
    * Matcher used to get all the star and end indexes for replacing the original

@@ -11,6 +11,7 @@ import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -60,6 +61,35 @@ public class DocumentImpl implements IDocument {
 
   public DocumentType getDocType() {
     return doc.getDocumentType();
+  }
+
+  public String getModifiedBy() {
+    String displayTime = "";
+    Date timeModified = doc.getLastModificationDate().getTime();
+    Date today = new Date();
+
+    long diff = today.getTime() - timeModified.getTime();
+
+    long diffSeconds = diff / 1000 % 60;
+    long diffMinutes = diff / (60 * 1000) % 60;
+    long diffHours = diff / (60 * 60 * 1000) % 24;
+    long diffDays = diff / (24 * 60 * 60 * 1000);
+
+    if (diffDays > 0) {
+      displayTime = String.valueOf(diffDays) + " day/s ago";
+
+    } else if (diffHours > 0) {
+      displayTime = String.valueOf(diffHours) + " hour/s ago";
+
+    } else if (diffMinutes > 0) {
+      displayTime = String.valueOf(diffHours) + " minute/s ago";
+
+    } else if (diffSeconds > 0) {
+      displayTime = String.valueOf(diffSeconds) + " second/s ago";
+
+    }
+
+    return "Modified by " + doc.getLastModifiedBy() + " " + displayTime;
   }
 
   public boolean canUserDelete() {
