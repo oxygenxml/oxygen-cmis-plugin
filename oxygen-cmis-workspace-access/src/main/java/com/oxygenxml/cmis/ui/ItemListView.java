@@ -26,8 +26,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -68,7 +66,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  * @author bluecc
  *
  */
-public class ItemListView extends JPanel implements ResourcesBrowser, ListSelectionListener, SearchListener {
+public class ItemListView extends JPanel implements ResourcesBrowser, SearchListener, RepositoryListener {
 
   private static final String SEARCH_RESULTS = "#search.results";
 
@@ -105,7 +103,6 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
     resourceList = new JList<>();
     resourceList.setSelectedIndex(0);
     resourceList.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    resourceList.addListSelectionListener(this);
 
     // Scroller for the listRepo
     final JScrollPane listItemScrollPane = new JScrollPane(resourceList);
@@ -338,12 +335,6 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
   }
 
   @Override
-  public void valueChanged(ListSelectionEvent e) {
-
-  }
-
-  @Override
-
   public void presentResources(String folderID) {
 
     installDefaultRenderer();
@@ -496,7 +487,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
             new OpenDocumentAction(currentItem).openDocumentPath();
           } else {
             // Present the next item (folder)
-            breadcrumbPresenter.presentBreadcrumb(currentItem);
+            breadcrumbPresenter.addBreadcrumb(currentItem);
             // Present the folder children.
             presentResources(currentItem);
           }
@@ -560,5 +551,10 @@ public class ItemListView extends JPanel implements ResourcesBrowser, ListSelect
 
       return component;
     }
+  }
+
+  @Override
+  public void repositoryConnected(URL serverURL, String repositoryID) {
+    presentResources(serverURL, repositoryID);
   }
 }

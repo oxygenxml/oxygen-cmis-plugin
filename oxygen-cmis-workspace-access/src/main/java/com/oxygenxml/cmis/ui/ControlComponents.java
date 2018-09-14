@@ -65,7 +65,10 @@ public class ControlComponents extends JPanel {
     itemsPanel.setContentProvider(searchPanel);
 
     // Initialization of the repositories
-    repoComboBox = new RepoComboBoxView(itemsPanel, breadcrumbList);
+    repoComboBox = new RepoComboBoxView();
+    
+    repoComboBox.addRepositoryListener(itemsPanel);
+    repoComboBox.addRepositoryListener(breadcrumbList);
 
     // initialization of the server
     serverPanel = new ServerView(repoComboBox, searchPanel);

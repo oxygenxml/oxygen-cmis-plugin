@@ -10,19 +10,16 @@ import com.oxygenxml.cmis.core.model.IResource;
  */
 public interface BreadcrumbPresenter {
   /**
-   * Presents the resource to the breadcrumb
+   * Appends this resource to the resources from the breadcrumb view.
    * 
    * @param resource
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  void presentBreadcrumb(IResource resource);
+  void addBreadcrumb(IResource resource);
 
   /**
-   * Flag for reseeting the breadcrumb as it was initially
-   * 
-   * @param flag
-   * 
+   * Clear all resources presented in the breadcrumb view. 
    */
-  void resetBreadcrumb(boolean flag);
+  void resetBreadcrumb();
 }
