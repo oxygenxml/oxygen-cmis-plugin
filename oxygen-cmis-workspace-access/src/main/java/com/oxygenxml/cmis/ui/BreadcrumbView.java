@@ -34,7 +34,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   private JToolBar toolBar;
   private JPanel breadcrumbPanel;
   private JLabel goUpIcon;
-  private ItemsPresenter itemsPresenter;
+  private ResourcesBrowser itemsPresenter;
   public static FolderImpl currentFolder;
 
   /*
@@ -43,7 +43,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
   private Stack<IResource> parentResources;
   private Stack<JButton> hiddenItems;
 
-  BreadcrumbView(ItemsPresenter itemsPresenter) {
+  BreadcrumbView(ResourcesBrowser itemsPresenter) {
     setOpaque(true);
     // setBackground(Color.green);
 
@@ -122,7 +122,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
           // Present the resources (children) of the items
           if (!parentResources.isEmpty()) {
-            itemsPresenter.presentFolderItems(parentResources.peek().getId());
+            itemsPresenter.presentResources(parentResources.peek().getId());
           }
 
           // Revalidate toolBar view and refresh
@@ -213,7 +213,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter {
 
         // Present the resources (children) of the items
         if (!parentResources.isEmpty()) {
-          itemsPresenter.presentFolderItems(parentResources.peek().getId());
+          itemsPresenter.presentResources(parentResources.peek().getId());
         }
 
         // Revalidate toolBar view and refresh

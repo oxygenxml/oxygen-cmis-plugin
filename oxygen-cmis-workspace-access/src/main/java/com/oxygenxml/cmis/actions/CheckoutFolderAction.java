@@ -10,7 +10,7 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.ui.ItemListView;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
  * Describes the cancel checkout action on a folder by extending the
@@ -24,7 +24,7 @@ public class CheckoutFolderAction extends AbstractAction {
   // The resource that will receive
   private IResource resource = null;
   private IResource currentParent = null;
-  private ItemsPresenter itemsPresenter = null;
+  private ResourcesBrowser itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
@@ -35,7 +35,7 @@ public class CheckoutFolderAction extends AbstractAction {
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  public CheckoutFolderAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public CheckoutFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
 
     super("Check out");
     this.resource = resource;

@@ -22,7 +22,7 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.ui.CheckinDocDialog;
 import com.oxygenxml.cmis.ui.CreateDocDialog;
 import com.oxygenxml.cmis.ui.ItemListView;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -39,7 +39,7 @@ public class CheckinDocumentAction extends AbstractAction {
   // The resource that will receive
   private IResource resource = null;
   private IResource currentParent = null;
-  private ItemsPresenter itemsPresenter = null;
+  private ResourcesBrowser itemsPresenter = null;
   private String versioningState;
   private String commitMessage;
   private CheckinDocDialog inputDialog;
@@ -53,7 +53,7 @@ public class CheckinDocumentAction extends AbstractAction {
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  public CheckinDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public CheckinDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Check in");
 
     this.resource = resource;

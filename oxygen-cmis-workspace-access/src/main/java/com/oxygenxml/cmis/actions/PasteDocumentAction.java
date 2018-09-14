@@ -19,7 +19,7 @@ import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
  * Describes the delete folder action on a document by extending the
@@ -34,7 +34,7 @@ public class PasteDocumentAction extends AbstractAction {
   // Parent of tht resource
   private IResource currentParent;
   // Presenter to update the content of that parent
-  private ItemsPresenter itemsPresenter;
+  private ResourcesBrowser itemsPresenter;
 
   /**
    * Constructor that gets the resource (where to paste), currentParent of that
@@ -44,7 +44,7 @@ public class PasteDocumentAction extends AbstractAction {
    * @param currentParent
    * @param itemsPresenter
    */
-  public PasteDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public PasteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
     super("Paste document");
 
@@ -139,7 +139,7 @@ public class PasteDocumentAction extends AbstractAction {
         CMISAccess.getInstance().createResourceController().addToFolder(((FolderImpl) resource).getFolder(), copiedDoc);
 
         // Presenter the new content of the current parent
-        itemsPresenter.presentFolderItems(currentParent.getId());
+        itemsPresenter.presentResources(currentParent.getId());
 
       } catch (Exception ev) {
 

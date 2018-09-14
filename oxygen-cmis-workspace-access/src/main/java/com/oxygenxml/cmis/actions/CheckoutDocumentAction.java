@@ -14,7 +14,7 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.ui.ItemListView;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
  * Describes the check out action on a document by extending the AbstractAction
@@ -28,7 +28,7 @@ public class CheckoutDocumentAction extends AbstractAction {
   // The resource that will receive
   private IResource resource = null;
   private IResource currentParent = null;
-  private ItemsPresenter itemsPresenter = null;
+  private ResourcesBrowser itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
@@ -39,7 +39,7 @@ public class CheckoutDocumentAction extends AbstractAction {
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  public CheckoutDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public CheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Check out");
 
     this.resource = resource;

@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
  * Describes how a document is renamed by using the user input from
@@ -21,7 +21,7 @@ public class RenameDocumentAction extends AbstractAction {
 
   private IResource resource = null;
   private IResource currentParent = null;
-  private ItemsPresenter itemsPresenter = null;
+  private ResourcesBrowser itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
@@ -32,7 +32,7 @@ public class RenameDocumentAction extends AbstractAction {
    * 
    * @see com.oxygenxml.cmis.core.model.IResource
    */
-  public RenameDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public RenameDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Rename");
 
     this.resource = resource;

@@ -8,7 +8,6 @@ import java.net.URL;
 
 import javax.swing.JPanel;
 
-import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 
 /**
@@ -20,15 +19,15 @@ import com.oxygenxml.cmis.core.model.IResource;
  */
 public class ControlComponents extends JPanel {
   // Repository component
-  private RepoComboBoxView repoComboBox;
+  private final RepoComboBoxView repoComboBox;
   // Documents and Folders componenet
-  private ItemListView itemsPanel;
+  private final ItemListView itemsPanel;
   // Breadcrumb component
-  private BreadcrumbView breadcrumbList;
+  private final BreadcrumbView breadcrumbList;
   // Server component
-  private ServerView serverPanel;
+  private final ServerView serverPanel;
   // Search panel component
-  private SearchView searchPanel;
+  private final SearchView searchPanel;
 
   /**
    * Receives the tab presenter to know where to present
@@ -38,22 +37,16 @@ public class ControlComponents extends JPanel {
   public ControlComponents(TabsPresenter tabs) {
 
     // Configure the breadcrumb for initialization
-    breadcrumbList = new BreadcrumbView(new ItemsPresenter() {
+    breadcrumbList = new BreadcrumbView(new ResourcesBrowser() {
 
       @Override
-      public void presentItems(URL connectionInfo, String repositoryID) {
-        itemsPanel.presentItems(connectionInfo, repositoryID);
+      public void presentResources(URL connectionInfo, String repositoryID) {
+        itemsPanel.presentResources(connectionInfo, repositoryID);
       }
 
       @Override
-      public void presentFolderItems(String folderID) {
-        itemsPanel.presentFolderItems(folderID);
-      }
-
-      @Override
-      public void presentFolderItems(IFolder folder) {
-
-        itemsPanel.presentFolderItems(folder);
+      public void presentResources(String folderID) {
+        itemsPanel.presentResources(folderID);
       }
 
       @Override

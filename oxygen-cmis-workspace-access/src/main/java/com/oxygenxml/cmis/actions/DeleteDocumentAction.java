@@ -10,7 +10,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.ui.DeleteDocDialog;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -29,7 +29,7 @@ public class DeleteDocumentAction extends AbstractAction {
   // Parent of that resource
   private IResource currentParent;
   // Presenter to be able to update the content of the parent
-  private ItemsPresenter itemsPresenter;
+  private ResourcesBrowser itemsPresenter;
   private DeleteDocDialog inputDialog;
   private String deleteType;
 
@@ -41,7 +41,7 @@ public class DeleteDocumentAction extends AbstractAction {
    * @param currentParent
    * @param itemsPresenter
    */
-  public DeleteDocumentAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public DeleteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
     super("Delete");
 

@@ -13,7 +13,7 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.ui.BreadcrumbView;
 import com.oxygenxml.cmis.ui.ItemListView;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
  * Describes the delete folder action on a document by extending the
@@ -29,7 +29,7 @@ public class DeleteFolderAction extends AbstractAction {
   // Parent of that resource
   private IResource currentParent;
   // Presenter to be able to update the content of the parent
-  private ItemsPresenter itemsPresenter;
+  private ResourcesBrowser itemsPresenter;
 
   /**
    * Constructor that gets the resource to be deleted , currentParent and the
@@ -39,7 +39,7 @@ public class DeleteFolderAction extends AbstractAction {
    * @param currentParent
    * @param itemsPresenter
    */
-  public DeleteFolderAction(IResource resource, IResource currentParent, ItemsPresenter itemsPresenter) {
+  public DeleteFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
     super("Delete");
 

@@ -44,7 +44,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
   // Option of the search (name, title)
   private String option = null;
 
-  public SearchView(ItemsPresenter itemsPresenter) {
+  public SearchView(ResourcesBrowser itemsPresenter) {
     setOpaque(true);
     // setBackground(Color.CYAN);
 

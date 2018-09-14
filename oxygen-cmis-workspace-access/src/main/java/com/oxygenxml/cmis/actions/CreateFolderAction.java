@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
  * Describes the create folder action on a document by extending the
@@ -22,7 +22,7 @@ import com.oxygenxml.cmis.ui.ItemsPresenter;
 public class CreateFolderAction extends AbstractAction {
 
   // Presenter of the items
-  private ItemsPresenter itemsPresenter;
+  private ResourcesBrowser itemsPresenter;
   // Parent folder where new folder will be created
   private IResource currentParent;
 
@@ -33,7 +33,7 @@ public class CreateFolderAction extends AbstractAction {
    * @param currentParent
    * @param itemsPresenter
    */
-  public CreateFolderAction(IResource currentParent, ItemsPresenter itemsPresenter) {
+  public CreateFolderAction(IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Give a name and a native icon
     super("Create Folder", UIManager.getIcon("FileView.directoryIcon"));
 
@@ -72,6 +72,6 @@ public class CreateFolderAction extends AbstractAction {
     }
 
     // Present the updated content of the current folder
-    itemsPresenter.presentFolderItems(currentFolder.getId());
+    itemsPresenter.presentResources(currentFolder.getId());
   }
 }

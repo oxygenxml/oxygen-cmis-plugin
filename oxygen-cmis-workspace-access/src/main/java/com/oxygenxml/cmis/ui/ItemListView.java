@@ -15,7 +15,6 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -68,7 +67,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  * @author bluecc
  *
  */
-public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener, SearchListener {
+public class ItemListView extends JPanel implements ResourcesBrowser, ListSelectionListener, SearchListener {
 
   private static final String SEARCH_RESULTS = "#search.results";
 
@@ -212,7 +211,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * created whenever the list is updated Facade Pattern
    */
   @Override
-  public void presentItems(URL connectionInfo, String repositoryID) {
+  public void presentResources(URL connectionInfo, String repositoryID) {
     try {
       // Get the instance
       CMISAccess instance = CMISAccess.getInstance();
@@ -333,21 +332,13 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   @Override
 
-  public void presentFolderItems(String folderID) {
+  public void presentResources(String folderID) {
 
     installDefaultRenderer();
 
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
     // Present the folder children
     presentResources(new FolderImpl(resourceController.getFolder(folderID)));
-  }
-
-  @Override
-  public void presentFolderItems(IFolder folder) {
-
-    installDefaultRenderer();
-
-    presentResources(folder);
   }
 
   private void installDefaultRenderer() {

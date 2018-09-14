@@ -31,7 +31,7 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.ui.CreateDocDialog;
-import com.oxygenxml.cmis.ui.ItemsPresenter;
+import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.ecss.extensions.commons.ui.OKCancelDialog;
 import ro.sync.exml.editor.re;
@@ -48,7 +48,7 @@ public class CreateDocumentAction extends AbstractAction {
   // Parent of the resource
   private IResource currentParent;
   // Presenter to use to show the resources
-  private ItemsPresenter itemsPresenter;
+  private ResourcesBrowser itemsPresenter;
   // New document created
   private DocumentImpl documentCreated;
   private String versioningState;
@@ -62,7 +62,7 @@ public class CreateDocumentAction extends AbstractAction {
    * @param currentParent
    * @param itemsPresenter
    */
-  public CreateDocumentAction(IResource currentParent, ItemsPresenter itemsPresenter) {
+  public CreateDocumentAction(IResource currentParent, ResourcesBrowser itemsPresenter) {
 
     // Set a name and use a native icon
     super("Create document ", UIManager.getIcon("FileView.fileIcon"));
@@ -185,7 +185,7 @@ public class CreateDocumentAction extends AbstractAction {
     // --------
 
     currentParent.refresh();
-    itemsPresenter.presentFolderItems(currentParent.getId());
+    itemsPresenter.presentResources(currentParent.getId());
   }
 
 }

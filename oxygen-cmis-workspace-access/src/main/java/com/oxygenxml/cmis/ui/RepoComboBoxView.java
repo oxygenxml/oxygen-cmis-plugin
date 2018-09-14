@@ -49,7 +49,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
   private List<Repository> serverReposList;
   // Current URL
   private URL serverURL;
-  private ItemsPresenter itemsPresenter;
+  private ResourcesBrowser itemsPresenter;
   private BreadcrumbPresenter breadcrumbPresenter;
 
   /**
@@ -61,7 +61,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    * @param itemsPresenter
    * @param breadcrumbPresenter
    */
-  RepoComboBoxView(ItemsPresenter itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+  RepoComboBoxView(ResourcesBrowser itemsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
     setOpaque(true);
     //setBackground(Color.cyan);
 
@@ -108,7 +108,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
         System.out.println(selected.getId());
 
         // Present the items with the URL and repository
-        itemsPresenter.presentItems(serverURL, selected.getId());
+        itemsPresenter.presentResources(serverURL, selected.getId());
 
         // Reset the breadcrumb to show new items from repository
         breadcrumbPresenter.resetBreadcrumb(true);
@@ -161,7 +161,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
       if (serverReposList != null && !serverReposList.isEmpty()) {
 
         // Present the items with the URL and repository
-        itemsPresenter.presentItems(serverURL, serverReposList.get(0).getId());
+        itemsPresenter.presentResources(serverURL, serverReposList.get(0).getId());
 
         // Reset the breadcrumb to show new items from repository
         breadcrumbPresenter.resetBreadcrumb(true);
