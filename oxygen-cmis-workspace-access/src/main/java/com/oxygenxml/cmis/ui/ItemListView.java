@@ -69,27 +69,27 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  */
 public class ItemListView extends JPanel implements ItemsPresenter, ListSelectionListener, SearchListener {
 
-  // All the resources recieved
-  private JList<IResource> resourceList;
-  // Popup menu foe each type of element (folder,document)
-  private JPopupMenu menu;
-
-  // Current folder inside
-  private IResource currentParent;
-  private DefaultListCellRenderer regularRenderer;
-  private SearchResultCellRenderer seachRenderer;
-  private int allowCopyAndMove = TransferHandler.MOVE;
-  ContentSearchProvider contentProvider;
+  private static final String SEARCH_RESULTS = "#search.results";
 
   /**
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(ItemListView.class);
 
-  public void setContentProvider(ContentSearchProvider contentProvider) {
-    this.contentProvider = contentProvider;
-    contentProvider.addSearchListener(this);
-  }
+  /**
+   * The resource for which we currently present its children.
+   */
+  private transient IResource currentParent;
+  /**
+   * All the children to present.
+   */
+  private final JList<IResource> resourceList;
+  
+  private static final  int COPY_PERMISSIONS = TransferHandler.MOVE;
+  /**
+   * Search support.
+   */
+  private ContentSearcher contentProvider;
 
   /**
    * Constructor that gets the tabPresenter to show documents in tabs and
@@ -98,10 +98,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param tabsPresenter
    * @param breadcrumbPresenter
    */
-  ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+  public ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
 
     // Create the listItem
-    resourceList = new JList<IResource>();
+    resourceList = new JList<>();
     resourceList.setSelectedIndex(0);
     resourceList.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     resourceList.addListSelectionListener(this);
@@ -114,7 +114,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
      */
     resourceList.setDragEnabled(true);
     resourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    resourceList.setTransferHandler(new ToTransferHandler(resourceList, allowCopyAndMove));
+    resourceList.setTransferHandler(new ToTransferHandler(resourceList, COPY_PERMISSIONS));
     resourceList.setDropMode(DropMode.ON_OR_INSERT);
 
     /*
@@ -126,50 +126,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
      * 
      * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
      */
-    regularRenderer = new DefaultListCellRenderer() {
-      @Override
-      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-          boolean cellHasFocus) {
-
-        Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-        if (component instanceof JLabel) {
-
-          String renderText = "";
-
-          if (value != null) {
-            IResource resource = ((IResource) value);
-            // Cast in order to use the methods from IResource interface
-            renderText = resource.getDisplayName();
-            ((JLabel) component).setText(renderText);
-
-            // If it's an instance of custom type of Folder
-            if ((IResource) value instanceof FolderImpl) {
-
-              ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
-
-            } else if ((IResource) value instanceof DocumentImpl) {
-              // ---------Use Oxygen Icons
-              try {
-                ((JLabel) component).setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
-                    .getIconDecoration(new URL("http://localhost/" + resource.getDisplayName())));
-              } catch (MalformedURLException e) {
-                // If it's an instance of custom type of Folder
-                // Set the native icon to the component
-                ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
-
-                e.printStackTrace();
-              }
-              // ---------
-            }
-
-          }
-        }
-
-        return component;
-      }
-    };
-    resourceList.setCellRenderer(regularRenderer);
+    resourceList.setCellRenderer(new DefaultListCellRendererExtension());
     /*
      * Add listener to the entire list
      * 
@@ -177,98 +134,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
      * 
      * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
      */
-    resourceList.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(final MouseEvent e) {
-        IResource currentItem = null;
-        // Get the location of the item using location of the click
-        int itemIndex = resourceList.locationToIndex(e.getPoint());
-
-        if (itemIndex != -1) {
-
-          // Get the current item
-          currentItem = resourceList.getModel().getElementAt(itemIndex);
-
-          // If right click was pressed
-          if (e.getClickCount() == 1 && SwingUtilities.isRightMouseButton(e)) {
-            menu = new JPopupMenu();
-
-            // Get the bounds of the item
-            Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
-
-            // Check if the click was outside the visible list
-            if (!cellBounds.contains(e.getPoint())) {
-
-              // Check is has a parent folder for the creation
-              if (currentParent != null) {
-                // Create de menu for the outside list
-                if (!currentParent.getId().equals("#search.results")) {
-                  System.out.println("ID item = " + ((IFolder) currentParent).getId());
-                  System.out.println("Name item!!!! = " + currentParent.getDisplayName());
-                  createExternalListJMenu();
-                }
-              }
-            } else {
-
-              // Set selected on right click
-              resourceList.setSelectedIndex(itemIndex);
-
-              if (currentItem instanceof DocumentImpl) {
-
-                // Create the JMenu for the document
-                createDocumentJMenu(currentItem);
-
-              } else if (currentItem instanceof FolderImpl) {
-
-                // Create the JMenu for the folder
-                createFolderJMenu(currentItem);
-
-              }
-            }
-
-            // Bounds of the click
-            menu.show(resourceList, e.getX(), e.getY());
-
-          }
-        }
-        // Check if user clicked two times
-        if (itemIndex != -1 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-
-          // Check whether the item in the list
-          if (itemIndex != -1) {
-            System.out.println("TO present breadcrumb=" + currentItem.getDisplayName());
-
-            if (!(currentItem instanceof DocumentImpl)) {
-              // Present the next item (folder)
-              breadcrumbPresenter.presentBreadcrumb(currentItem);
-            }
-
-            /*
-             * If it's an document show it on a tab instead of iterating the
-             * children
-             */
-            if (currentItem instanceof DocumentImpl) {
-
-              // Present the document in tabs
-              // JUST FOR DEMO OUTSIDE OXYGEN
-              // tabsPresenter.presentItem(((DocumentImpl)
-              // currentItem).getDoc());
-
-              // Present document in Oxygen
-              new OpenDocumentAction(currentItem).openDocumentPath();
-
-            } else {
-
-              // Present the folder children
-              presentResources(currentItem);
-            }
-
-          }
-        }
-        ;
-
-      }
-    });
+    resourceList.addMouseListener(new ResourceMouseHandler(breadcrumbPresenter));
 
     // Set layout
     setLayout(new BorderLayout(0, 0));
@@ -277,22 +143,29 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   }
 
-  /*
-   * JMenu for outside of the list components
-   */
-  private void createExternalListJMenu() {
+  public void setContentProvider(ContentSearcher contentProvider) {
+    this.contentProvider = contentProvider;
+    contentProvider.addSearchListener(this);
+  }
 
+
+  /**
+   * Populates the contextual menu with generic actions. Used when nothing is selected in the list.
+   */
+  private void addGenericActions(JPopupMenu menu) {
     // Create a document in the current folder
     menu.add(new CreateDocumentAction(currentParent, this));
     // Create a folder in the current folder
     menu.add(new CreateFolderAction(currentParent, this));
   }
 
-  /*
-   * JMenu for the Document
+  /**
+   * Adds the actions that manipulate documents.
+   * 
+   * @param selectedResource The selected resource. The actions must manipulate it.
+   * @param menu The menu to add the actions to.
    */
-  private void createDocumentJMenu(final IResource selectedResource) {
-
+  private void addDocumentActions(final IResource selectedResource, JPopupMenu menu) {
     // CRUD Document
     menu.add(new OpenDocumentAction(selectedResource));
     menu.add(new RenameDocumentAction(selectedResource, currentParent, this));
@@ -301,27 +174,28 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     menu.add(new CheckinDocumentAction(selectedResource, currentParent, this));
     menu.add(new CheckoutDocumentAction(selectedResource, currentParent, this));
     menu.add(new CancelCheckoutDocumentAction(selectedResource, currentParent, this));
-
-    // TODO Check if is removed one reference or all maybe use of
+    
+    // TODO Cristian Check if is removed one reference or all maybe use of
     // removeFromFolder
 
-    // TODO Drag and drop
+    // TODO Cristian Drag and drop
     // Move to Folder
   }
 
-  /*
-   * JMenu for the Folder
+  /**
+   * Adds the actions that manipulate folders.
+   * 
+   * @param selectedResource The selected resource. The actions must manipulate it.
+   * @param menu The menu to add the actions to.
    */
-
-  private void createFolderJMenu(final IResource selectedResource) {
-
+  private void addFolderActions(final IResource selectedResource, JPopupMenu menu) {
     // CRUD Folder
     menu.add(new CreateDocumentAction(selectedResource, this));
     // Create a folder in the current folder
     menu.add(new CreateFolderAction(selectedResource, this));
 
     menu.add(new RenameFolderAction(selectedResource, currentParent, this));
-    // TODO copy all resources postponed
+    // TODO Cristian copy all resources postponed
     menu.add(new CopyFolderAction(selectedResource));
 
     menu.add(new PasteDocumentAction(selectedResource, currentParent, this));
@@ -330,10 +204,9 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     menu.add(new CheckinFolderAction(selectedResource, currentParent, this));
     menu.add(new CheckoutFolderAction(selectedResource, currentParent, this));
     menu.add(new CancelCheckoutFolderAction(selectedResource, currentParent, this));
-
   }
 
-  /*
+  /**
    * Implemented presentItems using connectionInfo and repoID !! Model shall be
    * created whenever the list is updated Facade Pattern
    */
@@ -343,41 +216,55 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
       // Get the instance
       CMISAccess instance = CMISAccess.getInstance();
 
-      boolean connected = false;
-      // Connect
-      UserCredentials uc = null;
-      do {
-        try {
+      connectToRepository(connectionInfo, repositoryID, instance);
+      // Get the rootFolder and set the model
+      Folder rootFolder = instance.createResourceController().getRootFolder();
 
-          // Try to connect to the repository
-          instance.connectToRepo(connectionInfo, repositoryID, uc);
-
-          // Get the rootFolder and set the model
-          ResourceController resourceController = instance.createResourceController();
-
-          Folder rootFolder = resourceController.getRootFolder();
-
-          final FolderImpl origin = new FolderImpl(rootFolder);
-          setFolder(origin);
-
-          connected = true;
-
-        } catch (CmisUnauthorizedException e) {
-
-          // Get the credentials and show login dialog if necessary
-          uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
-          System.out.println("User credit item list" + uc.getUsername());
-        }
-
-      } while (!connected);
-
+      final FolderImpl origin = new FolderImpl(rootFolder);
+      setFolder(origin);
     } catch (UserCanceledException e1) {
-      logger.error(e1, e1);
+      // The user canceled the process.
+      logger.debug(e1, e1);
 
       // Show the exception if there is one
+      // TODO Cristian Pass a parent.
       JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
+  }
 
+  /**
+   * Checks the connection to the server. If the method returns without exception, the connection was successfull.
+   * 
+   * @param connectionInfo URL to the server.
+   * @param repositoryID The ID 
+   * @param instance
+   * 
+   * @throws UserCanceledException Unable to connect and the 
+   */
+  private void connectToRepository(
+      URL connectionInfo, 
+      String repositoryID, 
+      CMISAccess instance) throws UserCanceledException {
+    boolean connected = false;
+    // Connect
+    UserCredentials uc = null;
+    do {
+      try {
+
+        // Try to connect to the repository
+        instance.connectToRepo(connectionInfo, repositoryID, uc);
+        connected = true;
+
+      } catch (CmisUnauthorizedException e) {
+        // Get the credentials and show login dialog if necessary
+        uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
+
+        if (logger.isDebugEnabled()) {
+          logger.debug("User credit item list" + uc.getUsername());
+        }
+      }
+
+    } while (!connected);
   }
 
   /**
@@ -388,7 +275,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   private void setFolder(final FolderImpl origin) {
     DefaultListModel<IResource> model = new DefaultListModel<>();
 
-    installRenderer(origin.getId());
+    installDefaultRenderer();
     model.addElement(origin);
     resourceList.setModel(model);
   }
@@ -399,9 +286,10 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
    * @param resource
    *          the resource to present its children.
    */
+  @Override
   public void presentResources(IResource parentResource) {
     // Install a renderer
-    installRenderer(parentResource.getId());
+    installDefaultRenderer();
 
     presentResourcesInternal(parentResource);
   }
@@ -427,7 +315,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
-        IResource iResource = (IResource) childrenIterator.next();
+        IResource iResource = childrenIterator.next();
         model.addElement(iResource);
 
       }
@@ -446,7 +334,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
   public void presentFolderItems(String folderID) {
 
-    installRenderer(folderID);
+    installDefaultRenderer();
 
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
     // Present the folder children
@@ -456,20 +344,13 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   @Override
   public void presentFolderItems(IFolder folder) {
 
-    installRenderer(folder.getId());
+    installDefaultRenderer();
 
     presentResources(folder);
   }
 
-  private void installRenderer(String id) {
-
-    if (id.equals("#search.results")) {
-      System.out.println("Search?");
-      resourceList.setCellRenderer(seachRenderer);
-    } else {
-      resourceList.setCellRenderer(regularRenderer);
-
-    }
+  private void installDefaultRenderer() {
+    resourceList.setCellRenderer(new DefaultListCellRendererExtension());
   }
 
   @Override
@@ -480,7 +361,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     // Create a rendered by using the custom renderer with the resources from
     // cache (data gotten and the filter(text to search))
-    seachRenderer = new SearchResultCellRenderer(csp, filter);
+    SearchResultCellRenderer seachRenderer = new SearchResultCellRenderer(csp, filter);
     resourceList.setCellRenderer(seachRenderer);
 
     IResource parentResource = new IFolder() {
@@ -496,7 +377,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       @Override
       public String getId() {
-        return "#search.results";
+        return SEARCH_RESULTS;
       }
 
       @Override
@@ -541,4 +422,130 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     presentResourcesInternal(parentResource);
   }
 
+  /**
+   * Mouse interaction support.
+   */
+  private final class ResourceMouseHandler extends MouseAdapter {
+    private final BreadcrumbPresenter breadcrumbPresenter;
+
+    public ResourceMouseHandler(BreadcrumbPresenter breadcrumbPresenter) {
+      this.breadcrumbPresenter = breadcrumbPresenter;
+    }
+    
+    @Override
+    public void mouseClicked(final MouseEvent e) {
+      // Get the location of the item using location of the click
+      int itemIndex = resourceList.locationToIndex(e.getPoint());
+
+      if (itemIndex != -1) {
+        // Get the current item
+        IResource currentItem = resourceList.getModel().getElementAt(itemIndex);
+
+        // If right click was pressed
+        if (e.getClickCount() == 1 && SwingUtilities.isRightMouseButton(e)) {
+          JPopupMenu menu = new JPopupMenu();
+
+          // Get the bounds of the item
+          Rectangle cellBounds = resourceList.getCellBounds(itemIndex, itemIndex);
+
+          // Check if the click was outside the visible list
+          if (!cellBounds.contains(e.getPoint())) {
+            // Check is has a parent folder for the creation
+            if (currentParent != null && 
+                !currentParent.getId().equals(SEARCH_RESULTS)) {
+              if (logger.isDebugEnabled()) {
+                logger.debug("ID item = " + ((IFolder) currentParent).getId());
+                logger.debug("Name item!!!! = " + currentParent.getDisplayName());
+              }
+              addGenericActions(menu);
+            }
+          } else {
+
+            // Set selected on right click
+            resourceList.setSelectedIndex(itemIndex);
+
+            if (currentItem instanceof DocumentImpl) {
+
+              // Create the JMenu for the document
+              addDocumentActions(currentItem, menu);
+
+            } else if (currentItem instanceof FolderImpl) {
+
+              // Create the JMenu for the folder
+              addFolderActions(currentItem, menu);
+
+            }
+          }
+
+          // Bounds of the click
+          menu.show(resourceList, e.getX(), e.getY());
+
+        }
+        
+        // Check if we have a double click.
+        if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+          if (logger.isDebugEnabled()) {
+            logger.debug("TO present breadcrumb=" + currentItem.getDisplayName());
+          }
+          
+          if (currentItem instanceof DocumentImpl) {
+            // Open the document in Oxygen.
+            new OpenDocumentAction(currentItem).openDocumentPath();
+          } else {
+            // Present the next item (folder)
+            breadcrumbPresenter.presentBreadcrumb(currentItem);
+            // Present the folder children.
+            presentResources(currentItem);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Default renderer for resources. 
+   */
+  private static final class DefaultListCellRendererExtension extends DefaultListCellRenderer {
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
+
+      Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+      if (component instanceof JLabel) {
+
+        String renderText = "";
+
+        if (value != null) {
+          IResource resource = ((IResource) value);
+          // Cast in order to use the methods from IResource interface
+          renderText = resource.getDisplayName();
+          ((JLabel) component).setText(renderText);
+
+          // If it's an instance of custom type of Folder
+          if ((IResource) value instanceof FolderImpl) {
+
+            ((JLabel) component).setIcon(UIManager.getIcon("FileView.directoryIcon"));
+
+          } else if ((IResource) value instanceof DocumentImpl) {
+            // ---------Use Oxygen Icons
+            try {
+              ((JLabel) component).setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
+                  .getIconDecoration(new URL("http://localhost/" + resource.getDisplayName())));
+            } catch (MalformedURLException e) {
+              // If it's an instance of custom type of Folder
+              // Set the native icon to the component
+              ((JLabel) component).setIcon(UIManager.getIcon("FileView.fileIcon"));
+
+              logger.error(e, e);
+            }
+            // ---------
+          }
+
+        }
+      }
+
+      return component;
+    }
+  }
 }

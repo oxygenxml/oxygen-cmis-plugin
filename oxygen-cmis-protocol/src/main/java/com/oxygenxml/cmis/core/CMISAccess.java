@@ -56,7 +56,6 @@ public class CMISAccess {
 		cmisAccess.parameters = parameters;
 		// create session
 		cmisAccess.session = factory.createSession(parameters);
-
 		return cmisAccess;
 	}
 
@@ -65,10 +64,10 @@ public class CMISAccess {
 	 * 
 	 * Creates a connection to the given server.
 	 * 
-	 * @param connectionInfo
-	 *            Server location.
-	 * @param repositoryID
-	 *            Repository ID.
+	 * @param connectionInfo Server location.
+	 * @param repositoryID   Repository ID.
+	 *            
+	 * @exception CmisUnauthorizedException Bad credentials.
 	 */
 	public void connectToRepo(URL connectionInfo, String repositoryID, UserCredentials uc)
 			throws CmisUnauthorizedException {
@@ -82,7 +81,6 @@ public class CMISAccess {
 	}
 
 	private void populateParameters(URL connectionInfo, Map<String, String> parameters, UserCredentials uc) {
-		// TODO Ask for credentials. Different implementations SA/Web
 		if (uc != null) {
 			parameters.put(SessionParameter.USER, uc.getUsername());
 			parameters.put(SessionParameter.PASSWORD, String.valueOf(uc.getPassword()));

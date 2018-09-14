@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 /**
@@ -99,7 +98,7 @@ public class CheckinFolderAction extends AbstractAction {
       while (childrenIterator.hasNext()) {
 
         // Get the next child
-        IResource iResource = (IResource) childrenIterator.next();
+        IResource iResource = childrenIterator.next();
 
         // Check if it an instance of custom interface Folder
         if (iResource instanceof FolderImpl) {
@@ -112,7 +111,7 @@ public class CheckinFolderAction extends AbstractAction {
           try {
             if (((DocumentImpl) iResource).isCheckedOut() && ((DocumentImpl) iResource).isPrivateWorkingCopy()) {
               
-              //TODO: add input dialog
+              //TODO Cristian This is a bulk check in. I think we get just one commit message from the user.
               ((DocumentImpl) iResource).checkIn(true, "new comment");
             }
           } catch (Exception ev) {
@@ -138,7 +137,7 @@ public class CheckinFolderAction extends AbstractAction {
       while (childrenIterator.hasNext() && !checkStatus) {
 
         // Get the next child
-        IResource iResource = (IResource) childrenIterator.next();
+        IResource iResource = childrenIterator.next();
 
         // Check if it's a custom type interface FolderImpl
         if (iResource instanceof FolderImpl) {

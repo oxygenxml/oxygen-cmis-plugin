@@ -1,8 +1,6 @@
 package com.oxygenxml.cmis.ui;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
-
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -12,28 +10,19 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.chemistry.opencmis.client.api.Folder;
-//import org.apache.chemistry.opencmis.client.api.ObjectId;
-
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
-import com.oxygenxml.cmis.core.model.IDocument;
-import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.search.SearchDocument;
 import com.oxygenxml.cmis.search.SearchFolder;
-import com.oxygenxml.cmis.storage.SessionStorage;
-import com.oxygenxml.cmis.core.CMISAccess;
 
 /**
  * Search componenet that takes care of the searching for resources
@@ -41,13 +30,13 @@ import com.oxygenxml.cmis.core.CMISAccess;
  * @author bluecc
  *
  */
-public class SearchView extends JPanel implements ContentSearchProvider, SearchPresenter {
+public class SearchView extends JPanel implements ContentSearcher, SearchPresenter {
   /**
    * Objects interested in search events.
    */
 
   // Listeners of the search behavior
-  private List<SearchListener> listeners = new ArrayList<>();
+  private final List<SearchListener> listeners = new ArrayList<>();
 
   private JTextField searchField = null;
   private JButton searchButton = null;
@@ -144,6 +133,7 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
     add(searchButton, c);
   }
 
+  @Override
   public void doSearch(final String searchText) {
     // Get the search results of the query
     List<IResource> queryResults = searchItems(searchText);
@@ -169,6 +159,7 @@ public class SearchView extends JPanel implements ContentSearchProvider, SearchP
    * 
    * @param searchListener
    */
+  @Override
   public void addSearchListener(SearchListener searchListener) {
     listeners.add(searchListener);
   }

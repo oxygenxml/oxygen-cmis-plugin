@@ -27,30 +27,29 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
-import ro.sync.exml.plugin.Plugin;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import sun.swing.DefaultLookup;
 
 public class SearchResultCellRenderer extends JPanel implements ListCellRenderer<IResource> {
-  private JPanel iconPanel;
-  private JLabel iconLabel;
+  private final JPanel iconPanel;
+  private final JLabel iconLabel;
 
-  private JPanel descriptionPanel;
-  private JLabel nameResource;
-  private JLabel propertiesResource;
-  private JLabel lineResource;
-  private JPanel lineResourcePanel;
+  private final JPanel descriptionPanel;
+  private final JLabel nameResource;
+  private final JLabel propertiesResource;
+  private final JLabel lineResource;
+  private final JPanel lineResourcePanel;
 
-  private JPanel notifierPanel;
-  private JLabel notification;
+  private final JPanel notifierPanel;
+  private final JLabel notification;
 
-  private ContentSearchProvider contentProv;
+  private final ContentSearcher contentProv;
 
   // Graphics configurations
   private boolean isSelected;
-  private String matchPattern;
+  private final String matchPattern;
 
-  public SearchResultCellRenderer(ContentSearchProvider contentProvider, String matchPattern) {
+  public SearchResultCellRenderer(ContentSearcher contentProvider, String matchPattern) {
     contentProv = contentProvider;
     this.matchPattern = matchPattern;
 
@@ -66,7 +65,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     // Description panel
     descriptionPanel = new JPanel();
     descriptionPanel.setLayout(new GridBagLayout());
-    GridBagConstraints c = new GridBagConstraints();
+    final GridBagConstraints c = new GridBagConstraints();
 
     c.gridx = 0;
     c.gridy = 0;
@@ -122,7 +121,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     // Initialize the graphics configurations for the cell
     this.isSelected = isSelected;
 
-    ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+    final ResourceController ctrl = CMISAccess.getInstance().createResourceController();
 
     String pathValue = null;
     String notifyValue = null;
@@ -140,7 +139,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     if (value instanceof DocumentImpl && value != null) {
 
-      DocumentImpl doc = ((DocumentImpl) value);
+      final DocumentImpl doc = ((DocumentImpl) value);
       if (doc.getId() != null) {
 
         if (doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
@@ -159,7 +158,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
             iconLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
                 .getIconDecoration(new URL("http://localhost/" + value.getDisplayName())));
 
-          } catch (MalformedURLException e) {
+          } catch (final MalformedURLException e) {
 
             iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
           }
@@ -185,7 +184,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       }
     } else if (value instanceof FolderImpl && value != null) {
 
-      FolderImpl folder = ((FolderImpl) value);
+      final FolderImpl folder = ((FolderImpl) value);
       
       if (folder.getId() != null) {
         iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
@@ -208,7 +207,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     notification.setText(notifyValue);
 
-    JList.DropLocation dropLocation = list.getDropLocation();
+    final JList.DropLocation dropLocation = list.getDropLocation();
     if (dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == index) {
 
       bg = DefaultLookup.getColor(this, ui, "List.dropCellBackground");
@@ -240,7 +239,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       // Check if there is something in searchbar
       if (matchPattern != null) {
         // Split the words entered as keys
-        String[] searchKeys = matchPattern.trim().split("\\s+");
+        final String[] searchKeys = matchPattern.trim().split("\\s+");
 
         // Get the styled HTML splitted
         resultContext = getReadyHTMLSplit(resultContext, searchKeys);
@@ -255,9 +254,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     c.setBackground(background);
 
     if (c instanceof Container) {
-      Component[] components = ((Container) c).getComponents();
+      final Component[] components = ((Container) c).getComponents();
       for (int i = 0; i < components.length; i++) {
-        Component child = components[i];
+        final Component child = components[i];
 
         setBackgroundC(child, background);
       }
@@ -268,116 +267,16 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     c.setForeground(foreground);
 
     if (c instanceof Container) {
-      Component[] components = ((Container) c).getComponents();
+      final Component[] components = ((Container) c).getComponents();
       for (int i = 0; i < components.length; i++) {
-        Component child = components[i];
+        final Component child = components[i];
 
         setForegroundC(child, foreground);
       }
     }
   }
 
-  // public ApplicationListResizeSensitive(boolean forwardSelection) {
-  // super(forwardSelection);
-  //
-  // // The HTML content of the renderers may wrap to the list viewport
-  // bounds, leading to
-  // // a different height for the same value
-  //
-  // // Receives resize events and invalidates the list.
-  // final ComponentAdapter parentComponentListener = new
-  // ComponentAdapter() {
-  //
-  // @Override
-  // public void componentResized(ComponentEvent e) {
-  // size = e.getComponent().getSize();
-  // clearRendererAllocationCache();
-  // }
-  // };
-  //
-  // addHierarchyListener(new HierarchyListener() {
-  // /**
-  // * A reference to the previous linked caret. Used to avoid
-  // clearing the cache too often.
-  // */
-  // private Container oldParent = null;
-  // @Override
-  // public void hierarchyChanged(HierarchyEvent e) {
-  // // Such events can be fired quite often. For example when
-  //// changing the selected tab in a tabbed pane.
-  //
-  // Container parent = getParent();
-  // if (parent != null
-  // // A new parent.
-  // && (parent != oldParent
-  // // Just a precaution. The size of the parent changed. Maybe
-  //// it can happen if inside
-  // // a tabbed pane when switching.
-  // || !ro.sync.basic.util.Equaler.verifyEquals(size,
-  // parent.getSize()))) {
-  // // Avoid linking multiple times.
-  // parent.removeComponentListener(parentComponentListener);
-  // parent.addComponentListener(parentComponentListener);
-  // clearRendererAllocationCache();
-  //
-  // oldParent = parent;
-  // }
-  // }
-  // });
-  // }
 
-  /**
-   * Invalidates the bounds of the cells.
-   */
-  // public void clearRendererAllocationCache() {
-  //
-  // ListCellRenderer cellRenderer = getOriginalCellRenderer();
-  // setCellRenderer(null);
-  // setCellRenderer(cellRenderer);
-  // }
-  // protected void update(String htmlContent, boolean selected, boolean
-  // isHovered, int htmlWidth) {
-  // this.isSelected = selected;
-  // this.isHovered = isHovered;
-  // // Update the colors.
-  //
-  // StringBuilder html = new StringBuilder();
-  // html.append("<html><body>");
-  //
-  // if (htmlWidth == -1) {
-  // htmlWidth = getVisibleListWidth(0);
-  // }
-  //
-  // html.append(" <table cellspacing='" + getRendererTableCellSpacing() + "'
-  // cellpadding='0' width='")
-  // .append(htmlWidth).append("'>");
-  // html.append(htmlContent);
-  // html.append("</table></body></html>");
-  //
-  // // Update the dimensions of the text label.
-  // this.setBackground(UIManager.getColor("TextArea.background"));
-  // this.setText(html.toString());
-  //
-  // View view = (View) this.getClientProperty(BasicHTML.propertyKey);
-  // if (view != null) {
-  // double w = view.getPreferredSpan(View.X_AXIS);
-  // double h = view.getPreferredSpan(View.Y_AXIS);
-  //
-  // // Do not force label size beyond minimum size.
-  // double minimumWidth = this.getMinimumSize().getWidth();
-  // double minimumHeight = this.getMinimumSize().getHeight();
-  // if (w < minimumWidth) {
-  // w = minimumWidth;
-  // }
-  // if (h < minimumHeight) {
-  // h = minimumHeight;
-  // }
-  //
-  // this.setPreferredSize(new Dimension((int) w, (int) h));
-  // } else {
-  // this.setPreferredSize(new Dimension(10, 10));
-  // }
-  // }
 
   /**
    * Matcher used to get all the star and end indexes for replacing the original
@@ -389,8 +288,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
    * @return The styled string to be showed
    */
   static String getReadyHTMLSplit(String context, String[] searchKeys) {
-    String contextToSplit = context;
-    StringBuffer stBuffer = new StringBuffer(contextToSplit);
+    final String contextToSplit = context;
+    final StringBuffer stBuffer = new StringBuffer(contextToSplit);
     String styledMatch = "";
 
     // System.out.println("COntext=" + stBuffer.toString() + " Size =" +
@@ -398,26 +297,26 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
     // Concatenate all the keys from the search
     String regex = "";
-    for (String string : searchKeys) {
+    for (final String string : searchKeys) {
       regex += string + "|";
     }
 
     // Use a stack to store data because we will show them from the back in
     // order to not destroy the original string
-    Stack<ObjectFound> foundObjects = new Stack<ObjectFound>();
+    final Stack<ObjectFound> foundObjects = new Stack<ObjectFound>();
 
     // Matters to preserve the order of the keys
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(stBuffer.toString());
+    final Pattern pattern = Pattern.compile(regex);
+    final Matcher matcher = pattern.matcher(stBuffer.toString());
 
     // While some results are found
     while (matcher.find()) {
-      String found = matcher.group();
+      final String found = matcher.group();
 
       // There is data
       if (!found.equals("")) {
-        int startIndex = matcher.start();
-        int endIndex = matcher.end();
+        final int startIndex = matcher.start();
+        final int endIndex = matcher.end();
 
         // Create a new object
         foundObjects.push(new ObjectFound(startIndex, endIndex, found.trim()));
@@ -431,7 +330,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     // Iterate all the objects from the stack
     while (!foundObjects.isEmpty()) {
 
-      ObjectFound element = foundObjects.peek();
+      final ObjectFound element = foundObjects.peek();
       styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + element.getContent() + "</nobr>";
       // System.out.println("Index from list=" + element.getStartIndex());
       // System.out.println("Till = " + element.getEndIndex() + " The key =" +
@@ -453,9 +352,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
    * @return
    */
   public static String escapeHTML(String s) {
-    StringBuilder out = new StringBuilder(Math.max(16, s.length()));
+    final StringBuilder out = new StringBuilder(Math.max(16, s.length()));
     for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
+      final char c = s.charAt(i);
       if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
         out.append("&#");
         out.append((int) c);

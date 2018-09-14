@@ -3,7 +3,10 @@ package com.oxygenxml.cmis.ui;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 
-public interface ContentSearchProvider {
+/**
+ *  Search support.
+ */
+public interface ContentSearcher {
 
   String getLineDoc(IResource doc, String matchPattern);
   String getPath(IResource doc,ResourceController ctrl);

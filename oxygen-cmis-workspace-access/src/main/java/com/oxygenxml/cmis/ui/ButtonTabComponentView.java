@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -49,11 +48,12 @@ public class ButtonTabComponentView extends JPanel {
     setOpaque(false);
 
     // make JLabel read titles from JTabbedPane
-    JLabel label = new JLabel() {
+    final JLabel label = new JLabel() {
+      @Override
       public String getText() {
 
         // Get the index
-        int i = pane.indexOfTabComponent(ButtonTabComponentView.this);
+        final int i = pane.indexOfTabComponent(ButtonTabComponentView.this);
         if (i != -1) {
           return pane.getTitleAt(i);
         }
@@ -66,7 +66,7 @@ public class ButtonTabComponentView extends JPanel {
     label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
     // Tab button
-    JButton button = new TabButton();
+    final JButton button = new TabButton();
     add(button);
 
     // Add more space to the top of the component
@@ -81,7 +81,7 @@ public class ButtonTabComponentView extends JPanel {
    */
   private class TabButton extends JButton implements ActionListener {
     public TabButton() {
-      int size = 17;
+      final int size = 17;
 
       setPreferredSize(new Dimension(size, size));
       setToolTipText("close this tab");
@@ -109,8 +109,9 @@ public class ButtonTabComponentView extends JPanel {
     /**
      * Remove the button on remove and decrease the number of the items in tabs
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
-      int i = pane.indexOfTabComponent(ButtonTabComponentView.this);
+      final int i = pane.indexOfTabComponent(ButtonTabComponentView.this);
       if (i != -1) {
         pane.remove(i);
         TabComponentsView.itemsCounter--;
@@ -118,13 +119,15 @@ public class ButtonTabComponentView extends JPanel {
     }
 
     // We don't want to update UI for this button
+    @Override
     public void updateUI() {
     }
 
     // Paint the cross
+    @Override
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
-      Graphics2D g2 = (Graphics2D) g.create();
+      final Graphics2D g2 = (Graphics2D) g.create();
 
       // Shift the image for pressed buttons
       if (getModel().isPressed()) {
@@ -135,7 +138,7 @@ public class ButtonTabComponentView extends JPanel {
       if (getModel().isRollover()) {
         g2.setColor(Color.MAGENTA);
       }
-      int delta = 6;
+      final int delta = 6;
       g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
       g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
       g2.dispose();
@@ -146,25 +149,27 @@ public class ButtonTabComponentView extends JPanel {
   // Set the button border when mouse is inside
   private final static MouseAdapter buttonMouseListener = new MouseAdapter() {
 
+    @Override
     public void mouseEntered(MouseEvent e) {
 
-      Component component = e.getComponent();
+      final Component component = e.getComponent();
 
       if (component instanceof AbstractButton) {
 
-        AbstractButton button = (AbstractButton) component;
+        final AbstractButton button = (AbstractButton) component;
         button.setBorderPainted(true);
       }
     }
 
     // Remove the button border when mouse is outside
+    @Override
     public void mouseExited(MouseEvent e) {
 
-      Component component = e.getComponent();
+      final Component component = e.getComponent();
 
       if (component instanceof AbstractButton) {
 
-        AbstractButton button = (AbstractButton) component;
+        final AbstractButton button = (AbstractButton) component;
 
         button.setBorderPainted(false);
       }

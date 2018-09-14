@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 /**
@@ -42,18 +41,8 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     this.itemsPresenter = itemsPresenter;
 
     DocumentImpl doc = ((DocumentImpl) resource);
-
-    if (doc.canUserCancelCheckout()) {
-      if (doc.isCheckedOut() && doc.isPrivateWorkingCopy()) {
-
-        this.enabled = true;
-
-      } else {
-        this.enabled = false;
-      }
-    } else {
-      this.enabled = false;
-    }
+    boolean canCancel = doc.canUserCancelCheckout() && doc.isCheckedOut() && doc.isPrivateWorkingCopy();
+    setEnabled(canCancel);
   }
 
   /**
@@ -67,7 +56,7 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    DocumentImpl doc = ((DocumentImpl) resource);
+    final DocumentImpl doc = ((DocumentImpl) resource);
 
     // Try to do the cancel checkout
     try {
@@ -84,9 +73,11 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
         itemsPresenter.presentResources(currentParent);
       }
 
-    } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException ev) {
+    } catch (final org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException ev) {
 
       // Show the exception if there is one
+      // TODO Cristian Dialogs need a parent to ensure the proper hierarchy. For example, if the parent is missing,
+      // the dialog might end up on the wrong screen.
       JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }
   }

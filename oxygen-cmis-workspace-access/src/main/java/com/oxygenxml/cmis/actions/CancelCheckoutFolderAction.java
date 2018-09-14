@@ -1,7 +1,6 @@
 package com.oxygenxml.cmis.actions;
 
 import java.awt.event.ActionEvent;
-
 import java.util.Iterator;
 
 import javax.swing.AbstractAction;
@@ -10,7 +9,6 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
 
 /**
@@ -43,6 +41,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
+    // TODO Cristian Use setEnabled() intead. All should actions do this.
     if (checkCanCancelCheckoutFolder(resource)) {
 
       this.enabled = true;
@@ -102,7 +101,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
       while (childrenIterator.hasNext()) {
 
         // Get the next child
-        IResource iResource = (IResource) childrenIterator.next();
+        IResource iResource = childrenIterator.next();
 
         // Check if it's a custom type interface FolderImpl
         if (iResource instanceof FolderImpl) {
@@ -141,7 +140,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
       while (childrenIterator.hasNext() && !checkStatus) {
 
         // Get the next child
-        IResource iResource = (IResource) childrenIterator.next();
+        IResource iResource = childrenIterator.next();
 
         // Check if it's a custom type interface FolderImpl
         if (iResource instanceof FolderImpl) {

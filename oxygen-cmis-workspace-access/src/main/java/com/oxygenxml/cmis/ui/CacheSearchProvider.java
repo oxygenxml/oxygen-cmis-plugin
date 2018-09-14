@@ -2,22 +2,17 @@ package com.oxygenxml.cmis.ui;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
-import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
-import com.icl.saxon.exslt.Date;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-
-import ro.sync.exml.editor.re;
 
 /**
  * Class thats gets the line asynchronously and then repainting the component of
@@ -26,17 +21,17 @@ import ro.sync.exml.editor.re;
  * @author bluecc
  *
  */
-public class CacheSearchProvider implements ContentSearchProvider {
+public class CacheSearchProvider implements ContentSearcher {
 
-  private ContentSearchProvider searchProvider;
-  private JList<IResource> list;
+  private final ContentSearcher searchProvider;
+  private final JList<IResource> list;
 
-  private HashMap<String, String> cacheLine;
-  private HashMap<String, String> cachePath;
-  private HashMap<String, String> cacheProperties;
-  private HashMap<String, String> cacheName;
+  private final HashMap<String, String> cacheLine;
+  private final HashMap<String, String> cachePath;
+  private final HashMap<String, String> cacheProperties;
+  private final HashMap<String, String> cacheName;
 
-  private Timer timer = new Timer(false);
+  private final Timer timer = new Timer(false);
 
   /**
    * Initialize the data
@@ -44,7 +39,7 @@ public class CacheSearchProvider implements ContentSearchProvider {
    * @param searchProvider
    * @param list
    */
-  CacheSearchProvider(ContentSearchProvider searchProvider, JList<IResource> list) {
+  CacheSearchProvider(ContentSearcher searchProvider, JList<IResource> list) {
     cacheLine = new HashMap<>();
     cachePath = new HashMap<>();
     cacheProperties = new HashMap<>();
