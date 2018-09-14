@@ -1,20 +1,19 @@
 package com.oxygenxml.cmis.actions;
 
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.JLabel;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 import com.oxygenxml.cmis.core.CMISAccess;
-import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.ui.DeleteDocDialog;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
+
+import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes the delete document action on a document by extending the
@@ -31,7 +30,7 @@ public class DeleteDocumentAction extends AbstractAction {
   private IResource currentParent;
   // Presenter to be able to update the content of the parent
   private ItemsPresenter itemsPresenter;
-  private DeleteDocInputPanel inputPanel;
+  private DeleteDocDialog inputDialog;
   private String deleteType;
 
   /**
@@ -56,7 +55,6 @@ public class DeleteDocumentAction extends AbstractAction {
       this.enabled = false;
     }
 
-    inputPanel = new DeleteDocInputPanel();
   }
 
   /**
@@ -71,100 +69,57 @@ public class DeleteDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+    final PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+    final int defaultValueOfResult = -1;
+    int result = defaultValueOfResult;
+
     // Cast to the custom type of Document
-    DocumentImpl doc = ((DocumentImpl) resource);
-    // Get a file name from user
-    String fileName;
-    
-    
+    final DocumentImpl doc = ((DocumentImpl) resource);
+
+    // If status changed result = 0 means cancel and 1 means yes
+    // FOr that a default value in necessarey
     do {
-      fileName = JOptionPane.showInputDialog(null, inputPanel, "myfile.txt");
-    } while (!fileName.trim().equals(doc.getDisplayName()));
-    
-    try {
-      deleteType = inputPanel.getDeleteType();
+      // Create the input dialog
+      inputDialog = new DeleteDocDialog((JFrame) pluginWorkspace.getParentFrame());
 
-      // Try to delete <Code>deleteOneVersionDocument</Code>
-      if (deleteType.equals("SINGLE")) {
+      deleteType = inputDialog.getDeleteType();
+      result = inputDialog.getResult();
 
-        // Commit the deletion
-        CMISAccess.getInstance().createResourceController().deleteOneVersionDocument(doc.getDoc());
-
-      } else if (deleteType.equals("ALL")) {
-
-        // Try to delete <Code>deleteAllVersionsDocument</Code>
-        // Commit the deletion
-        CMISAccess.getInstance().createResourceController().deleteAllVersionsDocument(doc.getDoc());
+      if (result == 0) {
+        break;
       }
+    } while (result == defaultValueOfResult);
 
-      // Present the new content of the parent resource
-      if (currentParent.getId().equals("#search.results")) {
-        currentParent.refresh();
+    if (result == 1) {
+      try {
 
-      } else {
-        currentParent.refresh();
-        itemsPresenter.presentResources(currentParent);
+        // Try to delete <Code>deleteOneVersionDocument</Code>
+        if (deleteType.equals("SINGLE")) {
+
+          // Commit the deletion
+          CMISAccess.getInstance().createResourceController().deleteOneVersionDocument(doc.getDoc());
+
+        } else if (deleteType.equals("ALL")) {
+
+          // Try to delete <Code>deleteAllVersionsDocument</Code>
+          // Commit the deletion
+          CMISAccess.getInstance().createResourceController().deleteAllVersionsDocument(doc.getDoc());
+        }
+
+        // Present the new content of the parent resource
+        if (currentParent.getId().equals("#search.results")) {
+          currentParent.refresh();
+
+        } else {
+          currentParent.refresh();
+          itemsPresenter.presentResources(currentParent);
+        }
+
+      } catch (final Exception ev) {
+
+        // Show the exception if there is one
+        JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
       }
-
-    } catch (Exception ev) {
-
-      // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
     }
-  }
-}
-
-class DeleteDocInputPanel extends JPanel implements ActionListener {
-  private JLabel messageLabel;
-  private JRadioButton radioItemAll;
-  private JRadioButton radioItemSingle;
-  private JPanel radioPanel;
-
-  private String deleteType;
-
-  public DeleteDocInputPanel() {
-    radioPanel = new JPanel(new GridLayout(1, 2));
-    messageLabel = new JLabel("Enter the name of the doc: ");
-
-    setLayout(new GridLayout(1, 2, 0, 0));
-    add(messageLabel);
-
-    // Delete all versions
-    radioItemAll = new JRadioButton("All versions");
-    radioItemAll.setActionCommand("ALL");
-    radioItemAll.addActionListener(this);
-    // Set selected
-    radioItemAll.setSelected(true);
-    deleteType = "ALL";
-
-    // MINOR
-    radioItemSingle = new JRadioButton("Single version");
-    radioItemSingle.setActionCommand("SINGLE");
-    radioItemSingle.addActionListener(this);
-
-    radioPanel.add(radioItemAll);
-    radioPanel.add(radioItemSingle);
-
-    add(radioPanel);
-  }
-
-  @Override
-  public void actionPerformed(ActionEvent e) {
-
-    if (e.getActionCommand().equals("ALL")) {
-      radioItemSingle.setSelected(false);
-
-      deleteType = e.getActionCommand();
-    }
-
-    if (e.getActionCommand().equals("SINGLE")) {
-      radioItemAll.setSelected(false);
-
-      deleteType = e.getActionCommand();
-    }
-  }
-
-  public String getDeleteType() {
-    return this.deleteType;
   }
 }

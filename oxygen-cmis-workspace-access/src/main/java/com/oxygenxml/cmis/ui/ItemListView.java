@@ -15,6 +15,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -107,7 +108,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
     resourceList.addListSelectionListener(this);
 
     // Scroller for the listRepo
-    JScrollPane listItemScrollPane = new JScrollPane(resourceList);
+    final JScrollPane listItemScrollPane = new JScrollPane(resourceList);
 
     /*
      * Drag and drop move item
@@ -305,13 +306,13 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
     System.out.println("Current item=" + parentResource.getDisplayName());
     // Get all the children of the item in an iterator
-    Iterator<IResource> childrenIterator = parentResource.iterator();
+    final Iterator<IResource> childrenIterator = parentResource.iterator();
 
     // Iterate them till it has a child
     if (childrenIterator != null) {
 
       // Define a model for the list in order to render the items
-      DefaultListModel<IResource> model = new DefaultListModel<>();
+      final DefaultListModel<IResource> model = new DefaultListModel<>();
 
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
@@ -357,14 +358,14 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
   public void searchFinished(String filter, final List<IResource> resources) {
 
     // Provides the threads needed for async response
-    CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
+    final CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
 
     // Create a rendered by using the custom renderer with the resources from
     // cache (data gotten and the filter(text to search))
     SearchResultCellRenderer seachRenderer = new SearchResultCellRenderer(csp, filter);
     resourceList.setCellRenderer(seachRenderer);
 
-    IResource parentResource = new IFolder() {
+    final IResource parentResource = new IFolder() {
       @Override
       public Iterator<IResource> iterator() {
         return resources.iterator();
@@ -413,7 +414,7 @@ public class ItemListView extends JPanel implements ItemsPresenter, ListSelectio
 
       @Override
       public void removeFromModel(IResource resource) {
-        int index = ((DefaultListModel<IResource>) resourceList.getModel()).indexOf(resource);
+        final int index = ((DefaultListModel<IResource>) resourceList.getModel()).indexOf(resource);
         ((DefaultListModel<IResource>) resourceList.getModel()).remove(index);
 
       }

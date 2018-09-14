@@ -5,20 +5,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.ui.CheckinDocDialog;
+import com.oxygenxml.cmis.ui.CreateDocDialog;
 import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ItemsPresenter;
+
+import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes the check in action on a document by extending the AbstractAction
@@ -34,7 +41,8 @@ public class CheckinDocumentAction extends AbstractAction {
   private IResource currentParent = null;
   private ItemsPresenter itemsPresenter = null;
   private String versioningState;
-  private CheckInDocInputPanel inputPanel;
+  private String commitMessage;
+  private CheckinDocDialog inputDialog;
 
   /**
    * Constructor that receives the resource to process
@@ -65,7 +73,6 @@ public class CheckinDocumentAction extends AbstractAction {
       this.enabled = false;
     }
 
-    inputPanel = new CheckInDocInputPanel();
   }
 
   /**
@@ -79,93 +86,55 @@ public class CheckinDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    String message = JOptionPane.showInputDialog(null, inputPanel, "New comment here");
-    versioningState = inputPanel.getVersioningState();
+    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+    int result = 0;
 
-    boolean majorCheckin = versioningState.equals("MAJOR") ? true : false;
-    System.out.println("Version major?=" + majorCheckin);
-    // The id received of the object after the check in
-    ObjectId res = null;
+    // A comment in mandatory
+    do {
+      // Create the input dialog
+      inputDialog = new CheckinDocDialog((JFrame) pluginWorkspace.getParentFrame());
+      commitMessage = inputDialog.getCommitMessage();
+      versioningState = inputDialog.getVersioningState();
+      result = inputDialog.getResult();
 
-    // Cast to the custom interface to use its methods
-    DocumentImpl doc = ((DocumentImpl) resource);
-
-    // Try to <Code>checkIn</Code>
-    try {
-
-      // Commit the <Code>checkIn</Code> and Get the ObjectId
-      res = (ObjectId) doc.checkIn(majorCheckin, message);
-
-      if (currentParent.getId().equals("#search.results")) {
-        // currentParent.refresh();
-        ((IFolder) currentParent).removeFromModel(resource);
-
-        Document checkedInResource = CMISAccess.getInstance().createResourceController().getDocument(res.getId());
-        ((IFolder) currentParent).addToModel(checkedInResource);
-      } else {
-        currentParent.refresh();
-        itemsPresenter.presentResources(currentParent);
+      if (result == 0) {
+        break;
       }
+    } while (commitMessage == null);
 
-    } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
+    // Only if the action was not canceled
+    if (result != 0) {
+      boolean majorCheckin = versioningState.equals("MAJOR") ? true : false;
+      System.out.println("Version major?=" + majorCheckin);
 
-      // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+      // The id received of the object after the check in
+      ObjectId res = null;
+
+      // Cast to the custom interface to use its methods
+      DocumentImpl doc = ((DocumentImpl) resource);
+
+      // Try to <Code>checkIn</Code>
+      try {
+
+        // Commit the <Code>checkIn</Code> and Get the ObjectId
+        res = (ObjectId) doc.checkIn(majorCheckin, commitMessage);
+
+        if (currentParent.getId().equals("#search.results")) {
+          // currentParent.refresh();
+          ((IFolder) currentParent).removeFromModel(resource);
+
+          Document checkedInResource = CMISAccess.getInstance().createResourceController().getDocument(res.getId());
+          ((IFolder) currentParent).addToModel(checkedInResource);
+        } else {
+          currentParent.refresh();
+          itemsPresenter.presentResources(currentParent);
+        }
+
+      } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
+
+        // Show the exception if there is one
+        JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+      }
     }
-  }
-}
-
-class CheckInDocInputPanel extends JPanel implements ActionListener {
-  private JLabel versionLabel;
-  private JRadioButton radioItemMajor;
-  private JRadioButton radioItemMinor;
-  private JPanel radioPanel;
-
-  private String versioningState;
-
-  public CheckInDocInputPanel() {
-    radioPanel = new JPanel(new GridLayout(1, 2));
-    versionLabel = new JLabel("Enter the message: ");
-
-    setLayout(new GridLayout(1, 2, 0, 0));
-    add(versionLabel);
-
-    // MAJOR
-    radioItemMajor = new JRadioButton("Major");
-    radioItemMajor.setActionCommand("MAJOR");
-    radioItemMajor.addActionListener(this);
-    // Set selected
-    radioItemMajor.setSelected(true);
-    versioningState = "MAJOR";
-
-    // MINOR
-    radioItemMinor = new JRadioButton("Minor");
-    radioItemMinor.setActionCommand("MINOR");
-    radioItemMinor.addActionListener(this);
-
-    radioPanel.add(radioItemMajor);
-    radioPanel.add(radioItemMinor);
-
-    add(radioPanel);
-  }
-
-  @Override
-  public void actionPerformed(ActionEvent e) {
-
-    if (e.getActionCommand().equals("MAJOR")) {
-      radioItemMinor.setSelected(false);
-
-      versioningState = e.getActionCommand();
-    }
-
-    if (e.getActionCommand().equals("MINOR")) {
-      radioItemMajor.setSelected(false);
-
-      versioningState = e.getActionCommand();
-    }
-  }
-
-  public String getVersioningState() {
-    return this.versioningState;
   }
 }
