@@ -40,11 +40,24 @@
 	display: inline-block;
 }
 
-#info {
+.warningdiv {
 	text-align: center;
-	font-weight: 400;
+	font-weight: 500;
 	font-family: robotolight, Arial, Helvetica, sans-serif;
 	font-size: 18px;
+}
+
+#messdiv {
+	text-align: center;
+	font-family: robotolight, Arial, Helvetica, sans-serif;
+	font-size: 16px;
+}
+
+#warnhr {
+	border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 #head {
@@ -78,14 +91,14 @@
 	height: 60px;
 	-webkit-animation: spin 1s linear infinite;
 	animation: spin 1s linear infinite;
-  }
+}
   
-  @-webkit-keyframes spin {
+@-webkit-keyframes spin {
 	0% { -webkit-transform: rotate(0deg); }
 	100% { -webkit-transform: rotate(360deg); }
-  }
+}
   
-  @keyframes spin {
+@keyframes spin {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
-  }
+}

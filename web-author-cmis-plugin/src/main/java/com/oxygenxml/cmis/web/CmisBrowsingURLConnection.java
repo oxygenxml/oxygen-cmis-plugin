@@ -52,7 +52,6 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		try {
 			if (this.url.getQuery() != null) {
 				if(this.url.getQuery().contains(CmisActions.OLD_VERSION)) {
-					
 					HashMap<String, String> queryPart = new HashMap<>();
 
 					for (String pair : url.getQuery().split("&")) {

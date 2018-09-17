@@ -3,7 +3,6 @@ package com.oxygenxml.cmis.web;
 import java.net.URL;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.Before;
 import org.junit.Test;
 

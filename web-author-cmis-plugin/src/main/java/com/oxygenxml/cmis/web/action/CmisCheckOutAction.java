@@ -16,7 +16,7 @@ public class CmisCheckOutAction {
 	 * @throws Exception
 	 */
 	public static void checkOutDocument(Document document) throws Exception {
-		
+
 		document = document.getObjectOfLatestVersion(false);
 
 		if (document.isVersionSeriesCheckedOut()) {
@@ -40,6 +40,7 @@ public class CmisCheckOutAction {
 
 		if (!document.isVersionSeriesCheckedOut()) {
 			logger.info("Document isn't checked-out!");
+			
 		} else {
 			document = document.getObjectOfLatestVersion(false);
 			String pwc = document.getVersionSeriesCheckedOutId();

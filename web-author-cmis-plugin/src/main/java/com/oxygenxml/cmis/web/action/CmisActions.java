@@ -10,6 +10,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.EditorListener;
+import com.oxygenxml.cmis.web.TranslationTags;
 
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
@@ -20,6 +21,7 @@ import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
+import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
@@ -31,7 +33,8 @@ public class CmisActions extends AuthorOperationWithResult {
 	private UserCredentials credentials;
 	private Document document;
 	
-	private String oldVersionJson = null;
+	private static String oldVersionJson = null;
+	private static String errorInformation = null;
 
 	public static final String OLD_VERSION = "oldversion";
 	
@@ -48,6 +51,24 @@ public class CmisActions extends AuthorOperationWithResult {
 		return "";
 	}
 
+	private String errorInfoBuilder(String errorType, String errorInfo) {
+		StringBuilder infoBuilder = new StringBuilder();
+
+		infoBuilder.append("{");
+		infoBuilder.append("\"error\"").append(":");
+		infoBuilder.append("\"" + errorType + "\"");
+		
+		if(errorInfo != null) {
+			infoBuilder.append(",");
+			infoBuilder.append("\"message\"").append(":");
+			infoBuilder.append("\"" + errorInfo + "\"");
+		}
+		
+		infoBuilder.append("}");
+
+		return infoBuilder.toString();
+	}
+
 	/**
 	 * Check which action was received and do operation.
 	 * 
@@ -57,40 +78,50 @@ public class CmisActions extends AuthorOperationWithResult {
 	 * @param authorAccess
 	 * @param url
 	 */
-	private void actionManipulator(String actualAction, String actualState, String commitMessage,
-			AuthorAccess authorAccess, String url) {
+	private void actionManipulator(String actualAction, String actualState, String commitMessage, String url,
+			AuthorAccess authorAccess, AuthorDocumentModel model) {
+		
+		PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace())
+				.getResourceBundle();
 
+		oldVersionJson = null;
+		
 		try {
 			if (actualAction.equals(CHECK_OUT)) {
 				CmisCheckOutAction.checkOutDocument(document);
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess().setEditable(true);
 				}
+
+				errorInformation = errorInfoBuilder("you_shall_not_pass", null);
 			}
 			if (actualAction.equals(CANCEL_CHECK_OUT)) {
 				CmisCheckOutAction.cancelCheckOutDocument(document, connection);
 				if (EditorListener.isCheckOutRequired()) {
-					authorAccess.getEditorAccess().setReadOnly(new ReadOnlyReason("Check-out required!"));
+					authorAccess.getEditorAccess()
+							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQ_EDITOR)));
 				}
 			}
 			if (actualAction.equals(CHECK_IN)) {
 				CmisCheckInAction.checkInDocument(document, connection, actualState, commitMessage);
 				if (EditorListener.isCheckOutRequired()) {
-					authorAccess.getEditorAccess().setReadOnly(new ReadOnlyReason("Check-out required!"));
+					authorAccess.getEditorAccess()
+							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQ_EDITOR)));
 				}
 			}
-			if(actualAction.equals(LIST_VERSIONS)) {
+			if (actualAction.equals(LIST_VERSIONS)) {
 				oldVersionJson = ListOldVersionsAction.listOldVersions(document, url);
 			}
 		} catch (Exception e) {
 			logger.info(e.getMessage());
-			logger.info("Invalid object or object URL!");
+			
+			errorInformation = errorInfoBuilder("denied", e.getMessage());
 		}
 	}
 
 	/**
-	 * Get the action from ArgumentsMap, get connection with server
-	 * and call actionManipulator.
+	 * Get the action from ArgumentsMap, get connection with server and call
+	 * actionManipulator.
 	 */
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
@@ -110,10 +141,10 @@ public class CmisActions extends AuthorOperationWithResult {
 		credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
 		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
-		if(urlWithoutContextId.contains(OLD_VERSION) || urlWithoutContextId.contains("?")) {
+		if (urlWithoutContextId.contains(OLD_VERSION) || urlWithoutContextId.contains("?")) {
 			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf("?"));
 		}
-		
+
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException e1) {
@@ -132,12 +163,13 @@ public class CmisActions extends AuthorOperationWithResult {
 		logger.info(" actualState: " + actualState);
 
 		if (!actualAction.isEmpty()) {
-			actionManipulator(actualAction, actualState, commitMessage, authorAccess, urlWithoutContextId);
+			actionManipulator(actualAction, actualState, commitMessage, urlWithoutContextId, authorAccess, model);
 		}
-				
-		if(oldVersionJson != null) {
+
+		if (oldVersionJson != null) {
 			return oldVersionJson;
 		}
-		return null;
+
+		return errorInformation;
 	}
 }

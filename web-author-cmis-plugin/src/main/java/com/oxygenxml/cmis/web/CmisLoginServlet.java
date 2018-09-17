@@ -33,6 +33,7 @@ public class CmisLoginServlet extends WebappServletPluginExtension {
 	@Override
 	public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
 			throws ServletException, IOException {
+		
 		String userId = httpRequest.getSession().getId();
 		String action = httpRequest.getParameter("action");
 

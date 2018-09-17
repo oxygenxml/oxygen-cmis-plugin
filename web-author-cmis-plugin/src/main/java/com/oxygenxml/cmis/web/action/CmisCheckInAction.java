@@ -33,10 +33,10 @@ public class CmisCheckInAction {
 			if (pwc != null) {
 				Document PWC = (Document) connection.getCMISAccess().getSession().getObject(pwc);
 
-				if(commitMessage == null || commitMessage == "null") {
+				if (commitMessage == null || commitMessage == "null") {
 					commitMessage = "";
 				}
-				
+
 				if (actualState.equals(MAJOR_STATE)) {
 					PWC.checkIn(true, null, null, commitMessage);
 				} else {

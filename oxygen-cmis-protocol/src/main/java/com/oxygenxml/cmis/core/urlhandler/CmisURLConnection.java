@@ -13,7 +13,6 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
@@ -234,26 +233,27 @@ public class CmisURLConnection extends URLConnection {
       @Override
       public void close() throws IOException {
         Document document = null;
-        String docUrl = null;
-        boolean newly = false;
+        String documentUrl = null;
+        boolean newDocument = false;
 
         try {
-          docUrl = getURL().toExternalForm();
-          document = (Document) getCMISObject(docUrl);
+          documentUrl = getURL().toExternalForm();
+          document = (Document) getCMISObject(documentUrl);
+          
         } catch (CmisObjectNotFoundException e) {
           // If created document doesn't exist we create one
-          docUrl = createDocument();
-          document = (Document) getCMISObject(docUrl);
-          newly = true;
+          documentUrl = createDocument();
+          document = (Document) getCMISObject(documentUrl);
+          newDocument = true;
         }
 
         // All bytes have been written.
         byte[] byteArray = toByteArray();
-
+        
         ContentStreamImpl contentStream = new ContentStreamImpl(document.getName(),
             BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
             new ByteArrayInputStream(byteArray));
-
+      
         /** 
          * Here we check if document is versionable
          * and do operation.
@@ -282,7 +282,7 @@ public class CmisURLConnection extends URLConnection {
 
           PWC.setContentStream(contentStream, true);
 
-          if (newly) {
+          if (newDocument) {
             PWC.checkIn(true, null, null, " ");
           } else if (wasChecked) {
             PWC.checkIn(false, null, null, " ");
@@ -317,9 +317,8 @@ public class CmisURLConnection extends URLConnection {
     if (mimeType == "application/octet-stream") {
       mimeType = "text/xml";
     }
-
-    Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
     
+    Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
     Document document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType,
         DOC_TYPE, VersioningState.MINOR);
 

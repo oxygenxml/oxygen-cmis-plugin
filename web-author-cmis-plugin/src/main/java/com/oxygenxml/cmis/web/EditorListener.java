@@ -123,7 +123,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 					if (!credentials.getUsername().equals(versionSeriesCheckedOutBy)) {
 						documentModel.getAuthorAccess().getEditorAccess().setReadOnly(new ReadOnlyReason(
-								rb.getMessage(TranslationTags.CHECKED_OUT_BY) + " " + versionSeriesCheckedOutBy));
+								rb.getMessage(TranslationTags.CHECKED_OUT_BY) + " " + versionSeriesCheckedOutBy + "."));
 						documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 								.setPseudoClass(TO_BLOCK);
 					} else {
