@@ -101,7 +101,7 @@ public class ConnectionTestBase {
 	private Map<String, Set<String>> createdDocs = new HashMap<>();
 
 	// Put docs to the memory copy using parent path (folder)
-	protected Document createDocument(Folder parent, String docName, String content)
+	public Document createDocument(Folder parent, String docName, String content)
 			throws UnsupportedEncodingException {
 		ResourceController ctrl = CMISAccess.getInstance().createResourceController();
 
@@ -112,7 +112,7 @@ public class ConnectionTestBase {
 		}
 		docs.add(docName);
 
-		return ctrl.createVersionedDocument(parent, docName, content, "plain/text", "VersionableType",
+		return ctrl.createVersionedDocument(parent, docName, content, "text/plain", "VersionableType",
 				VersioningState.MINOR);
 	}
 

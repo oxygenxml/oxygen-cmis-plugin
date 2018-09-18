@@ -20,16 +20,17 @@ import org.apache.batik.ext.swing.GridBagConstants;
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
 
 /**
- * Dialog thats extends a dialog with cancel and ok button and uses a main panel
- * CheckinInputPanel
+ * Dialog that extends a dialog with cancel and ok buttons and uses a main panel
+ * CheckinInputPanel.
  * 
  * @author bluecc
  *
  */
 public class CheckinDocDialog extends OKCancelDialog {
   // Main inputPanel
-  private CheckinInputPanel inputPanel;
-
+  private final CheckinInputPanel inputPanel;
+ 
+  
   /**
    * The constructor that uses the main frame as a location point
    * 
@@ -55,12 +56,10 @@ public class CheckinDocDialog extends OKCancelDialog {
     setVisible(true);
   }
 
-  // TODO: I doubt this decision
   public String getCommitMessage() {
     return inputPanel.getCommitMessage();
   }
 
-  // TODO: I doubt this decision
   public String getVersioningState() {
     return inputPanel.getVersioningState();
   }
@@ -73,10 +72,15 @@ public class CheckinDocDialog extends OKCancelDialog {
  *
  */
 class CheckinInputPanel extends JPanel implements ActionListener {
-  private JLabel messageLabel, versionLabel;
-  private JTextArea commitArea;
-  private JRadioButton radioItemMajor;
-  private JRadioButton radioItemMinor;
+  private static final String MAJOR_VERSION = "MAJOR";
+  private static final String MINOR_VERSION = "MINOR";
+  private static final String NONE_VERSION = "NONE";
+  
+  private final JLabel messageLabel;
+  private final JLabel versionLabel;
+  private final JTextArea commitArea;
+  private final JRadioButton radioItemMajor;
+  private final JRadioButton radioItemMinor;
 
   private String versioningState;
 
@@ -89,78 +93,59 @@ class CheckinInputPanel extends JPanel implements ActionListener {
 
     // --Message
     messageLabel = new JLabel("Commit message:");
-    // messageLabel.setOpaque(true);
-    // messageLabel.setBackground(Color.BLUE);
+
     final GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
     c.gridy = 0;
-    // c.weightx = 0;
-    // c.ipadx = 10;
     c.gridwidth = 1;
     c.insets = new Insets(1, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
     add(messageLabel, c);
 
-    // --Commit area
+    // Commit area
     commitArea = new JTextArea("Enter your message here", 5, 4);
     commitArea.selectAll();
-    // commitArea.setOpaque(true);
-    // commitArea.setBackground(Color.RED);
     c.gridx = 0;
     c.gridy = 1;
     c.gridwidth = 3;
     c.weightx = 1;
-    // c.ipadx = 10;
-    // c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
     add(commitArea, c);
 
-    // --Version
+    // Version
     versionLabel = new JLabel("Version:");
-    // versionLabel.setOpaque(true);
-    // versionLabel.setBackground(Color.BLUE);
     c.gridx = 0;
     c.gridy = 2;
     c.anchor = GridBagConstants.WEST;
     c.gridwidth = 1;
     c.weightx = 0;
-    // c.ipadx = 10;
-    // c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstants.VERTICAL;
     add(versionLabel, c);
 
-    // --MAJOR
+    // MAJOR
     radioItemMajor = new JRadioButton("Major");
-    // radioItemMajor.setOpaque(true);
-    // radioItemMajor.setBackground(Color.RED);
-    radioItemMajor.setActionCommand("MAJOR");
+    radioItemMajor.setActionCommand(MAJOR_VERSION);
     radioItemMajor.addActionListener(this);
     // Set selected
     radioItemMajor.setSelected(true);
-    versioningState = "MAJOR";
+    versioningState = MAJOR_VERSION;
     c.gridx = 1;
     c.gridy = 2;
     c.gridwidth = 1;
     c.anchor = GridBagConstants.WEST;
     c.weightx = 0.5;
-    // c.ipadx = 10;
-    // c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
     add(radioItemMajor, c);
 
-    // --MINOR
+    // MINOR
     radioItemMinor = new JRadioButton("Minor");
-    // radioItemMinor.setOpaque(true);
-    // radioItemMinor.setBackground(Color.yellow);
-    radioItemMinor.setActionCommand("MINOR");
+    radioItemMinor.setActionCommand(MINOR_VERSION);
     radioItemMinor.addActionListener(this);
     c.anchor = GridBagConstants.WEST;
     c.gridx = 2;
     c.gridy = 2;
     c.gridwidth = 1;
     c.weightx = 0.5;
-    // c.ipadx = 10;
-    // c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
     add(radioItemMinor, c);
 
@@ -178,12 +163,12 @@ class CheckinInputPanel extends JPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
 
-    if (e.getActionCommand().equals("MAJOR")) {
+    if (e.getActionCommand().equals(MAJOR_VERSION)) {
       radioItemMinor.setSelected(false);
       versioningState = e.getActionCommand();
     }
 
-    if (e.getActionCommand().equals("MINOR")) {
+    if (e.getActionCommand().equals(MINOR_VERSION)) {
       radioItemMajor.setSelected(false);
       versioningState = e.getActionCommand();
     }

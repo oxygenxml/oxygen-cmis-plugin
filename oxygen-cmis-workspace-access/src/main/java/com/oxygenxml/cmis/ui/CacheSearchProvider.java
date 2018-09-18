@@ -68,16 +68,15 @@ public class CacheSearchProvider implements ContentSearcher {
             cacheLine.put(doc.getId(), line != null ? line : null);
 
             // Repaint later the component
-            SwingUtilities.invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(doc);
-                Rectangle cellBounds = list.getCellBounds(index, index);
+            SwingUtilities.invokeLater(() -> {
 
-                if (cellBounds != null) {
-                  list.repaint(cellBounds);
-                }
+              int index = ((DefaultListModel<IResource>) list.getModel()).indexOf(doc);
+              Rectangle cellBounds = list.getCellBounds(index, index);
+
+              if (cellBounds != null) {
+                list.repaint(cellBounds);
               }
+
             });
           }
         }
@@ -154,7 +153,7 @@ public class CacheSearchProvider implements ContentSearcher {
       TimerTask task = new TimerTask() {
         @Override
         public void run() {
-          
+
           // Get the line
           String properties = null;
           if (resource instanceof DocumentImpl) {

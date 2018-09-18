@@ -6,7 +6,6 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.SearchController;
-import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
@@ -18,8 +17,8 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  */
 public class SearchDocument {
 
-  private ArrayList<IResource> resultsQueries;
-  private FolderImpl tempFolder;
+  private final ArrayList<IResource> resultsQueries;
+  private final FolderImpl tempFolder;
   private Folder tempRoot;
 
   /**
@@ -30,7 +29,7 @@ public class SearchDocument {
    */
   public SearchDocument(String toSearch, SearchController searchCtrl, String option) {
 
-    String[] searchKeys = toSearch.split("\\s+");
+
 
     this.resultsQueries = new ArrayList<>();
     this.tempFolder = new FolderImpl(CMISAccess.getInstance().createResourceController().getRootFolder());
@@ -38,10 +37,10 @@ public class SearchDocument {
     switch (option) {
 
     case "null":
-      for (String key : searchKeys) {
-        System.out.println("The key= "+key);
-        resultsQueries.addAll(searchCtrl.queryDoc(key));
-      }
+//      for (String key : searchKeys) {
+//        System.out.println("The key= "+key);
+        resultsQueries.addAll(searchCtrl.queryDoc(toSearch));
+//      }
       break;
 
     case "name":

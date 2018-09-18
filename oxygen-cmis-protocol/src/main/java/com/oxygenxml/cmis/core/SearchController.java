@@ -11,6 +11,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -21,6 +22,22 @@ public class SearchController {
 
   public static final int SEARCH_IN_DOCUMENT = 1;
   public static final int SEARCH_IN_FOLDER = 2;
+
+  /**
+   * Logic operators for the search that are supposed to be uppercase
+   * 
+   * @author bluecc
+   *
+   */
+  public enum LogicOperators {
+    AND, OR, NOT;
+    public static boolean contains(String s) {
+      for (LogicOperators choice : values())
+        if (choice.name().equals(s))
+          return true;
+      return false;
+    }
+  };
 
   private ResourceController ctrl;
   private Scanner scanner;
@@ -101,22 +118,25 @@ public class SearchController {
 
   /**
    * Find all the resources and order by name ascending depending on what to
-   * search a cmis:document or folder
+   * search (ALL KEYS) a cmis:document or folder
    * 
    * @param content
    * @param searchObjectTypes
    * @return
    */
-  private List<IResource> queryResource(String content, int searchObjectTypes) {
+  private List<IResource> queryResource(String toSearch, int searchObjectTypes) {
+    String[] searchKeys = toSearch.split("\\s+");
+
     ArrayList<IResource> resources = new ArrayList<>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
     oc.setOrderBy("cmis:name ASC");
     oc.setIncludeAllowableActions(true);
-
+    oc.setIncludeRelationships(IncludeRelationships.BOTH);
+    oc.setIncludePolicies(true);
     String scope = "";
-    
-    // Binary trick 
+
+    // Binary trick
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
       scope = "cmis:document";
     }
@@ -128,24 +148,63 @@ public class SearchController {
       scope += "cmis:folder";
     }
 
-    String where = "cmis:name LIKE '%" + content + "%' OR cmis:description LIKE '%" + content
-        + "%' OR cmis:createdBy LIKE '%" + content + "%'" + "OR CONTAINS ('" + content + "')";
+    // It's necessary to exist only one CONTAINS
+    StringBuilder strBuild = new StringBuilder();
+    strBuild.append("CONTAINS('");
 
+    String searchKey = "";
+    String logicKey = "";
+    String key = "";
+
+    for (int index = 0; index < searchKeys.length; index++) {
+      // Get the current key
+      key = searchKeys[index];
+
+      // Check if it's an operator or not
+      if (LogicOperators.contains(key)) {
+        logicKey = key;
+        // Append logic operator
+        strBuild.append(logicKey);
+
+      } else {
+        searchKey = key;
+        strBuild.append("(cmis:name:" + searchKey + " OR cmis:description:" + searchKey + " OR " + searchKey + ")");
+
+        // Check if the is a next key (The case when there is only a space
+        // between search keys.
+        if (index + 1 < searchKeys.length) {
+          key = searchKeys[index + 1];
+
+          // Check if it's a logic key
+          if (!LogicOperators.contains(key)) {
+            logicKey = "AND";
+            strBuild.append(logicKey);
+          }
+        }
+
+      }
+
+    }
+    strBuild.append("')");
+
+    String where = strBuild.toString();
+    System.out.println("Where statement : " + where);
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, where, false, oc);
 
     for (CmisObject cmisObject : results) {
       IResource res = null;
+
       if (cmisObject instanceof Document) {
         res = new DocumentImpl((Document) cmisObject);
+
       } else {
         res = new FolderImpl((Folder) cmisObject);
       }
 
       resources.add(res);
     }
-    resources = removeBlockedDocFromSearch(resources);
+    return removeBlockedDocFromSearch(resources);
 
-    return resources;
   }
 
   /**
@@ -177,6 +236,7 @@ public class SearchController {
   public List<IResource> queryDoc(String content) {
     return queryResource(content, SEARCH_IN_DOCUMENT);
   }
+
 
   /**
    * Get the results for searching the name and the title in the folders

@@ -3,7 +3,6 @@ package com.oxygenxml.cmis.ui;
 import java.net.URL;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
@@ -16,7 +15,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Utility for getting the user credentials and open the login dialog while
- * credentials are null
+ * credentials are null.
  * 
  * @author bluecc
  *
@@ -26,6 +25,9 @@ public class AuthenticatorUtil {
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(AuthenticatorUtil.class);
+
+  AuthenticatorUtil() {
+  }
 
   /**
    * While the credentials are null show the login dialog
@@ -94,39 +96,40 @@ public class AuthenticatorUtil {
 
     boolean succesLogin = false;
 
-    // While it is not connected
-    while (succesLogin == false) {
-      try {
+    // Try to get the user credentials
+    try {
 
-        try {
-          // Get the credentials for the URL
-          uc = getUserCredentials(serverURL);
+      uc = getUserCredentials(serverURL, uc);
 
-        } catch (UserCanceledException e) {
+      // Check if there are some repositories and set succes
+      if (instance.connectToServerGetRepositories(serverURL, uc) != null) {
 
-          // Exit login dialog
-          break;
-        }
-
-        // Check if there are some repositories and set succes
-        if (instance.connectToServerGetRepositories(serverURL, uc) != null) {
-
-          // Return succes
-          succesLogin = true;
-          return succesLogin;
-
-        }
-
-      } catch (CmisUnauthorizedException e) {
-
-        // Show the exception if there is one
-        JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
+        // Return succes
+        succesLogin = true;
+        return succesLogin;
 
       }
+
+    } catch (CmisUnauthorizedException e) {
+      // Show the exception if there is one
+      logger.error(e);
+
     }
 
     return succesLogin;
 
+  }
+
+  private static UserCredentials getUserCredentials(URL serverURL, UserCredentials uc) {
+    try {
+      // Get the credentials for the URL
+      uc = getUserCredentials(serverURL);
+
+    } catch (UserCanceledException e) {
+      // Exit login dialog
+
+    }
+    return uc;
   }
 
 }

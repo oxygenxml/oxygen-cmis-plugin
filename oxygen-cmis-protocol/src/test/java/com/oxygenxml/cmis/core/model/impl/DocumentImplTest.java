@@ -186,7 +186,18 @@ public class DocumentImplTest extends ConnectionTestBase {
     
     ctrl.deleteAllVersionsDocument(doc);
   }
+  @Test
+  public void testGetProperties() throws UnsupportedEncodingException {
+    Document latest = null;
+    Document doc = ctrl.createDocument(root, "queryTestFile11", "some text", "plain/text");
 
+   System.out.println("Properties:"+ doc.getProperties());
+
+    assertEquals("queryTestFile2", latest.getName());
+    assertNotNull(latest);
+
+    ctrl.deleteAllVersionsDocument(doc);
+  }
   @After
   public void afterMethod() {
     cleanUpDocuments();

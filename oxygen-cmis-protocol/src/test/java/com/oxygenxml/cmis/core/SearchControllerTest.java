@@ -73,7 +73,6 @@ public class SearchControllerTest extends ConnectionTestBase {
     List<IResource> resources = search.queryDoc("myfile");
 
     assertNotNull(resources);
-   
 
     for (IResource iResource : resources) {
       System.out.println("Name:" + ((DocumentImpl) iResource).getDisplayName());
@@ -84,6 +83,37 @@ public class SearchControllerTest extends ConnectionTestBase {
     assertNotNull(resources);
   }
 
+  @Test
+  public void testCaseSensitive() {
+     SearchController search = new SearchController(ctrl);
+     String searchKeys = "Preparation care";
+     List<IResource> resources = search.queryDoc(searchKeys);
+    
+     assertNotNull(resources);
+    
+     for (IResource iResource : resources) {
+     System.out.println("Name:" + ((DocumentImpl)
+     iResource).getDisplayName());
+    
+     }
+    
+     assertNotNull(resources);
+  }
+
+  @Test
+  public void testLogicOperators(){
+    SearchController search = new SearchController(ctrl);
+    String searchKeys = "Preparation AND care ?lower";
+    List<IResource> resources = search.queryDoc(searchKeys);
+   
+    assertNotNull(resources);
+   
+    for (IResource iResource : resources) {
+    System.out.println("Name:" + ((DocumentImpl)
+    iResource).getDisplayName());
+   
+    }
+  }
   @After
   public void afterMethod() {
     ctrl.getSession().clear();
