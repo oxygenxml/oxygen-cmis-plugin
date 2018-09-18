@@ -37,14 +37,38 @@
     
     this.dialog.show();
 
-    this.dialog.onSelect(goog.bind(function (key, e) {
-      if(key === 'yes'){
-        this.editor.getActionsManager().invokeOperation(
-          'com.oxygenxml.cmis.web.action.CmisActions', {
-            action: 'cancelCmisCheckout'
-          }, callback);
-          
-        cmisStatus = false;
-      }
-    }, this));
+    try {
+      this.dialog.onSelect(goog.bind(function (key, e) {
+        if(key === 'yes'){
+          this.editor.getActionsManager().invokeOperation(
+            'com.oxygenxml.cmis.web.action.CmisActions', {
+              action: 'cancelCmisCheckout'
+            }, callback);
+            
+          cmisStatus = false;
+        }
+      }, this));
+    } catch(err){
+      this.dialog = workspace.createDialog();
+      this.dialog.setTitle(tr(msgs.ERROR_TITLE_));
+      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+      this.dialog.setPreferredSize(350, 300);
+
+      var warningDiv = document.createElement('div');
+       warningDiv.setAttribute('class', 'warningdiv');
+      warningDiv.innerHTML = tr(msgs.ERROR_WARN_);
+
+      var messageDiv = document.createElement('div');
+      messageDiv.setAttribute('id', 'messdiv');
+      messageDiv.innerHTML = err.message;
+
+      var warnHr = document.createElement('hr');
+      warnHr.setAttribute('id', 'warnhr');
+
+      this.dialog.getElement().appendChild(warningDiv);
+      this.dialog.getElement().appendChild(warnHr);
+      this.dialog.getElement().appendChild(messageDiv);
+
+      this.dialog.show();
   }
+}

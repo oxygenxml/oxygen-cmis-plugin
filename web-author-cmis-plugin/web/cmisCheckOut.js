@@ -45,7 +45,14 @@ CmisCheckOutAction.prototype.actionPerformed = function (callback) {
 
             var messageDiv = document.createElement('div');
             messageDiv.setAttribute('id', 'messdiv');
-            messageDiv.innerHTML = cause.message;
+
+            var errorMessage = cause.message;
+
+            if(err){
+              errorMessage = err.message;
+            }
+
+            messageDiv.innerHTML = errorMessage;
 
             var warnHr = document.createElement('hr');
             warnHr.setAttribute('id', 'warnhr');

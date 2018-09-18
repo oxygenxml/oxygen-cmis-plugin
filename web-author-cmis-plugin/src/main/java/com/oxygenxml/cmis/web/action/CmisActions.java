@@ -6,6 +6,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
+
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
@@ -65,7 +66,7 @@ public class CmisActions extends AuthorOperationWithResult {
 		}
 		
 		infoBuilder.append("}");
-
+		//new ObjectMapper().writevs
 		return infoBuilder.toString();
 	}
 

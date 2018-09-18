@@ -9,6 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
+		<oxygen.version>20.1.0.1</oxygen.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
@@ -48,7 +49,7 @@
 		<dependency>
 			<groupId>com.oxygenxml</groupId>
 			<artifactId>oxygen-sdk</artifactId>
-			<version>20.1.0.1</version>
+			<version>${oxygen.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
