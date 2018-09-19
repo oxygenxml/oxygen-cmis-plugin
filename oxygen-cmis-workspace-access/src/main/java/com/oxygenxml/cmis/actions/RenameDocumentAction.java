@@ -5,7 +5,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import org.apache.log4j.Logger;
+
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
@@ -18,10 +19,13 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class RenameDocumentAction extends AbstractAction {
-
-  private IResource resource = null;
-  private IResource currentParent = null;
-  private ResourcesBrowser itemsPresenter = null;
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(RenameDocumentAction.class);
+  private transient IResource resource = null;
+  private transient IResource currentParent = null;
+  private transient ResourcesBrowser itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
@@ -55,7 +59,6 @@ public class RenameDocumentAction extends AbstractAction {
 
     // Get input from user
     String getInput = JOptionPane.showInputDialog(null, "Plase enter a name", "myfile");
-    System.out.println("The input=" + getInput);
     // Try to rename
     try {
 

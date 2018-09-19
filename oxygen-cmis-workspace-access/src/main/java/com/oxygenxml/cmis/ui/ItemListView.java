@@ -18,7 +18,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -226,17 +225,14 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       setFolder(origin);
     } catch (UserCanceledException e1) {
       // The user canceled the process.
-      logger.debug(e1, e1);
+      logger.error("Error ", e1);
 
-      // Show the exception if there is one
-      // TODO Cristian Pass a parent.
-      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
   }
 
   /**
    * Checks the connection to the server. If the method returns without
-   * exception, the connection was successfull.
+   * exception, the connection was successful.
    * 
    * @param connectionInfo
    *          URL to the server.
@@ -320,13 +316,14 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
         IResource iResource = childrenIterator.next();
-        // Only if it's not a locked document add to the model
-        if (!(iResource instanceof DocumentImpl && ((DocumentImpl) iResource).isCheckedOut()
-            && !((DocumentImpl) iResource).isPrivateWorkingCopy())) {
 
+        // Only if it's not a PWC document add to the model
+        boolean notPWC = !(iResource instanceof DocumentImpl && ((DocumentImpl) iResource).isCheckedOut()
+            && ((DocumentImpl) iResource).isPrivateWorkingCopy());
+
+        if (notPWC) {
           model.addElement(iResource);
         }
-
       }
 
       // Set the model to the list
@@ -402,7 +399,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
       @Override
       public void addToModel(Document doc) {
-        // TODO: add
+
         ((DefaultListModel<IResource>) resourceList.getModel()).addElement(new DocumentImpl(doc));
       }
 
@@ -514,9 +511,9 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
           // Cast in order to use the methods from IResource interface
           renderText = resource.getDisplayName();
-          
-          //All PWC has a space in the front of the string (Working Copy).
-          comLabel.setText(renderText.replace(" (Working Copy)", "").trim());
+
+          // Set the label for the component
+          comLabel.setText(renderText);
 
           // If it's an instance of custom type of Folder.
           if ((IResource) value instanceof FolderImpl) {
@@ -525,8 +522,8 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
           } else if (resource instanceof DocumentImpl) {
             DocumentImpl doc = ((DocumentImpl) resource);
-            // Check if it's a Private Working Copy.
-            if (doc.isCheckedOut() && doc.isPrivateWorkingCopy()) {
+            // Check if it's checked-out.
+            if (doc.isCheckedOut()) {
 
               comLabel.setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
 

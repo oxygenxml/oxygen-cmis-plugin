@@ -3,17 +3,14 @@ package com.oxygenxml.cmis.actions;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
@@ -24,11 +21,15 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CheckoutDocumentAction extends AbstractAction {
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(CheckoutDocumentAction.class);
 
   // The resource that will receive
-  private IResource resource = null;
-  private IResource currentParent = null;
-  private ResourcesBrowser itemsPresenter = null;
+  private transient IResource resource = null;
+  private transient IResource currentParent = null;
+  private transient ResourcesBrowser itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
@@ -41,23 +42,17 @@ public class CheckoutDocumentAction extends AbstractAction {
    */
   public CheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Check out");
-
+    
+    // Set logger level
+    logger.setLevel(Level.DEBUG);
+    
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
     DocumentImpl doc = ((DocumentImpl) resource);
 
-    if (doc.canUserCheckout()) {
-      if (doc.isCheckedOut()) {
-
-        this.enabled = false;
-
-      } else {
-        this.enabled = true;
-      }
-    }else{
-      this.enabled = false;
-    }
+    boolean isCheckedout = (doc.isCheckedOut() || doc.isPrivateWorkingCopy());
+    setEnabled(doc.canUserCheckout() && !isCheckedout);
   }
 
   /**
@@ -85,7 +80,6 @@ public class CheckoutDocumentAction extends AbstractAction {
       res = doc.checkOut(doc.getDocType());
 
       if (currentParent.getId().equals("#search.results")) {
-        // currentParent.refresh();
         ((IFolder) currentParent).addToModel(res);
         ((IFolder) currentParent).removeFromModel(resource);
       } else {
@@ -96,9 +90,8 @@ public class CheckoutDocumentAction extends AbstractAction {
     } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException ev) {
 
       // SHow the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+      logger.debug("Exception ", ev);
     }
 
-    System.out.println(res);
   }
 }

@@ -4,8 +4,13 @@ import java.awt.event.ActionEvent;
 import java.util.Iterator;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
 
+import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -19,11 +24,16 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CancelCheckoutFolderAction extends AbstractAction {
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(CancelCheckoutFolderAction.class);
 
   // The resource that will receive
-  private IResource resource = null;
-  private IResource currentParent = null;
-  private ResourcesBrowser itemsPresenter = null;
+  private transient IResource resource = null;
+  private transient IResource currentParent = null;
+  private transient ResourcesBrowser itemsPresenter = null;
+  private static ResourceController resourceController = CMISAccess.getInstance().createResourceController();
 
   /**
    * Constructor that receives the resource to process
@@ -35,21 +45,16 @@ public class CancelCheckoutFolderAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CancelCheckoutFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-
     super("Cancel check out");
+
+    // Set logger level
+    logger.setLevel(Level.DEBUG);
+
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
-    // TODO Cristian Use setEnabled() intead. All should actions do this.
-    if (checkCanCancelCheckoutFolder(resource)) {
-
-      this.enabled = true;
-
-    } else {
-      this.enabled = false;
-
-    }
+    setEnabled(checkCanCancelCheckoutFolder(resource));
 
   }
 
@@ -83,8 +88,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
   }
 
   /**
-   * Helper method to iterate and commit the <Code> cancelCheckOut</Code> using
-   * the recursion till the child has new children
+   * Helper method to iterate and commit the <Code> cancelCheckOut</Code>
    * 
    * @param resource
    * @see com.oxygenxml.cmis.core.model.model.impl.FolderImpl
@@ -100,44 +104,80 @@ public class CancelCheckoutFolderAction extends AbstractAction {
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
 
-        // Get the next child
-        IResource iResource = childrenIterator.next();
-
-        // Check if it's a custom type interface FolderImpl
-        if (iResource instanceof FolderImpl) {
-
-          // Call the helper method used for recursion
-          cancelCheckoutFolder(iResource);
-
-        } else if (iResource instanceof DocumentImpl) {
-
-          // If it is a document type of custom interface
-          try {
-
-            // Commit the <Code>cancelCheckOout()</Code>
-            if (((DocumentImpl) iResource).isCheckedOut() && ((DocumentImpl) iResource).isPrivateWorkingCopy()) {
-              ((DocumentImpl) iResource).cancelCheckOut();
-            }
-          } catch (Exception ev) {
-
-            // Show the exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
-          }
-        }
+        commitCancelCheckout(childrenIterator);
       }
     }
   }
 
+  /**
+   * Does the cancel checkout on the resource whether is a folder or a document
+   * using the recursion. 
+   * 
+   * @param childrenIterator
+   */
+  private void commitCancelCheckout(Iterator<IResource> childrenIterator) {
+    Document pwc;
+    String pwcId;
+    DocumentImpl pwcDoc;
+    // Get the next child
+    IResource iResource = childrenIterator.next();
 
+    // Check if it's a custom type interface FolderImpl
+    if (iResource instanceof FolderImpl) {
+
+      // Call the helper method used for recursion
+      cancelCheckoutFolder(iResource);
+
+    } else if (iResource instanceof DocumentImpl) {
+
+      // If it is a document type of custom interface
+      try {
+        DocumentImpl childResource = ((DocumentImpl) iResource);
+        // Check if it's a checkout document
+        if (childResource.isCheckedOut() && !childResource.isPrivateWorkingCopy()) {
+          // Get the PWC id
+          pwcId = childResource.getVersionSeriesCheckedOutId();
+
+          if (pwcId != null) {
+            logger.debug("Document = " + childResource.getDisplayName());
+            logger.debug("PWC ID to cancel= " + pwcId);
+            pwc = (Document) resourceController.getSession().getObject(pwcId);
+            pwcDoc = new DocumentImpl(pwc);
+
+            pwcDoc.cancelCheckOut();
+
+          } else if (childResource.isPrivateWorkingCopy()) {
+            childResource.cancelCheckOut();
+
+          }
+        }
+      } catch (Exception ev) {
+        // Show the exception if there is one
+        logger.error("Exception action ", ev);
+      }
+    }
+  }
+
+  /**
+   * Iterates each element whether, is a folder or a doc. If it's a folder it
+   * will be iterated with recursion otherwise if it's a document it needs to
+   * pass the check method.
+   * 
+   * @param resource
+   * @return Whether the cancel checkout can be applied on the resources of the
+   *         resource given.
+   */
   private boolean checkCanCancelCheckoutFolder(IResource resource) {
-    boolean checkStatus = false;
+    boolean canCancel = false;
+
     // Get all the children of the item in an iterator
     Iterator<IResource> childrenIterator = resource.iterator();
 
     if (childrenIterator != null) {
 
-      // While has a child, add to the model
-      while (childrenIterator.hasNext() && !checkStatus) {
+      // While has a child, add to the model. It's enough one doc to be checkout
+      // to enable the action
+      while (childrenIterator.hasNext() && !canCancel) {
 
         // Get the next child
         IResource iResource = childrenIterator.next();
@@ -146,28 +186,65 @@ public class CancelCheckoutFolderAction extends AbstractAction {
         if (iResource instanceof FolderImpl) {
 
           // Call the helper method used for recursion
-          checkStatus = checkStatus || checkCanCancelCheckoutFolder(iResource);
+          canCancel = checkCanCancelCheckoutFolder(iResource);
 
         } else if (iResource instanceof DocumentImpl) {
-          System.out.println("Trying to verify a document name=" + ((DocumentImpl) iResource).getDisplayName());
-          // If it is a document type of custom interface
-          try {
-
-            if (((DocumentImpl) iResource).isCheckedOut()) {
-              // return true if a document was found checked out so
-              checkStatus = true;
-
-
-            }
-
-          } catch (Exception ev) {
-
-            // Show the exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
-          }
+          canCancel = checkDocument( iResource);
         }
       }
     }
-    return checkStatus;
+    return canCancel;
+  }
+
+  /**
+   * Checks if a the cancel checkout action is available for current user
+   * 
+   * @param canCancel
+   * @param iResource
+   * @return
+   */
+  private boolean checkDocument( IResource iResource) {
+    DocumentImpl doc;
+    String pwcId;
+    boolean hasPwc;
+    boolean canUserCancelCheckout;
+    Document pwc;
+    DocumentImpl pwcDoc;
+    boolean canCancel = false;
+    
+    // If it is a document type of custom interface
+    try {
+      doc = ((DocumentImpl) iResource);
+
+      // Check if it's a PWC
+      if (doc.isCheckedOut() && !doc.isPrivateWorkingCopy()) {
+
+        hasPwc = false;
+        canUserCancelCheckout = false;
+
+        // Get the PWC id
+        pwcId = doc.getVersionSeriesCheckedOutId();
+
+        // If has a PWC id
+        if (pwcId != null) {
+          hasPwc = true;
+
+          // Get the pwc
+          pwc = (Document) resourceController.getSession().getObject(pwcId);
+          pwcDoc = new DocumentImpl(pwc);
+
+          // Allow cancelCheckout
+          canUserCancelCheckout = pwcDoc.canUserCancelCheckout();
+        }
+        canCancel = canUserCancelCheckout && hasPwc;
+
+      }
+
+    } catch (Exception ev) {
+
+      // Show the exception if there is one
+      logger.error("Exception check", ev);
+    }
+    return canCancel;
   }
 }

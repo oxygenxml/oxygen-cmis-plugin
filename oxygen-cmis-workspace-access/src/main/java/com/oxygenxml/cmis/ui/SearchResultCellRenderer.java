@@ -142,15 +142,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       final DocumentImpl doc = ((DocumentImpl) value);
       if (doc.getId() != null) {
 
-        if (doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
+        if (!doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
 
           iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
-          // System.out.println("DocPWC:" + doc.getDisplayName());
-
-        } else if (doc.isCheckedOut()) {
-
-          iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/checkedout.png")));
-          // System.out.println("Doc:" + doc.getDisplayName());
 
         } else {
 

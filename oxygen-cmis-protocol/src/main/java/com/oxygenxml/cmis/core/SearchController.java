@@ -102,13 +102,13 @@ public class SearchController {
    * @param resources
    * @return
    */
-  private ArrayList<IResource> removeBlockedDocFromSearch(ArrayList<IResource> resources) {
+  private ArrayList<IResource> removePWCDocsFromSearch(ArrayList<IResource> resources) {
     Iterator<IResource> resIterator = resources.iterator();
 
     while (resIterator.hasNext()) {
 
       IResource resource = resIterator.next();
-      if (resource.isCheckedOut() && !((DocumentImpl) resource).isPrivateWorkingCopy()) {
+      if (resource.isCheckedOut() && ((DocumentImpl) resource).isPrivateWorkingCopy()) {
         resIterator.remove();
       }
     }
@@ -203,7 +203,7 @@ public class SearchController {
 
       resources.add(res);
     }
-    return removeBlockedDocFromSearch(resources);
+    return removePWCDocsFromSearch(resources);
 
   }
 

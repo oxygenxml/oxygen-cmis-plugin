@@ -59,6 +59,10 @@ public class DocumentImpl implements IDocument {
     return doc.getContentStreamId();
   }
 
+  public String getVersionSeriesCheckedOutId() {
+    return doc.getVersionSeriesCheckedOutId();
+  }
+
   public DocumentType getDocType() {
     return doc.getDocumentType();
   }

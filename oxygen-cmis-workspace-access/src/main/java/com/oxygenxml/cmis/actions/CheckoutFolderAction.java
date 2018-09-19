@@ -4,12 +4,13 @@ import java.awt.event.ActionEvent;
 import java.util.Iterator;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
@@ -20,11 +21,15 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CheckoutFolderAction extends AbstractAction {
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(CheckoutFolderAction.class);
 
   // The resource that will receive
-  private IResource resource = null;
-  private IResource currentParent = null;
-  private ResourcesBrowser itemsPresenter = null;
+  private transient IResource resource = null;
+  private transient IResource currentParent = null;
+  private transient ResourcesBrowser itemsPresenter = null;
 
   /**
    * Constructor that receives the resource to process
@@ -36,20 +41,16 @@ public class CheckoutFolderAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckoutFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-
     super("Check out");
+
+    // Set logger level
+    logger.setLevel(Level.DEBUG);
+
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
-    if (checkCanCheckoutFolder(resource)) {
-
-      this.enabled = true;
-
-    } else {
-      this.enabled = false;
-
-    }
+    setEnabled(checkCanCheckoutFolder(resource));
   }
 
   /**
@@ -67,6 +68,7 @@ public class CheckoutFolderAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+
     checkoutFolder(resource);
     if (currentParent.getId().equals("#search.results")) {
       currentParent.refresh();
@@ -97,75 +99,111 @@ public class CheckoutFolderAction extends AbstractAction {
       while (childrenIterator.hasNext()) {
 
         // Get the child
-        IResource iResource = (IResource) childrenIterator.next();
+        IResource iResource = childrenIterator.next();
 
         // Check if it's an instance of custom interface Folder
         if (iResource instanceof FolderImpl) {
-
           // Call recursively if it's a folder
           checkoutFolder(iResource);
 
         } else if (iResource instanceof DocumentImpl) {
-          // Try <Code>checkOut</Code> if it's an instance of a custom interface
-          // of Document
-          try {
-            // Commit the checkOut
-            boolean checkedOutStatus = ((DocumentImpl) iResource).isCheckedOut();
-            boolean privateCopyStatus = ((DocumentImpl) iResource).isPrivateWorkingCopy();
 
-            if (!(checkedOutStatus || privateCopyStatus)) {
-              ((DocumentImpl) iResource).checkOut(((DocumentImpl) iResource).getDocType());
-            }
-          } catch (Exception ev) {
-
-            // Show there exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
-          }
+          commitCheckout(iResource);
         }
       }
     }
   }
 
+  /**
+   * Commit the checkout
+   * 
+   * @param iResource
+   */
+  private void commitCheckout(IResource iResource) {
+    try {
+      // Commit the checkOut
+      DocumentImpl doc = (DocumentImpl) iResource;
+
+      if (!(doc.isCheckedOut() || doc.isPrivateWorkingCopy())) {
+        doc.checkOut(doc.getDocType());
+      }
+    } catch (Exception ev) {
+
+      // SHow the exception if there is one
+      logger.debug("Exception ", ev);
+    }
+  }
+
+  /**
+   * Check if a check out can be applied
+   * 
+   * @param resource
+   * @return
+   */
   private boolean checkCanCheckoutFolder(IResource resource) {
-    boolean checkStatus = false;
+    boolean canCheckout = false;
     // Get all the children of the item in an iterator
     Iterator<IResource> childrenIterator = resource.iterator();
 
     if (childrenIterator != null) {
 
       // While has a child, add to the model
-      while (childrenIterator.hasNext() && !checkStatus) {
+      while (childrenIterator.hasNext() && !canCheckout) {
 
         // Get the next child
-        IResource iResource = (IResource) childrenIterator.next();
+        IResource iResource = childrenIterator.next();
 
         // Check if it's a custom type interface FolderImpl
         if (iResource instanceof FolderImpl) {
 
           // Call the helper method used for recursion
-          checkStatus = checkStatus || checkCanCheckoutFolder(iResource);
+          canCheckout = checkCanCheckoutFolder(iResource);
 
         } else if (iResource instanceof DocumentImpl) {
-          System.out.println("Trying to verify a document name=" + ((DocumentImpl) iResource).getDisplayName());
           // If it is a document type of custom interface
           try {
-            boolean checkedOutStatus = ((DocumentImpl) iResource).isCheckedOut();
-            boolean privateCopyStatus = ((DocumentImpl) iResource).isPrivateWorkingCopy();
-
-            if (!(checkedOutStatus || privateCopyStatus)) {
-              // return true if a document was found checked out so
-              return true;
-
-            }
+            canCheckout = checkDocument(iResource);
 
           } catch (Exception ev) {
 
             // Show the exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+            logger.error("Exception check", ev);
           }
         }
       }
     }
-    return checkStatus;
+    return canCheckout;
+  }
+
+  /**
+   * Checks if a the checkout action is available for current user
+   * 
+   * @param canCancel
+   * @param iResource
+   * @return
+   */
+  private boolean checkDocument(IResource iResource) {
+    DocumentImpl doc;
+    boolean canUserCheckout = false;
+
+    // If it is a document type of custom interface
+    try {
+      doc = ((DocumentImpl) iResource);
+
+      // Check if it's not checkout out
+      if (!(doc.isCheckedOut() || doc.isPrivateWorkingCopy())) {
+
+        // Allow cancelCheckout
+        canUserCheckout = doc.canUserCheckout();
+      }
+
+    } catch (
+
+    Exception ev) {
+
+      // Show the exception if there is one
+      logger.error("Exception check", ev);
+    }
+    return canUserCheckout;
   }
 }

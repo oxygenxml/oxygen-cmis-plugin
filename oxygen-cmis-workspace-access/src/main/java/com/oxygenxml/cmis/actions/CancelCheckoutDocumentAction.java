@@ -3,8 +3,13 @@ package com.oxygenxml.cmis.actions;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
 
+import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
@@ -18,11 +23,16 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CancelCheckoutDocumentAction extends AbstractAction {
-
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(CancelCheckoutFolderAction.class);
   // The resource that will receive
-  private IResource resource = null;
-  private IResource currentParent = null;
-  private ResourcesBrowser itemsPresenter = null;
+  private transient IResource resource = null;
+  private transient IResource currentParent = null;
+  private transient ResourcesBrowser itemsPresenter = null;
+  private transient DocumentImpl pwcDoc;
+  private static ResourceController resourceController = CMISAccess.getInstance().createResourceController();
 
   /**
    * Constructor that receives the resource to process
@@ -35,13 +45,37 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
    */
   public CancelCheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Cancel check out");
+    
+    // Set logger level
+    logger.setLevel(Level.DEBUG);
 
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
     DocumentImpl doc = ((DocumentImpl) resource);
-    boolean canCancel = doc.canUserCancelCheckout() && doc.isCheckedOut() && doc.isPrivateWorkingCopy();
+    String pwcId = null;
+    boolean hasPwc = false;
+    boolean canUserCancelCheckout = false;
+
+    // Check if the doc is checked-out and get the PWC id
+    if (doc.isCheckedOut() && !doc.isPrivateWorkingCopy()) {
+      pwcId = doc.getVersionSeriesCheckedOutId();
+    }
+
+    // If has a PWC id
+    if (pwcId != null) {
+      hasPwc = true;
+
+      // Get the pwc
+      Document pwc = (Document) resourceController.getSession().getObject(pwcId);
+      pwcDoc = new DocumentImpl(pwc);
+
+      // Allow cancelCheckout
+      canUserCancelCheckout = pwcDoc.canUserCancelCheckout();
+    }
+
+    boolean canCancel = canUserCancelCheckout && doc.isCheckedOut() && hasPwc;
     setEnabled(canCancel);
   }
 
@@ -56,13 +90,12 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    final DocumentImpl doc = ((DocumentImpl) resource);
 
     // Try to do the cancel checkout
     try {
 
       // Commit the <Code>cancelCheckOut</Code>
-      doc.cancelCheckOut();
+      pwcDoc.cancelCheckOut();
 
       if (currentParent.getId().equals("#search.results")) {
         ((IFolder) currentParent).removeFromModel(resource);
@@ -76,9 +109,7 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     } catch (final org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException ev) {
 
       // Show the exception if there is one
-      // TODO Cristian Dialogs need a parent to ensure the proper hierarchy. For example, if the parent is missing,
-      // the dialog might end up on the wrong screen.
-      JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+      logger.error("Exception action ", ev);
     }
   }
 }

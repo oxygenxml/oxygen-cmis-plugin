@@ -36,8 +36,8 @@ public class CheckinDocDialog extends OKCancelDialog {
    * 
    * @param frame
    */
-  public CheckinDocDialog(JFrame frame) {
-    super(frame, "Check-in document", true);
+  public CheckinDocDialog(JFrame frame, String docName) {
+    super(frame, "Check-in "+ docName, true);
 
     // Get the parent container
     final Container cont = getContentPane();
