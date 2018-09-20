@@ -1,15 +1,10 @@
 package com.oxygenxml.cmis.search;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.Folder;
-
-import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.SearchController;
-import com.oxygenxml.cmis.core.model.IDocument;
-import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
-import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 /**
  * @see com.oxygenxml.core.model.impl
@@ -18,7 +13,7 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  */
 public class SearchFolder {
 
-  private ArrayList<IResource> resultsQueries;
+  private final ArrayList<IResource> resultsQueries;
 
   /**
    * 
@@ -28,13 +23,12 @@ public class SearchFolder {
    */
   public SearchFolder(String toSearch, SearchController searchCtrl, String option) {
     String [] searchKeys= toSearch.split("\\s+");
-    this.resultsQueries = new ArrayList<IResource>();
+    this.resultsQueries = new ArrayList<>();
 
     switch (option) {
 
     case "null":
       for (String key : searchKeys) {
-        System.out.println("The key= "+key);
         resultsQueries.addAll(searchCtrl.queryFolder(key));
       }
       break;
@@ -49,7 +43,7 @@ public class SearchFolder {
 
   }
 
-  public ArrayList<IResource> getResultsFolder() {
+  public List<IResource> getResultsFolder() {
     return resultsQueries;
   }
 }

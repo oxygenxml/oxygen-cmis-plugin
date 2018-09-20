@@ -12,6 +12,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.plugin.OptionsCMIS;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -27,7 +28,6 @@ import ro.sync.exml.workspace.api.editor.WSEditor;
 public class OpenDocumentAction extends AbstractAction {
   // The resource to open
   private transient IResource resource = null;
-  private final boolean allowEditOriginal = false;
 
   /**
    * Constructor that gets the resource to open
@@ -66,8 +66,13 @@ public class OpenDocumentAction extends AbstractAction {
   }
 
   public void openDocumentPath() {
+    // Get the workspace of the plugin
+    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
     boolean editable = false;
     DocumentImpl currDoc = (DocumentImpl) resource;
+    String allowEditOption = pluginWorkspace.getOptionsStorage().getOption(OptionsCMIS.ALLOW_EDIT, "false");
+    Boolean allowEditOriginal = Boolean.valueOf(allowEditOption);
+    
     if (currDoc.isVersionable()) {
 
       if (currDoc.isCheckedOut() && currDoc.canUserUpdateContent()) {
@@ -90,9 +95,6 @@ public class OpenDocumentAction extends AbstractAction {
 
     urlAsTring = CmisURLConnection.generateURLObject(currDoc.getDoc(),
         CMISAccess.getInstance().createResourceController());
-
-    // Get the workspace of the plugin
-    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
     // Check if it's not null
     if (pluginWorkspace != null) {

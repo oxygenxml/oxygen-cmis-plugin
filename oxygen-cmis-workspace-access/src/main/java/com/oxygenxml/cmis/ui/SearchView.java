@@ -175,7 +175,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
 
     // The results from searching the documents
-    ArrayList<IResource> documentsResults = new SearchDocument(searchText, searchCtrl, option).getResultsFolder();
+    ArrayList<IResource> documentsResults = (ArrayList<IResource>) new SearchDocument(searchText, searchCtrl, option).getResultsFolder();
 
     // TODO: Catch exceptions
     for (IResource iResource : documentsResults) {
@@ -187,7 +187,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     System.out.println("Documents=" + documentsResults.size());
 
     // The results from searching the folders
-    ArrayList<IResource> foldersResults = new SearchFolder(searchText, searchCtrl, option).getResultsFolder();
+    ArrayList<IResource> foldersResults = (ArrayList<IResource>) new SearchFolder(searchText, searchCtrl, option).getResultsFolder();
 
     queryResults.addAll(documentsResults);
     queryResults.addAll(foldersResults);
