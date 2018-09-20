@@ -3,17 +3,16 @@ package com.oxygenxml.cmis.actions;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import org.apache.chemistry.opencmis.client.api.ObjectId;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
-import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
-import com.oxygenxml.cmis.ui.BreadcrumbView;
-import com.oxygenxml.cmis.ui.ItemListView;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
+
+import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes the delete folder action on a document by extending the
@@ -25,11 +24,11 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
 public class DeleteFolderAction extends AbstractAction {
 
   // The resource to be deleted
-  private IResource resource;
+  private transient IResource resource;
   // Parent of that resource
-  private IResource currentParent;
+  private transient IResource currentParent;
   // Presenter to be able to update the content of the parent
-  private ResourcesBrowser itemsPresenter;
+  private transient ResourcesBrowser itemsPresenter;
 
   /**
    * Constructor that gets the resource to be deleted , currentParent and the
@@ -61,7 +60,8 @@ public class DeleteFolderAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-
+    final PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+    JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
     // Cast to the custom interface to use it's methods
     FolderImpl folderToDelete = ((FolderImpl) resource);
 
@@ -81,7 +81,7 @@ public class DeleteFolderAction extends AbstractAction {
     } catch (Exception ev) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, "Exception " + ev.getMessage());
     }
 
   }

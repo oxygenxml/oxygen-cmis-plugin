@@ -101,9 +101,26 @@ public class DocumentImpl implements IDocument {
 
   }
 
+  /**
+   * Any use can get the content stream
+   * 
+   * @return
+   */
   public boolean canUserOpen() {
     return doc.hasAllowableAction(Action.CAN_GET_CONTENT_STREAM);
 
+  }
+
+  public boolean canUserCreateDoc() {
+    return doc.hasAllowableAction(Action.CAN_CREATE_DOCUMENT);
+  }
+
+  public boolean canUserUpdateContent() {
+    return doc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
+  }
+
+  public boolean canUserUpdateProperties() {
+    return doc.hasAllowableAction(Action.CAN_UPDATE_PROPERTIES);
   }
 
   /**
@@ -123,7 +140,6 @@ public class DocumentImpl implements IDocument {
    */
   public boolean canUserCheckin() {
     return doc.hasAllowableAction(Action.CAN_CHECK_IN);
-
   }
 
   /**
@@ -134,6 +150,10 @@ public class DocumentImpl implements IDocument {
   public boolean canUserCancelCheckout() {
     return doc.hasAllowableAction(Action.CAN_CANCEL_CHECK_OUT);
 
+  }
+
+  public boolean isVersionable() {
+    return doc.isVersionable();
   }
 
   public String getMimetype() {

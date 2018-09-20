@@ -1,7 +1,6 @@
 package com.oxygenxml.cmis.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -27,7 +26,8 @@ import ro.sync.exml.workspace.api.editor.WSEditor;
  */
 public class OpenDocumentAction extends AbstractAction {
   // The resource to open
-  private IResource resource = null;
+  private transient IResource resource = null;
+  private final boolean allowEditOriginal = false;
 
   /**
    * Constructor that gets the resource to open
@@ -40,13 +40,8 @@ public class OpenDocumentAction extends AbstractAction {
     super("Open document", UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
-    
-    if (((DocumentImpl) resource).canUserOpen()) {
-      this.enabled = true;
 
-    } else {
-      this.enabled = false;
-    }
+    setEnabled(((DocumentImpl) resource).canUserOpen());
   }
 
   /**
@@ -72,20 +67,30 @@ public class OpenDocumentAction extends AbstractAction {
 
   public void openDocumentPath() {
     boolean editable = false;
-    DocumentImpl currResource = (DocumentImpl) resource;
+    DocumentImpl currDoc = (DocumentImpl) resource;
+    if (currDoc.isVersionable()) {
 
-    if (currResource.isCheckedOut() && currResource.isPrivateWorkingCopy()) {
+      if (currDoc.isCheckedOut() && currDoc.canUserUpdateContent()) {
+        editable = true;
+      } else {
+        editable = allowEditOriginal;
+      }
+    } else {
       editable = true;
     }
+
+    // if (currDoc.isVersionable() currDoc.canUserUpdateContent() ||
+    // currDoc.canUserCheckout()) {
+    // editable = true;
+    // }
     // -------Oxygen
 
     // Initialize the URL
     String urlAsTring = null;
 
-    urlAsTring = CmisURLConnection.generateURLObject(currResource.getDoc(),
+    urlAsTring = CmisURLConnection.generateURLObject(currDoc.getDoc(),
         CMISAccess.getInstance().createResourceController());
 
-    System.out.println("Open Action URL" + urlAsTring);
     // Get the workspace of the plugin
     PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
@@ -99,13 +104,12 @@ public class OpenDocumentAction extends AbstractAction {
 
           // if null - image preview opened
           WSEditor editorAccess = pluginWorkspace.getEditorAccess(new URL(urlAsTring),
-              pluginWorkspace.MAIN_EDITING_AREA);
+              PluginWorkspace.MAIN_EDITING_AREA);
 
           if (editorAccess != null) {
             editorAccess.setEditable(editable);
           } else {
 
-            System.out.println("URL:" + new URL(urlAsTring));
             pluginWorkspace.openInExternalApplication(new URL(urlAsTring), true);
 
           }

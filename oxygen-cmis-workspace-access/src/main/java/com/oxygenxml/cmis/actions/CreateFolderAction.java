@@ -1,16 +1,23 @@
 package com.oxygenxml.cmis.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
+
+import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes the create folder action on a document by extending the
@@ -20,11 +27,15 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CreateFolderAction extends AbstractAction {
-
+  private static final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(CreateFolderAction.class);
   // Presenter of the items
-  private ResourcesBrowser itemsPresenter;
+  private transient ResourcesBrowser itemsPresenter;
   // Parent folder where new folder will be created
-  private IResource currentParent;
+  private transient IResource currentParent;
 
   /**
    * Constructor that gets the parent where new folder will be created and a
@@ -36,6 +47,9 @@ public class CreateFolderAction extends AbstractAction {
   public CreateFolderAction(IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Give a name and a native icon
     super("Create Folder", UIManager.getIcon("FileView.directoryIcon"));
+
+    // Set logger level
+    logger.setLevel(Level.DEBUG);
 
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
@@ -51,23 +65,27 @@ public class CreateFolderAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+    // Plugin workspace
+    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+    // Main frame
+    JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
     // Get input from user
     String getInput = JOptionPane.showInputDialog(null, "Plase enter a name", "myfolder");
-    System.out.println("The input=" + getInput);
+    logger.debug("The input=" + getInput);
 
     // Set current folder where we want a new folder
-    System.out.println("Current parrent=" + currentParent.getDisplayName());
+    logger.debug("Current parrent=" + currentParent.getDisplayName());
     FolderImpl currentFolder = (FolderImpl) currentParent;
+
     // Try creating the folder in the currentParent using the input
     try {
-      CMISAccess.getInstance().createResourceController().createFolder(((FolderImpl) currentParent).getFolder(),
-          getInput);
+      resourceController.createFolder(((FolderImpl) currentParent).getFolder(), getInput);
 
     } catch (Exception e1) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, "Exception " + e1.getMessage());
 
     }
 

@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.ui.DeleteDocDialog;
@@ -24,14 +25,13 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  */
 public class DeleteDocumentAction extends AbstractAction {
 
+  private static final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
   // The resource to be deleted
-  private IResource resource;
+  private transient IResource resource;
   // Parent of that resource
-  private IResource currentParent;
+  private transient IResource currentParent;
   // Presenter to be able to update the content of the parent
-  private ResourcesBrowser itemsPresenter;
-  private DeleteDocDialog inputDialog;
-  private String deleteType;
+  private transient ResourcesBrowser itemsPresenter;
 
   /**
    * Constructor that gets the resource to be deleted , currentParent and the
@@ -49,12 +49,7 @@ public class DeleteDocumentAction extends AbstractAction {
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
-    if (((DocumentImpl) resource).canUserDelete()) {
-      this.enabled = true;
-    } else {
-      this.enabled = false;
-    }
-
+    setEnabled(((DocumentImpl) resource).canUserDelete());
   }
 
   /**
@@ -71,13 +66,16 @@ public class DeleteDocumentAction extends AbstractAction {
   public void actionPerformed(ActionEvent e) {
     final PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
     final int defaultValueOfResult = -1;
-    int result = defaultValueOfResult;
+    int result = -1;
+    JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
+    DeleteDocDialog inputDialog;
+    String deleteType;
 
     // Cast to the custom type of Document
     final DocumentImpl doc = ((DocumentImpl) resource);
 
     // If status changed result = 0 means cancel and 1 means yes
-    // FOr that a default value in necessarey
+    // For that a default value in necessarey
     do {
       // Create the input dialog
       inputDialog = new DeleteDocDialog((JFrame) pluginWorkspace.getParentFrame());
@@ -97,13 +95,13 @@ public class DeleteDocumentAction extends AbstractAction {
         if (deleteType.equals("SINGLE")) {
 
           // Commit the deletion
-          CMISAccess.getInstance().createResourceController().deleteOneVersionDocument(doc.getDoc());
+          resourceController.deleteOneVersionDocument(doc.getDoc());
 
         } else if (deleteType.equals("ALL")) {
 
           // Try to delete <Code>deleteAllVersionsDocument</Code>
           // Commit the deletion
-          CMISAccess.getInstance().createResourceController().deleteAllVersionsDocument(doc.getDoc());
+          resourceController.deleteAllVersionsDocument(doc.getDoc());
         }
 
         // Present the new content of the parent resource
@@ -118,7 +116,7 @@ public class DeleteDocumentAction extends AbstractAction {
       } catch (final Exception ev) {
 
         // Show the exception if there is one
-        JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+        JOptionPane.showMessageDialog(mainFrame, "Exception " + ev.getMessage());
       }
     }
   }

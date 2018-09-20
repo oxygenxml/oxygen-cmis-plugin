@@ -21,7 +21,7 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 public class CopyDocumentAction extends AbstractAction {
 
   // The resource that will receive
-  private IResource resource = null;
+  private transient IResource resource = null;
 
   /**
    * Constructor that receives the resource to process
@@ -34,13 +34,8 @@ public class CopyDocumentAction extends AbstractAction {
     super("Copy");
 
     this.resource = resource;
-    
-    if (((DocumentImpl) resource).canUserCheckout()) {
-      this.enabled = true;
-      
-    } else {
-      this.enabled = false;
-    }
+
+    setEnabled(((DocumentImpl) resource).canUserCheckout());
   }
 
   /**

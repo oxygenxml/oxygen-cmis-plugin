@@ -8,18 +8,21 @@ import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
+
+import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes the delete folder action on a document by extending the
@@ -29,12 +32,15 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class PasteDocumentAction extends AbstractAction {
+  private static final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
   // The resource to paste
-  private IResource resource;
+  private transient IResource resource;
   // Parent of tht resource
-  private IResource currentParent;
+  private transient IResource currentParent;
   // Presenter to update the content of that parent
-  private ResourcesBrowser itemsPresenter;
+  private final transient ResourcesBrowser itemsPresenter;
+  private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+  private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
   /**
    * Constructor that gets the resource (where to paste), currentParent of that
@@ -60,8 +66,9 @@ public class PasteDocumentAction extends AbstractAction {
    */
 
   public static String getSysClipboardText() {
+
     // Initialize the returned text
-    String ret = null;
+    String result = null;
 
     // Get the clipboard
     Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -70,23 +77,21 @@ public class PasteDocumentAction extends AbstractAction {
     Transferable clipTf = sysClip.getContents(null);
 
     // If there is something
-    if (clipTf != null) {
+    if (clipTf != null && clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 
-      // TODO Customize dataflavor
-      if (clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-        try {
+      try {
 
-          ret = (String) clipTf.getTransferData(DataFlavor.stringFlavor);
+        result = (String) clipTf.getTransferData(DataFlavor.stringFlavor);
 
-        } catch (Exception e) {
+      } catch (Exception e) {
 
-          // Show the exepction if there is one
-          JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
-        }
+        // Show the exepction if there is one
+        JOptionPane.showMessageDialog(mainFrame, "Exception " + e.getMessage());
       }
+
     }
 
-    return ret;
+    return result;
   }
 
   // Is called every time the class is instantiated
@@ -122,21 +127,25 @@ public class PasteDocumentAction extends AbstractAction {
       // Try to get the document
       try {
         // Get the document
-        Document docClipboard = CMISAccess.getInstance().createResourceController().getDocument(getSysClipboardText());
+        Document docClipboard = resourceController.getDocument(getSysClipboardText());
 
         String fileName = docClipboard.getName();
         ContentStream content = docClipboard.getContentStream();
         String mimetype = docClipboard.getContentStreamMimeType();
         String objectTypeId = docClipboard.getType().getId();
-        // TODO: That's not how ypu do it!!
         String versioningState = "MAJOR";
+        FolderImpl folder = ((FolderImpl) resource);
+        Document copiedDoc = null;
 
-        Document copiedDoc = CMISAccess.getInstance().createResourceController().createVersionedDocument(
-            ((FolderImpl) resource).getFolder(), fileName, content, mimetype, objectTypeId,
-            VersioningState.valueOf(versioningState));
+        if (mimetype.equals("NONE")) {
+          copiedDoc = resourceController.createDocument(folder.getFolder(), fileName, content.toString(), mimetype);
 
+        } else {
+          copiedDoc = resourceController.createVersionedDocument(folder.getFolder(), fileName, content, mimetype,
+              objectTypeId, VersioningState.valueOf(versioningState));
+        }
         // // Add the document from clipboard to the currentFolder
-        CMISAccess.getInstance().createResourceController().addToFolder(((FolderImpl) resource).getFolder(), copiedDoc);
+        resourceController.addToFolder(((FolderImpl) resource).getFolder(), copiedDoc);
 
         // Presenter the new content of the current parent
         itemsPresenter.presentResources(currentParent.getId());
