@@ -7,7 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;

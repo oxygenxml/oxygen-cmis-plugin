@@ -77,7 +77,7 @@ class ResourceMouseHandler extends MouseAdapter {
     // CRUD Document
     IResource currentParent = currentParentSupplier.get();
     
-    menu.add(new OpenDocumentAction(selectedResource));
+    menu.add(new OpenDocumentAction(selectedResource,currentParent, itemsPresenter));
     menu.add(new RenameDocumentAction(selectedResource, currentParent, itemsPresenter));
     menu.add(new CopyDocumentAction(selectedResource));
     menu.add(new DeleteDocumentAction(selectedResource, currentParent, itemsPresenter));
@@ -178,6 +178,7 @@ class ResourceMouseHandler extends MouseAdapter {
   }
 
   private void doubleLeftClick(final MouseEvent event, IResource currentItem) {
+    IResource currentParent = currentParentSupplier.get();
     // Check if we have a double click.
     if (event.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(event)) {
       if (logger.isDebugEnabled()) {
@@ -186,7 +187,7 @@ class ResourceMouseHandler extends MouseAdapter {
 
       if (currentItem instanceof DocumentImpl) {
         // Open the document in Oxygen.
-        new OpenDocumentAction(currentItem).openDocumentPath();
+        new OpenDocumentAction(currentItem,currentParent, itemsPresenter).openDocumentPath();
 
       } else {
         // Present the next item (folder)

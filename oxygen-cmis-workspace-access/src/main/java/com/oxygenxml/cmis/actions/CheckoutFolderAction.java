@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IResource;

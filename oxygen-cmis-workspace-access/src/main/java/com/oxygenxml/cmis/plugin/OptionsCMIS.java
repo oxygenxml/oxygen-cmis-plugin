@@ -8,11 +8,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import ro.sync.exml.plugin.option.OptionPagePluginExtension;
 import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class OptionsCMIS extends OptionPagePluginExtension {
   /**
@@ -25,8 +25,8 @@ public class OptionsCMIS extends OptionPagePluginExtension {
   public static final String ALLOW_EDIT = "ALLOW_EDIT";
 
   public OptionsCMIS() {
+
     // Set logger level
-    
 
     mainPanel = new JPanel(new GridBagLayout());
 
@@ -39,7 +39,7 @@ public class OptionsCMIS extends OptionPagePluginExtension {
     c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstraints.HORIZONTAL;
     allowEditCheckout = new JCheckBox("Allow edit without checkout (applies on Versionable documents)");
-    allowEditCheckout.setSelected(false);
+
     mainPanel.add(allowEditCheckout, c);
 
   }
@@ -74,7 +74,8 @@ public class OptionsCMIS extends OptionPagePluginExtension {
 
   @Override
   public JComponent init(PluginWorkspace pluginWorkspace) {
-
+    String allowEdit = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage().getOption(ALLOW_EDIT, "false");
+    allowEditCheckout.setSelected(Boolean.valueOf(allowEdit));
     return mainPanel;
   }
 
