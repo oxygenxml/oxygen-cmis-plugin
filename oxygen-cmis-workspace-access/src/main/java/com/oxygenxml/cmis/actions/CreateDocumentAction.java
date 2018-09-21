@@ -14,16 +14,15 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.oxygen.cmis.dialogs.CreateDocDialog;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.ui.CreateDocDialog;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -62,7 +61,7 @@ public class CreateDocumentAction extends AbstractAction {
     super("Create document ", UIManager.getIcon("FileView.fileIcon"));
 
     // Set logger level
-    logger.setLevel(Level.DEBUG);
+    
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 

@@ -2,15 +2,9 @@ package com.oxygenxml.cmis.storage;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -19,8 +13,6 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.UserCredentials;
-import com.oxygenxml.cmis.ui.AuthenticatorUtil;
-import com.oxygenxml.cmis.ui.LoginDialog;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -49,7 +41,7 @@ public class SessionStorage {
   private static SessionStorage instance;
 
   // Get the plugin workspace
-  private PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+  private final PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
 
   // Get the singleton instance
   public static SessionStorage getInstance() {
@@ -167,7 +159,7 @@ public class SessionStorage {
     Unmarshaller m = context.createUnmarshaller();
 
     // Write to userCredentials
-    System.err.println("content |" + content + "|");
+    logger.debug("content |" + content + "|");
     return (Options) m.unmarshal(new StringReader(content));
   }
 

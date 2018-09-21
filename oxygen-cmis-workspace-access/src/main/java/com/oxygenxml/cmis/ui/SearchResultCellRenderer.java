@@ -9,7 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
+import org.apache.log4j.Logger;
+
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -28,9 +31,15 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
-import sun.swing.DefaultLookup;
 
 public class SearchResultCellRenderer extends JPanel implements ListCellRenderer<IResource> {
+  private static final String HTML_ENCLOSING_TAG = "</code></html>";
+  private static final String HTML_TAG = "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>";
+  private static final String NO_DATA = "No data";
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(ItemListView.class);
   private final JPanel iconPanel;
   private final JLabel iconLabel;
 
@@ -43,10 +52,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   private final JPanel notifierPanel;
   private final JLabel notification;
 
-  private final ContentSearcher contentProv;
+  private final transient ContentSearcher contentProv;
 
   // Graphics configurations
-  private boolean isSelected;
   private final String matchPattern;
 
   public SearchResultCellRenderer(ContentSearcher contentProvider, String matchPattern) {
@@ -97,7 +105,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     c.fill = GridBagConstraints.BOTH;
     lineResource = new JLabel();
 
-    // lineResource.setContentType("text/html");
     lineResourcePanel.add(lineResource, BorderLayout.CENTER);
     descriptionPanel.add(lineResourcePanel, c);
 
@@ -119,8 +126,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   public Component getListCellRendererComponent(JList<? extends IResource> list, IResource value, int index,
       boolean isSelected, boolean cellHasFocus) {
     // Initialize the graphics configurations for the cell
-    this.isSelected = isSelected;
-
     final ResourceController ctrl = CMISAccess.getInstance().createResourceController();
 
     String pathValue = null;
@@ -129,8 +134,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     String resourceText = null;
     setComponentOrientation(list.getComponentOrientation());
 
-    Color bg = null;
-    Color fg = null;
     resourceText = contentProv.getName(value);
 
     if (resourceText != null) {
@@ -142,41 +145,26 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       final DocumentImpl doc = ((DocumentImpl) value);
       if (doc.getId() != null) {
 
-        if (!doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
+        renderDocIcon(value, doc);
 
-          iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
-
-        } else {
-
-          try {
-            iconLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
-                .getIconDecoration(new URL("http://localhost/" + value.getDisplayName())));
-
-          } catch (final MalformedURLException e) {
-
-            iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
-          }
-
-        }
-
+        // Get the path
         pathValue = contentProv.getPath(doc, ctrl);
+        // Get the properties
         propertiesValues = contentProv.getProperties(doc);
+        // Get notification
         notifyValue = "By:" + doc.getCreatedBy();
 
-        // System.out.println("Line=" + contentProv.getLineDoc(doc,
-        // matchPattern));
+        logger.debug("Line=" + contentProv.getLineDoc(doc, matchPattern));
 
         // Get the results from the server
         String resultContext = contentProv.getLineDoc(doc, matchPattern);
 
         resultContext = styleString(resultContext);
 
-        lineResource.setText(
-            "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
-                + (resultContext != null ? resultContext : "No data") + "</code></html>");
+        lineResource.setText(HTML_TAG + (resultContext != null ? resultContext : NO_DATA) + HTML_ENCLOSING_TAG);
 
       }
-    } else if (value instanceof FolderImpl && value != null) {
+    } else if (value instanceof FolderImpl) {
 
       final FolderImpl folder = ((FolderImpl) value);
 
@@ -187,27 +175,44 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         propertiesValues = contentProv.getProperties(folder);
         notifyValue = "By:" + folder.getCreatedBy();
 
-        lineResource.setText(
-            "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>"
-                + "No data" + "</code></html>");
+        lineResource.setText(HTML_TAG + NO_DATA + HTML_ENCLOSING_TAG);
 
       }
     }
-
+    // Render name
     nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word;'>"
-        + (resourceText != null ? resourceText : "No data") + "</div></html>");
+        + (resourceText != null ? resourceText : NO_DATA) + "</div></html>");
 
+    // Render properties
     propertiesResource.setOpaque(true);
     propertiesResource.setForeground(Color.GRAY);
-    propertiesResource.setText((propertiesValues != null ? propertiesValues : "No data"));
+    propertiesResource.setText((propertiesValues != null ? propertiesValues : NO_DATA));
 
+    // Render notification
     notification.setText(notifyValue);
 
+    setBackgroundComponent(list, index, isSelected, pathValue);
+
+    return this;
+  }
+
+  /**
+   * Set a background when a component is selected.
+   * 
+   * @param list
+   * @param index
+   * @param isSelected
+   * @param pathValue
+   */
+  private void setBackgroundComponent(JList<? extends IResource> list, int index, boolean isSelected,
+      String pathValue) {
     final JList.DropLocation dropLocation = list.getDropLocation();
+    Color bg = null;
+    Color fg = null;
     if (dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == index) {
 
-      bg = DefaultLookup.getColor(this, ui, "List.dropCellBackground");
-      fg = DefaultLookup.getColor(this, ui, "List.dropCellForeground");
+      bg = javax.swing.UIManager.getColor("List.dropCellBackground");
+      fg = javax.swing.UIManager.getColor("List.dropCellForeground");
 
       isSelected = true;
     }
@@ -220,10 +225,33 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       setBackgroundC(this, list.getBackground());
       setForegroundC(this, list.getForeground());
     }
-
-    return this;
   }
 
+  private void renderDocIcon(IResource value, final DocumentImpl doc) {
+    if (!doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
+
+      iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
+
+    } else {
+
+      try {
+        iconLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
+            .getIconDecoration(new URL("http://localhost/" + value.getDisplayName())));
+
+      } catch (final MalformedURLException e) {
+
+        iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
+      }
+
+    }
+  }
+
+  /**
+   * Initializes the escpaing of the HTML and
+   * 
+   * @param resultContext
+   * @return
+   */
   private String styleString(String resultContext) {
     // Check if there is some data
     if (resultContext != null) {
@@ -231,17 +259,15 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
       // Escape the HTML
       resultContext = escapeHTML(resultContext);
 
-      // System.out.println("Before split = " + resultContext);
+      logger.debug("Before split = " + resultContext);
       // Check if there is something in searchbar
       if (matchPattern != null) {
-        // Split the words entered as keys
-        final String[] searchKeys = matchPattern.trim().split("\\s+");
 
         // Get the styled HTML splitted
-        resultContext = getReadyHTMLSplit(resultContext, searchKeys);
+        resultContext = getReadyHTMLSplit(resultContext, matchPattern);
       }
 
-      // System.out.println("After split = " + resultContext);
+      logger.debug("After split = " + resultContext);
     }
     return resultContext;
   }
@@ -281,27 +307,26 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
    * @param searchKeys
    * @return The styled string to be showed
    */
-  static String getReadyHTMLSplit(String context, String[] searchKeys) {
+  static String getReadyHTMLSplit(String context, String matchPattern) {
+    // Split the words entered as keys
+    final String[] searchKeys = matchPattern.trim().split("\\s+");
     final String contextToSplit = context;
-    final StringBuffer stBuffer = new StringBuffer(contextToSplit);
+    final StringBuilder strBuilder = new StringBuilder(contextToSplit);
+    final StringBuilder regexBuilder = new StringBuilder();
     String styledMatch = "";
 
-    // System.out.println("COntext=" + stBuffer.toString() + " Size =" +
-    // (stBuffer.length() - 1));
-
     // Concatenate all the keys from the search
-    String regex = "";
     for (final String string : searchKeys) {
-      regex += string + "|";
+      regexBuilder.append(string + "|");
     }
 
     // Use a stack to store data because we will show them from the back in
     // order to not destroy the original string
-    final Stack<ObjectFound> foundObjects = new Stack<ObjectFound>();
+    final Deque<ObjectFound> foundObjects = new ArrayDeque<>();
 
     // Matters to preserve the order of the keys
-    final Pattern pattern = Pattern.compile(regex);
-    final Matcher matcher = pattern.matcher(stBuffer.toString());
+    final Pattern pattern = Pattern.compile(regexBuilder.toString());
+    final Matcher matcher = pattern.matcher(strBuilder.toString());
 
     // While some results are found
     while (matcher.find()) {
@@ -315,9 +340,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         // Create a new object
         foundObjects.push(new ObjectFound(startIndex, endIndex, found.trim()));
 
-        // System.out.print("Start index: " + startIndex);
-        // System.out.print(" End index: " + endIndex);
-        // System.out.println(" Found: " + found.trim());
+        logger.debug("Start index: " + startIndex);
+        logger.debug(" End index: " + endIndex);
+        logger.debug(" Found: " + found.trim());
       }
     }
 
@@ -326,17 +351,14 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       final ObjectFound element = foundObjects.peek();
       styledMatch = "<nobr style=' background-color:yellow; color:gray'>" + element.getContent() + "</nobr>";
-      // System.out.println("Index from list=" + element.getStartIndex());
-      // System.out.println("Till = " + element.getEndIndex() + " The key =" +
-      // element.getContent());
 
-      stBuffer.replace(element.getStartIndex(), element.getEndIndex(), styledMatch);
+      strBuilder.replace(element.getStartIndex(), element.getEndIndex(), styledMatch);
       foundObjects.pop();
 
     }
-    // System.out.println(" FinalCOntext=" + stBuffer.toString());
+    logger.debug(" FinalContext=" + strBuilder.toString());
 
-    return stBuffer.toString();
+    return strBuilder.toString();
   }
 
   /**
@@ -362,7 +384,8 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 }
 
 /**
- * Class use only for the sake of storing the start,endindex and the data fround
+ * Class use only for the sake of storing the start, end index and the data
+ * found.
  * 
  * @author bluecc
  *

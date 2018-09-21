@@ -7,15 +7,14 @@ import javax.swing.JFrame;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.oxygen.cmis.dialogs.CheckinDocDialog;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
-import com.oxygenxml.cmis.ui.CheckinDocDialog;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -55,7 +54,6 @@ public class CheckinDocumentAction extends AbstractAction {
     super("Check in");
 
     // Set logger level
-    logger.setLevel(Level.DEBUG);
 
     this.resource = resource;
     this.currentParent = currentParent;

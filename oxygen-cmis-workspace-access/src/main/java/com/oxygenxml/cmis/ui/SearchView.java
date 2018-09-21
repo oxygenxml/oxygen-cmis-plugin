@@ -3,8 +3,6 @@ package com.oxygenxml.cmis.ui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -15,6 +13,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -31,12 +31,14 @@ import com.oxygenxml.cmis.search.SearchFolder;
  *
  */
 public class SearchView extends JPanel implements ContentSearcher, SearchPresenter {
+  private static final String OPERATION_IS_NOT_SUPPORTED = "Operation is not supported";
+  private static final Logger logger = Logger.getLogger(SearchView.class);
   /**
    * Objects interested in search events.
    */
 
   // Listeners of the search behavior
-  private final List<SearchListener> listeners = new ArrayList<>();
+  private final transient List<SearchListener> listeners = new ArrayList<>();
 
   private JTextField searchField = null;
   private JButton searchButton = null;
@@ -44,9 +46,8 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
   // Option of the search (name, title)
   private String option = null;
 
-  public SearchView(ResourcesBrowser itemsPresenter) {
+  public SearchView() {
     setOpaque(true);
-    // setBackground(Color.CYAN);
 
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -64,13 +65,13 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
 
       @Override
       public void focusLost(FocusEvent e) {
-        // TODO Auto-generated method stub
 
+        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
       }
 
       @Override
       public void focusGained(FocusEvent e) {
-        // TODO Auto-generated method stub
+
         searchField.selectAll();
       }
     });
@@ -80,26 +81,24 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
 
       @Override
       public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
 
+        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
       }
 
       @Override
       public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
 
+        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
       }
 
       @Override
       public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
           searchButton.doClick();
         }
       }
     });
 
-    // searchField.setBackground(Color.red);
     searchField.setEnabled(false);
     add(searchField, c);
 
@@ -115,21 +114,18 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     /**
      * This is where the fireSearch will occur when the button is pressed
      */
-    searchButton.addActionListener(new ActionListener() {
+    searchButton.addActionListener(e -> {
+      // The option will be orderer
+      option = "null";
+      // Get the entered text and trim of white space from both sides
+      final String searchText = searchField.getText().trim();
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // The option will be orderer
-        option = "null";
-        // Get the entered text and trim of white space from both sides
-        final String searchText = searchField.getText().trim();
+      doSearch(searchText);
+    }
 
-        doSearch(searchText);
-      }
-
-    });
+    );
     searchButton.setOpaque(true);
-    // searchButton.setBackground(Color.blue);
+
     add(searchButton, c);
   }
 
@@ -175,23 +171,24 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
 
     // The results from searching the documents
-    ArrayList<IResource> documentsResults = (ArrayList<IResource>) new SearchDocument(searchText, searchCtrl, option).getResultsFolder();
+    ArrayList<IResource> documentsResults = (ArrayList<IResource>) new SearchDocument(searchText, searchCtrl, option)
+        .getResultsFolder();
 
-    // TODO: Catch exceptions
     for (IResource iResource : documentsResults) {
-      System.out.println(" Doc id = " + iResource.getId());
-      System.out.println(" Doc name = " + iResource.getDisplayName());
-      System.out.println();
+      logger.debug(" Doc id = " + iResource.getId());
+      logger.debug(" Doc name = " + iResource.getDisplayName());
+      logger.debug("\n");
     }
 
-    System.out.println("Documents=" + documentsResults.size());
+    logger.debug("Documents=" + documentsResults.size());
 
     // The results from searching the folders
-    ArrayList<IResource> foldersResults = (ArrayList<IResource>) new SearchFolder(searchText, searchCtrl, option).getResultsFolder();
+    ArrayList<IResource> foldersResults = (ArrayList<IResource>) new SearchFolder(searchText, searchCtrl, option)
+        .getResultsFolder();
 
     queryResults.addAll(documentsResults);
     queryResults.addAll(foldersResults);
-    System.out.println("Results from server=" + queryResults.size());
+    logger.debug("Results from server=" + queryResults.size());
 
     return queryResults;
   }

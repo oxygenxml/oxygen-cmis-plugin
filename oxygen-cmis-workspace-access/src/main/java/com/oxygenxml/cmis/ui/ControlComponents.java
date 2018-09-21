@@ -60,7 +60,7 @@ public class ControlComponents extends JPanel {
     itemsPanel = new ItemListView(tabs, breadcrumbList);
 
     // Initialization of the search
-    searchPanel = new SearchView(itemsPanel);
+    searchPanel = new SearchView();
   
     itemsPanel.setContentProvider(searchPanel);
 

@@ -48,7 +48,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
     super("Cancel check out");
 
     // Set logger level
-    logger.setLevel(Level.DEBUG);
+    
 
     this.resource = resource;
     this.currentParent = currentParent;

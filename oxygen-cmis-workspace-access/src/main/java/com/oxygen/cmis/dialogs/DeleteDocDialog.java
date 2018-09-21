@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.ui;
+package com.oxygen.cmis.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -25,7 +25,7 @@ import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
  *
  */
 public class DeleteDocDialog extends OKCancelDialog {
-  private DeleteInputPanel inputPanel;
+  private final DeleteInputPanel inputPanel;
 
   public DeleteDocDialog(JFrame frame) {
     super(frame, "Delete document", true);
@@ -47,16 +47,17 @@ public class DeleteDocDialog extends OKCancelDialog {
     setVisible(true);
   }
 
-  // TODO: I doubt this decision
   public String getDeleteType() {
     return inputPanel.getDeleteType();
   }
 }
 
 class DeleteInputPanel extends JPanel implements ActionListener {
-  private JLabel messageLabel, versionLabel;
-  private JRadioButton radioItemAll;
-  private JRadioButton radioItemSingle;
+  private static final String SINGLE_VERSION = "SINGLE";
+  private static final String ALL_VERSIONS = "ALL";
+  private final JLabel messageLabel, versionLabel;
+  private final JRadioButton radioItemAll;
+  private final JRadioButton radioItemSingle;
 
   private String deleteType;
 
@@ -65,13 +66,10 @@ class DeleteInputPanel extends JPanel implements ActionListener {
 
     // --MessageLabel
     messageLabel = new JLabel("Are sure you want to delete the selected item/s from the repository? :");
-    // messageLabel.setOpaque(true);
-    // messageLabel.setBackground(Color.BLUE);
     final GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
     c.gridy = 0;
-    // c.weightx = 0;
-    // c.ipadx = 10;
+   
     c.gridwidth = 3;
     c.insets = new Insets(1, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
@@ -79,51 +77,41 @@ class DeleteInputPanel extends JPanel implements ActionListener {
 
     // -- VersionLabel
     versionLabel = new JLabel("Version:");
-    // versionLabel.setOpaque(true);
-    // versionLabel.setBackground(Color.BLUE);
     c.gridx = 0;
     c.gridy = 1;
     c.anchor = GridBagConstants.WEST;
     c.gridwidth = 1;
     c.weightx = 0;
-    // c.ipadx = 10;
-    // c.insets = new Insets(3, 5, 3, 5);
+  
     c.fill = GridBagConstants.VERTICAL;
     add(versionLabel, c);
 
     // --All versions
     radioItemAll = new JRadioButton("All versions");
-    // radioItemAll.setOpaque(true);
-    // radioItemAll.setBackground(Color.RED);
-    radioItemAll.setActionCommand("ALL");
+  
+    radioItemAll.setActionCommand(ALL_VERSIONS);
     radioItemAll.addActionListener(this);
     c.gridx = 1;
     c.gridy = 1;
     c.gridwidth = 1;
     c.anchor = GridBagConstants.WEST;
     c.weightx = 0.5;
-    // c.ipadx = 10;
-    // c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
     add(radioItemAll, c);
 
     // --SINGLE
     radioItemSingle = new JRadioButton("Single version ");
-    // radioItemSingle.setOpaque(true);
-    // radioItemSingle.setBackground(Color.yellow);
-    radioItemSingle.setActionCommand("SINGLE");
+    radioItemSingle.setActionCommand(SINGLE_VERSION);
     radioItemSingle.addActionListener(this);
     // Set selected
     radioItemSingle.setSelected(true);
-    deleteType = "SINGLE";
+    deleteType = SINGLE_VERSION;
 
     c.anchor = GridBagConstants.WEST;
     c.gridx = 2;
     c.gridy = 1;
     c.gridwidth = 1;
     c.weightx = 0.5;
-    // c.ipadx = 10;
-    // c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
     add(radioItemSingle, c);
 
@@ -132,12 +120,12 @@ class DeleteInputPanel extends JPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
 
-    if (e.getActionCommand().equals("ALL")) {
+    if (e.getActionCommand().equals(ALL_VERSIONS)) {
       radioItemSingle.setSelected(false);
       deleteType = e.getActionCommand();
     }
 
-    if (e.getActionCommand().equals("SINGLE")) {
+    if (e.getActionCommand().equals(SINGLE_VERSION)) {
       radioItemAll.setSelected(false);
       deleteType = e.getActionCommand();
     }

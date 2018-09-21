@@ -6,7 +6,6 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.HashMap;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -22,7 +21,7 @@ public class CmisStreamHandler extends URLStreamHandler {
   private static final Logger logger = Logger.getLogger(CmisStreamHandler.class);
 
   CmisStreamHandler() {
-    logger.setLevel(Level.DEBUG);
+
   }
 
   @Override

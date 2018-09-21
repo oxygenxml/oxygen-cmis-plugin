@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.ui;
+package com.oxygen.cmis.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -29,15 +29,14 @@ import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
 public class CheckinDocDialog extends OKCancelDialog {
   // Main inputPanel
   private final CheckinInputPanel inputPanel;
- 
-  
+
   /**
    * The constructor that uses the main frame as a location point
    * 
    * @param frame
    */
   public CheckinDocDialog(JFrame frame, String docName) {
-    super(frame, "Check-in "+ docName, true);
+    super(frame, "Check-in " + docName, true);
 
     // Get the parent container
     final Container cont = getContentPane();
@@ -75,7 +74,7 @@ class CheckinInputPanel extends JPanel implements ActionListener {
   private static final String MAJOR_VERSION = "MAJOR";
   private static final String MINOR_VERSION = "MINOR";
   private static final String NONE_VERSION = "NONE";
-  
+
   private final JLabel messageLabel;
   private final JLabel versionLabel;
   private final JTextArea commitArea;
@@ -151,12 +150,7 @@ class CheckinInputPanel extends JPanel implements ActionListener {
 
     // This solves the problem where the dialog was not getting
     // focus the second time it was displayed
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        commitArea.requestFocusInWindow();
-      }
-    });
+    SwingUtilities.invokeLater(commitArea::requestFocusInWindow);
 
   }
 

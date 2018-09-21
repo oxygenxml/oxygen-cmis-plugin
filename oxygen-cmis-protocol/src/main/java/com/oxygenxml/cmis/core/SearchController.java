@@ -13,18 +13,25 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
+import org.apache.log4j.Logger;
+
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
 public class SearchController {
-
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(SearchController.class);
+  private static final String FOLDER_TYPE = "cmis:folder";
+  private static final String DOCUMENT_TYPE = "cmis:document";
   public static final int SEARCH_IN_DOCUMENT = 1;
   public static final int SEARCH_IN_FOLDER = 2;
 
   /**
-   * Logic operators for the search that are supposed to be uppercase
+   * Logic operators for the search that are supposed to be upper case
    * 
    * @author bluecc
    *
@@ -37,10 +44,9 @@ public class SearchController {
           return true;
       return false;
     }
-  };
+  }
 
   private ResourceController ctrl;
-  private Scanner scanner;
 
   /**
    * CONSTRUCTOR
@@ -65,18 +71,18 @@ public class SearchController {
     ArrayList<IResource> resources = new ArrayList<>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
-    // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
+
     String scope = "";
 
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
-      scope = "cmis:document";
+      scope = DOCUMENT_TYPE;
     }
 
     else if ((searchObjectTypes & SEARCH_IN_FOLDER) != 0) {
       if (scope.length() > 0) {
         scope += ",";
       }
-      scope += "cmis:folder";
+      scope += FOLDER_TYPE;
     }
 
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, "cmis:name LIKE '%" + name + "%'", false,
@@ -118,36 +124,70 @@ public class SearchController {
 
   /**
    * Find all the resources and order by name ascending depending on what to
-   * search (ALL KEYS) a cmis:document or folder
+   * search (ALL KEYS) a cmis:document or folder.
    * 
    * @param content
    * @param searchObjectTypes
    * @return
    */
   private List<IResource> queryResource(String toSearch, int searchObjectTypes) {
-    String[] searchKeys = toSearch.split("\\s+");
-
     ArrayList<IResource> resources = new ArrayList<>();
+    String[] searchKeys = toSearch.split("\\s+");
+    String scope = "";
 
     OperationContext oc = ctrl.getSession().createOperationContext();
     oc.setOrderBy("cmis:name ASC");
     oc.setIncludeAllowableActions(true);
     oc.setIncludeRelationships(IncludeRelationships.BOTH);
     oc.setIncludePolicies(true);
-    String scope = "";
 
     // Binary trick
     if ((searchObjectTypes & SEARCH_IN_DOCUMENT) != 0) {
-      scope = "cmis:document";
+      scope = DOCUMENT_TYPE;
     }
 
     else if ((searchObjectTypes & SEARCH_IN_FOLDER) != 0) {
       if (scope.length() > 0) {
         scope += ",";
       }
-      scope += "cmis:folder";
+      scope += FOLDER_TYPE;
     }
 
+    StringBuilder strBuild = constructWhereStatement(searchKeys);
+
+    String where = strBuild.toString();
+
+    logger.debug("Where statement : " + where);
+
+    // The results after the search.
+    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, where, false, oc);
+
+    // Check what kind of results we've got.
+    for (CmisObject cmisObject : results) {
+      IResource res = null;
+
+      if (cmisObject instanceof Document) {
+        res = new DocumentImpl((Document) cmisObject);
+
+      } else if (cmisObject instanceof Folder) {
+        res = new FolderImpl((Folder) cmisObject);
+      }
+
+      resources.add(res);
+    }
+    return removePWCDocsFromSearch(resources);
+
+  }
+
+  /**
+   * Constructs the statement using ONLY one CONTAINS because only this way all
+   * the fields can be searched (case sensitive).
+   * 
+   * @param searchKeys
+   * @return Final string to b e used for there where parameter in queryObjects
+   *         method.
+   */
+  private StringBuilder constructWhereStatement(String[] searchKeys) {
     // It's necessary to exist only one CONTAINS
     StringBuilder strBuild = new StringBuilder();
     strBuild.append("CONTAINS('");
@@ -167,7 +207,14 @@ public class SearchController {
         strBuild.append(logicKey);
 
       } else {
-        searchKey = key;
+        // When there is only one key search for everything that contains that
+        // key
+        if (searchKeys.length == 1) {
+          searchKey = "*" + key + "*";
+
+        } else {
+          searchKey = key;
+        }
         strBuild.append("(cmis:name:" + searchKey + " OR cmis:description:" + searchKey + " OR " + searchKey + ")");
 
         // Check if the is a next key (The case when there is only a space
@@ -186,25 +233,7 @@ public class SearchController {
 
     }
     strBuild.append("')");
-
-    String where = strBuild.toString();
-    System.out.println("Where statement : " + where);
-    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, where, false, oc);
-
-    for (CmisObject cmisObject : results) {
-      IResource res = null;
-
-      if (cmisObject instanceof Document) {
-        res = new DocumentImpl((Document) cmisObject);
-
-      } else {
-        res = new FolderImpl((Folder) cmisObject);
-      }
-
-      resources.add(res);
-    }
-    return removePWCDocsFromSearch(resources);
-
+    return strBuild;
   }
 
   /**
@@ -237,7 +266,6 @@ public class SearchController {
     return queryResource(content, SEARCH_IN_DOCUMENT);
   }
 
-
   /**
    * Get the results for searching the name and the title in the folders
    * 
@@ -249,17 +277,17 @@ public class SearchController {
   }
 
   /**
-   * METHOD TO SEARCH DOCUMENTS WITH SPECIFIC CONTENT!
+   * Searches for specific content
    * 
    * @param content
    * @return
    */
   public List<IDocument> queryDocContent(String content) {
-    ArrayList<IDocument> docList = new ArrayList<IDocument>();
+    ArrayList<IDocument> docList = new ArrayList<>();
 
     OperationContext oc = ctrl.getSession().createOperationContext();
-    // oc.setFilterString("cmis:objectId,cmis:name,cmis:createdBy");
-    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects("cmis:document", "CONTAINS ('" + content + "')",
+
+    ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(DOCUMENT_TYPE, "CONTAINS ('" + content + "')",
         false, oc);
 
     for (CmisObject cmisObject : results) {
@@ -286,40 +314,46 @@ public class SearchController {
     if (resource instanceof DocumentImpl) {
 
       IDocument iDocument = (IDocument) resource;
-      if (iDocument != null) {
-        try {
-          // Use a reader for the content
-          Reader documentContent = ctrl.getDocumentContent(iDocument.getId());
 
-          // If there is something
-          if (documentContent != null) {
-            scanner = new Scanner(documentContent);
+      try {
+        // Use a reader for the content
+        Reader documentContent = ctrl.getDocumentContent(iDocument.getId());
 
-            // Iterare line by line
-            while (scanner.hasNextLine()) {
-              String line = scanner.nextLine().trim();
-
-              // Check for each key
-              for (String key : searchKeys) {
-
-                // System.out.println("Key context =" + key);
-                if (line.contains(key)) {
-
-                  // System.out.println("Content found=" + line);
-                  return limitStringResult(line, key, STRING_LIMIT);
-
-                }
-              }
-
-            }
-            scanner.close();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+        // If there is something
+        if (documentContent != null) {
+          return scanLines(searchKeys, STRING_LIMIT, documentContent);
         }
+      } catch (Exception e) {
+        logger.debug("Exception", e);
       }
+
     }
 
+    return null;
+  }
+
+  private String scanLines(String[] searchKeys, final int STRING_LIMIT, Reader documentContent) {
+    Scanner scanner;
+    scanner = new Scanner(documentContent);
+
+    // Iterate line by line
+    while (scanner.hasNextLine()) {
+      String line = scanner.nextLine().trim();
+
+      // Check for each key
+      for (String key : searchKeys) {
+
+        // If line contains the key
+        if (line.contains(key)) {
+
+          logger.debug("Content found=" + line);
+          scanner.close();
+          return limitStringResult(line, key, STRING_LIMIT);
+        }
+      }
+
+    }
+    scanner.close();
     return null;
   }
 
@@ -342,13 +376,11 @@ public class SearchController {
 
       // Not reached the front of the input
       if (frontCounter != limitedString.indexOf(pattern)) {
-        // System.out.println("front counter=" + frontCounter);
-        // System.out.println("back counter=" + backCounter);
-        limitedString = limitedString.substring(frontCounter);
-        // System.out.println("The string after front cut = " + limitedString);
-        // System.out.println("String length =" + limitedString.length());
-        backCounter--;
 
+        limitedString = limitedString.substring(frontCounter);
+        // After Front cut
+
+        backCounter--;
       }
 
       if (limitedString.length() <= stringLimit) {
@@ -357,11 +389,9 @@ public class SearchController {
 
       // Not reached the back of input
       if (backCounter != limitedString.indexOf(pattern) + pattern.length() - 1) {
-        // System.out.println("\nfront counter=" + frontCounter);
-        // System.out.println("back counter=" + backCounter);
+
         limitedString = limitedString.substring(0, backCounter);
-        // System.out.println("The string after back cut = " + limitedString);
-        // System.out.println("String length =" + limitedString.length());
+        // Back cut
         backCounter--;
 
       }

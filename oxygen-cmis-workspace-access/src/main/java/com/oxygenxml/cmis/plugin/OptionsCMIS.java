@@ -26,7 +26,7 @@ public class OptionsCMIS extends OptionPagePluginExtension {
 
   public OptionsCMIS() {
     // Set logger level
-    logger.setLevel(Level.DEBUG);
+    
 
     mainPanel = new JPanel(new GridBagLayout());
 

@@ -44,7 +44,7 @@ public class CheckoutFolderAction extends AbstractAction {
     super("Check out");
 
     // Set logger level
-    logger.setLevel(Level.DEBUG);
+    
 
     this.resource = resource;
     this.currentParent = currentParent;

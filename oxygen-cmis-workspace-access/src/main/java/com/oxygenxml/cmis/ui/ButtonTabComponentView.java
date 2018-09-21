@@ -147,7 +147,7 @@ public class ButtonTabComponentView extends JPanel {
   }
 
   // Set the button border when mouse is inside
-  private final static MouseAdapter buttonMouseListener = new MouseAdapter() {
+  private static final MouseAdapter buttonMouseListener = new MouseAdapter() {
 
     @Override
     public void mouseEntered(MouseEvent e) {

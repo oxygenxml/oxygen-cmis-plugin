@@ -39,7 +39,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
   /**
    * Parties interested about the repository change events.
    */
-  private final transient List<RepositoryListener> listeners = new ArrayList<>(2);
+  private final transient List<RepositoryListener> listeners = new ArrayList<>();
 
   private URL serverURL;
 
@@ -88,10 +88,10 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
       if (logger.isDebugEnabled()) {
         logger.debug(selected.getId());
       }
-      
+
       fireRepositoryChangedEvent(serverURL, selected.getId());
     });
-    
+
     /*
      * Render all the elements of the listRepo
      */
@@ -102,24 +102,35 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
         String renderTex = "";
         if (value != null) {
           renderTex = ((Repository) value).getName();
-          
+
           if (renderTex.length() == 0) {
             renderTex = ((Repository) value).getId();
           }
         }
-
 
         return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
       }
     });
   }
 
-  protected void fireRepositoryChangedEvent(URL serverURL2, String repositoryID) {
+  /**
+   * On changed repository reset the breadcrumb and present the resources again
+   * of the current ropsitory.
+   * 
+   * @param serverURL
+   * @param repositoryID
+   */
+  protected void fireRepositoryChangedEvent(URL serverURL, String repositoryID) {
     for (RepositoryListener repositoryListener : listeners) {
-      repositoryListener.repositoryConnected(serverURL2, repositoryID);
+      repositoryListener.repositoryConnected(serverURL, repositoryID);
     }
   }
-  
+
+  /**
+   * Adds repositories to the list to be reseted
+   * 
+   * @param repositoryListener
+   */
   public void addRepositoryListener(RepositoryListener repositoryListener) {
     listeners.add(repositoryListener);
   }

@@ -16,21 +16,22 @@ public class SearchFolder {
   private final ArrayList<IResource> resultsQueries;
 
   /**
+   * Search constructor for searching for different options (default null).
    * 
    * @param toSearch
    * @param searchCtrl
    * @param options
    */
   public SearchFolder(String toSearch, SearchController searchCtrl, String option) {
-    String [] searchKeys= toSearch.split("\\s+");
+
     this.resultsQueries = new ArrayList<>();
 
     switch (option) {
 
     case "null":
-      for (String key : searchKeys) {
-        resultsQueries.addAll(searchCtrl.queryFolder(key));
-      }
+
+      resultsQueries.addAll(searchCtrl.queryFolder(toSearch));
+
       break;
 
     case "name":
@@ -43,6 +44,10 @@ public class SearchFolder {
 
   }
 
+  /**
+   * 
+   * @return Returns all the folders from the search.
+   */
   public List<IResource> getResultsFolder() {
     return resultsQueries;
   }

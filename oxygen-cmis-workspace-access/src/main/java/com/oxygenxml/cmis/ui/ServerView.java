@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -22,8 +20,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.storage.SessionStorage;
 
@@ -35,7 +34,14 @@ import com.oxygenxml.cmis.storage.SessionStorage;
  *
  */
 public class ServerView extends JPanel {
-  // Order shall be savedG
+
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(ServerView.class);
+  private static final String OPERATION_IS_NOT_SUPPORTED = "Operation is not supported";
+
+  // Order shall be saved
   private final Set<String> serversList = new LinkedHashSet<>();
   // Combo box to choose from in-memory servers
   private final JComboBox<String> serverItemsCombo = new JComboBox<>();
@@ -48,14 +54,13 @@ public class ServerView extends JPanel {
    * @exception MalformedURLException
    */
   public ServerView(RepositoriesPresenter repoPresenter, SearchPresenter searchPresenter) {
+
     /*
      * TESTING in comments Arrays.assList has a fixed range no add allowed
      */
-    // serversList.add("http://localhost:8080/B/atom11");
-    // serversList.add("http://127.0.0.1:8098/alfresco/api/-default-/cmis/versions/1.1/atom");
-    // serversList.add("http://localhost:8088/alfresco/api/-default-/cmis/versions/1.1/atom");
-    // serversList.add("http://localhost:8990/alfresco/api/-default-/cmis/versions/1.1/atom");
-    // presentServers(serversList);
+
+    // "http://localhost:8088/alfresco/api/-default-/cmis/versions/1.1/atom
+    // http://localhost:8990/alfresco/api/-default-/cmis/versions/1.1/atom
 
     // Add all new elements to the LinkedHash set (unique and ordered)
     Set<String> elements = SessionStorage.getInstance().getSevers();
@@ -64,7 +69,6 @@ public class ServerView extends JPanel {
       Collections.addAll(serversList, elements.toArray(new String[0]));
     }
     setOpaque(true);
-    // setBackground(Color.CYAN);
     // Present them
     presentServers(serversList);
 
@@ -80,7 +84,6 @@ public class ServerView extends JPanel {
     JLabel serverUrlLabel = new JLabel("Server URL:");
 
     serverUrlLabel.setOpaque(true);
-    // serverUrlLabel.setBackground(Color.red);
 
     add(serverUrlLabel, c);
 
@@ -99,15 +102,14 @@ public class ServerView extends JPanel {
 
       @Override
       public void focusLost(FocusEvent e) {
-        // TODO Auto-generated method stub
+        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
 
       }
 
       @Override
       public void focusGained(FocusEvent e) {
-        // TODO Auto-generated method stub
         serverItemsCombo.setFocusable(true);
-        ;
+
       }
     });
     serverItemsCombo.validate();
@@ -117,25 +119,25 @@ public class ServerView extends JPanel {
 
       @Override
       public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
+        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
 
       }
 
       @Override
       public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
+        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
 
       }
 
       @Override
       public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
+
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
           loadButton.doClick();
         }
       }
     });
-    // serverItemsCombo.setBackground(Color.yellow);
+
     // Load JButton constraints constraints
     add(serverItemsCombo, c);
     c.gridx = 3;
@@ -145,49 +147,59 @@ public class ServerView extends JPanel {
     c.fill = GridBagConstraints.NONE;
     loadButton = new JButton("Connect");
 
-    loadButton.addActionListener(new ActionListener() {
+    loadButton.addActionListener(e -> {
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
+      // Try presentRepositories using the URL
+      Object selectedItem = serverItemsCombo.getSelectedItem();
 
-        // Try presentRepositories using the URL
-        Object selectedItem = serverItemsCombo.getSelectedItem();
+      if (selectedItem != null) {
+        try {
+          // Get the url from the item selected
+          URL serverURL = new URL(serverItemsCombo.getSelectedItem().toString().trim());
 
-        if (selectedItem != null) {
-          try {
-            // Get the url from the item selected
-            URL serverURL = new URL(serverItemsCombo.getSelectedItem().toString().trim());
+          // Get the typed URL and trim it
+          String currentServerURL = serverItemsCombo.getEditor().getItem().toString().trim();
 
-            // Get the typed URL and trim it
-            String currentServerURL = serverItemsCombo.getEditor().getItem().toString().trim();
+          // Add to the serves list
+          serversList.add(currentServerURL);
+          // Present repositories
+          presentRepositories(repoPresenter, searchPresenter, serverURL);
 
-            // Add to the serves list
-            serversList.add(currentServerURL);
-            try {
+          // Add the server
+          SessionStorage.getInstance().addServer(currentServerURL);
 
-              repoPresenter.presentRepositories(serverURL);
-              searchPresenter.activateSearch();
+        } catch (MalformedURLException e1) {
 
-            } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException ev) {
-
-              // Show an exception if there is one
-              JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
-            }
-            // Add the server
-            SessionStorage.getInstance().addServer(currentServerURL);
-
-          } catch (MalformedURLException e1) {
-
-            // Show an exception if there is one
-            JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
-          }
+          // Show an exception if there is one
+          logger.debug("Exception ", e1);
         }
-
       }
+
     });
     loadButton.setOpaque(true);
-    // loadButton.setBackground(new Color(0, 0, 255));
+
     add(loadButton, c);
+  }
+
+  /**
+   * Tries to present repositories and activate the search
+   * 
+   * @param repoPresenter
+   * @param searchPresenter
+   * @param serverURL
+   */
+  private void presentRepositories(RepositoriesPresenter repoPresenter, SearchPresenter searchPresenter,
+      URL serverURL) {
+    try {
+
+      repoPresenter.presentRepositories(serverURL);
+      searchPresenter.activateSearch();
+
+    } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException ev) {
+
+      // Show an exception if there is one
+      logger.debug("Exception ", ev);
+    }
   }
 
   /**

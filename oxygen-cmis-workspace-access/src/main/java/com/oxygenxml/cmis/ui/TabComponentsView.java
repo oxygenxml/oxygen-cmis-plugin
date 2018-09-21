@@ -1,16 +1,12 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,7 +14,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 
@@ -29,6 +25,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
  *
  */
 public class TabComponentsView extends JPanel implements TabsPresenter {
+  private static final Logger logger = Logger.getLogger(TabComponentsView.class);
   protected static int itemsCounter = 0;
   private final JTabbedPane pane = new JTabbedPane();
 
@@ -39,7 +36,6 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
 
     // Set layout
     setLayout(new GridBagLayout());
-    GridBagConstraints c = new GridBagConstraints();
 
     // constraints
     add(pane);
@@ -52,10 +48,9 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
   /**
    * Initialize each component using ButtonTabComponent class
    * 
-   * @param doc
    * @param i
    */
-  private void initTabComponent(Document doc, int i) {
+  private void initTabComponent(int i) {
 
     pane.setTabComponentAt(i, new ButtonTabComponentView(pane));
   }
@@ -69,7 +64,7 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
    */
   @Override
   public void presentItem(Document doc) {
-    
+
     // The title
     String title = doc.getName();
 
@@ -92,13 +87,9 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
         // Append the text to the textArea
         area.append(String.valueOf(ch, 0, l));
       }
-    } catch (UnsupportedEncodingException e) {
+    } catch (Exception e) {
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
-
-    } catch (IOException e) {
-      // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + e.getMessage());
+      logger.debug("Exception ", e);
 
     } finally {
       // No matter what happens close at the end the doc
@@ -123,7 +114,7 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
     pane.add(title, scrollerTabs);
 
     // Initialize the button for the tab
-    initTabComponent(doc, itemsCounter);
+    initTabComponent(itemsCounter);
     itemsCounter++;
 
     pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);

@@ -49,7 +49,7 @@ public class CreateFolderAction extends AbstractAction {
     super("Create Folder", UIManager.getIcon("FileView.directoryIcon"));
 
     // Set logger level
-    logger.setLevel(Level.DEBUG);
+    
 
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;

@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IFolder;
@@ -42,10 +41,9 @@ public class CheckoutDocumentAction extends AbstractAction {
    */
   public CheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Check out");
-    
+
     // Set logger level
-    logger.setLevel(Level.DEBUG);
-    
+
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;

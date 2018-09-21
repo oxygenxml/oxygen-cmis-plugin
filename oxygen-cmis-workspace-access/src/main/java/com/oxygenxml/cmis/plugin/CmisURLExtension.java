@@ -17,7 +17,7 @@ public class CmisURLExtension implements URLStreamHandlerPluginExtension {
 	 */
 	@Override
 	public URLStreamHandler getURLStreamHandler(String protocol) {
-		logger.info("CmisURLExtension.getURLStreamHandler() ---> " + protocol);
+	  logger.info("CmisURLExtension.getURLStreamHandler() ---> "+ protocol);
 		if (protocol.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
 			return new CmisStreamHandler();
 		}

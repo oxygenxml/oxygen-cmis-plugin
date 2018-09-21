@@ -1,6 +1,5 @@
-package com.oxygenxml.cmis.ui;
+package com.oxygen.cmis.dialogs;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -26,8 +25,8 @@ import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
 public class LoginDialog extends OKCancelDialog {
 
   // Initialize the fields
-  private JTextField userField;
-  private JPasswordField passwordField;
+  private final JTextField userField;
+  private final JPasswordField passwordField;
 
   // Constructor
   public LoginDialog(JFrame frame) {
@@ -89,6 +88,7 @@ public class LoginDialog extends OKCancelDialog {
     // This solves the problem where the dialog was not getting
     // focus the second time it was displayed
     SwingUtilities.invokeLater(new Runnable() {
+      @Override
       public void run() {
         userField.requestFocusInWindow();
       }

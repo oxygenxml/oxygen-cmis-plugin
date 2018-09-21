@@ -3,8 +3,6 @@ package com.oxygenxml.cmis.storage;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,7 +27,7 @@ public class Options {
   /*
    * PluginWorkspace that is used to encrypt and decrypt data
    */
-  private PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+  private final PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
   /**
    * All the known CMIS servers URLs.
    */

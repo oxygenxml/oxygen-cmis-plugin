@@ -5,9 +5,9 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.ui.ControlComponents;
-import com.oxygenxml.cmis.ui.TabsPresenter;
 
 import ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
@@ -18,6 +18,10 @@ import ro.sync.exml.workspace.api.standalone.ViewInfo;
  * Plugin extension - workspace access extension.
  */
 public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPluginExtension {
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(CMISWorkspaceAccessPluginExtension.class);
 
   /**
    * @see ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension#applicationStarted(ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace)
@@ -35,14 +39,9 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
         // The view ID defined in the "plugin.xml"
         "com.oxygenxml.cmis.plugin.CMISPlugin.View".equals(viewInfo.getViewID())) {
 
-          viewInfo.setComponent(new ControlComponents(new TabsPresenter() {
+          viewInfo.setComponent(new ControlComponents((Document doc) ->
 
-            @Override
-            public void presentItem(Document doc) {
-
-              System.err.println("Open " + doc.getName());
-            }
-          }));
+          logger.debug("Open " + doc.getName())));
           viewInfo.setTitle("CMIS Explorer");
 
           // Accepts only PNGs

@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
+import com.oxygen.cmis.dialogs.LoginDialog;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.storage.SessionStorage;

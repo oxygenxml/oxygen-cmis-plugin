@@ -45,6 +45,10 @@ public class SearchDocument {
 
   }
 
+  /**
+   * 
+   * @return All the documents from the search.
+   */
   public List<IResource> getResultsFolder() {
     return resultsQueries;
   }
