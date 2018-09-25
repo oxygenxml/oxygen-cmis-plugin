@@ -29,7 +29,7 @@ class DefaultListCellRendererExtension extends DefaultListCellRenderer {
   /**
    * Logging.
    */
-  private static final Logger logger = Logger.getLogger(ItemListView.class);
+  private static final Logger logger = Logger.getLogger(DefaultListCellRendererExtension.class);
 
   @Override
   public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,

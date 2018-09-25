@@ -61,12 +61,12 @@ public class ControlComponents extends JPanel {
 
     // Initialization of the search
     searchPanel = new SearchView();
-  
+
     itemsPanel.setContentProvider(searchPanel);
 
     // Initialization of the repositories
     repoComboBox = new RepoComboBoxView();
-    
+
     repoComboBox.addRepositoryListener(itemsPanel);
     repoComboBox.addRepositoryListener(breadcrumbList);
 
@@ -116,6 +116,11 @@ public class ControlComponents extends JPanel {
     c.fill = GridBagConstraints.BOTH;
     add(itemsPanel, c);
 
+  }
+
+  public String getSelectedURL() {
+
+    return itemsPanel.getSelectedObjectUrl();
   }
 
 }

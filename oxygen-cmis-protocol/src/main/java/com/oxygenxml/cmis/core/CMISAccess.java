@@ -126,6 +126,9 @@ public class CMISAccess {
 	 * @return A controller to work with resources.
 	 */
 	public ResourceController createResourceController() {
+	  if (session == null) {
+	    throw new IllegalAccessError("Not connected to reposiotry. This controller can't be used.");
+	  }
 		return new ResourceController(session);
 	}
 

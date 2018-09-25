@@ -21,12 +21,13 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class RenameFolderAction extends AbstractAction {
+  private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+  private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
+  
 
   private transient IResource resource = null;
   private  transient IResource currentParent = null;
   private transient ResourcesBrowser itemsPresenter = null;
-  private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
-  private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
 
   /**

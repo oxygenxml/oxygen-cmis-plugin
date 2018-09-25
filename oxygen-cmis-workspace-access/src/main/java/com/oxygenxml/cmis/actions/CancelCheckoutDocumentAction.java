@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -27,12 +26,12 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(CancelCheckoutFolderAction.class);
+  private final transient ResourceController resourceController;
   // The resource that will receive
   private transient IResource resource = null;
   private transient IResource currentParent = null;
   private transient ResourcesBrowser itemsPresenter = null;
   private transient DocumentImpl pwcDoc;
-  private static ResourceController resourceController = CMISAccess.getInstance().createResourceController();
 
   /**
    * Constructor that receives the resource to process
@@ -45,13 +44,13 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
    */
   public CancelCheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Cancel check out");
-    
+
     // Set logger level
-    
 
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
+    this.resourceController = CMISAccess.getInstance().createResourceController();
 
     DocumentImpl doc = ((DocumentImpl) resource);
     String pwcId = null;

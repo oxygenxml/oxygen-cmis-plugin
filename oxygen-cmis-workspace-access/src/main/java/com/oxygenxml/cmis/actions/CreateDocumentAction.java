@@ -39,14 +39,15 @@ public class CreateDocumentAction extends AbstractAction {
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(CreateDocumentAction.class);
-  private static final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+  private final transient ResourceController resourceController;
+  private transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+  private final JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
+
   // Parent of the resource
   private transient IResource currentParent;
   // Presenter to use to show the resources
   private final transient ResourcesBrowser itemsPresenter;
-  private transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
   private transient String versioningState;
-  private final  JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
   /**
    * Constructor that receives data to process for the creation and presentation
@@ -60,12 +61,11 @@ public class CreateDocumentAction extends AbstractAction {
     // Set a name and use a native icon
     super("Create document ", UIManager.getIcon("FileView.fileIcon"));
 
-    // Set logger level
-    
+    this.resourceController = CMISAccess.getInstance().createResourceController();
+
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
 
-    
   }
 
   /**

@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.plugin;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
@@ -50,6 +51,8 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
           URL resource = getClass().getClassLoader().getResource("images/cmis.png");
 
           viewInfo.setIcon(new ImageIcon(resource));
+          JFrame mainFrame = (JFrame) pluginWorkspaceAccess.getParentFrame();
+          pluginWorkspaceAccess.addInputURLChooserCustomizer(new BrowseCMIS(mainFrame));
 
         }
       }

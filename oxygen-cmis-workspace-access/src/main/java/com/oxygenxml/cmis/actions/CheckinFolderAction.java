@@ -34,11 +34,12 @@ public class CheckinFolderAction extends AbstractAction {
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(CheckinFolderAction.class);
+  private final transient ResourceController resourceController;
+
   // The resource that will receive
   private transient IResource resource = null;
   private transient IResource currentParent = null;
   private transient ResourcesBrowser itemsPresenter = null;
-  private static ResourceController resourceController = CMISAccess.getInstance().createResourceController();
 
   /**
    * Constructor that receives the resource to process
@@ -53,8 +54,7 @@ public class CheckinFolderAction extends AbstractAction {
 
     super("Check in");
 
-    // Set logger level
-    
+    this.resourceController = CMISAccess.getInstance().createResourceController();
 
     this.resource = resource;
     this.currentParent = currentParent;
@@ -148,7 +148,7 @@ public class CheckinFolderAction extends AbstractAction {
         } else if (iResource instanceof DocumentImpl) {
           // If it's a document try <Code>checkIn</Code>
           // Only if the action was not canceled
-          
+
           DocumentImpl doc = (DocumentImpl) iResource;
           if (result != 0 && doc.isCheckedOut() && !doc.isPrivateWorkingCopy()) {
             // Try to <Code>checkIn</Code>
@@ -244,7 +244,7 @@ public class CheckinFolderAction extends AbstractAction {
           // If it is a document type of custom interface
           try {
 
-            canCheckin = checkDocument( iResource);
+            canCheckin = checkDocument(iResource);
 
           } catch (Exception ev) {
 
@@ -264,7 +264,7 @@ public class CheckinFolderAction extends AbstractAction {
    * @param iResource
    * @return
    */
-  private boolean checkDocument( IResource iResource) {
+  private boolean checkDocument(IResource iResource) {
     DocumentImpl doc;
     String pwcId;
     boolean hasPwc;

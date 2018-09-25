@@ -7,9 +7,11 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.UIManager;
 
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
@@ -29,11 +31,12 @@ import ro.sync.exml.workspace.api.listeners.WSEditorChangeListener;
  *
  */
 public class OpenDocumentAction extends AbstractAction {
+  private static final Logger logger = Logger.getLogger(OpenDocumentAction.class);
+
   // The resource to open
   private transient IResource resource = null;
   private transient IResource currentParent = null;
   private transient ResourcesBrowser itemsPresenter = null;
-  private static final Logger logger = Logger.getLogger(OpenDocumentAction.class);
 
   /**
    * Constructor that gets the resource to open
@@ -78,21 +81,13 @@ public class OpenDocumentAction extends AbstractAction {
   public void openDocumentPath() {
     // Get the workspace of the plugin
     PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+
     boolean editable = false;
     DocumentImpl currDoc = (DocumentImpl) resource;
     String allowEditOption = pluginWorkspace.getOptionsStorage().getOption(OptionsCMIS.ALLOW_EDIT, "false");
     Boolean allowEditOriginal = Boolean.valueOf(allowEditOption);
 
-    if (currDoc.isVersionable()) {
-
-      if (currDoc.isCheckedOut() && currDoc.canUserUpdateContent()) {
-        editable = true;
-      } else {
-        editable = allowEditOriginal;
-      }
-    } else {
-      editable = true;
-    }
+    editable = canUserOpenDoc(editable, currDoc, allowEditOriginal);
 
     // -------Oxygen
 
@@ -137,5 +132,41 @@ public class OpenDocumentAction extends AbstractAction {
     }
 
     // ------
+  }
+
+  /**
+   * Checks if the user by checking if the document is checked out and the PWC
+   * can be updated (doc cannot on the state of checked out) can open the
+   * selected document.
+   * 
+   * @param editable
+   * @param currDoc
+   * @param allowEditOriginal
+   * @return
+   */
+  private boolean canUserOpenDoc(boolean editable, DocumentImpl currDoc, Boolean allowEditOriginal) {
+    ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    String pwcId;
+    if (currDoc.isVersionable()) {
+      pwcId = currDoc.getVersionSeriesCheckedOutId();
+
+      Document pwc = null;
+      if (pwcId != null) {
+        pwc = (Document) resourceController.getSession().getObject(pwcId);
+      }
+      if (pwc != null) {
+        DocumentImpl pwcDoc = new DocumentImpl(pwc);
+
+        if (currDoc.isCheckedOut() && pwcDoc.canUserUpdateContent()) {
+          editable = true;
+        } else {
+          editable = allowEditOriginal;
+        }
+      }
+    } else {
+      editable = true;
+    }
+    logger.info("Is checked out? " + currDoc.isCheckedOut() + " Can user update? " + currDoc.canUserUpdateContent());
+    return editable;
   }
 }

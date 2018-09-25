@@ -32,15 +32,16 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class PasteDocumentAction extends AbstractAction {
-  private static final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+  private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+  private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
+  private final transient ResourceController resourceController;
+
   // The resource to paste
   private transient IResource resource;
   // Parent of tht resource
   private transient IResource currentParent;
   // Presenter to update the content of that parent
   private final transient ResourcesBrowser itemsPresenter;
-  private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
-  private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
   /**
    * Constructor that gets the resource (where to paste), currentParent of that
@@ -53,6 +54,8 @@ public class PasteDocumentAction extends AbstractAction {
   public PasteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
     super("Paste document");
+
+    this.resourceController = CMISAccess.getInstance().createResourceController();
 
     this.resource = resource;
     this.currentParent = currentParent;

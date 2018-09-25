@@ -25,7 +25,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  */
 public class DeleteDocumentAction extends AbstractAction {
 
-  private static final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+  private final transient ResourceController resourceController;
   // The resource to be deleted
   private transient IResource resource;
   // Parent of that resource
@@ -44,6 +44,8 @@ public class DeleteDocumentAction extends AbstractAction {
   public DeleteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
     super("Delete");
+
+    this.resourceController = CMISAccess.getInstance().createResourceController();
 
     this.resource = resource;
     this.currentParent = currentParent;

@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
@@ -26,6 +27,7 @@ import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 /**
  * Describes how the folders and documents are: displayed, rendered, their
@@ -52,7 +54,6 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    * All the children to present.
    */
   private final JList<IResource> resourceList;
-
   private static final int COPY_PERMISSIONS = TransferHandler.MOVE;
   /**
    * Search support.
@@ -336,5 +337,36 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
   @Override
   public void repositoryConnected(URL serverURL, String repositoryID) {
     presentResources(serverURL, repositoryID);
+  }
+
+  public String getSelectedObjectUrl() {
+    CmisObject object = null;
+    IResource selectedResource = resourceList.getSelectedValue();
+
+    logger.info("Reaches present SelectedURL?");
+    if (selectedResource != null) {
+      logger.info("Selected resource exists");
+      if (selectedResource instanceof DocumentImpl) {
+        object = ((DocumentImpl) selectedResource).getDoc();
+
+      } else if (selectedResource instanceof FolderImpl) {
+        object = ((FolderImpl) selectedResource).getFolder();
+
+      }
+    } else {
+      logger.info("Selected resource is null");
+    }
+    
+    ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    logger.info("Controller " + resourceController );
+    if (resourceController != null) {
+      logger.info("Sess " + resourceController.getSession());
+      
+      if (resourceController.getSession() != null) {
+        logger.info("params " + resourceController.getSession().getSessionParameters());
+      }
+    }
+    
+    return object != null ? CmisURLConnection.generateURLObject(object, resourceController) : null;
   }
 }

@@ -26,11 +26,12 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class CreateFolderAction extends AbstractAction {
-  private static final ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+  private final transient ResourceController resourceController;
   /**
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(CreateFolderAction.class);
+
   // Presenter of the items
   private transient ResourcesBrowser itemsPresenter;
   // Parent folder where new folder will be created
@@ -47,8 +48,7 @@ public class CreateFolderAction extends AbstractAction {
     // Give a name and a native icon
     super("Create Folder", UIManager.getIcon("FileView.directoryIcon"));
 
-    // Set logger level
-    
+    this.resourceController = CMISAccess.getInstance().createResourceController();
 
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;

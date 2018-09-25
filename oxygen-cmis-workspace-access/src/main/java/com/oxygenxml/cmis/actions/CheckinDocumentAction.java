@@ -32,6 +32,7 @@ public class CheckinDocumentAction extends AbstractAction {
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(CheckinDocumentAction.class);
+  private final transient ResourceController resourceController;
 
   // The resource that will receive
   private transient IResource resource = null;
@@ -39,7 +40,6 @@ public class CheckinDocumentAction extends AbstractAction {
   private transient ResourcesBrowser itemsPresenter = null;
 
   private transient DocumentImpl pwcDoc;
-  private static ResourceController resourceController = CMISAccess.getInstance().createResourceController();
 
   /**
    * Constructor that receives the resource to process
@@ -53,7 +53,7 @@ public class CheckinDocumentAction extends AbstractAction {
   public CheckinDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super("Check in");
 
-    // Set logger level
+    this.resourceController = CMISAccess.getInstance().createResourceController();
 
     this.resource = resource;
     this.currentParent = currentParent;
