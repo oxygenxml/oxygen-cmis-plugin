@@ -15,6 +15,8 @@ import ro.sync.exml.workspace.api.standalone.InputURLChooser;
 import ro.sync.exml.workspace.api.standalone.InputURLChooserCustomizer;
 
 public class BrowseCMIS implements InputURLChooserCustomizer {
+  // Get the workspace of the plugin
+
   private final Action browseAction;
   private InputURLChooser inputUrlChooser;
   /**
@@ -23,12 +25,15 @@ public class BrowseCMIS implements InputURLChooserCustomizer {
   private static final Logger logger = Logger.getLogger(BrowseCMIS.class);
 
   BrowseCMIS(JFrame frame) {
+    String browseCmis = TranslationResourceController.getMessage("BROWSE_CMIS");
+    String cmisDialog = TranslationResourceController.getMessage("CMIS_DIALOG");
+
     URL urlIcon = getClass().getClassLoader().getResource("images/cmis.png");
-    browseAction = new AbstractAction("Browse CMIS", new ImageIcon(urlIcon)) {
+    browseAction = new AbstractAction(browseCmis, new ImageIcon(urlIcon)) {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        new CmisDialog(frame, "CMIS Dialog", inputUrlChooser, true);
+        new CmisDialog(frame, cmisDialog, inputUrlChooser, true);
 
       }
     };

@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.storage.SessionStorage;
 
 /**
@@ -39,7 +40,6 @@ public class ServerView extends JPanel {
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(ServerView.class);
-  private static final String OPERATION_IS_NOT_SUPPORTED = "Operation is not supported";
 
   // Order shall be saved
   private final Set<String> serversList = new LinkedHashSet<>();
@@ -54,6 +54,10 @@ public class ServerView extends JPanel {
    * @exception MalformedURLException
    */
   public ServerView(RepositoriesPresenter repoPresenter, SearchPresenter searchPresenter) {
+    // Elements constants
+    String operationIsNotSupported = TranslationResourceController.getMessage("OPERATION_IS_NOT_SUPPORTED");
+    String serverUrlLabelValue = TranslationResourceController.getMessage("SERVER_URL_LABEL");
+    String connectButtonValue = TranslationResourceController.getMessage("CONNECT_BUTTON");
 
     /*
      * TESTING in comments Arrays.assList has a fixed range no add allowed
@@ -81,7 +85,7 @@ public class ServerView extends JPanel {
     c.weightx = 0.0;
     c.insets = new Insets(1, 10, 1, 10);
     c.fill = GridBagConstraints.NONE;
-    JLabel serverUrlLabel = new JLabel("Server URL:");
+    JLabel serverUrlLabel = new JLabel(serverUrlLabelValue);
 
     serverUrlLabel.setOpaque(true);
 
@@ -102,7 +106,7 @@ public class ServerView extends JPanel {
 
       @Override
       public void focusLost(FocusEvent e) {
-        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
+        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
 
       }
 
@@ -119,13 +123,13 @@ public class ServerView extends JPanel {
 
       @Override
       public void keyTyped(KeyEvent e) {
-        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
+        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
 
       }
 
       @Override
       public void keyReleased(KeyEvent e) {
-        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
+        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
 
       }
 
@@ -145,7 +149,7 @@ public class ServerView extends JPanel {
     c.gridy = 0;
     c.weightx = 0.0;
     c.fill = GridBagConstraints.NONE;
-    loadButton = new JButton("Connect");
+    loadButton = new JButton(connectButtonValue);
 
     loadButton.addActionListener(e -> {
 

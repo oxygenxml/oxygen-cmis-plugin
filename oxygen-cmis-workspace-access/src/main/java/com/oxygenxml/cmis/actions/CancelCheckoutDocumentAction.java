@@ -12,6 +12,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
@@ -22,6 +23,8 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CancelCheckoutDocumentAction extends AbstractAction {
+  // Internal role
+  private static final String SEARCH_RESULTS_ID = "#search.results";
   /**
    * Logging.
    */
@@ -43,7 +46,7 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CancelCheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super("Cancel check out");
+    super(TranslationResourceController.getMessage("CANCEL_CHECK_OUT_DOCUMENT_ACTION_TITLE"));
 
     // Set logger level
 
@@ -96,7 +99,7 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
       // Commit the <Code>cancelCheckOut</Code>
       pwcDoc.cancelCheckOut();
 
-      if (currentParent.getId().equals("#search.results")) {
+      if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
         ((IFolder) currentParent).removeFromModel(resource);
         currentParent.refresh();
 

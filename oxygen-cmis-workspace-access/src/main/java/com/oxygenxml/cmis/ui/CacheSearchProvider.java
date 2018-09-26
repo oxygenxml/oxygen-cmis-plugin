@@ -13,6 +13,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 /**
  * Class thats gets the line asynchronously and then repainting the component of
@@ -23,7 +24,8 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
  */
 public class CacheSearchProvider implements ContentSearcher {
 
-  private static final String EMPTY_RESULT = "Empty";
+  private  final String timeCreated;
+  private final String emptyResult;
   private final ContentSearcher searchProvider;
   private final JList<IResource> list;
 
@@ -41,6 +43,9 @@ public class CacheSearchProvider implements ContentSearcher {
    * @param list
    */
   CacheSearchProvider(ContentSearcher searchProvider, JList<IResource> list) {
+    timeCreated = TranslationResourceController.getMessage("TIME_CREATED");
+    emptyResult = TranslationResourceController.getMessage("EMPTY_RESULT");
+    
     cacheLine = new HashMap<>();
     cachePath = new HashMap<>();
     cacheProperties = new HashMap<>();
@@ -110,7 +115,7 @@ public class CacheSearchProvider implements ContentSearcher {
           }
 
           // Put it in the hashmap or put 'Empty'
-          cachePath.put(resource.getId(), path != null ? path : EMPTY_RESULT);
+          cachePath.put(resource.getId(), path != null ? path : emptyResult);
 
           // Repaint later the component
           SwingUtilities.invokeLater(() -> {
@@ -160,12 +165,12 @@ public class CacheSearchProvider implements ContentSearcher {
 
           } else if (resource instanceof FolderImpl) {
             FolderImpl folder = (FolderImpl) resource;
-            properties = "Time created:" + folder.getTimeCreated();
+            properties = timeCreated + folder.getTimeCreated();
 
           }
 
           // Put it in the hashmap or put 'Empty'
-          cacheProperties.put(resource.getId(), properties != null ? properties : EMPTY_RESULT);
+          cacheProperties.put(resource.getId(), properties != null ? properties : emptyResult);
 
           // Repaint later the component
           SwingUtilities.invokeLater(() -> {
@@ -204,7 +209,7 @@ public class CacheSearchProvider implements ContentSearcher {
           name = resource.getDisplayName().replace(" (Working Copy)", "").trim();
 
           // Put it in the hashmap or put 'Empty'
-          cacheName.put(resource.getId(), name != null ? name : EMPTY_RESULT);
+          cacheName.put(resource.getId(), name != null ? name : emptyResult);
 
           // Repaint later the component
           SwingUtilities.invokeLater(() -> {

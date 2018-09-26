@@ -11,6 +11,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -24,7 +25,12 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class DeleteDocumentAction extends AbstractAction {
+  private final String unknownException ;
 
+  // Internal role
+  private static final String SEARCH_RESULTS_ID = "#search.results";
+  private static final String ALL_VERSIONS = "ALL";
+  private static final String SINGLE_VERSION = "SINGLE";
   private final transient ResourceController resourceController;
   // The resource to be deleted
   private transient IResource resource;
@@ -43,8 +49,9 @@ public class DeleteDocumentAction extends AbstractAction {
    */
   public DeleteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super("Delete");
-
+    super(TranslationResourceController.getMessage("DELETE_DOCUMENT_ACTION_TITLE"));
+    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
+    
     this.resourceController = CMISAccess.getInstance().createResourceController();
 
     this.resource = resource;
@@ -94,12 +101,12 @@ public class DeleteDocumentAction extends AbstractAction {
       try {
 
         // Try to delete <Code>deleteOneVersionDocument</Code>
-        if (deleteType.equals("SINGLE")) {
+        if (deleteType.equals(SINGLE_VERSION)) {
 
           // Commit the deletion
           resourceController.deleteOneVersionDocument(doc.getDoc());
 
-        } else if (deleteType.equals("ALL")) {
+        } else if (deleteType.equals(ALL_VERSIONS)) {
 
           // Try to delete <Code>deleteAllVersionsDocument</Code>
           // Commit the deletion
@@ -107,7 +114,7 @@ public class DeleteDocumentAction extends AbstractAction {
         }
 
         // Present the new content of the parent resource
-        if (currentParent.getId().equals("#search.results")) {
+        if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
           currentParent.refresh();
 
         } else {
@@ -118,7 +125,7 @@ public class DeleteDocumentAction extends AbstractAction {
       } catch (final Exception ev) {
 
         // Show the exception if there is one
-        JOptionPane.showMessageDialog(mainFrame, "Exception " + ev.getMessage());
+        JOptionPane.showMessageDialog(mainFrame, unknownException + ev.getMessage());
       }
     }
   }

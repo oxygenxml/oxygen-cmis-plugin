@@ -1,6 +1,5 @@
 package com.oxygen.cmis.dialogs;
 
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -18,13 +17,16 @@ import javax.swing.SwingUtilities;
 
 import org.apache.batik.ext.swing.GridBagConstants;
 
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
+
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
 
 public class CreateDocDialog extends OKCancelDialog {
+
   private final CreateDocInputPanel inputPanel;
 
   public CreateDocDialog(JFrame frame) {
-    super(frame, "Create document", true);
+    super(frame, TranslationResourceController.getMessage("CREATE_DOCUMENT_DIALOG_TITLE"), true);
 
     // Get the parent container
     Container cont = getContentPane();
@@ -52,6 +54,8 @@ public class CreateDocDialog extends OKCancelDialog {
 }
 
 class CreateDocInputPanel extends JPanel implements ActionListener {
+
+  // Internal role
   private static final String NONE_STATE = "NONE";
   private static final String MINOR_STATE = "MINOR";
   private static final String MAJOR_STATE = "MAJOR";
@@ -65,9 +69,19 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
   private String versioningState;
 
   public CreateDocInputPanel() {
+    // To be translated
+    String versioningStateNoneLabel = TranslationResourceController.getMessage("VERSIONING_STATE_NONE_LABEL");
+    String versioningStateMinorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MINOR_LABEL");
+    String versioningStateMajorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MAJOR_LABEL");
+    String versionLabelValue = TranslationResourceController
+        .getMessage("VERSION_CREATE_DOCUMENT_DIALOG_LABEL");
+    String deafultFilenameValue = TranslationResourceController
+        .getMessage("DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG");
+    String messageLabelValue = TranslationResourceController
+        .getMessage("MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL");
     setLayout(new GridBagLayout());
 
-    messageLabel = new JLabel("File name:");
+    messageLabel = new JLabel(messageLabelValue);
     GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
     c.gridy = 0;
@@ -76,7 +90,7 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
     c.fill = GridBagConstants.BOTH;
     add(messageLabel, c);
 
-    filename = new JTextField("myfile.txt");
+    filename = new JTextField(deafultFilenameValue);
     c.gridx = 1;
     c.gridy = 0;
     c.gridwidth = 3;
@@ -85,7 +99,7 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
     c.fill = GridBagConstants.BOTH;
     add(filename, c);
 
-    versionLabel = new JLabel("Version:");
+    versionLabel = new JLabel(versionLabelValue);
     c.gridx = 0;
     c.gridy = 2;
     c.anchor = GridBagConstants.WEST;
@@ -95,7 +109,7 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
     add(versionLabel, c);
 
     // MAJOR
-    radioItemMajor = new JRadioButton("Major");
+    radioItemMajor = new JRadioButton(versioningStateMajorLabel);
     radioItemMajor.setActionCommand(MAJOR_STATE);
     radioItemMajor.addActionListener(this);
     // Set selected
@@ -110,7 +124,7 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
     add(radioItemMajor, c);
 
     // MINOR
-    radioItemMinor = new JRadioButton("Minor");
+    radioItemMinor = new JRadioButton(versioningStateMinorLabel);
     radioItemMinor.setActionCommand(MINOR_STATE);
     radioItemMinor.addActionListener(this);
     c.anchor = GridBagConstants.CENTER;
@@ -122,7 +136,7 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
     add(radioItemMinor, c);
 
     // NONE
-    radioItemNone = new JRadioButton("None");
+    radioItemNone = new JRadioButton(versioningStateNoneLabel);
     radioItemNone.setActionCommand(NONE_STATE);
     radioItemNone.addActionListener(this);
     c.anchor = GridBagConstants.CENTER;

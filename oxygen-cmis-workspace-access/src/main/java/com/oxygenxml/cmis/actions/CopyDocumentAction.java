@@ -7,10 +7,12 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
+
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 /**
  * Describes the copy action on a document by extending the AbstractAction class
@@ -19,6 +21,10 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
  *
  */
 public class CopyDocumentAction extends AbstractAction {
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(CopyDocumentAction.class);
 
   // The resource that will receive
   private transient IResource resource = null;
@@ -31,7 +37,7 @@ public class CopyDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CopyDocumentAction(IResource resource) {
-    super("Copy");
+    super(TranslationResourceController.getMessage("COPY_DOCUMENT_ACTION_TITLE"));
 
     this.resource = resource;
 
@@ -77,8 +83,7 @@ public class CopyDocumentAction extends AbstractAction {
 
     } catch (Exception ev) {
 
-      // SHow the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+      logger.debug("Exception ", ev);
     }
   }
 

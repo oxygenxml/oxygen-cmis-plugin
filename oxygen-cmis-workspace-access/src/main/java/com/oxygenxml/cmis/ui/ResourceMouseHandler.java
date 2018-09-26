@@ -40,7 +40,7 @@ class ResourceMouseHandler extends MouseAdapter {
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(ResourceMouseHandler.class);
-  private static final String SEARCH_RESULTS = "#search.results";
+  private static final String SEARCH_RESULTS_ID = "#search.results";
   private final BreadcrumbPresenter breadcrumbPresenter;
   private final ResourcesBrowser itemsPresenter;
   private final Supplier<JList<IResource>> resourceListSupplier;
@@ -146,7 +146,7 @@ class ResourceMouseHandler extends MouseAdapter {
       // Check if the click was outside the visible list
       if (!cellBounds.contains(e.getPoint())) {
         // Check is has a parent folder for the creation
-        if (currentParentSupplier != null && !currentParentSupplier.get().getId().equals(SEARCH_RESULTS)) {
+        if (currentParentSupplier != null && !currentParentSupplier.get().getId().equals(SEARCH_RESULTS_ID)) {
           if (logger.isDebugEnabled()) {
             logger.debug("ID item = " + ((IFolder) currentParentSupplier).getId());
             logger.debug("Name item!!!! = " + currentParentSupplier.get().getDisplayName());

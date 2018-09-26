@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
@@ -20,6 +21,9 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CheckoutFolderAction extends AbstractAction {
+  // Internal role
+  private static final String SEARCH_RESULTS_ID = "#search.results";
+
   /**
    * Logging.
    */
@@ -40,10 +44,9 @@ public class CheckoutFolderAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckoutFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super("Check out");
+    super(TranslationResourceController.getMessage("CHECK_OUT_FOLDER_ACTION_TITLE"));
 
     // Set logger level
-    
 
     this.resource = resource;
     this.currentParent = currentParent;
@@ -69,7 +72,7 @@ public class CheckoutFolderAction extends AbstractAction {
   public void actionPerformed(ActionEvent e) {
 
     checkoutFolder(resource);
-    if (currentParent.getId().equals("#search.results")) {
+    if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
       currentParent.refresh();
 
     } else {

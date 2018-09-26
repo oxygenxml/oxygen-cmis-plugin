@@ -15,6 +15,14 @@ import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class OptionsCMIS extends OptionPagePluginExtension {
+
+  private final String optionsTitle;
+  private final String allowEditLabel;
+
+  // Internal role
+  private static final String ALLOW_EDIT_OPTION_TRUE = "true";
+  private static final String ALLOW_EDIT_OPTION_FALSE = "false";
+  public static final String ALLOW_EDIT = "ALLOW_EDIT";
   /**
    * Logging.
    */
@@ -22,9 +30,12 @@ public class OptionsCMIS extends OptionPagePluginExtension {
   private final JPanel mainPanel;
 
   private final JCheckBox allowEditCheckout;
-  public static final String ALLOW_EDIT = "ALLOW_EDIT";
 
   public OptionsCMIS() {
+
+
+    optionsTitle = TranslationResourceController.getMessage("OPTIONS_CMIS_TITLE");
+    allowEditLabel = TranslationResourceController.getMessage("ALLOW_EDIT_WITHOUT_CHECKOUT");
 
     // Set logger level
 
@@ -38,7 +49,7 @@ public class OptionsCMIS extends OptionPagePluginExtension {
     c.ipadx = 10;
     c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstraints.HORIZONTAL;
-    allowEditCheckout = new JCheckBox("Allow edit without checkout (applies on Versionable documents)");
+    allowEditCheckout = new JCheckBox(allowEditLabel);
 
     mainPanel.add(allowEditCheckout, c);
 
@@ -49,10 +60,10 @@ public class OptionsCMIS extends OptionPagePluginExtension {
 
     try {
       if (allowEditCheckout.isSelected()) {
-        pluginWorkspace.getOptionsStorage().setOption(ALLOW_EDIT, "true");
+        pluginWorkspace.getOptionsStorage().setOption(ALLOW_EDIT, ALLOW_EDIT_OPTION_TRUE);
       } else {
 
-        pluginWorkspace.getOptionsStorage().setOption(ALLOW_EDIT, "false");
+        pluginWorkspace.getOptionsStorage().setOption(ALLOW_EDIT, ALLOW_EDIT_OPTION_FALSE);
       }
 
     } catch (Exception e) {
@@ -69,12 +80,13 @@ public class OptionsCMIS extends OptionPagePluginExtension {
   @Override
   public String getTitle() {
 
-    return "Options CMIS";
+    return optionsTitle;
   }
 
   @Override
   public JComponent init(PluginWorkspace pluginWorkspace) {
-    String allowEdit = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage().getOption(ALLOW_EDIT, "false");
+    String allowEdit = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage().getOption(ALLOW_EDIT,
+        ALLOW_EDIT_OPTION_FALSE);
     allowEditCheckout.setSelected(Boolean.valueOf(allowEdit));
     return mainPanel;
   }

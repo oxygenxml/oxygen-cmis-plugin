@@ -43,7 +43,6 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
           viewInfo.setComponent(new ControlComponents((Document doc) ->
 
           logger.debug("Open " + doc.getName())));
-          viewInfo.setTitle("CMIS Explorer");
 
           // Accepts only PNGs
           // You can have images located inside the JAR library and use them...
@@ -52,8 +51,12 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
 
           viewInfo.setIcon(new ImageIcon(resource));
           JFrame mainFrame = (JFrame) pluginWorkspaceAccess.getParentFrame();
+
           pluginWorkspaceAccess.addInputURLChooserCustomizer(new BrowseCMIS(mainFrame));
 
+          // Set name for the plugin
+          String cmisExplorerName = TranslationResourceController.getMessage("CMIS_EXPLORER_NAME");
+          viewInfo.setTitle(cmisExplorerName);
         }
       }
     });

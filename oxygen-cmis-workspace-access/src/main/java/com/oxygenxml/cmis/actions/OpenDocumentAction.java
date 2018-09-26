@@ -16,6 +16,7 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.plugin.OptionsCMIS;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -31,6 +32,10 @@ import ro.sync.exml.workspace.api.listeners.WSEditorChangeListener;
  *
  */
 public class OpenDocumentAction extends AbstractAction {
+
+  // Internal role
+  private static final String ALLOW_EDIT_OPTION_FALSE = "false";
+
   private static final Logger logger = Logger.getLogger(OpenDocumentAction.class);
 
   // The resource to open
@@ -48,7 +53,7 @@ public class OpenDocumentAction extends AbstractAction {
      * Logging.
      */
     // Set a name and a native icon
-    super("Open document", UIManager.getIcon("Tree.openIcon"));
+    super(TranslationResourceController.getMessage("OPEN_DOCUMENT_ACTION_TITLE"), UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
     this.currentParent = currentParent;
@@ -84,7 +89,8 @@ public class OpenDocumentAction extends AbstractAction {
 
     boolean editable = false;
     DocumentImpl currDoc = (DocumentImpl) resource;
-    String allowEditOption = pluginWorkspace.getOptionsStorage().getOption(OptionsCMIS.ALLOW_EDIT, "false");
+    String allowEditOption = pluginWorkspace.getOptionsStorage().getOption(OptionsCMIS.ALLOW_EDIT,
+        ALLOW_EDIT_OPTION_FALSE);
     Boolean allowEditOriginal = Boolean.valueOf(allowEditOption);
 
     editable = canUserOpenDoc(editable, currDoc, allowEditOriginal);

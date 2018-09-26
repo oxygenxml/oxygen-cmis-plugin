@@ -10,7 +10,7 @@ import java.net.URL;
  */
 public interface RepositoriesPresenter {
   /**
-   * Present the repositories tih the url entered
+   * Present the repositories the url entered
    * 
    * @param serverURL
    */

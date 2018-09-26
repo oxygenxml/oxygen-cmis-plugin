@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
 
@@ -31,7 +32,10 @@ public class LoginDialog extends OKCancelDialog {
   // Constructor
   public LoginDialog(JFrame frame) {
 
-    super(frame, "Login", true);
+    super(frame, TranslationResourceController.getMessage("LOGIN_DIALOG_TITLE"), true);
+
+    String passwordLabelValue = TranslationResourceController.getMessage("PASSWORD_LOGIN_DIALOG_LABEL");
+    String usernameLabelValue = TranslationResourceController.getMessage("USERNAME_LOGIN_DIALOG_LABEL");
 
     // Get the parent container
     Container cont = getContentPane();
@@ -51,7 +55,7 @@ public class LoginDialog extends OKCancelDialog {
     c.ipadx = 10;
     c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstraints.NONE;
-    JLabel userLabel = new JLabel("Username:");
+    JLabel userLabel = new JLabel(usernameLabelValue);
     cont.add(userLabel, c);
 
     // Username JField constraints
@@ -70,7 +74,7 @@ public class LoginDialog extends OKCancelDialog {
     c.ipadx = 10;
     c.gridwidth = 1;
     c.insets = new Insets(3, 5, 3, 5);
-    JLabel passwordLabel = new JLabel("Password:");
+    JLabel passwordLabel = new JLabel(passwordLabelValue);
     cont.add(passwordLabel, c);
 
     // Password JField constraints
@@ -87,12 +91,7 @@ public class LoginDialog extends OKCancelDialog {
 
     // This solves the problem where the dialog was not getting
     // focus the second time it was displayed
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        userField.requestFocusInWindow();
-      }
-    });
+    SwingUtilities.invokeLater(userField::requestFocusInWindow);
 
     pack();
     setModal(true);

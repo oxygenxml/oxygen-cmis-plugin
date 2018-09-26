@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -21,14 +22,17 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class RenameFolderAction extends AbstractAction {
+  private final String unknownException;
+  private final String enterNameLabel;
+
+  // Internal role
+  private static final String SEARCH_RESULTS_ID = "#search.results";
   private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
   private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
-  
 
   private transient IResource resource = null;
-  private  transient IResource currentParent = null;
+  private transient IResource currentParent = null;
   private transient ResourcesBrowser itemsPresenter = null;
-
 
   /**
    * Constructor that receives the resource to process
@@ -40,8 +44,10 @@ public class RenameFolderAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public RenameFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super("Rename");
-
+    super(TranslationResourceController.getMessage("RENAME_FOLDER_ACTION_TITLE"));
+    enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME_FOLDER");
+    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
+    
     this.resource = resource;
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
@@ -54,8 +60,8 @@ public class RenameFolderAction extends AbstractAction {
     FolderImpl folder = ((FolderImpl) resource);
 
     // Get input from user
-    String getInput = JOptionPane.showInputDialog(mainFrame, "Plase enter a name", resource.getDisplayName());
- 
+    String getInput = JOptionPane.showInputDialog(mainFrame, enterNameLabel, resource.getDisplayName());
+
     // Try to rename
     try {
 
@@ -63,7 +69,7 @@ public class RenameFolderAction extends AbstractAction {
       folder.rename(getInput);
 
       // Present the new content of the parent resource
-      if (currentParent.getId().equals("#search.results")) {
+      if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
         currentParent.refresh();
 
       } else {
@@ -74,7 +80,7 @@ public class RenameFolderAction extends AbstractAction {
     } catch (Exception ev) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, "Exception " + ev.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, unknownException + ev.getMessage());
     }
 
   }

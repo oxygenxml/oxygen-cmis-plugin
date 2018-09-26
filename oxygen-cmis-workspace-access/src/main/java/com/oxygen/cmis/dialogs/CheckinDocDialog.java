@@ -17,6 +17,8 @@ import javax.swing.SwingUtilities;
 
 import org.apache.batik.ext.swing.GridBagConstants;
 
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
+
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
 
 /**
@@ -27,6 +29,7 @@ import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
  *
  */
 public class CheckinDocDialog extends OKCancelDialog {
+
   // Main inputPanel
   private final CheckinInputPanel inputPanel;
 
@@ -36,7 +39,10 @@ public class CheckinDocDialog extends OKCancelDialog {
    * @param frame
    */
   public CheckinDocDialog(JFrame frame, String docName) {
-    super(frame, "Check-in " + docName, true);
+
+    super(frame, TranslationResourceController.getMessage("CHECK_IN_DIALOG_TITLE") +" "+ docName, true);
+
+    String okButtonCheckinDialog = TranslationResourceController.getMessage("OK_BUTTON_CHECKIN_DIALOG");
 
     // Get the parent container
     final Container cont = getContentPane();
@@ -45,7 +51,7 @@ public class CheckinDocDialog extends OKCancelDialog {
     cont.add(inputPanel, BorderLayout.CENTER);
 
     // Customize button
-    getOkButton().setText("Check in");
+    getOkButton().setText(okButtonCheckinDialog);
 
     // Show it in the center of the frame
     setLocationRelativeTo(frame);
@@ -71,6 +77,8 @@ public class CheckinDocDialog extends OKCancelDialog {
  *
  */
 class CheckinInputPanel extends JPanel implements ActionListener {
+
+  // Internal role
   private static final String MAJOR_VERSION = "MAJOR";
   private static final String MINOR_VERSION = "MINOR";
   private static final String NONE_VERSION = "NONE";
@@ -87,11 +95,19 @@ class CheckinInputPanel extends JPanel implements ActionListener {
    * Constructor of the main panel
    */
   public CheckinInputPanel() {
+    // To be translated
+    String versioningStateMinorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MINOR_LABEL");
+    String versioningStateMajorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MAJOR_LABEL");
+    String versionLabelValue = TranslationResourceController.getMessage("VERSION_CHECKIN_DIALOG_LABEL");
+    String commitAreaLabelValue = TranslationResourceController
+        .getMessage("COMMIT_AREA_CHECKIN_DIALOG_LABEL");
+    String commitMessageValueLabel = TranslationResourceController
+        .getMessage("COMMIT_MESSAGE_CHECKIN_DIALOG_LABEL");
     // Set the layout
     setLayout(new GridBagLayout());
 
     // --Message
-    messageLabel = new JLabel("Commit message:");
+    messageLabel = new JLabel(commitMessageValueLabel);
 
     final GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
@@ -102,7 +118,7 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     add(messageLabel, c);
 
     // Commit area
-    commitArea = new JTextArea("Enter your message here", 5, 4);
+    commitArea = new JTextArea(commitAreaLabelValue, 5, 4);
     commitArea.selectAll();
     c.gridx = 0;
     c.gridy = 1;
@@ -112,7 +128,7 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     add(commitArea, c);
 
     // Version
-    versionLabel = new JLabel("Version:");
+    versionLabel = new JLabel(versionLabelValue);
     c.gridx = 0;
     c.gridy = 2;
     c.anchor = GridBagConstants.WEST;
@@ -122,7 +138,7 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     add(versionLabel, c);
 
     // MAJOR
-    radioItemMajor = new JRadioButton("Major");
+    radioItemMajor = new JRadioButton(versioningStateMajorLabel);
     radioItemMajor.setActionCommand(MAJOR_VERSION);
     radioItemMajor.addActionListener(this);
     // Set selected
@@ -137,7 +153,7 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     add(radioItemMajor, c);
 
     // MINOR
-    radioItemMinor = new JRadioButton("Minor");
+    radioItemMinor = new JRadioButton(versioningStateMinorLabel);
     radioItemMinor.setActionCommand(MINOR_VERSION);
     radioItemMinor.addActionListener(this);
     c.anchor = GridBagConstants.WEST;

@@ -19,6 +19,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -32,6 +33,10 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class PasteDocumentAction extends AbstractAction {
+  private static String unknownException;
+  // Internal role
+  private static final String DEFAULT_VERSIONING_STATE = "MAJOR";
+  private static final String VERSIONING_STATE_NONE = "NONE";
   private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
   private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
   private final transient ResourceController resourceController;
@@ -53,7 +58,8 @@ public class PasteDocumentAction extends AbstractAction {
    */
   public PasteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super("Paste document");
+    super(TranslationResourceController.getMessage("PASTE_DOCUMENT_TITLE"));
+    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
 
     this.resourceController = CMISAccess.getInstance().createResourceController();
 
@@ -89,7 +95,7 @@ public class PasteDocumentAction extends AbstractAction {
       } catch (Exception e) {
 
         // Show the exepction if there is one
-        JOptionPane.showMessageDialog(mainFrame, "Exception " + e.getMessage());
+        JOptionPane.showMessageDialog(mainFrame, unknownException + e.getMessage());
       }
 
     }
@@ -136,11 +142,11 @@ public class PasteDocumentAction extends AbstractAction {
         ContentStream content = docClipboard.getContentStream();
         String mimetype = docClipboard.getContentStreamMimeType();
         String objectTypeId = docClipboard.getType().getId();
-        String versioningState = "MAJOR";
+        String versioningState = DEFAULT_VERSIONING_STATE;
         FolderImpl folder = ((FolderImpl) resource);
         Document copiedDoc = null;
 
-        if (mimetype.equals("NONE")) {
+        if (mimetype.equals(VERSIONING_STATE_NONE)) {
           copiedDoc = resourceController.createDocument(folder.getFolder(), fileName, content.toString(), mimetype);
 
         } else {
@@ -156,7 +162,7 @@ public class PasteDocumentAction extends AbstractAction {
       } catch (Exception ev) {
 
         // Show the exception if there is one
-        JOptionPane.showMessageDialog(null, "Exception " + ev.getMessage());
+        JOptionPane.showMessageDialog(null, unknownException + ev.getMessage());
       }
     }
   }

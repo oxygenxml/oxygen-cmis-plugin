@@ -17,6 +17,7 @@ import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -30,6 +31,9 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class CheckinFolderAction extends AbstractAction {
+  // Internal role
+  private static final String SEARCH_RESULTS_ID = "#search.results";
+  private static final String VERSIONING_STATE_MAJOR = "MAJOR";
   /**
    * Logging.
    */
@@ -52,7 +56,7 @@ public class CheckinFolderAction extends AbstractAction {
    */
   public CheckinFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
 
-    super("Check in");
+    super(TranslationResourceController.getMessage("CHECK_IN_FOLDER_ACTION_TITLE"));
 
     this.resourceController = CMISAccess.getInstance().createResourceController();
 
@@ -101,12 +105,12 @@ public class CheckinFolderAction extends AbstractAction {
 
     // Only if the action was not canceled
     if (result != 0) {
-      majorCheckin = versioningState.equals("MAJOR");
+      majorCheckin = versioningState.equals(VERSIONING_STATE_MAJOR);
     }
 
     checkinFolder(resource, commitMessage, majorCheckin, result);
 
-    if (currentParent.getId().equals("#search.results")) {
+    if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
       currentParent.refresh();
 
     } else {
@@ -190,7 +194,7 @@ public class CheckinFolderAction extends AbstractAction {
         res = pwcDoc.checkIn(majorCheckin, commitMessage);
 
         // If we are in the search
-        if (currentParent.getId().equals("#search.results")) {
+        if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
 
           // Remove from model current resource
           ((IFolder) currentParent).removeFromModel(resource);

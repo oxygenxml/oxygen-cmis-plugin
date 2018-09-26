@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translation>
+    <languageList>
+        <language description="English" lang="en_US"/>
+        <language description="German" lang="de_DE"/>
+        <language description="French" lang="fr_FR"/>
+        <language description="Japanese" lang="ja_JP"/>
+        <language description="Dutch" lang="nl_NL"/>
+    </languageList>
+    <!-- CMIS EXPLORER ACCESS -->
+
+    <!-- Plugin -->
+    <key value="BROWSE_CMIS">
+        <comment>Title of the browser CMIS.</comment>
+        <val lang="en_US">Browse CMIS</val>
+        <val lang="de_DE">Durchsuche CMIS</val>
+        <val lang="fr_FR">Feuilleter CMIS</val>
+        <val lang="ja_JP">ブラウズ CMIS</val>
+        <val lang="nl_NL">Doorbladeren CMIS</val>
+    </key>
+    <key value="CMIS_DIALOG">
+        <comment>Title of the browser dialog.</comment>
+        <val lang="en_US">CMIS Dialog</val>
+        <val lang="de_DE">CMIS Dialog</val>
+        <val lang="fr_FR">CMIS Dialog</val>
+        <val lang="ja_JP">CMIS Dialog</val>
+        <val lang="nl_NL">CMIS Dialog</val>
+    </key>
+    <key value="CMIS_EXPLORER_NAME">
+        <comment>Name of the plugin.</comment>
+        <val lang="en_US">CMIS Explorer</val>
+        <val lang="de_DE">CMIS Explorer</val>
+        <val lang="fr_FR">CMIS Explorer</val>
+        <val lang="ja_JP">CMIS Explorer</val>
+        <val lang="nl_NL">CMIS Explorer</val>
+    </key>
+    <key value="ALLOW_EDIT_WITHOUT_CHECKOUT">
+        <comment>Label for the checkbox.</comment>
+        <val lang="en_US">Allow edit without checkout (applies on Versionable documents)</val>
+        <val lang="de_DE">Allow edit without checkout (applies on Versionable documents)</val>
+        <val lang="fr_FR">Allow edit without checkout (applies on Versionable documents)</val>
+        <val lang="ja_JP">Allow edit without checkout (applies on Versionable documents)</val>
+        <val lang="nl_NL">Allow edit without checkout (applies on Versionable documents)</val>
+    </key>
+    <key value="OPTIONS_CMIS_TITLE">
+        <comment>Name of the frame.</comment>
+        <val lang="en_US">Options CMIS</val>
+        <val lang="de_DE">Options CMIS</val>
+        <val lang="fr_FR">Options CMIS</val>
+        <val lang="ja_JP">Options CMIS</val>
+        <val lang="nl_NL">Options CMIS</val>
+    </key>
+    <!-- END Plugin -->
+
+
+    <!-- UI -->
+    <!-- Breacrumb View -->
+    <key value="GO_BACK_TOOLTIP">
+        <comment>Tooltip for go back button.</comment>
+        <val lang="en_US">Go back</val>
+        <val lang="de_DE">Go back</val>
+        <val lang="fr_FR">Go back</val>
+        <val lang="ja_JP">Go back</val>
+        <val lang="nl_NL">Go back</val>
+    </key>
+    <!-- END Breacrumb View -->
+
+    <!-- CacheSearchProvider -->
+    <key value="TIME_CREATED">
+        <comment>Property of the resource.</comment>
+        <val lang="en_US">Time created:</val>
+        <val lang="de_DE">Time created:</val>
+        <val lang="fr_FR">Time created:</val>
+        <val lang="ja_JP">Time created:</val>
+        <val lang="nl_NL">Time created:</val>
+    </key>
+    <key value="EMPTY_RESULT">
+        <comment>Default result.</comment>
+        <val lang="en_US">Empty</val>
+        <val lang="de_DE">Empty</val>
+        <val lang="fr_FR">Empty</val>
+        <val lang="ja_JP">Empty</val>
+        <val lang="nl_NL">Empty</val>
+    </key>
+    <!-- END CacheSearchProvider -->
+
+    <!-- RepoCombobox View -->
+    <key value="REPOSITORY_LABEL">
+        <comment>Label for repository component.</comment>
+        <val lang="en_US">Repository:</val>
+        <val lang="de_DE">Repository:</val>
+        <val lang="fr_FR">Repository:</val>
+        <val lang="ja_JP">Repository:</val>
+        <val lang="nl_NL">Repository:</val>
+    </key>
+    <!-- END RepoCombobox View -->
+
+    <!-- SearchResultCellRenderer -->
+    <key value="CREATED_BY">
+        <comment>Default result.</comment>
+        <val lang="en_US">By:</val>
+        <val lang="de_DE">By:</val>
+        <val lang="fr_FR">By:</val>
+        <val lang="ja_JP">By:</val>
+        <val lang="nl_NL">By:</val>
+    </key>
+    <key value="NO_DATA">
+        <comment>Default result.</comment>
+        <val lang="en_US">No data</val>
+        <val lang="de_DE">No data</val>
+        <val lang="fr_FR">No data</val>
+        <val lang="ja_JP">No data</val>
+        <val lang="nl_NL">No data</val>
+    </key>
+    <!-- END SearchResultCellRenderer -->
+
+    <!-- Search View -->
+    <key value="OPERATION_IS_NOT_SUPPORTED">
+        <comment>Versioning state minor.</comment>
+        <val lang="en_US">Operation is not supported</val>
+        <val lang="de_DE">Operation is not supported</val>
+        <val lang="fr_FR">Operation is not supported</val>
+        <val lang="ja_JP">Operation is not supported</val>
+        <val lang="nl_NL">Operation is not supported</val>
+    </key>
+    <key value="SEARCH_LABEL">
+        <comment>Label for the search component.</comment>
+        <val lang="en_US">Search</val>
+        <val lang="de_DE">Search</val>
+        <val lang="fr_FR">Search</val>
+        <val lang="ja_JP">Search</val>
+        <val lang="nl_NL">Search</val>
+    </key>
+    <!-- END Search View -->
+
+    <!-- Server View -->
+    <key value="OPERATION_IS_NOT_SUPPORTED">
+        <comment>Versioning state minor.</comment>
+        <val lang="en_US">Operation is not supported</val>
+        <val lang="de_DE">Operation is not supported</val>
+        <val lang="fr_FR">Operation is not supported</val>
+        <val lang="ja_JP">Operation is not supported</val>
+        <val lang="nl_NL">Operation is not supported</val>
+    </key>
+    <key value="SERVER_URL_LABEL">
+        <comment>Label for the server component.</comment>
+        <val lang="en_US">Server URL:</val>
+        <val lang="de_DE">Server URL:</val>
+        <val lang="fr_FR">Server URL:</val>
+        <val lang="ja_JP">Server URL:</val>
+        <val lang="nl_NL">Server URL:</val>
+    </key>
+    <key value="CONNECT_BUTTON">
+        <comment>Value for the connect button.</comment>
+        <val lang="en_US">Connect</val>
+        <val lang="de_DE">Connect</val>
+        <val lang="fr_FR">Connect</val>
+        <val lang="ja_JP">Connect</val>
+        <val lang="nl_NL">Connect</val>
+    </key>
+    <!-- END Server View -->
+    <!-- END UI -->
+
+
+    <!-- Commons -->
+
+    <!-- Versioning -->
+    <key value="VERSIONING_STATE_MINOR_LABEL">
+        <comment>Versioning state minor.</comment>
+        <val lang="en_US">Minor</val>
+        <val lang="de_DE">Minor</val>
+        <val lang="fr_FR">Minor</val>
+        <val lang="ja_JP">Minor</val>
+        <val lang="nl_NL">Minor</val>
+    </key>
+    <key value="VERSIONING_STATE_MAJOR_LABEL">
+        <comment>Versioning state major.</comment>
+        <val lang="en_US">Major</val>
+        <val lang="de_DE">Major</val>
+        <val lang="fr_FR">Major</val>
+        <val lang="ja_JP">Major</val>
+        <val lang="nl_NL">Major</val>
+    </key>
+    <key value="VERSIONING_STATE_NONE_LABEL">
+        <comment>Versioning state None.</comment>
+        <val lang="en_US">None</val>
+        <val lang="de_DE">None</val>
+        <val lang="fr_FR">None</val>
+        <val lang="ja_JP">None</val>
+        <val lang="nl_NL">None</val>
+    </key>
+    <!-- END Versioning -->
+    <!-- END Common -->
+
+
+    <!-- DIALOGS -->
+    <!-- Checkin Dialog -->
+
+    <key value="OK_BUTTON_CHECKIN_DIALOG">
+        <comment>Ok button will be check-in.</comment>
+        <val lang="en_US">Check-in</val>
+        <val lang="de_DE">Check-in</val>
+        <val lang="fr_FR">Check-in</val>
+        <val lang="ja_JP">Check-in</val>
+        <val lang="nl_NL">Check-in</val>
+    </key>
+    <key value="CHECK_IN_DIALOG_TITLE">
+        <comment>Title of the dialog.</comment>
+        <val lang="en_US">Check-in</val>
+        <val lang="de_DE">Check-in</val>
+        <val lang="fr_FR">Check-in</val>
+        <val lang="ja_JP">Check-in</val>
+        <val lang="nl_NL">Check-in</val>
+    </key>
+    <key value="VERSION_CHECKIN_DIALOG_LABEL">
+        <comment>Label for the version label.</comment>
+        <val lang="en_US">Version:</val>
+        <val lang="de_DE">Version:</val>
+        <val lang="fr_FR">Version:</val>
+        <val lang="ja_JP">Version:</val>
+        <val lang="nl_NL">Version:</val>
+    </key>
+    <key value="COMMIT_AREA_CHECKIN_DIALOG_LABEL">
+        <comment>Textarea for the long message label.</comment>
+        <val lang="en_US">Enter your message here</val>
+        <val lang="de_DE">Enter your message here</val>
+        <val lang="fr_FR">Enter your message here</val>
+        <val lang="ja_JP">Enter your message here</val>
+        <val lang="nl_NL">Enter your message here</val>
+    </key>
+    <key value="COMMIT_MESSAGE_CHECKIN_DIALOG_LABEL">
+        <comment>Short message for the commit label.</comment>
+        <val lang="en_US">Commit message:</val>
+        <val lang="de_DE">Commit message:</val>
+        <val lang="fr_FR">Commit message:</val>
+        <val lang="ja_JP">Commit message:</val>
+        <val lang="nl_NL">Commit message:</val>
+    </key>
+    <!-- END Checkin Dialog-->
+
+    <!-- Create document Dialog -->
+    <key value="CREATE_DOCUMENT_DIALOG_TITLE">
+        <comment>Title of the dialog.</comment>
+        <val lang="en_US">Create document</val>
+        <val lang="de_DE">Create document</val>
+        <val lang="fr_FR">Create document</val>
+        <val lang="ja_JP">Create document</val>
+        <val lang="nl_NL">Create document</val>
+    </key>
+    <key value="CREATE_DOCUMENT_DIALOG_TITLE">
+        <comment>Title of the dialog.</comment>
+        <val lang="en_US">Create document</val>
+        <val lang="de_DE">Create document</val>
+        <val lang="fr_FR">Create document</val>
+        <val lang="ja_JP">Create document</val>
+        <val lang="nl_NL">Create document</val>
+    </key>
+    <key value="VERSION_CREATE_DOCUMENT_DIALOG_LABEL">
+        <comment>Version label.</comment>
+        <val lang="en_US">Version:</val>
+        <val lang="de_DE">Version:</val>
+        <val lang="fr_FR">Version:</val>
+        <val lang="ja_JP">Version:</val>
+        <val lang="nl_NL">Version:</val>
+    </key>
+    <key value="DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG">
+        <comment>Default filename with an extension</comment>
+        <val lang="en_US">myfile.txt</val>
+        <val lang="de_DE">myfile.txt</val>
+        <val lang="fr_FR">myfile.txt</val>
+        <val lang="ja_JP">myfile.txt</val>
+        <val lang="nl_NL">myfile.txt</val>
+    </key>
+    <key value="MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL">
+        <comment>Label for filename.</comment>
+        <val lang="en_US">File name:</val>
+        <val lang="de_DE">File name:</val>
+        <val lang="fr_FR">File name:</val>
+        <val lang="ja_JP">File name:</val>
+        <val lang="nl_NL">File name:</val>
+    </key>
+    <!-- END Create document Dialog -->
+
+    <!-- Delete document Dialog -->
+    <key value="CANCEL_BUTTON_DELETE_DOCUMENT_DIALOG">
+        <comment>Value of the cancel button.</comment>
+        <val lang="en_US">No</val>
+        <val lang="de_DE">No</val>
+        <val lang="fr_FR">No</val>
+        <val lang="ja_JP">No</val>
+        <val lang="nl_NL">No</val>
+    </key>
+    <key value="OK_BUTTON_DELETE_DOCUMENT_DIALOG">
+        <comment>Value of the ok button</comment>
+        <val lang="en_US">Yes</val>
+        <val lang="de_DE">Yes</val>
+        <val lang="fr_FR">Yes</val>
+        <val lang="ja_JP">Yes</val>
+        <val lang="nl_NL">Yes</val>
+    </key>
+    <key value="DELETE_DOCUMENT_DIALOG_TITLE">
+        <comment>Value of the dialog title</comment>
+        <val lang="en_US">Delete document</val>
+        <val lang="de_DE">Delete document</val>
+        <val lang="fr_FR">Delete document</val>
+        <val lang="ja_JP">Delete document</val>
+        <val lang="nl_NL">Delete document</val>
+    </key>
+    <key value="SINGLE_VERSION_LABEL">
+        <comment>Value of the single version label</comment>
+        <val lang="en_US">Single version</val>
+        <val lang="de_DE">Single version</val>
+        <val lang="fr_FR">Single version</val>
+        <val lang="ja_JP">Single version</val>
+        <val lang="nl_NL">Single version</val>
+    </key>
+    <key value="ALL_VERSIONS_LABEL">
+        <comment>Value of the all versions label.</comment>
+        <val lang="en_US">All versions</val>
+        <val lang="de_DE">All versions</val>
+        <val lang="fr_FR">All versions</val>
+        <val lang="ja_JP">All versions</val>
+        <val lang="nl_NL">All versions</val>
+    </key>
+    <key value="MESSAGE_DELETE_DOCUMENT_DIALOG_LABEL">
+        <comment>Main message to be displayed to user.</comment>
+        <val lang="en_US">Are sure you want to delete the selected item/s from the repository?
+            :</val>
+        <val lang="de_DE">Are sure you want to delete the selected item/s from the repository?
+            :</val>
+        <val lang="fr_FR">Are sure you want to delete the selected item/s from the repository?
+            :</val>
+        <val lang="ja_JP">Are sure you want to delete the selected item/s from the repository?
+            :</val>
+        <val lang="nl_NL">Are sure you want to delete the selected item/s from the repository?
+            :</val>
+    </key>
+    <!-- END Delete document Dialog -->
+
+    <!-- Login Dialog -->
+    <key value="PASSWORD_LOGIN_DIALOG_LABEL">
+        <comment>Value for the password label.</comment>
+        <val lang="en_US">Password:</val>
+        <val lang="de_DE">Password:</val>
+        <val lang="fr_FR">Password:</val>
+        <val lang="ja_JP">Password:</val>
+        <val lang="nl_NL">Password:</val>
+    </key>
+    <key value="USERNAME_LOGIN_DIALOG_LABEL">
+        <comment>Value for the username label.</comment>
+        <val lang="en_US">Username:</val>
+        <val lang="de_DE">Username:</val>
+        <val lang="fr_FR">Username:</val>
+        <val lang="ja_JP">Username:</val>
+        <val lang="nl_NL">Username:</val>
+    </key>
+    <key value="LOGIN_DIALOG_TITLE">
+        <comment>Value for the dialog title.</comment>
+        <val lang="en_US">Login:</val>
+        <val lang="de_DE">Login:</val>
+        <val lang="fr_FR">Login</val>
+        <val lang="ja_JP">Login</val>
+        <val lang="nl_NL">Login</val>
+    </key>
+    <!-- END Login Dialog -->
+    <!-- END DIALOGS -->
+
+    <!-- Actions -->
+    <key value="CANCEL_CHECK_OUT_DOCUMENT_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Cancel check-out</val>
+        <val lang="de_DE">Cancel check-out</val>
+        <val lang="fr_FR">Cancel check-out</val>
+        <val lang="ja_JP">Cancel check-out</val>
+        <val lang="nl_NL">Cancel check-out</val>
+    </key>
+    <key value="CANCEL_CHECK_OUT_FOLDER_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Cancel check-out</val>
+        <val lang="de_DE">Cancel check-out</val>
+        <val lang="fr_FR">Cancel check-out</val>
+        <val lang="ja_JP">Cancel check-out</val>
+        <val lang="nl_NL">Cancel check-out</val>
+    </key>
+    <key value="CHECK_IN_DOCUMENT_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Check-in</val>
+        <val lang="de_DE">Check-in</val>
+        <val lang="fr_FR">Check-in</val>
+        <val lang="ja_JP">Check-in</val>
+        <val lang="nl_NL">Check-in</val>
+    </key>
+    <key value="CHECK_IN_FOLDER_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Check-in</val>
+        <val lang="de_DE">Check-in</val>
+        <val lang="fr_FR">Check-in</val>
+        <val lang="ja_JP">Check-in</val>
+        <val lang="nl_NL">Check-in</val>
+    </key>
+    <key value="CHECK_OUT_DOCUMENT_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Check-out</val>
+        <val lang="de_DE">Check-out</val>
+        <val lang="fr_FR">Check-out</val>
+        <val lang="ja_JP">Check-out</val>
+        <val lang="nl_NL">Check-out</val>
+    </key>
+    <key value="CHECK_OUT_FOLDER_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Check-out</val>
+        <val lang="de_DE">Check-out</val>
+        <val lang="fr_FR">Check-out</val>
+        <val lang="ja_JP">Check-out</val>
+        <val lang="nl_NL">Check-out</val>
+    </key>
+    <key value="COPY_DOCUMENT_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Copy</val>
+        <val lang="de_DE">Copy</val>
+        <val lang="fr_FR">Copy</val>
+        <val lang="ja_JP">Copy</val>
+        <val lang="nl_NL">Copy</val>
+    </key>
+    <key value="CREATE_DOCUMENT_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Create document</val>
+        <val lang="de_DE">Create document</val>
+        <val lang="fr_FR">Create document</val>
+        <val lang="ja_JP">Create document</val>
+        <val lang="nl_NL">Create document</val>
+    </key>
+    <!-- Folder action -->
+    <key value="CREATE_FOLDER_ACTION_TITLE">
+        <comment>Title of the action.</comment>
+        <val lang="en_US">Create Folder</val>
+        <val lang="de_DE">Create Folder</val>
+        <val lang="fr_FR">Create Folder</val>
+        <val lang="ja_JP">Create Folder</val>
+        <val lang="nl_NL">Create Folder</val>
+    </key>
+    <key value="DEFAULT_NAME_FOLDER">
+        <comment>Default name of the folder.</comment>
+        <val lang="en_US">myfolder</val>
+        <val lang="de_DE">myfolder</val>
+        <val lang="fr_FR">myfolder</val>
+        <val lang="ja_JP">myfolder</val>
+        <val lang="nl_NL">myfolder</val>
+    </key>
+    <key value="ENTER_A_NAME_FOLDER">
+        <comment>Label for the name.</comment>
+        <val lang="en_US">Please enter a name</val>
+        <val lang="de_DE">Please enter a name</val>
+        <val lang="fr_FR">Please enter a name</val>
+        <val lang="ja_JP">Please enter a name</val>
+        <val lang="nl_NL">Please enter a name</val>
+    </key>
+    <!-- END Folder action -->
+
+    <key value="DELETE_DOCUMENT_ACTION_TITLE">
+        <comment>Action title.</comment>
+        <val lang="en_US">Delete</val>
+        <val lang="de_DE">Delete</val>
+        <val lang="fr_FR">Delete</val>
+        <val lang="ja_JP">Delete</val>
+        <val lang="nl_NL">Delete</val>
+    </key>
+    <key value="DELETE_FOLDER_ACTION_TITLE">
+        <comment>Action title.</comment>
+        <val lang="en_US">Delete</val>
+        <val lang="de_DE">Delete</val>
+        <val lang="fr_FR">Delete</val>
+        <val lang="ja_JP">Delete</val>
+        <val lang="nl_NL">Delete</val>
+    </key>
+    <key value="OPEN_DOCUMENT_ACTION_TITLE">
+        <comment>Action title.</comment>
+        <val lang="en_US">Open document</val>
+        <val lang="de_DE">Open document</val>
+        <val lang="fr_FR">Open document</val>
+        <val lang="ja_JP">Open document</val>
+        <val lang="nl_NL">Open document</val>
+    </key>
+    <key value="PASTE_DOCUMENT_TITLE">
+        <comment>Action title.</comment>
+        <val lang="en_US">Paste document</val>
+        <val lang="de_DE">Paste document</val>
+        <val lang="fr_FR">Paste document</val>
+        <val lang="ja_JP">Paste document</val>
+        <val lang="nl_NL">Paste document</val>
+    </key>
+    <!-- Rename Document Action -->
+    <key value="ENTER_A_NAME_DOCUMENT_LABEL">
+        <comment>Label for the field.</comment>
+        <val lang="en_US">Paste document</val>
+        <val lang="de_DE">Paste document</val>
+        <val lang="fr_FR">Paste document</val>
+        <val lang="ja_JP">Paste document</val>
+        <val lang="nl_NL">Paste document</val>
+    </key>
+    <key value="RENAME_DOCUMENT_ACTION_TITLE">
+        <comment>Label for the field.</comment>
+        <val lang="en_US">Rename</val>
+        <val lang="de_DE">Rename</val>
+        <val lang="fr_FR">Rename</val>
+        <val lang="ja_JP">Rename</val>
+        <val lang="nl_NL">Rename</val>
+    </key>
+    <!-- END Rename Document Action -->
+
+    <!-- Rename Folder Action -->
+    <key value="ENTER_A_NAME_FOLDER">
+        <comment>Label for the field.</comment>
+        <val lang="en_US">Paste document</val>
+        <val lang="de_DE">Paste document</val>
+        <val lang="fr_FR">Paste document</val>
+        <val lang="ja_JP">Paste document</val>
+        <val lang="nl_NL">Paste document</val>
+    </key>
+    <key value="RENAME_FOLDER_ACTION_TITLE">
+        <comment>Label for the field.</comment>
+        <val lang="en_US">Rename</val>
+        <val lang="de_DE">Rename</val>
+        <val lang="fr_FR">Rename</val>
+        <val lang="ja_JP">Rename</val>
+        <val lang="nl_NL">Rename</val>
+    </key>
+    <!-- END Rename Folder Action -->
+    <!-- END Actions -->
+
+
+    <!-- Exceptions -->
+    <key value="UNKNOWN_EXCEPTION">
+        <comment>Title of the exception.</comment>
+        <val lang="en_US">Exception</val>
+        <val lang="de_DE">Exception</val>
+        <val lang="fr_FR">Exception</val>
+        <val lang="ja_JP">Exception</val>
+        <val lang="nl_NL">Exception</val>
+    </key>
+    <key value="INVALID_URL_EXCEPTION">
+        <comment>Title of the exception.</comment>
+        <val lang="en_US">Exception</val>
+        <val lang="de_DE">Exception</val>
+        <val lang="fr_FR">Exception</val>
+        <val lang="ja_JP">Exception</val>
+        <val lang="nl_NL">Exception</val>
+    </key>
+    <key value="DOCUMENT_ALREADY_EXISTS_EXCEPTION">
+        <comment>Title of the exception.</comment>
+        <val lang="en_US">Document already exists</val>
+        <val lang="de_DE">Document already exists</val>
+        <val lang="fr_FR">Document already exists</val>
+        <val lang="ja_JP">Document already exists</val>
+        <val lang="nl_NL">Document already exists</val>
+    </key>
+    <key value="UNSUPPORTED_ENCODING_EXCEPTION">
+        <comment>Title of the exception.</comment>
+        <val lang="en_US">Unsupported encoding</val>
+        <val lang="de_DE">Unsupported encoding</val>
+        <val lang="fr_FR">Unsupported encoding</val>
+        <val lang="ja_JP">Unsupported encoding</val>
+        <val lang="nl_NL">Unsupported encoding</val>
+    </key>
+    <!-- END Exceptions -->
+    <!-- END CMIS Explorer Access -->
+</translation>

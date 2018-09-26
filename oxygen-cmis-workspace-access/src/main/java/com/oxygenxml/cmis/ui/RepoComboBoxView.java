@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 /**
  * Describes how the repositories a shown and their behaviors
@@ -29,6 +30,7 @@ import com.oxygenxml.cmis.core.UserCredentials;
  */
 public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
+  private final String repositoryLabel;
   /**
    * Logging.
    */
@@ -50,6 +52,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    * Creates the repositories component visually
    */
   public RepoComboBoxView() {
+    repositoryLabel = TranslationResourceController.getMessage("REPOSITORY_LABEL");
     setOpaque(true);
 
     repoItems = new JComboBox<>();
@@ -62,7 +65,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     c.gridy = 0;
     c.weightx = 0.0;
     c.insets = new Insets(1, 10, 1, 10);
-    JLabel serverUrlLabel = new JLabel("Repository:");
+    JLabel serverUrlLabel = new JLabel(repositoryLabel);
     serverUrlLabel.setOpaque(true);
     add(serverUrlLabel, c);
 

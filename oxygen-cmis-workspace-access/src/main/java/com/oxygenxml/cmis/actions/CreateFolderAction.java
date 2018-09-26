@@ -13,6 +13,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -26,6 +27,9 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class CreateFolderAction extends AbstractAction {
+  private final String unknownException;
+  private final String defaultNameFolder;
+  private final String enterNameLabelValue;
   private final transient ResourceController resourceController;
   /**
    * Logging.
@@ -46,7 +50,11 @@ public class CreateFolderAction extends AbstractAction {
    */
   public CreateFolderAction(IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Give a name and a native icon
-    super("Create Folder", UIManager.getIcon("FileView.directoryIcon"));
+    super(TranslationResourceController.getMessage("CREATE_FOLDER_ACTION_TITLE"),
+        UIManager.getIcon("FileView.directoryIcon"));
+    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
+    defaultNameFolder = TranslationResourceController.getMessage("DEFAULT_NAME_FOLDER");
+    enterNameLabelValue = TranslationResourceController.getMessage("ENTER_A_NAME_FOLDER");
 
     this.resourceController = CMISAccess.getInstance().createResourceController();
 
@@ -70,7 +78,7 @@ public class CreateFolderAction extends AbstractAction {
     JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
     // Get input from user
-    String getInput = JOptionPane.showInputDialog(null, "Plase enter a name", "myfolder");
+    String getInput = JOptionPane.showInputDialog(mainFrame, enterNameLabelValue, defaultNameFolder);
     logger.debug("The input=" + getInput);
 
     // Set current folder where we want a new folder
@@ -84,7 +92,7 @@ public class CreateFolderAction extends AbstractAction {
     } catch (Exception e1) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, "Exception " + e1.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, unknownException + e1.getMessage());
 
     }
 

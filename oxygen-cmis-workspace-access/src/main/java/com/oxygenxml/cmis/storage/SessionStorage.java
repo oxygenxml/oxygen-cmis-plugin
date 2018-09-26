@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -74,7 +73,6 @@ public class SessionStorage {
 
       logger.error(e1, e1);
 
-      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
     }
 
     // Initialize new options
@@ -184,8 +182,7 @@ public class SessionStorage {
     } catch (Exception e1) {
 
       logger.error(e1, e1);
-      // Show the exception if there is one
-      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
+
     }
 
   }

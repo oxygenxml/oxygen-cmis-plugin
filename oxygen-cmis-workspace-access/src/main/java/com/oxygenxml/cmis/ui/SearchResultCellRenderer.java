@@ -29,13 +29,17 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class SearchResultCellRenderer extends JPanel implements ListCellRenderer<IResource> {
+
+  private  final String createdByLabel;
+  private  final String noDataLabel;
+  // Internal role
   private static final String HTML_ENCLOSING_TAG = "</code></html>";
   private static final String HTML_TAG = "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>";
-  private static final String NO_DATA = "No data";
   /**
    * Logging.
    */
@@ -58,6 +62,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   private final String matchPattern;
 
   public SearchResultCellRenderer(ContentSearcher contentProvider, String matchPattern) {
+    createdByLabel = TranslationResourceController.getMessage("CREATED_BY");
+    noDataLabel = TranslationResourceController.getMessage("NO_DATA");
+    
     contentProv = contentProvider;
     this.matchPattern = matchPattern;
 
@@ -152,7 +159,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
         // Get the properties
         propertiesValues = contentProv.getProperties(doc);
         // Get notification
-        notifyValue = "By:" + doc.getCreatedBy();
+        notifyValue = createdByLabel + doc.getCreatedBy();
 
         logger.debug("Line=" + contentProv.getLineDoc(doc, matchPattern));
 
@@ -161,7 +168,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
         resultContext = styleString(resultContext);
 
-        lineResource.setText(HTML_TAG + (resultContext != null ? resultContext : NO_DATA) + HTML_ENCLOSING_TAG);
+        lineResource.setText(HTML_TAG + (resultContext != null ? resultContext : noDataLabel) + HTML_ENCLOSING_TAG);
 
       }
     } else if (value instanceof FolderImpl) {
@@ -173,20 +180,20 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
         pathValue = contentProv.getPath(folder, ctrl);
         propertiesValues = contentProv.getProperties(folder);
-        notifyValue = "By:" + folder.getCreatedBy();
+        notifyValue = createdByLabel + folder.getCreatedBy();
 
-        lineResource.setText(HTML_TAG + NO_DATA + HTML_ENCLOSING_TAG);
+        lineResource.setText(HTML_TAG + noDataLabel + HTML_ENCLOSING_TAG);
 
       }
     }
     // Render name
     nameResource.setText("<html><div style=' overflow-wrap: break-word; word-wrap: break-word;'>"
-        + (resourceText != null ? resourceText : NO_DATA) + "</div></html>");
+        + (resourceText != null ? resourceText : noDataLabel) + "</div></html>");
 
     // Render properties
     propertiesResource.setOpaque(true);
     propertiesResource.setForeground(Color.GRAY);
-    propertiesResource.setText((propertiesValues != null ? propertiesValues : NO_DATA));
+    propertiesResource.setText((propertiesValues != null ? propertiesValues : noDataLabel));
 
     // Render notification
     notification.setText(notifyValue);

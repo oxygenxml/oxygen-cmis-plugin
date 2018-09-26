@@ -21,6 +21,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.search.SearchDocument;
 import com.oxygenxml.cmis.search.SearchFolder;
 
@@ -31,7 +32,10 @@ import com.oxygenxml.cmis.search.SearchFolder;
  *
  */
 public class SearchView extends JPanel implements ContentSearcher, SearchPresenter {
-  private static final String OPERATION_IS_NOT_SUPPORTED = "Operation is not supported";
+
+  // Internal role
+  private static final String DEFAULT_SELECTED_OPTION_SEARCH = "null";
+
   private static final Logger logger = Logger.getLogger(SearchView.class);
   /**
    * Objects interested in search events.
@@ -47,6 +51,9 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
   private String option = null;
 
   public SearchView() {
+    String searchLabel = TranslationResourceController.getMessage("SEARCH_LABEL");
+    String operationIsNotSupported = TranslationResourceController.getMessage("OPERATION_IS_NOT_SUPPORTED");
+
     setOpaque(true);
 
     setLayout(new GridBagLayout());
@@ -59,14 +66,14 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     c.gridx = 0;
     c.gridy = 0;
     c.insets = new Insets(1, 10, 1, 10);
-    searchField = new JTextField("Search");
+    searchField = new JTextField(searchLabel);
     searchField.setOpaque(true);
     searchField.addFocusListener(new FocusListener() {
 
       @Override
       public void focusLost(FocusEvent e) {
 
-        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
+        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
       }
 
       @Override
@@ -82,13 +89,13 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
       @Override
       public void keyTyped(KeyEvent e) {
 
-        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
+        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
       }
 
       @Override
       public void keyReleased(KeyEvent e) {
 
-        logger.debug(new UnsupportedOperationException(OPERATION_IS_NOT_SUPPORTED));
+        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
       }
 
       @Override
@@ -108,7 +115,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     c.gridy = 0;
     c.weightx = 0.0;
 
-    searchButton = new JButton("Search");
+    searchButton = new JButton(searchLabel);
     searchButton.setEnabled(false);
 
     /**
@@ -116,7 +123,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
      */
     searchButton.addActionListener(e -> {
       // The option will be orderer
-      option = "null";
+      option = DEFAULT_SELECTED_OPTION_SEARCH;
       // Get the entered text and trim of white space from both sides
       final String searchText = searchField.getText().trim();
 

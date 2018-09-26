@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -23,6 +24,10 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  */
 public class DeleteFolderAction extends AbstractAction {
 
+  private final String unknownException;
+
+  // Internal role
+  private static final String SEARCH_RESULTS_ID = "#search.results";
   // The resource to be deleted
   private transient IResource resource;
   // Parent of that resource
@@ -40,7 +45,8 @@ public class DeleteFolderAction extends AbstractAction {
    */
   public DeleteFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super("Delete");
+    super(TranslationResourceController.getMessage("DELETE_FOLDER_ACTION_TITLE"));
+    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
 
     this.resource = resource;
     this.currentParent = currentParent;
@@ -70,7 +76,7 @@ public class DeleteFolderAction extends AbstractAction {
       CMISAccess.getInstance().createResourceController().deleteFolderTree(folderToDelete.getFolder());
 
       // Present the newly updated content of the parent folder
-      if (currentParent.getId().equals("#search.results")) {
+      if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
         currentParent.refresh();
 
       } else {
@@ -81,7 +87,7 @@ public class DeleteFolderAction extends AbstractAction {
     } catch (Exception ev) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, "Exception " + ev.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, unknownException + ev.getMessage());
     }
 
   }

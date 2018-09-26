@@ -39,7 +39,9 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
  */
 public class ItemListView extends JPanel implements ResourcesBrowser, SearchListener, RepositoryListener {
 
-  private static final String SEARCH_RESULTS = "#search.results";
+  private static final String SEARCH_RESULTS_VALUE = "Search results";
+
+  private static final String SEARCH_RESULTS_ID = "#search.results";
 
   /**
    * Logging.
@@ -289,12 +291,12 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
       @Override
       public String getId() {
-        return SEARCH_RESULTS;
+        return SEARCH_RESULTS_ID;
       }
 
       @Override
       public String getDisplayName() {
-        return "Search results";
+        return SEARCH_RESULTS_VALUE;
       }
 
       @Override

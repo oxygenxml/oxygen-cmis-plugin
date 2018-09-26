@@ -15,6 +15,8 @@ import javax.swing.JRadioButton;
 
 import org.apache.batik.ext.swing.GridBagConstants;
 
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
+
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
 
 /**
@@ -28,7 +30,10 @@ public class DeleteDocDialog extends OKCancelDialog {
   private final DeleteInputPanel inputPanel;
 
   public DeleteDocDialog(JFrame frame) {
-    super(frame, "Delete document", true);
+    super(frame, TranslationResourceController.getMessage("DELETE_DOCUMENT_DIALOG_TITLE"), true);
+
+    String cancelButtonValue = TranslationResourceController.getMessage("CANCEL_BUTTON_DELETE_DOCUMENT_DIALOG");
+    String okButtonValue = TranslationResourceController.getMessage("OK_BUTTON_DELETE_DOCUMENT_DIALOG");
 
     // Get the parent container
     final Container cont = getContentPane();
@@ -36,8 +41,8 @@ public class DeleteDocDialog extends OKCancelDialog {
 
     cont.add(inputPanel, BorderLayout.CENTER);
 
-    getOkButton().setText("Yes");
-    getCancelButton().setText("No");
+    getOkButton().setText(okButtonValue);
+    getCancelButton().setText(cancelButtonValue);
 
     // Show it in the center of the frame
     setLocationRelativeTo(frame);
@@ -53,9 +58,11 @@ public class DeleteDocDialog extends OKCancelDialog {
 }
 
 class DeleteInputPanel extends JPanel implements ActionListener {
+  // Internal role
   private static final String SINGLE_VERSION = "SINGLE";
   private static final String ALL_VERSIONS = "ALL";
-  private final JLabel messageLabel, versionLabel;
+  private final JLabel messageLabel;
+  private final JLabel versionLabel;
   private final JRadioButton radioItemAll;
   private final JRadioButton radioItemSingle;
 
@@ -64,31 +71,37 @@ class DeleteInputPanel extends JPanel implements ActionListener {
   public DeleteInputPanel() {
     setLayout(new GridBagLayout());
 
+    // To be translated
+    String allVersionsLabel = TranslationResourceController.getMessage("ALL_VERSIONS_LABEL");
+    String messageValueLabel = TranslationResourceController.getMessage("MESSAGE_DELETE_DOCUMENT_DIALOG_LABEL");
+    String singleVersionLabel = TranslationResourceController.getMessage("SINGLE_VERSION_LABEL");
+    String versionLabelValue = TranslationResourceController.getMessage("VERSION_CREATE_DOCUMENT_DIALOG_LABEL");
+    
     // --MessageLabel
-    messageLabel = new JLabel("Are sure you want to delete the selected item/s from the repository? :");
+    messageLabel = new JLabel(messageValueLabel);
     final GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
     c.gridy = 0;
-   
+
     c.gridwidth = 3;
     c.insets = new Insets(1, 5, 3, 5);
     c.fill = GridBagConstants.BOTH;
     add(messageLabel, c);
 
     // -- VersionLabel
-    versionLabel = new JLabel("Version:");
+    versionLabel = new JLabel(versionLabelValue);
     c.gridx = 0;
     c.gridy = 1;
     c.anchor = GridBagConstants.WEST;
     c.gridwidth = 1;
     c.weightx = 0;
-  
+
     c.fill = GridBagConstants.VERTICAL;
     add(versionLabel, c);
 
     // --All versions
-    radioItemAll = new JRadioButton("All versions");
-  
+    radioItemAll = new JRadioButton(allVersionsLabel);
+
     radioItemAll.setActionCommand(ALL_VERSIONS);
     radioItemAll.addActionListener(this);
     c.gridx = 1;
@@ -100,7 +113,7 @@ class DeleteInputPanel extends JPanel implements ActionListener {
     add(radioItemAll, c);
 
     // --SINGLE
-    radioItemSingle = new JRadioButton("Single version ");
+    radioItemSingle = new JRadioButton(singleVersionLabel);
     radioItemSingle.setActionCommand(SINGLE_VERSION);
     radioItemSingle.addActionListener(this);
     // Set selected

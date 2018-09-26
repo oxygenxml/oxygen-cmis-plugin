@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 /**
@@ -20,6 +21,9 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CheckoutDocumentAction extends AbstractAction {
+  // Internal role
+  private static final String SEARCH_RESULTS_ID = "#search.results";
+
   /**
    * Logging.
    */
@@ -40,7 +44,7 @@ public class CheckoutDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super("Check out");
+    super(TranslationResourceController.getMessage("CHECK_OUT_DOCUMENT_ACTION_TITLE"));
 
     // Set logger level
 
@@ -77,7 +81,7 @@ public class CheckoutDocumentAction extends AbstractAction {
       // Get the document
       res = doc.checkOut(doc.getDocType());
 
-      if (currentParent.getId().equals("#search.results")) {
+      if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
         ((IFolder) currentParent).addToModel(res);
         ((IFolder) currentParent).removeFromModel(resource);
       } else {

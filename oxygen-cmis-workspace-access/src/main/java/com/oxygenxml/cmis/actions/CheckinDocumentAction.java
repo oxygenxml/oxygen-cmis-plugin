@@ -15,6 +15,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
@@ -28,6 +29,9 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class CheckinDocumentAction extends AbstractAction {
+
+  private static final String SEARCH_RESULTS_ID = "#search.results";
+  private static final String VERSIONING_STATE_MAJOR = "MAJOR";
   /**
    * Logging.
    */
@@ -51,7 +55,7 @@ public class CheckinDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckinDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super("Check in");
+    super(TranslationResourceController.getMessage("CHECK_IN_DOCUMENT_ACTION_TITLE"));
 
     this.resourceController = CMISAccess.getInstance().createResourceController();
 
@@ -117,7 +121,7 @@ public class CheckinDocumentAction extends AbstractAction {
 
     // Only if the action was not canceled
     if (result != 0) {
-      boolean majorCheckin = versioningState.equals("MAJOR");
+      boolean majorCheckin = versioningState.equals(VERSIONING_STATE_MAJOR);
 
       // The id received of the object after the check in
       ObjectId res = null;
@@ -130,7 +134,7 @@ public class CheckinDocumentAction extends AbstractAction {
         // Commit the <Code>checkIn</Code> and Get the ObjectId
         res = pwcDoc.checkIn(majorCheckin, commitMessage);
 
-        if (currentParent.getId().equals("#search.results")) {
+        if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
           ((IFolder) currentParent).removeFromModel(resource);
 
           Document checkedInResource = CMISAccess.getInstance().createResourceController().getDocument(res.getId());
