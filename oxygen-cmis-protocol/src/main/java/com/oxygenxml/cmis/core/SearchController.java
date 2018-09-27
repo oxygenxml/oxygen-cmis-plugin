@@ -2,15 +2,18 @@ package com.oxygenxml.cmis.core;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
+import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 import org.apache.log4j.Logger;
@@ -100,6 +103,133 @@ public class SearchController {
     }
 
     return resources;
+  }
+
+  /**
+   * Find all the foreign resources by getting the personal documents and then
+   * eliminate the other documents from all resources with given search keys.
+   * 
+   * @param content
+   * @param searchObjectTypes
+   * @return
+   */
+  private List<IResource> queryPersonalCheckedoutDocs(String toSearch, int searchObjectTypes) {
+    List<DocumentImpl> personalDocuments = new ArrayList<>();
+    List<String> idResources = new ArrayList<>();
+    List<IResource> generalResults = new ArrayList<>();
+
+    OperationContext oc = ctrl.getSession().createOperationContext();
+    oc.setOrderBy("cmis:name ASC");
+    oc.setIncludeAllowableActions(true);
+    oc.setIncludeRelationships(IncludeRelationships.BOTH);
+    oc.setIncludePolicies(true);
+
+    // Get the personal checked out documents
+    ItemIterable<Document> personalResults = ctrl.getSession().getCheckedOutDocs(oc);
+    // Check what kind of results we've got.
+    for (CmisObject cmisObject : personalResults) {
+      IResource res = null;
+
+      if (cmisObject instanceof Document) {
+        res = new DocumentImpl((Document) cmisObject);
+
+      } else if (cmisObject instanceof Folder) {
+        res = new FolderImpl((Folder) cmisObject);
+      }
+
+      if (res != null) {
+        // Get the original versions
+        Document lastCheckoutVersion = ((DocumentImpl) res).getLastCheckoutVersion();
+        personalDocuments.add(new DocumentImpl(lastCheckoutVersion));
+      }
+    }
+
+    // Store the ids of the personal docs
+    for (DocumentImpl document : personalDocuments) {
+      idResources.add(document.getId());
+    }
+
+    // Get all the results with given seach keys
+    generalResults.addAll(queryDoc(toSearch));
+
+    // Eliminate those that are not personal
+    Iterator<IResource> resultsIterator = generalResults.iterator();
+    while (resultsIterator.hasNext()) {
+      DocumentImpl doc = (DocumentImpl) resultsIterator.next();
+
+      String docId = doc.getId();
+
+      if (!idResources.contains(docId)) {
+        resultsIterator.remove();
+      }
+    }
+
+    return generalResults;
+
+  }
+
+  /**
+   * Find all the foreign resources by getting the personal documents and then
+   * eliminate the other documents from all resources with given search keys.
+   * 
+   * @param content
+   * @return
+   */
+  public List<IResource> queryForeignCheckedoutDocs(String toSearch) {
+    List<IResource> personalCheckedoutDocs = new ArrayList<>();
+    List<IResource> allResources = new ArrayList<>();
+    List<String> idResources = new ArrayList<>();
+
+    // Get all personal documents
+    personalCheckedoutDocs.addAll(queryPersonalCheckedout(toSearch));
+    // Store the ids
+    for (IResource resource : personalCheckedoutDocs) {
+
+      if (resource instanceof DocumentImpl) {
+        String docId = ((DocumentImpl) resource).getId();
+        idResources.add(docId);
+
+      }
+    }
+
+    // Get all the resources with given search keys
+    allResources.addAll(queryDoc(toSearch));
+    // Remove non checkout docs
+    removeNonCheckoutDocuments(allResources);
+
+    Iterator<IResource> allResourcesIterator = allResources.iterator();
+    // Eliminate all personal documents
+    while (allResourcesIterator.hasNext()) {
+
+      IResource resource = allResourcesIterator.next();
+
+      if (idResources.contains(resource.getId())) {
+        allResourcesIterator.remove();
+      }
+    }
+
+    return allResources;
+
+  }
+
+  /**
+   * Removes the non checkout documents
+   * 
+   * @param resources
+   * @return
+   */
+  private List<IResource> removeNonCheckoutDocuments(List<IResource> resources) {
+    Iterator<IResource> resIterator = resources.iterator();
+
+    while (resIterator.hasNext()) {
+
+      IResource resource = resIterator.next();
+      if (!resource.isCheckedOut()) {
+        resIterator.remove();
+      }
+    }
+    return resources;
+
   }
 
   /**
@@ -215,7 +345,8 @@ public class SearchController {
         } else {
           searchKey = key;
         }
-        strBuild.append("(cmis:name:" + searchKey + " OR cmis:description:" + searchKey + " OR " + searchKey + ")");
+        strBuild.append("(cmis:name:" + searchKey + " OR cmis:createdBy:" + searchKey + " OR cmis:description:"
+            + searchKey + " OR " + searchKey + ")");
 
         // Check if the is a next key (The case when there is only a space
         // between search keys.
@@ -264,6 +395,10 @@ public class SearchController {
    */
   public List<IResource> queryDoc(String content) {
     return queryResource(content, SEARCH_IN_DOCUMENT);
+  }
+
+  public List<IResource> queryPersonalCheckedout(String content) {
+    return queryPersonalCheckedoutDocs(content, SEARCH_IN_DOCUMENT);
   }
 
   /**

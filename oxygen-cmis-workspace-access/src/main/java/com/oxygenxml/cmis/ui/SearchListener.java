@@ -18,7 +18,10 @@ public interface SearchListener {
    * 
    * @param filter
    * @param resources
+   * @param option
+   * @param searchFolders
+   *          Default search will be only for documents.
    */
-  void searchFinished(String filter, List<IResource> resources);
+  void searchFinished(String filter, List<IResource> resources, String option, boolean searchFolders);
 
 }

@@ -24,7 +24,7 @@ import com.oxygenxml.cmis.plugin.TranslationResourceController;
  */
 public class CacheSearchProvider implements ContentSearcher {
 
-  private  final String timeCreated;
+  private final String timeCreated;
   private final String emptyResult;
   private final ContentSearcher searchProvider;
   private final JList<IResource> list;
@@ -45,7 +45,7 @@ public class CacheSearchProvider implements ContentSearcher {
   CacheSearchProvider(ContentSearcher searchProvider, JList<IResource> list) {
     timeCreated = TranslationResourceController.getMessage("TIME_CREATED");
     emptyResult = TranslationResourceController.getMessage("EMPTY_RESULT");
-    
+
     cacheLine = new HashMap<>();
     cachePath = new HashMap<>();
     cacheProperties = new HashMap<>();
@@ -142,8 +142,8 @@ public class CacheSearchProvider implements ContentSearcher {
   }
 
   @Override
-  public void doSearch(String searchText) {
-    searchProvider.doSearch(searchText);
+  public void doSearch(String searchText, String option, boolean searchFolders) {
+    searchProvider.doSearch(searchText, option, searchFolders);
   }
 
   @Override

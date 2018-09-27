@@ -268,7 +268,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
   }
 
   @Override
-  public void searchFinished(String filter, final List<IResource> resources) {
+  public void searchFinished(String filter, final List<IResource> resources, String option, boolean searchFolders) {
 
     // Provides the threads needed for async response
     final CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
@@ -306,7 +306,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
       @Override
       public void refresh() {
-        contentProvider.doSearch(filter);
+        contentProvider.doSearch(filter, option, searchFolders);
       }
 
       @Override
@@ -358,17 +358,17 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
     } else {
       logger.info("Selected resource is null");
     }
-    
+
     ResourceController resourceController = CMISAccess.getInstance().createResourceController();
-    logger.info("Controller " + resourceController );
+    logger.info("Controller " + resourceController);
     if (resourceController != null) {
       logger.info("Sess " + resourceController.getSession());
-      
+
       if (resourceController.getSession() != null) {
         logger.info("params " + resourceController.getSession().getSessionParameters());
       }
     }
-    
+
     return object != null ? CmisURLConnection.generateURLObject(object, resourceController) : null;
   }
 }

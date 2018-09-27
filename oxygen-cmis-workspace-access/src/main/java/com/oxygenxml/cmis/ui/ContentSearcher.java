@@ -53,6 +53,10 @@ public interface ContentSearcher {
    * Activates the search of the searchText
    * 
    * @param searchText
+   * @param option 
+   * @param searchFolders
+   *          <code>False</code> Will search only for documents,
+   *          <code>True</code> Will search for documents and folders.
    */
-  public void doSearch(String searchText);
+  public void doSearch(String searchText, String option, boolean searchFolders);
 }

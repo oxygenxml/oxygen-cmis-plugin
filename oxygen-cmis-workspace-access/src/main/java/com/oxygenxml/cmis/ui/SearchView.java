@@ -7,10 +7,13 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -46,6 +49,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
 
   private JTextField searchField = null;
   private JButton searchButton = null;
+  private JLabel filterLabel = null;
 
   // Option of the search (name, title)
   private String option = null;
@@ -115,6 +119,11 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     c.gridy = 0;
     c.weightx = 0.0;
 
+    URL filterIconUrl = getClass().getClassLoader().getResource("images/settings.png");
+    filterLabel = new JLabel(new ImageIcon(filterIconUrl));
+    filterLabel.addMouseListener(new FilterMouseHandler(this, searchField));
+    filterLabel.setEnabled(false);
+
     searchButton = new JButton(searchLabel);
     searchButton.setEnabled(false);
 
@@ -127,22 +136,22 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
       // Get the entered text and trim of white space from both sides
       final String searchText = searchField.getText().trim();
 
-      doSearch(searchText);
+      doSearch(searchText, option, true);
     }
 
     );
     searchButton.setOpaque(true);
 
-    add(searchButton, c);
+    add(filterLabel, c);
   }
 
   @Override
-  public void doSearch(final String searchText) {
+  public void doSearch(final String searchText, String option, boolean searchFolders) {
     // Get the search results of the query
-    List<IResource> queryResults = searchItems(searchText);
+    List<IResource> queryResults = searchItems(searchText, option, searchFolders);
 
     // Fire the search for each listener
-    fireSearchFinished(searchText, queryResults);
+    fireSearchFinished(searchText, queryResults, option, searchFolders);
   }
 
   /**
@@ -151,9 +160,10 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
    * @param searchText
    * @param queryResults
    */
-  protected void fireSearchFinished(String searchText, List<IResource> queryResults) {
+  protected void fireSearchFinished(String searchText, List<IResource> queryResults, String option,
+      boolean searchFolders) {
     for (SearchListener l : listeners) {
-      l.searchFinished(searchText, queryResults);
+      l.searchFinished(searchText, queryResults, option, searchFolders);
     }
   }
 
@@ -171,9 +181,13 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
    * Add all the data searched in a list
    * 
    * @param searchText
+   * @param option
+   * @param searchFolders
+   *          If should search also in folders. Default search will be for
+   *          documents.
    * @return
    */
-  private List<IResource> searchItems(String searchText) {
+  private List<IResource> searchItems(String searchText, String option, boolean searchFolders) {
     List<IResource> queryResults = new ArrayList<>();
     SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
 
@@ -189,12 +203,14 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
 
     logger.debug("Documents=" + documentsResults.size());
 
-    // The results from searching the folders
-    ArrayList<IResource> foldersResults = (ArrayList<IResource>) new SearchFolder(searchText, searchCtrl, option)
-        .getResultsFolder();
-
     queryResults.addAll(documentsResults);
-    queryResults.addAll(foldersResults);
+
+    if (searchFolders) {
+      // The results from searching the folders
+      ArrayList<IResource> foldersResults = (ArrayList<IResource>) new SearchFolder(searchText, searchCtrl, option)
+          .getResultsFolder();
+      queryResults.addAll(foldersResults);
+    }
     logger.debug("Results from server=" + queryResults.size());
 
     return queryResults;
@@ -218,6 +234,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
 
   @Override
   public void activateSearch() {
+    filterLabel.setEnabled(true);
     searchField.setEnabled(true);
     searchButton.setEnabled(true);
   }

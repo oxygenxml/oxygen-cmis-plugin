@@ -3,6 +3,9 @@ package com.oxygenxml.cmis.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oxygenxml.cmis.actions.ShowAllResourcesAction;
+import com.oxygenxml.cmis.actions.ShowCheckedoutResourcesAction;
+import com.oxygenxml.cmis.actions.ShowForeignCheckoutResourcesAction;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
 
@@ -29,10 +32,18 @@ public class SearchDocument {
 
     switch (option) {
 
-    case "null":
+    case ShowAllResourcesAction.ALL_OPTION:
 
       resultsQueries.addAll(searchCtrl.queryDoc(toSearch));
+      break;
 
+    case ShowCheckedoutResourcesAction.PERSONAL_CHECKEDOUT_OPTION:
+
+      resultsQueries.addAll(searchCtrl.queryPersonalCheckedout(toSearch));
+      break;
+    case ShowForeignCheckoutResourcesAction.FOREIGN_OPTION:
+
+      resultsQueries.addAll(searchCtrl.queryForeignCheckedoutDocs(toSearch));
       break;
 
     case "name":

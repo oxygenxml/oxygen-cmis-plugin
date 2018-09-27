@@ -55,6 +55,11 @@ public class DocumentImpl implements IDocument {
     return doc.getId();
   }
 
+  // True will give a mjaor version
+  public Document getLastCheckoutVersion() {
+    return doc.getObjectOfLatestVersion(false);
+  }
+
   public String getContentStreamId() {
     return doc.getContentStreamId();
   }

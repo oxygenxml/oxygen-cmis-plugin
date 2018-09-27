@@ -492,11 +492,11 @@
     <!-- Rename Document Action -->
     <key value="ENTER_A_NAME_DOCUMENT_LABEL">
         <comment>Label for the field.</comment>
-        <val lang="en_US">Paste document</val>
-        <val lang="de_DE">Paste document</val>
-        <val lang="fr_FR">Paste document</val>
-        <val lang="ja_JP">Paste document</val>
-        <val lang="nl_NL">Paste document</val>
+        <val lang="en_US">Enter a name</val>
+        <val lang="de_DE">Enter a name</val>
+        <val lang="fr_FR">Enter a name</val>
+        <val lang="ja_JP">Enter a name</val>
+        <val lang="nl_NL">Enter a name</val>
     </key>
     <key value="RENAME_DOCUMENT_ACTION_TITLE">
         <comment>Label for the field.</comment>
@@ -511,11 +511,11 @@
     <!-- Rename Folder Action -->
     <key value="ENTER_A_NAME_FOLDER">
         <comment>Label for the field.</comment>
-        <val lang="en_US">Paste document</val>
-        <val lang="de_DE">Paste document</val>
-        <val lang="fr_FR">Paste document</val>
-        <val lang="ja_JP">Paste document</val>
-        <val lang="nl_NL">Paste document</val>
+        <val lang="en_US">Enter a name</val>
+        <val lang="de_DE">Enter a name</val>
+        <val lang="fr_FR">Enter a name</val>
+        <val lang="ja_JP">Enter a name</val>
+        <val lang="nl_NL">Enter a name</val>
     </key>
     <key value="RENAME_FOLDER_ACTION_TITLE">
         <comment>Label for the field.</comment>
