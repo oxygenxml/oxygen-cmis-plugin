@@ -70,7 +70,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter, Repos
 
     breadcrumbPanel = new JPanel();
     goUpIcon = new JLabel();
-
+    goUpIcon.setVisible(false);
     // Design the toolbar.
     breadcrumbToolBar.setFloatable(false);
     breadcrumbToolBar.setRollover(true);
@@ -242,6 +242,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter, Repos
   @Override
   public void resetBreadcrumb() {
     // Remove old data.
+    goUpIcon.setVisible(false);
     parentResources.clear();
     hiddenItems.clear();
     breadcrumbToolBar.removeAll();
@@ -276,7 +277,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter, Repos
     // Check if there is a widget
     boolean existsMoreWidget = false;
     if (breadcrumbToolBar.getComponentCount() > 0) {
-
+      goUpIcon.setVisible(true);
       JButton first = (JButton) breadcrumbToolBar.getComponent(0);
 
       if (first.getText().equals("..")) {
