@@ -11,8 +11,8 @@ import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
-import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -23,6 +23,10 @@ import com.oxygenxml.cmis.core.model.IResource;
  * CMIS document implementation.
  */
 public class DocumentImpl implements IDocument {
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(DocumentImpl.class);
   /**
    * Wrapped CMIS document.
    */
@@ -193,7 +197,6 @@ public class DocumentImpl implements IDocument {
   public String getDocumentPath(ResourceController ctrl) {
     StringBuilder b = new StringBuilder();
     List<String> docPath = doc.getPaths();
-    // System.out.println("Doc path:" + docPath);
 
     b.append("/").append(ctrl.getRootFolder().getName());
 
@@ -239,8 +242,7 @@ public class DocumentImpl implements IDocument {
   public boolean isCheckedOut() {
     // A property needed to be set on creation of the document in order to get
     // this property
-    // System.out.println("Checked out
-    // ="+doc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
+    logger.debug("Checked out=" + doc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
     return doc.isVersionSeriesCheckedOut();
   }
 
@@ -253,8 +255,7 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public boolean isPrivateWorkingCopy() {
-    // System.out.println("CPWC
-    // ="+doc.getProperty("cmis:isPrivateWorkingCopy").getValuesAsString());
+    logger.debug("CPWC=" + doc.getProperty("cmis:isPrivateWorkingCopy").getValuesAsString());
     return doc.isPrivateWorkingCopy();
   }
 
@@ -270,8 +271,8 @@ public class DocumentImpl implements IDocument {
 
       ObjectId pwcId = doc.checkOut();
       Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
-      System.out.println("PWC ID=" + pwcId);
-      System.out.println("PWC name=" + pwc.getName());
+      logger.debug("PWC ID=" + pwcId);
+      logger.debug("PWC name=" + pwc.getName());
 
       return pwc;
     }

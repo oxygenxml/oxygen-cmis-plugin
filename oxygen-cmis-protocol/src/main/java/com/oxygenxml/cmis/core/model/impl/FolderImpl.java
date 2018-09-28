@@ -21,7 +21,6 @@ public class FolderImpl implements IFolder {
    * Logger for logging.
    */
   private static Logger logger = Logger.getLogger(FolderImpl.class.getName());
-
   /**
    * Wrapped CMIS folder.
    */
@@ -38,7 +37,6 @@ public class FolderImpl implements IFolder {
 
   @Override
   public Iterator<IResource> iterator() {
-    // TODO Alexey Teste JUNIT.
     return new ResourceIterator(folder);
   }
 
@@ -92,7 +90,7 @@ public class FolderImpl implements IFolder {
   }
 
   public void addToModel(Document doc) {
-    // doc.addToFolder(folder.getId(), false);
+    // Not implemented
   }
 
   public Date getTimeCreated() {

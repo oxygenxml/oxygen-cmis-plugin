@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,14 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.log4j.Logger;
 
 public class ResourceController {
+  /**
+   * Logging.
+   */
+  private static final Logger logger = Logger.getLogger(ResourceController.class);
+  private static final String ENCODING = "UTF-8";
 
   private Session session;
 
@@ -56,17 +63,17 @@ public class ResourceController {
 
     String mimetype = mimeType.concat("; charset=UTF-8");
 
-    byte[] contentBytes = content.getBytes("UTF-8");
+    byte[] contentBytes = content.getBytes(ENCODING);
     ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
 
     ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
         mimetype, stream);
 
     // prepare properties
-    Map<String, Object> properties = new HashMap<String, Object>();
+    Map<String, Object> properties = new HashMap<>();
 
     properties.put(PropertyIds.NAME, filename);
-    properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+    properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
 
     // create the document
     try {
@@ -92,21 +99,20 @@ public class ResourceController {
   public Document createVersionedDocument(Folder path, String filename, String content, String mimetype,
       String objectType, VersioningState versioningState) throws UnsupportedEncodingException {
 
-    byte[] contentBytes = content.getBytes("UTF-8");
+    byte[] contentBytes = content.getBytes(ENCODING);
     ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
 
     ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
         mimetype, stream);
 
     // prepare properties
-    Map<String, Object> properties = new HashMap<String, Object>();
+    Map<String, Object> properties = new HashMap<>();
     properties.put(PropertyIds.NAME, filename);
 
     /**
-     * If repository or server doesn't support
-     * OBJECT_TYPE_ID like "VersionableType" we
-     * catch the error and try to put in properties
-     * default for open-cmis Object Id - "cmis:document".
+     * If repository or server doesn't support OBJECT_TYPE_ID like
+     * "VersionableType" we catch the error and try to put in properties default
+     * for open-cmis Object Id - "cmis:document".
      * 
      */
     Document document = null;
@@ -131,18 +137,17 @@ public class ResourceController {
    * @throws UnsupportedEncodingException
    *           Necessary VersionableType in order to get many versions
    */
-  public Document createVersionedDocument(Folder path, String filename, ContentStream contentStream, String mimetype,
-      String objectType, VersioningState versioningState) throws UnsupportedEncodingException {
+  public Document createVersionedDocument(Folder path, String filename, ContentStream contentStream, String objectType,
+      VersioningState versioningState) throws UnsupportedEncodingException {
 
     // prepare properties
-    Map<String, Object> properties = new HashMap<String, Object>();
+    Map<String, Object> properties = new HashMap<>();
     properties.put(PropertyIds.NAME, filename);
 
     /**
-     * If repository or server doesn't support
-     * OBJECT_TYPE_ID like "VersionableType" we
-     * catch the error and try to put in properties
-     * default for open-cmis Object Id - "cmis:document".
+     * If repository or server doesn't support OBJECT_TYPE_ID like
+     * "VersionableType" we catch the error and try to put in properties default
+     * for open-cmis Object Id - "cmis:document".
      * 
      */
     Document document = null;
@@ -215,7 +220,7 @@ public class ResourceController {
    * @return
    */
   public Folder createFolder(Folder parent, String name) {
-    Map<String, Object> properties = new HashMap<String, Object>();
+    Map<String, Object> properties = new HashMap<>();
 
     properties.put(PropertyIds.NAME, name);
     properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
@@ -235,7 +240,7 @@ public class ResourceController {
       return folder.deleteTree(true, UnfileObject.DELETE, true);
     }
 
-    return null;
+    return Collections.emptyList();
   }
 
   /**
@@ -286,7 +291,7 @@ public class ResourceController {
       try {
         document = (Document) session.getObject(docID);
       } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException e) {
-        System.out.println("No object found");
+        logger.info("No object found");
       }
       if (document != null) {
         ContentStream contentStream = document.getContentStream();
@@ -294,7 +299,7 @@ public class ResourceController {
         java.io.InputStream stream = contentStream.getStream();
 
         // TODO Get the encoding dynamically.
-        return new InputStreamReader(stream, "UTF-8");
+        return new InputStreamReader(stream, ENCODING);
       }
     }
     return null;

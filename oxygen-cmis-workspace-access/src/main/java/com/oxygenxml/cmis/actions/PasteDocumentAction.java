@@ -150,8 +150,8 @@ public class PasteDocumentAction extends AbstractAction {
           copiedDoc = resourceController.createDocument(folder.getFolder(), fileName, content.toString(), mimetype);
 
         } else {
-          copiedDoc = resourceController.createVersionedDocument(folder.getFolder(), fileName, content, mimetype,
-              objectTypeId, VersioningState.valueOf(versioningState));
+          copiedDoc = resourceController.createVersionedDocument(folder.getFolder(), fileName, content, objectTypeId,
+              VersioningState.valueOf(versioningState));
         }
         // // Add the document from clipboard to the currentFolder
         resourceController.addToFolder(((FolderImpl) resource).getFolder(), copiedDoc);

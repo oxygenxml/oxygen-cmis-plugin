@@ -101,10 +101,10 @@ public class CMISAccess {
 	 * @return List<Repository>
 	 */
 	public List<Repository> connectToServerGetRepositories(URL connectionInfo, UserCredentials uc) {
-		HashMap<String, String> parameters = new HashMap<>();
-		populateParameters(connectionInfo, parameters, uc);
+		HashMap<String, String> conParameters = new HashMap<>();
+		populateParameters(connectionInfo, conParameters, uc);
 
-		return factory.getRepositories(parameters);
+		return factory.getRepositories(conParameters);
 	}
 	
 	/**
@@ -113,13 +113,13 @@ public class CMISAccess {
 	 * @param uc
 	 */
 	public void pureConnectToServer(URL connectionInfo, UserCredentials uc) {
-		HashMap<String, String> parameters = new HashMap<>();
-		populateParameters(connectionInfo, parameters, uc);
+		HashMap<String, String> conParameters = new HashMap<>();
+		populateParameters(connectionInfo, conParameters, uc);
 		
-		String repositoryID = factory.getRepositories(parameters).get(0).getId();
-		parameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
+		String repositoryID = factory.getRepositories(conParameters).get(0).getId();
+		conParameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
 		
-		session = factory.createSession(parameters);
+		session = factory.createSession(conParameters);
 	}
 	
 	/**

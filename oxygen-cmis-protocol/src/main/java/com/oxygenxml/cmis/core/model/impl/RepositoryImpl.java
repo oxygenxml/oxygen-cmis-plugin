@@ -46,11 +46,12 @@ public class RepositoryImpl implements IRepository {
 
   @Override
   public void refresh() {
+    //Not implemented
+    
   }
 
   @Override
   public String getDescription() {
-    // TODO Auto-generated method stub
-    return null;
+    return repository.getDescription();
   }
 }

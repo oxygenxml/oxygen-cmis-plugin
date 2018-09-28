@@ -42,7 +42,7 @@ public class RealationshipsTest extends ConnectionTestBase{
   
   @Test
   public void testRelationshipsDocument() throws CmisConstraintException, UnsupportedEncodingException {
-    Document latest = null;
+
     Document doc = ctrl.createVersionedDocument(root, "queryTestFile3.txt", "some text",
         MimeTypes.getMIMEType("queryTestFile3.txt"), "VersionableType", VersioningState.MINOR);
     Document pwc = (Document) CMISAccess.getInstance().createResourceController().getCmisObj(doc.checkOut().getId());
