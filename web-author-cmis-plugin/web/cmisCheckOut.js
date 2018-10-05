@@ -1,125 +1,125 @@
-var CmisCheckOutAction = function (editor) {
+var CmisCheckOutAction = function(editor) {
   sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
 };
 
 CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
-CmisCheckOutAction.prototype.getDisplayName = function () {
+CmisCheckOutAction.prototype.getDisplayName = function() {
   return tr(msgs.CHECK_OUT_);
 };
 
-CmisCheckOutAction.prototype.getSmallIcon = function (devicePixelRation) {
+CmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
   return 'https://static.thenounproject.com/png/978469-200.png';
 }
 
-CmisCheckOutAction.prototype.isEnabled = function () {
+CmisCheckOutAction.prototype.isEnabled = function() {
   var isEnabled = true;
   if (cmisStatus || cmisStatus === 'checkedout') {
-    isEnabled = false;
+      isEnabled = false;
   }
   return isEnabled;
 }
-CmisCheckOutAction.prototype.actionPerformed = function (callback) {
+CmisCheckOutAction.prototype.actionPerformed = function(callback) {
   cmisStatus = true;
   this.editor.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisActions', {
-      action: 'cmisCheckout'
-    }, function (err, data) {
+      'com.oxygenxml.cmis.web.action.CmisActions', {
+          action: 'cmisCheckout'
+      },
+      function(err, data) {
 
-      if (data !== null) {
-        var cause = JSON.parse(data);
+          if (data !== null) {
+              var cause = JSON.parse(data);
 
-        if (cause.error === 'denied') {
-          cmisStatus = false;
+              if (cause.error === 'denied') {
+                  cmisStatus = false;
 
-          if (!this.dialog) {
-            this.dialog = workspace.createDialog();
-            this.dialog.setTitle(tr(msgs.ERROR_TITLE_));
-            this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-            this.dialog.setPreferredSize(350, 300);
+                  if (!this.dialog) {
+                      this.dialog = workspace.createDialog();
+                      this.dialog.setTitle(tr(msgs.ERROR_TITLE_));
+                      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+                      this.dialog.setPreferredSize(350, 300);
 
-            var warningDiv = document.createElement('div');
-            warningDiv.setAttribute('class', 'warningdiv');
-            warningDiv.innerHTML = tr(msgs.ERROR_WARN_);
+                      var warningDiv = document.createElement('div');
+                      warningDiv.setAttribute('class', 'warningdiv');
+                      warningDiv.innerHTML = tr(msgs.ERROR_WARN_);
 
-            var messageDiv = document.createElement('div');
-            messageDiv.setAttribute('id', 'messdiv');
+                      var messageDiv = document.createElement('div');
+                      messageDiv.setAttribute('id', 'messdiv');
 
-            var errorMessage = cause.message;
+                      var errorMessage = cause.message;
 
-            if(err){
-              errorMessage = err.message;
-            }
+                      if (err) {
+                          errorMessage = err.message;
+                      }
 
-            messageDiv.innerHTML = errorMessage;
+                      messageDiv.innerHTML = errorMessage;
 
-            var warnHr = document.createElement('hr');
-            warnHr.setAttribute('id', 'warnhr');
+                      var warnHr = document.createElement('hr');
+                      warnHr.setAttribute('id', 'warnhr');
 
-            this.dialog.getElement().appendChild(warningDiv);
-            this.dialog.getElement().appendChild(warnHr);
-            this.dialog.getElement().appendChild(messageDiv);
+                      this.dialog.getElement().appendChild(warningDiv);
+                      this.dialog.getElement().appendChild(warnHr);
+                      this.dialog.getElement().appendChild(messageDiv);
+                  }
+                  this.dialog.show();
+              } else {
+                  cmisStatus = true;
+              }
           }
-          this.dialog.show();
-        } else {
-          cmisStatus = true;
-        }
-      }
-      callback();
-    });
+          callback();
+      });
 };
 
 //------------------- Cmis cancel check-out action. -----------------------
-var cancelCmisCheckOutAction = function (editor) {
+var cancelCmisCheckOutAction = function(editor) {
   sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
 };
 
 cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
-cancelCmisCheckOutAction.prototype.getDisplayName = function () {
+cancelCmisCheckOutAction.prototype.getDisplayName = function() {
   return tr(msgs.CANCEL_CHECK_OUT_);
 };
 
 // PROTOTYPE!!!!
-cancelCmisCheckOutAction.prototype.getSmallIcon = function (devicePixelRation) {
+cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
   return 'http://icons.iconarchive.com/icons/icons8/ios7/256/Very-Basic-Cancel-icon.png';
 }
 
-cancelCmisCheckOutAction.prototype.isEnabled = function () {
+cancelCmisCheckOutAction.prototype.isEnabled = function() {
   var isEnabled = false;
   if (cmisStatus && cmisStatus !== 'checkedout') {
-    isEnabled = true;
+      isEnabled = true;
   }
   return isEnabled;
 }
 
-cancelCmisCheckOutAction.prototype.actionPerformed = function (callback) {
+cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   if (!this.dialog) {
-    this.dialog = workspace.createDialog();
-    this.dialog.setTitle(tr(msgs.CANCEL_CHECK_OUT_));
-    this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.YES_NO);
-    this.dialog.setPreferredSize(250, 180);
+      this.dialog = workspace.createDialog();
+      this.dialog.setTitle(tr(msgs.CANCEL_CHECK_OUT_));
+      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.YES_NO);
+      this.dialog.setPreferredSize(250, 180);
 
-    var warningDiv = document.createElement('div');
-    warningDiv.setAttribute('class', 'warningdiv');
-    warningDiv.innerHTML = tr(msgs.CANCEL_WARN_);
+      var warningDiv = document.createElement('div');
+      warningDiv.setAttribute('class', 'warningdiv');
+      warningDiv.innerHTML = tr(msgs.CANCEL_WARN_);
 
-    this.dialog.getElement().appendChild(warningDiv);
+      this.dialog.getElement().appendChild(warningDiv);
   }
 
   this.dialog.show();
 
-  this.dialog.onSelect(goog.bind(function (key, e) {
-    if (key === 'yes') {
-      this.editor.getActionsManager().invokeOperation(
-        'com.oxygenxml.cmis.web.action.CmisActions', {
-          action: 'cancelCmisCheckout'
-        }, callback);
+  this.dialog.onSelect(goog.bind(function(key, e) {
+      if (key === 'yes') {
+          this.editor.getActionsManager().invokeOperation(
+              'com.oxygenxml.cmis.web.action.CmisActions', {
+                  action: 'cancelCmisCheckout'
+              }, callback);
 
-      cmisStatus = false;
-    }
+          cmisStatus = false;
+      }
   }, this));
 }
-

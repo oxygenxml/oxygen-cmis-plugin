@@ -65,7 +65,6 @@ public class ListOldVersionsActionTest {
 
 			String test = ListOldVersionsAction.listOldVersions(document, url);
 
-			
 			System.out.println(test);
 			assertNotNull(test);
 			assertTrue(test.startsWith("{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost"
