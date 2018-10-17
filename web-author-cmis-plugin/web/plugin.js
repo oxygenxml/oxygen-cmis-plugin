@@ -7,7 +7,6 @@ var limit = initialUrl.substring(prefix.length).indexOf('/') + prefix.length;
 var rootUrl = initialUrl.substring(0, limit);
 
 var urlFromOptions = sync.options.PluginsOptions.getClientOption("cmis.enforced_url");
-var rootUrl = null;
 
 if (urlFromOptions) {
     rootUrl = 'cmis://' + encodeURIComponent(urlFromOptions);
@@ -16,7 +15,7 @@ if (urlFromOptions) {
     }
 }
 
-var cmisFileRepo = {};
+var cmisFileServer = {};
 
 /**
  * Login the user and call this callback at the end.
@@ -103,8 +102,17 @@ function login(serverUrl, authenticated) {
 
 window.login = login;
 
-cmisFileRepo.login = login;
-cmisFileRepo.logout = function(logoutCallback) {
+cmisFileServer.login = login;
+
+cmisFileServer.getUserName = function() {
+  return localStorage.getItem('cmis.user');
+};
+
+cmisFileServer.getDefaultRootUrl = function() {
+  return rootUrl;
+};
+
+cmisFileServer.logout = function(logoutCallback) {
     goog.net.XhrIo.send(
         '../plugins-dispatcher/cmis-login?action=logout',
         goog.bind(function() {
@@ -118,7 +126,7 @@ cmisFileRepo.logout = function(logoutCallback) {
         'POST');
 };
 
-cmisFileRepo.createRepositoryAddressComponent = function(rootUrlParam, currentBrowseUrl, rootURLChangedCallback) {
+cmisFileServer.createRootUrlComponent = function(rootUrlParam, rootURLChangedCallback, readOnly) {
     var div = document.createElement('div');
 
     if (rootUrl) {
@@ -126,8 +134,8 @@ cmisFileRepo.createRepositoryAddressComponent = function(rootUrlParam, currentBr
             if (!this.rootUrlSet) {
                 this.rootUrlSet = true;
                 setTimeout(function() {
-                    rootURLChangedCallback(rootUrl, rootUrl) // TODO: bug in web author.
-                }, 0)
+                    rootURLChangedCallback(rootUrl, rootUrl); // TODO: bug in web author.
+                }, 0);
             }
         }
         div.textContent = sync.options.PluginsOptions.getClientOption("cmis.enforced_name");
@@ -137,7 +145,7 @@ cmisFileRepo.createRepositoryAddressComponent = function(rootUrlParam, currentBr
     return div;
 };
 
-cmisFileRepo.getUrlInfo = function(url, urlInfoCallback, showErrorMessageCallback) {
+cmisFileServer.getUrlInfo = function(url, urlInfoCallback, showErrorMessageCallback) {
     urlInfoCallback(rootUrl, url);
 };
 
@@ -149,10 +157,10 @@ var cmisFileRepositoryDescriptor = {
     'matches': function matches(url) {
         return url.match('cmis'); // Check if the provided URL points to version file or folder from Cmis file repository
     },
-    'repository': cmisFileRepo
+    'fileServer': cmisFileServer
 };
 
-workspace.getFileRepositoriesManager().registerRepository(cmisFileRepositoryDescriptor);
+workspace.getFileServersManager().registerFileServerConnector(cmisFileRepositoryDescriptor);
 
 
 var cmisStatus = false;
