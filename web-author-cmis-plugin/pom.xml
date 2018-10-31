@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>com.oxygenxml.cmis</groupId>
 		<artifactId>cmis.plugins</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -19,11 +19,10 @@
 	</properties>
 
 	<repositories>
-		<!-- Download artifacts from the oXygem XML Maven Repository -->
 		<repository>
 			<id>oxygenxml</id>
 			<name>oXygen XML SDK Maven Repository</name>
-			<url>http://oxygenxml.com/maven/</url>
+			<url>https://oxygenxml.com/maven/</url>
 		</repository>
 	</repositories>
 
@@ -46,7 +45,7 @@
 		<dependency>
 			<groupId>com.oxygenxml.cmis</groupId>
 			<artifactId>oxygen-cmis-protocol</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
