@@ -6,6 +6,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>web-author-cmis-plugin</artifactId>
+	<name>Web Author CMIS Plugin</name>
+	<description>Plugin that adds CMIS support for Web Author</description>
 	<parent>
 		<groupId>com.oxygenxml.cmis</groupId>
 		<artifactId>cmis.plugins</artifactId>
