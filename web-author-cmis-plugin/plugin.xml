@@ -4,9 +4,9 @@
 
 <plugin class="com.oxygenxml.cmis.web.Plugin"
 
-	id="web-author-cmis-plugin" name="web-author-cmis-plugin"
-	description="A plugin for oXygen XML Web Author."
-	version="${project.nosnapshot.version}" vendor="com.oxygenxml.cmis">
+	id="web-author-cmis-plugin" name="CMIS Plugin"
+	description="Plugin that adds support for CMIS servers including browsing for files, check-out, edit, save, checkin."
+	version="${project.nosnapshot.version}" vendor="Syncro Soft SRL">
 
 	<runtime>
 		<librariesFolder name="lib" />
