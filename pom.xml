@@ -7,7 +7,6 @@
 	<groupId>com.oxygenxml.cmis</groupId>
 	<artifactId>cmis.plugins</artifactId>
 	<name>Oxygen CMIS Plugin</name>
-	<description>Plugin that adds support for CMS-es that implement the CMIS protocol</description>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -31,7 +30,14 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
+	
+	<licenses>
+	  <license>
+	    <name>Apache License, Version 2.0</name>
+	    <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+	  </license>
+	</licenses>
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
