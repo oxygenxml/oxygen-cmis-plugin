@@ -1,2 +1,4 @@
-# Oxygen-XML-Editor-CMIS-Plugin
-Integration plugin between Oxygen XML Editor and any CMIS enabled server.
+# CMIS Plugin for Oxygen XML Editor and Web Author
+
+Integration plugin between any CMIS enabled server and Oxygen XML Editor and Web Author.
+
