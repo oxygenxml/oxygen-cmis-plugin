@@ -19,7 +19,7 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisCheckInAction;
 import com.oxygenxml.cmis.web.action.CmisCheckOutAction;
 
-public class CmisActionsCheckInTest {
+public class CmisActionsCheckInIT {
 	/**
 	 * Executes operations over the resources.
 	 */

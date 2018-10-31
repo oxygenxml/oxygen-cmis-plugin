@@ -22,7 +22,7 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import ro.sync.basic.util.URLStreamHandlerFactorySetter;
 import ro.sync.net.protocol.FolderEntryDescriptor;
 
-public class CmisListFolderTest {
+public class CmisListFolderIT {
 	private URL serverUrl;
 	private CMISAccess cmisAccess;
 	private CmisBrowsingURLConnection browsing;

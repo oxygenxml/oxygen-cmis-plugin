@@ -19,7 +19,7 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.net.protocol.FolderEntryDescriptor;
 
-public class CmisListFolderReposTest {
+public class CmisListFolderReposIT {
 	/**
 	 * Executes operations over the resources.
 	 */

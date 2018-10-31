@@ -29,7 +29,7 @@ import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 
-public class EditorListenerTest {
+public class EditorListenerIT {
 
 	private URLStreamHandlerFactorySetter setter;
 	private URL serverUrl;
