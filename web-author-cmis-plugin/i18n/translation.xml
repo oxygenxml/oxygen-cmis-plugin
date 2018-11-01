@@ -26,9 +26,9 @@
     <key value="Server_URL">
         <comment>Open URL dialog. Input for the server URL.</comment>
         <val lang="en_US">Server URL</val>
-		<val lang="de_DE">Server URL</val>
-        <val lang="fr_FR">Server URL</val>
-        <val lang="ja_JP">Server URL</val>
+        <val lang="de_DE">Server-URL</val>
+        <val lang="fr_FR">URL du serveur</val>
+        <val lang="ja_JP">サーバー URL</val>
         <val lang="nl_NL">Server URL</val>
     </key>
 	<key value="Checkout_required" distribution="webauthor">
@@ -137,19 +137,11 @@
 	</key>
 	<key value="COMMIT_MESS_" distribution="webauthor">
 		<comment>Commit message</comment>
-		<val lang="en_US">Commit message</val>
-		<val lang="de_DE">Commit message</val>
-        <val lang="fr_FR">Commit message</val>
-        <val lang="ja_JP">Commit message</val>
-        <val lang="nl_NL">Commit message</val>
-	</key>
-	<key value="VERSION_" distribution="webauthor">
-		<comment>Version</comment>
-		<val lang="en_US">Version</val>
-		<val lang="de_DE">Version</val>
-        <val lang="fr_FR">Version</val>
-        <val lang="ja_JP">Version</val>
-        <val lang="nl_NL">Version</val>
+        <val lang="en_US">Commit message</val>
+        <val lang="de_DE">Eincheck-Nachricht</val>
+        <val lang="fr_FR">Message de livraison</val>
+        <val lang="ja_JP">コミットメッセージ</val>
+        <val lang="nl_NL">Incheckbericht</val>
 	</key>
 	<key value="MODIFIED_BY_" distribution="webauthor">
 		<comment>"Modified by" - label for ALL_VERSIONS_ button</comment>
@@ -159,22 +151,6 @@
         <val lang="ja_JP">Modified by</val>
         <val lang="nl_NL">Modified by</val>
 	</key>
-	<key value="MAJOR_VERSION_" distribution="webauthor">
-		<comment>Major version</comment>
-		<val lang="en_US">Major version</val>
-		<val lang="de_DE">Major version</val>
-        <val lang="fr_FR">Major version</val>
-        <val lang="ja_JP">Major version</val>
-        <val lang="nl_NL">Major version</val>
-	</key>
-	<key value="MINOR_VERSION_" distribution="webauthor">
-		<comment>Minor version</comment>
-		<val lang="en_US">Minor version</val>
-		<val lang="de_DE">Minor version</val>
-        <val lang="fr_FR">Minor version</val>
-        <val lang="ja_JP">Minor version</val>
-        <val lang="nl_NL">Minor version</val>
-	</key>
 	<key value="SET_CMIS_API_URL_" distribution="webauthor">
 		<comment>Set CMIS API URL in the Configuration Page</comment>
 		<val lang="en_US">A Connection URL must be set in the Plugin configuration within the Administration Page.</val>
@@ -182,14 +158,6 @@
         <val lang="fr_FR">A Connection URL must be set in the Plugin configuration within the Administration Page.</val>
         <val lang="ja_JP">A Connection URL must be set in the Plugin configuration within the Administration Page.</val>
         <val lang="nl_NL">A Connection URL must be set in the Plugin configuration within the Administration Page.</val>
-	</key>
-	<key value="CMIS_ACTIONS_" distribution="webauthor">
-		<comment>Actions</comment>
-		<val lang="en_US">Actions</val>
-		<val lang="de_DE">Actions</val>
-        <val lang="fr_FR">Actions</val>
-        <val lang="ja_JP">Actions</val>
-        <val lang="nl_NL">Actions</val>
 	</key>
 	<key value="CANCEL_WARN_" distribution="webauthor">
 		<comment>Cancel check out warning</comment>
@@ -206,14 +174,6 @@
         <val lang="fr_FR">Check-out failed. Try again or contact your admin.</val>
         <val lang="ja_JP">Check-out failed. Try again or contact your admin.</val>
         <val lang="nl_NL">Check-out failed. Try again or contact your admin.</val>
-	</key>
-	<key value="ERROR_TITLE_" distribution="webauthor">
-		<comment>Error dialog title.</comment>
-		<val lang="en_US">Error</val>
-		<val lang="de_DE">Error</val>
-        <val lang="fr_FR">Error</val>
-        <val lang="ja_JP">Error</val>
-        <val lang="nl_NL">Error</val>
 	</key>
     <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
         <comment>Title of login dialog.</comment>
@@ -234,9 +194,49 @@
     <key value="PASSWORD_">
         <comment>Open URL dialog. The password for the connection.</comment>
         <val lang="en_US">Password</val>
-        <val lang="de_DE">Passwort:</val>
+        <val lang="de_DE">Passwort</val>
         <val lang="fr_FR">Mot de passe</val>
         <val lang="ja_JP">パスワード</val>
         <val lang="nl_NL">Wachtwoord</val>
+    </key>
+    <key value="ERROR_TITLE_" distribution="webauthor">
+        <comment>Error dialog title.</comment>
+        <val lang="en_US">Error</val>
+        <val lang="de_DE">Fehler</val>
+        <val lang="fr_FR">Erreur</val>
+        <val lang="ja_JP">エラー</val>
+        <val lang="nl_NL">Fout</val>
+    </key>
+    <key value="CMIS_ACTIONS_" distribution="webauthor">
+        <comment>Actions</comment>
+        <val lang="en_US">Actions</val>
+        <val lang="de_DE">Aktionen</val>
+        <val lang="fr_FR">Actions</val>
+        <val lang="ja_JP">アクション</val>
+        <val lang="nl_NL">Acties</val>
+    </key>
+    <key value="VERSION_" distribution="webauthor">
+        <comment>Version</comment>
+        <val lang="en_US">Version</val>
+        <val lang="de_DE">Version</val>
+        <val lang="fr_FR">Version</val>
+        <val lang="ja_JP">バージョン</val>
+        <val lang="nl_NL">Versie</val>
+    </key>
+    <key value="MAJOR_VERSION_" distribution="webauthor">
+        <comment>Major version</comment>
+        <val lang="en_US">Major version</val>
+        <val lang="de_DE">Hauptversion</val>
+        <val lang="fr_FR">Version majeure</val>
+        <val lang="ja_JP">メジャーバージョン</val>
+        <val lang="nl_NL">Grote versie</val>
+    </key>
+    <key value="MINOR_VERSION_" distribution="webauthor">
+        <comment>Minor version</comment>
+        <val lang="en_US">Minor version</val>
+        <val lang="de_DE">Unterversion</val>
+        <val lang="fr_FR">Version mineure</val>
+        <val lang="ja_JP">マイナーバージョン</val>
+        <val lang="nl_NL">Kleine versie</val>
     </key>
 </translation>

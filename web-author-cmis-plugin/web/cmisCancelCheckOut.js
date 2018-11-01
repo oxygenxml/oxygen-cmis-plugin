@@ -30,7 +30,7 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
 
       var warningDiv = document.createElement('div');
       warningDiv.setAttribute('class', 'warningdiv');
-      warningDiv.innerHTML = tr(msgs.CANCEL_WARN_);
+      warningDiv.textContent = tr(msgs.CANCEL_WARN_);
 
       this.dialog.getElement().appendChild(warningDiv);
   }

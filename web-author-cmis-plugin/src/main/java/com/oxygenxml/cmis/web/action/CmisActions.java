@@ -148,11 +148,7 @@ public class CmisActions extends AuthorOperationWithResult {
 
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
-		} catch (CmisUnauthorizedException e1) {
-			logger.info(e1.getMessage());
-		} catch (CmisObjectNotFoundException e1) {
-			logger.info(e1.getMessage());
-		} catch (MalformedURLException e1) {
+		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e1) {
 			logger.info(e1.getMessage());
 		}
 

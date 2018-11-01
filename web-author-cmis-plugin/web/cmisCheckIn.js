@@ -23,6 +23,7 @@ CmisCheckInAction.prototype.isEnabled = function() {
 
 CmisCheckInAction.prototype.actionPerformed = function(callback) {
     if (!this.dialog) {
+        var dialogElement = this.dialog.getElement();
         var root = document.querySelector('[data-root="true"]');
         var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
@@ -30,7 +31,11 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
         this.dialog.setTitle(tr(msgs.CHECK_IN_));
 
         if (noSupport !== 'true') {
-            this.dialog.getElement().innerHTML = tr(msgs.CHECK_IN_MESSAGE_) + "<br>";
+            dialogElement.innerHTML = '';
+            var checkInMessageSpan = document.createElement('span');
+            checkInMessageSpan.textContent = tr(msgs.CHECK_IN_MESSAGE_);
+            dialogElement.appendChild(checkInMessageSpan);
+            dialogElement.appendChild(document.createElement('br'));
             this.dialog.setPreferredSize(300, 350);
 
             var input = document.createElement('textarea');
@@ -39,7 +44,7 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
             input.setAttribute('type', 'text');
             input.setAttribute('id', 'input');
 
-            this.dialog.getElement().appendChild(input);
+            dialogElement.appendChild(input);
 
         } else {
             this.dialog.setPreferredSize(200, 180);
@@ -52,7 +57,7 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
         form.setAttribute('action', '');
         radioButtonsCreator(form, text1, text2);
 
-        this.dialog.getElement().appendChild(form);
+        dialogElement.appendChild(form);
     }
 
     this.dialog.show();
@@ -99,7 +104,7 @@ function radioButtonsCreator(form, text1, text2) {
     radio1.setAttribute('checked', '');
     form.appendChild(radio1);
 
-    text1.innerHTML = tr(msgs.MAJOR_VERSION_);
+    text1.textContent = tr(msgs.MAJOR_VERSION_);
     text1.appendChild(document.createElement('br'));
     form.appendChild(text1);
 
@@ -111,6 +116,6 @@ function radioButtonsCreator(form, text1, text2) {
     radio2.setAttribute('value', 'minor');
     form.appendChild(radio2);
 
-    text2.innerHTML = tr(msgs.MINOR_VERSION_);
+    text2.textContent = tr(msgs.MINOR_VERSION_);
     form.appendChild(text2);
 }

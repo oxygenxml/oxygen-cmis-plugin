@@ -55,7 +55,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 					HashMap<String, String> queryPart = new HashMap<>();
 
 					for (String pair : url.getQuery().split("&")) {
-						int index = pair.indexOf("=");
+						int index = pair.indexOf('=');
 						queryPart.put(pair.substring(0, index), pair.substring(index + 1));
 					}
 

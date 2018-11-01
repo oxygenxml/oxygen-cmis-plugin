@@ -42,7 +42,7 @@ CmisCheckOutAction.prototype.actionPerformed = function(callback) {
 
                       var warningDiv = document.createElement('div');
                       warningDiv.setAttribute('class', 'warningdiv');
-                      warningDiv.innerHTML = tr(msgs.ERROR_WARN_);
+                      warningDiv.textContent = tr(msgs.ERROR_WARN_);
 
                       var messageDiv = document.createElement('div');
                       messageDiv.setAttribute('id', 'messdiv');
@@ -53,7 +53,7 @@ CmisCheckOutAction.prototype.actionPerformed = function(callback) {
                           errorMessage = err.message;
                       }
 
-                      messageDiv.innerHTML = errorMessage;
+                      messageDiv.textContent = errorMessage;
 
                       var warnHr = document.createElement('hr');
                       warnHr.setAttribute('id', 'warnhr');
@@ -105,7 +105,7 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
 
       var warningDiv = document.createElement('div');
       warningDiv.setAttribute('class', 'warningdiv');
-      warningDiv.innerHTML = tr(msgs.CANCEL_WARN_);
+      warningDiv.textContent = tr(msgs.CANCEL_WARN_);
 
       this.dialog.getElement().appendChild(warningDiv);
   }

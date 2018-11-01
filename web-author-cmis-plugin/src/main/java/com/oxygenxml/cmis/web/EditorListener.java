@@ -85,7 +85,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 				HashMap<String, String> queryPart = new HashMap<>();
 				
 				for(String pair : url.getQuery().split("&")) {
-					int index = pair.indexOf("=");
+					int index = pair.indexOf('=');
 					queryPart.put(pair.substring(0, index), pair.substring(index + 1));
 				}
 				
@@ -139,11 +139,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 				}
 			}
 
-		} catch (CmisUnauthorizedException e1) {
-			logger.info(e1.getMessage());
-		} catch (CmisObjectNotFoundException e1) {
-			logger.info(e1.getMessage());
-		} catch (MalformedURLException e1) {
+		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e1) {
 			logger.info(e1.getMessage());
 		}
 	}

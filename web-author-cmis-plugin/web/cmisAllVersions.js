@@ -62,20 +62,20 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
               var childDiv = document.createElement('div');
               childDiv.setAttribute('id', 'versionDiv');
               childDiv.setAttribute('class', 'headtitle');
-              childDiv.innerHTML = this.tr(msgs.VERSION_);
+              childDiv.textContent = this.tr(msgs.VERSION_);
               div.appendChild(childDiv);
 
               var childDiv1 = document.createElement('div');
               childDiv1.setAttribute('id', 'userDiv');
               childDiv1.setAttribute('class', 'headtitle');
-              childDiv1.innerHTML = this.tr(msgs.MODIFIED_BY_);
+              childDiv1.textContent = this.tr(msgs.MODIFIED_BY_);
               div.appendChild(childDiv1);
 
               if (!noSupport) {
                   var childDiv2 = document.createElement('div');
                   childDiv2.setAttribute('id', 'commitDiv');
                   childDiv2.setAttribute('class', 'headtitle');
-                  childDiv2.innerHTML = this.tr(msgs.COMMIT_MESS_);
+                  childDiv2.textContent = this.tr(msgs.COMMIT_MESS_);
                   div.appendChild(childDiv2);
               }
 
@@ -100,7 +100,7 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
                   commitTd.setAttribute('class', 'td');
 
                   if (value[1] !== "" || value[1] !== null) {
-                      commitTd.innerHTML = value[1];
+                      commitTd.textContent = value[1];
                   }
 
                   var href = window.location.origin + window.location.pathname + value[0];
@@ -111,12 +111,12 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
                   versionLink.setAttribute('href', href);
                   versionLink.setAttribute('target', '_blank');
                   versionLink.setAttribute('class', 'oldlink');
-                  versionLink.innerHTML = key;
+                  versionLink.textContent = key;
 
                   var userTd = document.createElement('td');
                   userTd.setAttribute('id', 'user');
                   userTd.setAttribute('class', 'td');
-                  userTd.innerHTML = value[2];
+                  userTd.textContent = value[2];
 
                   if (window.location.search.indexOf(oldVer) + 1) {
                       versionLink.setAttribute('href', '#');

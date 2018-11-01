@@ -77,10 +77,10 @@
     <key value="EMPTY_RESULT">
         <comment>Default result.</comment>
         <val lang="en_US">Empty</val>
-        <val lang="de_DE">Empty</val>
-        <val lang="fr_FR">Empty</val>
-        <val lang="ja_JP">Empty</val>
-        <val lang="nl_NL">Empty</val>
+        <val lang="de_DE">Leer</val>
+        <val lang="fr_FR">Vide</val>
+        <val lang="ja_JP">空</val>
+        <val lang="nl_NL">Leeg</val>
     </key>
     <!-- END CacheSearchProvider -->
 
@@ -126,10 +126,10 @@
     <key value="SEARCH_LABEL">
         <comment>Label for the search component.</comment>
         <val lang="en_US">Search</val>
-        <val lang="de_DE">Search</val>
-        <val lang="fr_FR">Search</val>
-        <val lang="ja_JP">Search</val>
-        <val lang="nl_NL">Search</val>
+        <val lang="de_DE">Suche</val>
+        <val lang="fr_FR">Rechercher</val>
+        <val lang="ja_JP">検索</val>
+        <val lang="nl_NL">Zoek</val>
     </key>
     <!-- END Search View -->
 
@@ -153,10 +153,10 @@
     <key value="CONNECT_BUTTON">
         <comment>Value for the connect button.</comment>
         <val lang="en_US">Connect</val>
-        <val lang="de_DE">Connect</val>
-        <val lang="fr_FR">Connect</val>
-        <val lang="ja_JP">Connect</val>
-        <val lang="nl_NL">Connect</val>
+        <val lang="de_DE">Verbinden</val>
+        <val lang="fr_FR">Connexion</val>
+        <val lang="ja_JP">接続</val>
+        <val lang="nl_NL">Verbind</val>
     </key>
     <!-- END Server View -->
     <!-- END UI -->
@@ -184,10 +184,10 @@
     <key value="VERSIONING_STATE_NONE_LABEL">
         <comment>Versioning state None.</comment>
         <val lang="en_US">None</val>
-        <val lang="de_DE">None</val>
-        <val lang="fr_FR">None</val>
-        <val lang="ja_JP">None</val>
-        <val lang="nl_NL">None</val>
+        <val lang="de_DE">Keine</val>
+        <val lang="fr_FR">Aucun</val>
+        <val lang="ja_JP">なし</val>
+        <val lang="nl_NL">Geen</val>
     </key>
     <!-- END Versioning -->
     <!-- END Common -->
@@ -239,14 +239,6 @@
     <!-- END Checkin Dialog-->
 
     <!-- Create document Dialog -->
-    <key value="CREATE_DOCUMENT_DIALOG_TITLE">
-        <comment>Title of the dialog.</comment>
-        <val lang="en_US">Create document</val>
-        <val lang="de_DE">Create document</val>
-        <val lang="fr_FR">Create document</val>
-        <val lang="ja_JP">Create document</val>
-        <val lang="nl_NL">Create document</val>
-    </key>
     <key value="CREATE_DOCUMENT_DIALOG_TITLE">
         <comment>Title of the dialog.</comment>
         <val lang="en_US">Create document</val>
@@ -356,8 +348,8 @@
     </key>
     <key value="LOGIN_DIALOG_TITLE">
         <comment>Value for the dialog title.</comment>
-        <val lang="en_US">Login:</val>
-        <val lang="de_DE">Login:</val>
+        <val lang="en_US">Login</val>
+        <val lang="de_DE">Login</val>
         <val lang="fr_FR">Login</val>
         <val lang="ja_JP">Login</val>
         <val lang="nl_NL">Login</val>
@@ -520,10 +512,10 @@
     <key value="RENAME_FOLDER_ACTION_TITLE">
         <comment>Label for the field.</comment>
         <val lang="en_US">Rename</val>
-        <val lang="de_DE">Rename</val>
-        <val lang="fr_FR">Rename</val>
-        <val lang="ja_JP">Rename</val>
-        <val lang="nl_NL">Rename</val>
+        <val lang="de_DE">Umbenennen</val>
+        <val lang="fr_FR">Renommer</val>
+        <val lang="ja_JP">名前変更</val>
+        <val lang="nl_NL">Hernoem</val>
     </key>
     <!-- END Rename Folder Action -->
     <!-- END Actions -->
