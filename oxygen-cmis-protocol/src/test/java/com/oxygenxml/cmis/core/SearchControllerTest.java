@@ -21,12 +21,12 @@ public class SearchControllerTest extends ConnectionTestBase {
 
   @Before
   public void setUp() throws MalformedURLException {
-//     CMISAccess.getInstance().connectToRepo(new
-//     URL("http://localhost:8080/B/atom11"), "A1",
-//     new UserCredentials("admin", "admin"));
-    CMISAccess.getInstance().connectToRepo(
-        new URL("http://localhost:8990/alfresco/api/-default-/cmis/versions/1.1/atom"), "-default-",
-        new UserCredentials("admin", "1234"));
+     CMISAccess.getInstance().connectToRepo(new
+     URL("http://localhost:8080/B/atom11"), "A1",
+     new UserCredentials("admin", "admin"));
+//    CMISAccess.getInstance().connectToRepo(
+//        new URL("http://localhost:8990/alfresco/api/-default-/cmis/versions/1.1/atom"), "-default-",
+//        new UserCredentials("admin", "1234"));
     ctrl = CMISAccess.getInstance().createResourceController();
   }
 

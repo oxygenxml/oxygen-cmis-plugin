@@ -169,36 +169,6 @@ public class DocumentImplTest extends ConnectionTestBase {
     ctrl.deleteAllVersionsDocument(doc);
   }
 
-  @Test
-  public void testRelationshipsDocument() throws CmisConstraintException, UnsupportedEncodingException {
-
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile3.txt", "some text",
-        MimeTypes.getMIMEType("queryTestFile3.txt"), "VersionableType", VersioningState.MINOR);
-    Document pwc = (Document) CMISAccess.getInstance().createResourceController().getCmisObj(doc.checkOut().getId());
-
-    List<Relationship> relationships = pwc.getRelationships();
-    Iterator<Relationship> relastionIterator = relationships.iterator();
-    while (relastionIterator.hasNext()) {
-      System.out.println(CMISAccess.getInstance().createResourceController()
-          .getCmisObj(relastionIterator.next().getTarget().toString()));
-    }
-    assertNotNull(relastionIterator);
-
-    ctrl.deleteAllVersionsDocument(doc);
-  }
-
-  @Test
-  public void testGetProperties() throws UnsupportedEncodingException {
-
-    Document doc = ctrl.createDocument(root, "queryTestFile11", "some text", "plain/text");
-
-    System.out.println("Properties:" + doc.getProperties());
-
-    assertNotNull(doc);
-
-    ctrl.deleteAllVersionsDocument(doc);
-  }
-
   @After
   public void afterMethod() {
     cleanUpDocuments();
