@@ -12,6 +12,7 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
+  <name>Oxygen CMIS Protocol Implementation</name>
 	<description>The core functionality. Offers an API for accessing documents and browsing. Contains an Oxygen Custom protocol implementation.</description>
 
 	<dependencies>
