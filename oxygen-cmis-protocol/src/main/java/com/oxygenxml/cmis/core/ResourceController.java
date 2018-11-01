@@ -120,6 +120,7 @@ public class ResourceController {
       properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
       document = path.createDocument(properties, contentStream, versioningState);
     } catch (Exception e) {
+      logger.debug("Object type " + objectType + " not supported", e);
       properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
       document = path.createDocument(properties, contentStream, versioningState);
     }
