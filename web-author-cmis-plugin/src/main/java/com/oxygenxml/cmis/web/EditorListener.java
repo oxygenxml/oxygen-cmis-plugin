@@ -46,7 +46,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 			@Override
 			public void editingSessionStarted(String sessionId, AuthorDocumentModel documentModel) {
-				utilityMethod(webappPluginWorkspace, documentModel);
+			  EditorListener.this.editingSessionStarted(webappPluginWorkspace, documentModel);
 			}
 		});
 	}
@@ -58,7 +58,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	 * @param documentModel
 	 */
 	@VisibleForTesting
-	public void utilityMethod(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
+	public void editingSessionStarted(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
 		AuthorAccess authorAccess = documentModel.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 
@@ -66,11 +66,11 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 		// Get URL and ContextID for CmisURLConnection
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
-		String urlWithoutContextId = null;
-		
-		if(url != null) {
-			urlWithoutContextId = url.getProtocol() + "://" + url.getHost() + url.getPath();
+		if (url == null || !url.getProtocol().equals("cmis")) {
+		  return;
 		}
+		String urlWithoutContextId = null;
+		urlWithoutContextId = url.getProtocol() + "://" + url.getHost() + url.getPath();
 		
 		String contextId = url.getUserInfo();
 		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
