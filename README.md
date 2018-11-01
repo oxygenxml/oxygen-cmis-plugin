@@ -11,6 +11,7 @@ mvn clean install
 ```
 
 The plugin for Oxygen XML Editor/Author can be found in ` oxygen-cmis-workspace-access/target/oxygen-cmis-workspace-access-*-plugin.zip`.
+
 The plugin for Oxygen XML Web Author can be found in `web-author-cmis-plugin/target/web-author-cmis-plugin-*-plugin.jar`.
 
 # Install
