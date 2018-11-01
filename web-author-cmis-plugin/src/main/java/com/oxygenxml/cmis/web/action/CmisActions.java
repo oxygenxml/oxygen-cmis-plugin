@@ -100,14 +100,14 @@ public class CmisActions extends AuthorOperationWithResult {
 				CmisCheckOutAction.cancelCheckOutDocument(document, connection);
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess()
-							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQ_EDITOR)));
+							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
 				}
 			}
 			if (actualAction.equals(CHECK_IN)) {
 				CmisCheckInAction.checkInDocument(document, connection, actualState, commitMessage);
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess()
-							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQ_EDITOR)));
+							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
 				}
 			}
 			if (actualAction.equals(LIST_VERSIONS)) {

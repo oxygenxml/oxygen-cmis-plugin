@@ -134,7 +134,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 				} else {
 					if (isCheckOutRequired() && !document.isVersionSeriesCheckedOut()) {
 						documentModel.getAuthorAccess().getEditorAccess()
-								.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQ_EDITOR)));
+								.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
 					}
 				}
 			}

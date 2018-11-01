@@ -4,7 +4,12 @@ public interface TranslationTags {
 
 	String SERVER_URL = "Server_URL";
 
-	String CHECKOUT_REQUIRED_RESOURCE = "Checkout_required";
+	/**
+	 * Label for required checkbox.
+	 * 
+	 * en: Check-out required.
+	 */
+  String CHECKOUT_REQUIRED = "Checkout_required";
 	
 	/**
 	 * Label for input. Used in WebDAV plugin configuration.
@@ -56,7 +61,7 @@ public interface TranslationTags {
 	 * 
 	 * en: Old version of document
 	 */
-	String OLD_VER_WARNING = "Old_version_of_document";
+	String OLD_VER_WARNING = "Old_ver_warning";
 
 	/**
 	 * Message if document is checked out by another user.
@@ -70,7 +75,7 @@ public interface TranslationTags {
 	 * 
 	 * en: Check - out required
 	 */
-	String CHECK_OUT_REQ_EDITOR = "Check_out_requiered_editor";
+	String CHECK_OUT_REQUIRED = "Check_out_required";
 
 	/**
 	 * Label for input. Used in WebDAV plugin configuration.
