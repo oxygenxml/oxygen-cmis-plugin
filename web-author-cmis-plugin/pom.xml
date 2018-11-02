@@ -236,7 +236,6 @@
         <configuration>
           <argLine>-Xmx1024m</argLine>
           <trimStackTrace>false</trimStackTrace>
-          <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <useSystemClassLoader>false</useSystemClassLoader>
         </configuration>
         <executions>
