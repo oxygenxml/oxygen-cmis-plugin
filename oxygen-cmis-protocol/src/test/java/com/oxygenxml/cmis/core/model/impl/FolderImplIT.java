@@ -24,7 +24,7 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 
-public class FolderImplTest extends ConnectionTestBase {
+public class FolderImplIT extends ConnectionTestBase {
 
 	/**
 	 * Root folder.

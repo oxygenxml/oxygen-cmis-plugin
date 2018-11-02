@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -16,10 +15,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
-import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
-import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +28,7 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 
-public class DocumentImplTest extends ConnectionTestBase {
+public class DocumentImplIT extends ConnectionTestBase {
 
   private Folder root;
   private ResourceController ctrl;

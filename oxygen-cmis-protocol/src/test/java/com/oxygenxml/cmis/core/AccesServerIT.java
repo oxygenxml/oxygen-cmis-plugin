@@ -8,7 +8,7 @@ import org.apache.chemistry.opencmis.client.api.Repository;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AccesServerTest {
+public class AccesServerIT {
 
 	@Test
 	public void testGetRepos() throws MalformedURLException {

@@ -23,7 +23,7 @@ import org.junit.Test;
  * Tests for operations over resources.
  * 
  */
-public class ResourceControllerDocumentTest extends ConnectionTestBase {
+public class ResourceControllerDocumentIT extends ConnectionTestBase {
 	/**
 	 * Root folder.
 	 */

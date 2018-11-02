@@ -79,25 +79,10 @@
 				</executions>
 			</plugin>
 
-			<!-- Exclude the integration tests from the unit tests. -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>com/oxygenxml/cmis/core/**/*Test.java</exclude>
-					</excludes>
-					<argLine>-Xmx1024m ${argLine}</argLine>
-				</configuration>
-			</plugin>
 			<!-- INTEGRATION TESTS -->
-			<!-- Include only the integration tests. -->
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
-					<includes>
-						<include>com/oxygenxml/cmis/core/**/*Test.java</include>
-					</includes>
 					<argLine>-Xmx1024m</argLine>
 					<trimStackTrace>false</trimStackTrace>
 					<systemPropertyVariables>

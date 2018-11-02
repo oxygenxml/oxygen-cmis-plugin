@@ -18,7 +18,7 @@ import org.junit.Test;
  * Tests for operations over resources.
  * 
  */
-public class ResourceControllerFolderTest extends ConnectionTestBase {
+public class ResourceControllerFolderIT extends ConnectionTestBase {
 	/**
 	 * Executes operations over the resources.
 	 */

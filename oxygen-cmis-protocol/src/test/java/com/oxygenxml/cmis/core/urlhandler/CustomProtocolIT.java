@@ -21,7 +21,7 @@ import com.oxygenxml.cmis.core.UserCredentials;
 /**
  * Tests for accessing CMIS resources through our custom protocol.
  */
-public class CustomProtocolTest extends ConnectionTestBase {
+public class CustomProtocolIT extends ConnectionTestBase {
 
 	/**
 	 * TODO Code review. It makes no sense to keep the document as a member variable

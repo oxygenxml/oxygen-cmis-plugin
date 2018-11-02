@@ -15,7 +15,7 @@ import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 
-public class SearchControllerTest extends ConnectionTestBase {
+public class SearchControllerIT extends ConnectionTestBase {
 
   private ResourceController ctrl;
 
