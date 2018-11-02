@@ -88,7 +88,6 @@
 					<systemPropertyVariables>
 						<production>true</production>
 					</systemPropertyVariables>
-					<rerunFailingTestsCount>1</rerunFailingTestsCount>
 				</configuration>
 				<executions>
 					<execution>
