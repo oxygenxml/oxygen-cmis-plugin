@@ -52,7 +52,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    * Creates the repositories component visually
    */
   public RepoComboBoxView() {
-    repositoryLabel = TranslationResourceController.getMessage("REPOSITORY_LABEL");
+    repositoryLabel = TranslationResourceController.getMessage("REPOSITORY_LABEL") + ":";
     setOpaque(true);
 
     repoItems = new JComboBox<>();

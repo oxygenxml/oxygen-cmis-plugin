@@ -23,12 +23,12 @@ CmisCheckInAction.prototype.isEnabled = function() {
 
 CmisCheckInAction.prototype.actionPerformed = function(callback) {
     if (!this.dialog) {
-        var dialogElement = this.dialog.getElement();
         var root = document.querySelector('[data-root="true"]');
         var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
         this.dialog = workspace.createDialog();
         this.dialog.setTitle(tr(msgs.CHECK_IN_));
+        var dialogElement = this.dialog.getElement();
 
         if (noSupport !== 'true') {
             dialogElement.innerHTML = '';

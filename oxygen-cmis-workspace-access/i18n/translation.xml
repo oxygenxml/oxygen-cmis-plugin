@@ -87,11 +87,11 @@
     <!-- RepoCombobox View -->
     <key value="REPOSITORY_LABEL">
         <comment>Label for repository component.</comment>
-        <val lang="en_US">Repository:</val>
-        <val lang="de_DE">Repository:</val>
-        <val lang="fr_FR">Repository:</val>
-        <val lang="ja_JP">Repository:</val>
-        <val lang="nl_NL">Repository:</val>
+        <val lang="en_US">Repository</val>
+        <val lang="de_DE">Ablage</val>
+        <val lang="fr_FR">Dépôt</val>
+        <val lang="ja_JP">レポジトリ</val>
+        <val lang="nl_NL">Opslagplaats</val>
     </key>
     <!-- END RepoCombobox View -->
 
