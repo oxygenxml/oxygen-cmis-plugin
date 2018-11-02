@@ -83,7 +83,7 @@ public class EditorListenerIT {
 			Mockito.when(node.getRootElement()).thenReturn(element);
 
 			EditorListener listener = new EditorListener();
-			listener.utilityMethod(webappPluginWorkspace, documentModel);
+			listener.editingSessionStarted(webappPluginWorkspace, documentModel);
 
 			assertNotNull(listener);
 
