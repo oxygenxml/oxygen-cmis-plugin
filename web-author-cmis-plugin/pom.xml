@@ -197,7 +197,7 @@
             <contextPath>/B</contextPath>
           </webApp>
           <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-            <filename>target/yyyy_mm_dd.request.log</filename>
+            <filename>${project.build.directory}/yyyy_mm_dd.request.log</filename>
             <retainDays>90</retainDays>
             <append>true</append>
             <extended>true</extended>
