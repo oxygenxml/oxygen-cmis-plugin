@@ -73,12 +73,9 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
     String versioningStateNoneLabel = TranslationResourceController.getMessage("VERSIONING_STATE_NONE_LABEL");
     String versioningStateMinorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MINOR_LABEL");
     String versioningStateMajorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MAJOR_LABEL");
-    String versionLabelValue = TranslationResourceController
-        .getMessage("VERSION_CREATE_DOCUMENT_DIALOG_LABEL");
-    String deafultFilenameValue = TranslationResourceController
-        .getMessage("DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG");
-    String messageLabelValue = TranslationResourceController
-        .getMessage("MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL");
+    String versionLabelValue = TranslationResourceController.getMessage("VERSION_LABEL") + ":";
+    String deafultFilenameValue = TranslationResourceController.getMessage("DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG");
+    String messageLabelValue = TranslationResourceController.getMessage("MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL") + ":";
     setLayout(new GridBagLayout());
 
     messageLabel = new JLabel(messageLabelValue);

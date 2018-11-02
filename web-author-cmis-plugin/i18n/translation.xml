@@ -31,14 +31,6 @@
         <val lang="ja_JP">サーバー URL</val>
         <val lang="nl_NL">Server URL</val>
     </key>
-	<key value="Checkout_required" distribution="webauthor">
-		<comment>Label for required checkbox.</comment>
-		<val lang="en_US">Check-out required.</val>
-		<val lang="de_DE">Check-out required.</val>
-        <val lang="fr_FR">Check-out required.</val>
-        <val lang="ja_JP">Check-out required.</val>
-        <val lang="nl_NL">Check-out required.</val>
-	</key>
     <key value="Enforced_server" distribution="webauthor">
         <comment>Label for input setting the enforced server URL.</comment>
         <val lang="en_US">Connection URL</val>
@@ -89,11 +81,11 @@
 	</key>
 	<key value="Check_out_required" distribution="webauthor">
 		<comment>Message if check out is required.</comment>
-		<val lang="en_US">Check-out required.</val>
-		<val lang="de_DE">Check-out required.</val>
-        <val lang="fr_FR">Check-out required.</val>
-        <val lang="ja_JP">Check-out required.</val>
-        <val lang="nl_NL">Check-out required.</val>
+        <val lang="en_US">Check-out required</val>
+        <val lang="de_DE">Check-out required</val>
+        <val lang="fr_FR">Check-out required</val>
+        <val lang="ja_JP">Check-out required</val>
+        <val lang="nl_NL">Check-out required</val>
 	</key>
 	<key value="ALL_VERSIONS_" distribution="webauthor">
 		<comment>Title for "All versions" button.</comment>

@@ -75,7 +75,7 @@ class DeleteInputPanel extends JPanel implements ActionListener {
     String allVersionsLabel = TranslationResourceController.getMessage("ALL_VERSIONS_LABEL");
     String messageValueLabel = TranslationResourceController.getMessage("MESSAGE_DELETE_DOCUMENT_DIALOG_LABEL");
     String singleVersionLabel = TranslationResourceController.getMessage("SINGLE_VERSION_LABEL");
-    String versionLabelValue = TranslationResourceController.getMessage("VERSION_CREATE_DOCUMENT_DIALOG_LABEL");
+    String versionLabelValue = TranslationResourceController.getMessage("VERSION_LABEL") + ":";
     
     // --MessageLabel
     messageLabel = new JLabel(messageValueLabel);

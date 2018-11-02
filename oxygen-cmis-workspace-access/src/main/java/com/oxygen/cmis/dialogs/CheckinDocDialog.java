@@ -40,9 +40,9 @@ public class CheckinDocDialog extends OKCancelDialog {
    */
   public CheckinDocDialog(JFrame frame, String docName) {
 
-    super(frame, TranslationResourceController.getMessage("CHECK_IN_DIALOG_TITLE") +" "+ docName, true);
+    super(frame, TranslationResourceController.getMessage("CHECK_IN_ACTION_TITLE") +" "+ docName, true);
 
-    String okButtonCheckinDialog = TranslationResourceController.getMessage("OK_BUTTON_CHECKIN_DIALOG");
+    String okButtonCheckinDialog = TranslationResourceController.getMessage("CHECK_IN_ACTION_TITLE");
 
     // Get the parent container
     final Container cont = getContentPane();
@@ -98,7 +98,7 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     // To be translated
     String versioningStateMinorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MINOR_LABEL");
     String versioningStateMajorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MAJOR_LABEL");
-    String versionLabelValue = TranslationResourceController.getMessage("VERSION_CHECKIN_DIALOG_LABEL");
+    String versionLabelValue = TranslationResourceController.getMessage("VERSION_LABEL");
     String commitAreaLabelValue = TranslationResourceController
         .getMessage("COMMIT_AREA_CHECKIN_DIALOG_LABEL");
     String commitMessageValueLabel = TranslationResourceController

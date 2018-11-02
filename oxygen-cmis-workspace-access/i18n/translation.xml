@@ -144,11 +144,11 @@
     </key>
     <key value="SERVER_URL_LABEL">
         <comment>Label for the server component.</comment>
-        <val lang="en_US">Server URL:</val>
-        <val lang="de_DE">Server URL:</val>
-        <val lang="fr_FR">Server URL:</val>
-        <val lang="ja_JP">Server URL:</val>
-        <val lang="nl_NL">Server URL:</val>
+        <val lang="en_US">Server URL</val>
+        <val lang="de_DE">Server-URL</val>
+        <val lang="fr_FR">URL du serveur</val>
+        <val lang="ja_JP">サーバー URL</val>
+        <val lang="nl_NL">Server URL</val>
     </key>
     <key value="CONNECT_BUTTON">
         <comment>Value for the connect button.</comment>
@@ -195,31 +195,6 @@
 
     <!-- DIALOGS -->
     <!-- Checkin Dialog -->
-
-    <key value="OK_BUTTON_CHECKIN_DIALOG">
-        <comment>Ok button will be check-in.</comment>
-        <val lang="en_US">Check-in</val>
-        <val lang="de_DE">Check-in</val>
-        <val lang="fr_FR">Check-in</val>
-        <val lang="ja_JP">Check-in</val>
-        <val lang="nl_NL">Check-in</val>
-    </key>
-    <key value="CHECK_IN_DIALOG_TITLE">
-        <comment>Title of the dialog.</comment>
-        <val lang="en_US">Check-in</val>
-        <val lang="de_DE">Check-in</val>
-        <val lang="fr_FR">Check-in</val>
-        <val lang="ja_JP">Check-in</val>
-        <val lang="nl_NL">Check-in</val>
-    </key>
-    <key value="VERSION_CHECKIN_DIALOG_LABEL">
-        <comment>Label for the version label.</comment>
-        <val lang="en_US">Version:</val>
-        <val lang="de_DE">Version:</val>
-        <val lang="fr_FR">Version:</val>
-        <val lang="ja_JP">Version:</val>
-        <val lang="nl_NL">Version:</val>
-    </key>
     <key value="COMMIT_AREA_CHECKIN_DIALOG_LABEL">
         <comment>Textarea for the long message label.</comment>
         <val lang="en_US">Enter your message here</val>
@@ -247,13 +222,13 @@
         <val lang="ja_JP">Create document</val>
         <val lang="nl_NL">Create document</val>
     </key>
-    <key value="VERSION_CREATE_DOCUMENT_DIALOG_LABEL">
+    <key value="VERSION_LABEL">
         <comment>Version label.</comment>
-        <val lang="en_US">Version:</val>
-        <val lang="de_DE">Version:</val>
-        <val lang="fr_FR">Version:</val>
-        <val lang="ja_JP">Version:</val>
-        <val lang="nl_NL">Version:</val>
+        <val lang="en_US">Version</val>
+        <val lang="de_DE">Version</val>
+        <val lang="fr_FR">Version</val>
+        <val lang="ja_JP">バージョン</val>
+        <val lang="nl_NL">Versie</val>
     </key>
     <key value="DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG">
         <comment>Default filename with an extension</comment>
@@ -265,11 +240,11 @@
     </key>
     <key value="MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL">
         <comment>Label for filename.</comment>
-        <val lang="en_US">File name:</val>
-        <val lang="de_DE">File name:</val>
-        <val lang="fr_FR">File name:</val>
-        <val lang="ja_JP">File name:</val>
-        <val lang="nl_NL">File name:</val>
+        <val lang="en_US">File name</val>
+        <val lang="de_DE">Dateiname</val>
+        <val lang="fr_FR">Nom du fichier</val>
+        <val lang="ja_JP">ファイル名</val>
+        <val lang="nl_NL">Bestandsnaam</val>
     </key>
     <!-- END Create document Dialog -->
 
@@ -277,18 +252,18 @@
     <key value="CANCEL_BUTTON_DELETE_DOCUMENT_DIALOG">
         <comment>Value of the cancel button.</comment>
         <val lang="en_US">No</val>
-        <val lang="de_DE">No</val>
-        <val lang="fr_FR">No</val>
-        <val lang="ja_JP">No</val>
-        <val lang="nl_NL">No</val>
+        <val lang="de_DE">Nein</val>
+        <val lang="fr_FR">Non</val>
+        <val lang="ja_JP">いいえ</val>
+        <val lang="nl_NL">Nee</val>
     </key>
     <key value="OK_BUTTON_DELETE_DOCUMENT_DIALOG">
         <comment>Value of the ok button</comment>
         <val lang="en_US">Yes</val>
-        <val lang="de_DE">Yes</val>
-        <val lang="fr_FR">Yes</val>
-        <val lang="ja_JP">Yes</val>
-        <val lang="nl_NL">Yes</val>
+        <val lang="de_DE">Ja</val>
+        <val lang="fr_FR">Oui</val>
+        <val lang="ja_JP">はい</val>
+        <val lang="nl_NL">Ja</val>
     </key>
     <key value="DELETE_DOCUMENT_DIALOG_TITLE">
         <comment>Value of the dialog title</comment>
@@ -332,19 +307,19 @@
     <!-- Login Dialog -->
     <key value="PASSWORD_LOGIN_DIALOG_LABEL">
         <comment>Value for the password label.</comment>
-        <val lang="en_US">Password:</val>
-        <val lang="de_DE">Password:</val>
-        <val lang="fr_FR">Password:</val>
-        <val lang="ja_JP">Password:</val>
-        <val lang="nl_NL">Password:</val>
+        <val lang="en_US">Password</val>
+        <val lang="de_DE">Passwort</val>
+        <val lang="fr_FR">Mot de passe</val>
+        <val lang="ja_JP">パスワード</val>
+        <val lang="nl_NL">Wachtwoord</val>
     </key>
     <key value="USERNAME_LOGIN_DIALOG_LABEL">
         <comment>Value for the username label.</comment>
-        <val lang="en_US">Username:</val>
-        <val lang="de_DE">Username:</val>
-        <val lang="fr_FR">Username:</val>
-        <val lang="ja_JP">Username:</val>
-        <val lang="nl_NL">Username:</val>
+        <val lang="en_US">Username</val>
+        <val lang="de_DE">Benutzername</val>
+        <val lang="fr_FR">Nom d'utilisateur</val>
+        <val lang="ja_JP">ユーザー名</val>
+        <val lang="nl_NL">Gebruikersnaam</val>
     </key>
     <key value="LOGIN_DIALOG_TITLE">
         <comment>Value for the dialog title.</comment>
@@ -374,7 +349,7 @@
         <val lang="ja_JP">Cancel check-out</val>
         <val lang="nl_NL">Cancel check-out</val>
     </key>
-    <key value="CHECK_IN_DOCUMENT_ACTION_TITLE">
+    <key value="CHECK_IN_ACTION_TITLE">
         <comment>Title of the action.</comment>
         <val lang="en_US">Check-in</val>
         <val lang="de_DE">Check-in</val>
@@ -382,23 +357,7 @@
         <val lang="ja_JP">Check-in</val>
         <val lang="nl_NL">Check-in</val>
     </key>
-    <key value="CHECK_IN_FOLDER_ACTION_TITLE">
-        <comment>Title of the action.</comment>
-        <val lang="en_US">Check-in</val>
-        <val lang="de_DE">Check-in</val>
-        <val lang="fr_FR">Check-in</val>
-        <val lang="ja_JP">Check-in</val>
-        <val lang="nl_NL">Check-in</val>
-    </key>
-    <key value="CHECK_OUT_DOCUMENT_ACTION_TITLE">
-        <comment>Title of the action.</comment>
-        <val lang="en_US">Check-out</val>
-        <val lang="de_DE">Check-out</val>
-        <val lang="fr_FR">Check-out</val>
-        <val lang="ja_JP">Check-out</val>
-        <val lang="nl_NL">Check-out</val>
-    </key>
-    <key value="CHECK_OUT_FOLDER_ACTION_TITLE">
+    <key value="CHECK_OUT_ACTION_TITLE">
         <comment>Title of the action.</comment>
         <val lang="en_US">Check-out</val>
         <val lang="de_DE">Check-out</val>
@@ -449,21 +408,13 @@
     </key>
     <!-- END Folder action -->
 
-    <key value="DELETE_DOCUMENT_ACTION_TITLE">
+    <key value="DELETE_ACTION_TITLE">
         <comment>Action title.</comment>
         <val lang="en_US">Delete</val>
-        <val lang="de_DE">Delete</val>
-        <val lang="fr_FR">Delete</val>
-        <val lang="ja_JP">Delete</val>
-        <val lang="nl_NL">Delete</val>
-    </key>
-    <key value="DELETE_FOLDER_ACTION_TITLE">
-        <comment>Action title.</comment>
-        <val lang="en_US">Delete</val>
-        <val lang="de_DE">Delete</val>
-        <val lang="fr_FR">Delete</val>
-        <val lang="ja_JP">Delete</val>
-        <val lang="nl_NL">Delete</val>
+        <val lang="de_DE">Löschen</val>
+        <val lang="fr_FR">Supprimer</val>
+        <val lang="ja_JP">削除</val>
+        <val lang="nl_NL">Wis</val>
     </key>
     <key value="OPEN_DOCUMENT_ACTION_TITLE">
         <comment>Action title.</comment>
@@ -490,14 +441,6 @@
         <val lang="ja_JP">Enter a name</val>
         <val lang="nl_NL">Enter a name</val>
     </key>
-    <key value="RENAME_DOCUMENT_ACTION_TITLE">
-        <comment>Label for the field.</comment>
-        <val lang="en_US">Rename</val>
-        <val lang="de_DE">Rename</val>
-        <val lang="fr_FR">Rename</val>
-        <val lang="ja_JP">Rename</val>
-        <val lang="nl_NL">Rename</val>
-    </key>
     <!-- END Rename Document Action -->
 
     <!-- Rename Folder Action -->
@@ -509,7 +452,7 @@
         <val lang="ja_JP">Enter a name</val>
         <val lang="nl_NL">Enter a name</val>
     </key>
-    <key value="RENAME_FOLDER_ACTION_TITLE">
+    <key value="RENAME_ACTION_TITLE">
         <comment>Label for the field.</comment>
         <val lang="en_US">Rename</val>
         <val lang="de_DE">Umbenennen</val>

@@ -43,7 +43,7 @@ public class RenameDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public RenameDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super(TranslationResourceController.getMessage("RENAME_DOCUMENT_ACTION_TITLE"));
+    super(TranslationResourceController.getMessage("RENAME_ACTION_TITLE"));
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
     enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME_DOCUMENT_LABEL");
     

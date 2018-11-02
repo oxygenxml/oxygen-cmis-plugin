@@ -3,13 +3,6 @@ package com.oxygenxml.cmis.web;
 public interface TranslationTags {
 
 	String SERVER_URL = "Server_URL";
-
-	/**
-	 * Label for required checkbox.
-	 * 
-	 * en: Check-out required.
-	 */
-  String CHECKOUT_REQUIRED = "Checkout_required";
 	
 	/**
 	 * Label for input. Used in WebDAV plugin configuration.

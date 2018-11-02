@@ -45,7 +45,7 @@ public class DeleteFolderAction extends AbstractAction {
    */
   public DeleteFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super(TranslationResourceController.getMessage("DELETE_FOLDER_ACTION_TITLE"));
+    super(TranslationResourceController.getMessage("DELETE_ACTION_TITLE"));
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
 
     this.resource = resource;

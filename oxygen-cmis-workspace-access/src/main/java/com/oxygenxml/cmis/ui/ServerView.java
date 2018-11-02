@@ -56,7 +56,7 @@ public class ServerView extends JPanel {
   public ServerView(RepositoriesPresenter repoPresenter, SearchPresenter searchPresenter) {
     // Elements constants
     String operationIsNotSupported = TranslationResourceController.getMessage("OPERATION_IS_NOT_SUPPORTED");
-    String serverUrlLabelValue = TranslationResourceController.getMessage("SERVER_URL_LABEL");
+    String serverUrlLabelValue = TranslationResourceController.getMessage("SERVER_URL_LABEL") + ":";
     String connectButtonValue = TranslationResourceController.getMessage("CONNECT_BUTTON");
 
     /*

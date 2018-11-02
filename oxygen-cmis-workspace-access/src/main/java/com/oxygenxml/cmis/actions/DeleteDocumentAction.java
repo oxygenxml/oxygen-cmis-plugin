@@ -49,7 +49,7 @@ public class DeleteDocumentAction extends AbstractAction {
    */
   public DeleteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super(TranslationResourceController.getMessage("DELETE_DOCUMENT_ACTION_TITLE"));
+    super(TranslationResourceController.getMessage("DELETE_ACTION_TITLE"));
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
     
     this.resourceController = CMISAccess.getInstance().createResourceController();

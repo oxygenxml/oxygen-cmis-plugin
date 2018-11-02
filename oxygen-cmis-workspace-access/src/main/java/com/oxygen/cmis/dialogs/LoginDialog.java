@@ -34,8 +34,8 @@ public class LoginDialog extends OKCancelDialog {
 
     super(frame, TranslationResourceController.getMessage("LOGIN_DIALOG_TITLE"), true);
 
-    String passwordLabelValue = TranslationResourceController.getMessage("PASSWORD_LOGIN_DIALOG_LABEL");
-    String usernameLabelValue = TranslationResourceController.getMessage("USERNAME_LOGIN_DIALOG_LABEL");
+    String passwordLabelValue = TranslationResourceController.getMessage("PASSWORD_LOGIN_DIALOG_LABEL") + ":";
+    String usernameLabelValue = TranslationResourceController.getMessage("USERNAME_LOGIN_DIALOG_LABEL") + ":";
 
     // Get the parent container
     Container cont = getContentPane();

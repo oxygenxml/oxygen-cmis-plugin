@@ -44,7 +44,7 @@ public class RenameFolderAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public RenameFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super(TranslationResourceController.getMessage("RENAME_FOLDER_ACTION_TITLE"));
+    super(TranslationResourceController.getMessage("RENAME_ACTION_TITLE"));
     enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME_FOLDER");
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
     
