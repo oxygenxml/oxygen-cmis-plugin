@@ -12,6 +12,7 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import ro.sync.basic.util.URLStreamHandlerFactorySetter;
+import ro.sync.net.protocol.OxygenURLStreamHandlerFactory;
 
 /**
  * Builds a CMIS access.
@@ -39,6 +40,7 @@ public class CmisAccessProvider extends ExternalResource{
     cmisAccess = new CMISAccess();
     cmisAccess.connectToRepo(serverUrl, "A1", new UserCredentials("admin", ""));
     setter = new URLStreamHandlerFactorySetter();
+    OxygenURLStreamHandlerFactory oxygenFactory = new OxygenURLStreamHandlerFactory();
     setter.setFactory(protocol -> {
        if ("cmis".equals(protocol)) {
          return new URLStreamHandler() {
@@ -48,7 +50,7 @@ public class CmisAccessProvider extends ExternalResource{
            }
          };
        } else {
-         return null; 
+         return oxygenFactory.createURLStreamHandler(protocol); 
        }
      });
 
