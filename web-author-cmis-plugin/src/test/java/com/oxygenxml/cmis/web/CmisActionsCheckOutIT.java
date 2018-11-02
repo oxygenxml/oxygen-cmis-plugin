@@ -1,6 +1,5 @@
 package com.oxygenxml.cmis.web;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -29,11 +28,10 @@ public class CmisActionsCheckOutIT {
 	public void testCheckOut() throws Exception {
 	  Document document = null;
 		try {
-      document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkout", "empty", "plain/xml",
+			document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkout", "empty", "plain/xml",
 	        "VersionableType", VersioningState.MINOR);
-    	CmisCheckOutAction.checkOutDocument(document);
+			CmisCheckOutAction.checkOutDocument(document);
 
-			assertNotNull(document);
 			assertTrue(document.isVersionable());
 
 			document = document.getObjectOfLatestVersion(false);

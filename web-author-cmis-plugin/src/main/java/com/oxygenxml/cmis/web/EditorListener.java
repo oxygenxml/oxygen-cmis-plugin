@@ -66,9 +66,11 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 		// Get URL and ContextID for CmisURLConnection
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
+		
 		if (url == null || !url.getProtocol().equals("cmis")) {
 		  return;
 		}
+		
 		String urlWithoutContextId = null;
 		urlWithoutContextId = url.getProtocol() + "://" + url.getHost() + url.getPath();
 		
@@ -82,15 +84,9 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			logger.info("EditorListener is loaded!");
 
 			if (url.getQuery() != null && url.getQuery().contains(CmisActions.OLD_VERSION)) {
-				HashMap<String, String> queryPart = new HashMap<>();
-				
-				for(String pair : url.getQuery().split("&")) {
-					int index = pair.indexOf('=');
-					queryPart.put(pair.substring(0, index), pair.substring(index + 1));
-				}
-				
-				String objectId = queryPart.get(CmisActions.OLD_VERSION);
-				Document oldDoc = (Document) connection.getResourceController(urlWithoutContextId).getCmisObj(objectId);
+				String objectId = getOlderVersionDocumentId(url);
+				Document oldDoc = (Document) connection.getResourceController(urlWithoutContextId)
+									.getCmisObj(objectId);
 
 				String language = webappPluginWorkspace.getUserInterfaceLanguage();
 				SimpleDateFormat df = new SimpleDateFormat("d MMM yyyy HH:mm:ss", new Locale(language));
@@ -142,6 +138,24 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e1) {
 			logger.info(e1.getMessage());
 		}
+	}
+	
+	/**
+	 * 
+	 * @param url
+	 * @return objectId of old version of document.
+	 */
+	private String getOlderVersionDocumentId(URL url) {
+		HashMap<String, String> queryPart = new HashMap<>();
+		
+		for(String pair : url.getQuery().split("&")) {
+			int index = pair.indexOf('=');
+			queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+		}
+		
+		String objectId = queryPart.get(CmisActions.OLD_VERSION);
+		
+		return objectId;
 	}
 
 	public static boolean isCheckOutRequired() {

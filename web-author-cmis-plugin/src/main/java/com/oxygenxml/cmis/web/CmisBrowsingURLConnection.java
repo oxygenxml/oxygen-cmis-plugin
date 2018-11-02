@@ -32,15 +32,20 @@ import ro.sync.net.protocol.FolderEntryDescriptor;
 public class CmisBrowsingURLConnection extends FilterURLConnection {
 	private static final Logger logger = Logger.getLogger(CmisBrowsingURLConnection.class.getName());
 
+	private static final String ERROR_MESSAGE = "Invalid username or password!";
+	private static final String ERROR_CODE = "401";
+	
 	private CmisURLConnection connection;
 	private URL serverUrl;
 
+	
 	public CmisBrowsingURLConnection(URLConnection delegateConnection, URL serverUrl) {
 		super(delegateConnection);
 		this.connection = (CmisURLConnection) delegateConnection;
 		this.serverUrl = serverUrl;
 	}
 
+	
 	/**
 	 * Get the InputStream of document.
 	 * If document is an old version, get this document
@@ -52,33 +57,48 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		try {
 			if (this.url.getQuery() != null) {
 				if(this.url.getQuery().contains(CmisActions.OLD_VERSION)) {
-					HashMap<String, String> queryPart = new HashMap<>();
-
-					for (String pair : url.getQuery().split("&")) {
-						int index = pair.indexOf('=');
-						queryPart.put(pair.substring(0, index), pair.substring(index + 1));
-					}
-
-					String objectId = queryPart.get(CmisActions.OLD_VERSION);
-					String connectionUrl = this.url.toExternalForm().replace(this.url.getQuery(), "");
-
-					connectionUrl = connectionUrl.replace("?", "");
-					Document document = (Document) connection.getResourceController(connectionUrl).getCmisObj(objectId);
-
-					return document.getContentStream().getStream();
+					return getOlderVersionInputStream();
 				}
 			}
 
 			return super.getInputStream();
 
 		} catch (CmisUnauthorizedException e) {
-			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
-					"Invalid username or password!", true);
+			WebappMessage webappMessage = new WebappMessage(WebappMessage
+					.MESSAGE_TYPE_ERROR, ERROR_CODE, ERROR_MESSAGE, true);
 			
 			throw new UserActionRequiredException(webappMessage);
 		}
 	}
 
+	
+	/**
+	 * If document is an older version, we get InputStream
+	 * of this document selected by id.
+	 * 
+	 * @return InputStream of older version document.
+	 * @throws MalformedURLException
+	 */
+	private InputStream getOlderVersionInputStream() throws MalformedURLException {
+		HashMap<String, String> queryPart = new HashMap<>();
+
+		for (String pair : url.getQuery().split("&")) {
+			int index = pair.indexOf('=');
+			queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+		}
+
+		String objectId = queryPart.get(CmisActions.OLD_VERSION);
+		String connectionUrl = this.url.toExternalForm()
+				.replace(this.url.getQuery(), "");
+
+		connectionUrl = connectionUrl.replace("?", "");
+		Document document = (Document) connection
+				.getResourceController(connectionUrl).getCmisObj(objectId);
+
+		return document.getContentStream().getStream();
+	}
+	
+	
 	/**
 	 * Get OutputStream of document.
 	 * 
@@ -88,13 +108,14 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		try {
 			return super.getOutputStream();
 		} catch (CmisUnauthorizedException e) {
-			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
-					"Invalid username or password!", true);
+			WebappMessage webappMessage = new WebappMessage(WebappMessage
+					.MESSAGE_TYPE_ERROR, ERROR_CODE, ERROR_MESSAGE, true);
 			
 			throw new UserActionRequiredException(webappMessage);
 		}
 	}
 
+	
 	/**
 	 * Generate FolderEntryDescriptor for any object
 	 * in current depth.
@@ -102,18 +123,19 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 */
 	@Override
 	public List<FolderEntryDescriptor> listFolder() throws IOException, UserActionRequiredException {
-		List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
-		logger.info("listFolder: " + url);
+		List<FolderEntryDescriptor> list = null;
 
 		try {
+			
 			if (this.url.getPath().isEmpty() || this.url.getPath().equals("/")) {
-				rootEntryMethod(list);
+				list = getRootFolderEntriesDescriptiors();
 			} else {
-				entryMethod(list);
+				list = getFolderEntriesDescriptiors();
 			}
+			
 		} catch (CmisUnauthorizedException e) {
-			WebappMessage webappMessage = new WebappMessage(WebappMessage.MESSAGE_TYPE_ERROR, "401",
-					"Invalid username or password!", true);
+			WebappMessage webappMessage = new WebappMessage(WebappMessage
+					.MESSAGE_TYPE_ERROR, ERROR_CODE, ERROR_MESSAGE, true);
 			
 			throw new UserActionRequiredException(webappMessage);
 		}
@@ -121,21 +143,27 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		return list;
 	}
 
+	
 	/**
 	 * Add CmisObject url into FolderEntryDescriptor list
 	 * 
 	 * @param list
+	 * @return 
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 * @throws UserActionRequiredException
 	 */
 	@VisibleForTesting
-	public void entryMethod(List<FolderEntryDescriptor> list)
+	public List<FolderEntryDescriptor> getFolderEntriesDescriptiors()
 			throws MalformedURLException, CmisUnauthorizedException, UnsupportedEncodingException {
+		List<FolderEntryDescriptor> list = new ArrayList<>();
+			
+		
 		FileableCmisObject parent = null;
 
 		// After connection we get ResourceController for generate URL!
-		parent = (FileableCmisObject) connection.getCMISObject(url.toExternalForm());
+		parent = (FileableCmisObject) connection
+				.getCMISObject(url.toExternalForm());
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
 			if (obj instanceof Document) {
@@ -160,8 +188,11 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			list.add(new FolderEntryDescriptor(entryUrl));
 		}
 		folderEntryLogger(list);
+		
+		return list;
 	}
 
+	
 	/**
 	 * Add Repository url into FolderEntryDescriptor list
 	 * 
@@ -171,19 +202,25 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UserActionRequiredException
 	 */
 	@VisibleForTesting
-	public void rootEntryMethod(List<FolderEntryDescriptor> list)
+	public List<FolderEntryDescriptor> getRootFolderEntriesDescriptiors()
 			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
-		List<Repository> reposList = connection.getCMISAccess().connectToServerGetRepositories(serverUrl,
-				connection.getUserCredentials());
+		List<FolderEntryDescriptor> list = new ArrayList<>();
+		
+		List<Repository> reposList = connection.getCMISAccess()
+				.connectToServerGetRepositories(serverUrl,
+						connection.getUserCredentials());
 
 		for (Repository repos : reposList) {
-			String reposUrl = generateRepoUrl(repos);
+			String reposUrl = getRepositoryUrl(repos);
 			list.add(new FolderEntryDescriptor(reposUrl));
 		}
 
 		folderEntryLogger(list);
+		
+		return list;
 	}
 
+	
 	/**
 	 * Generates custom URL for Repositories is used when URL path is empty
 	 * 
@@ -192,23 +229,28 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UnsupportedEncodingException
 	 * @throws MalformedURLException
 	 */
-	private String generateRepoUrl(Repository repo)
+	private String getRepositoryUrl(Repository repo)
 			throws UnsupportedEncodingException, MalformedURLException, CmisUnauthorizedException {
+		
 		StringBuilder urlb = new StringBuilder();
 
 		// Connecting to Server to get host
 		connection.getCMISAccess().connectToRepo(serverUrl, repo.getId(), connection.getUserCredentials());
 		// Get server URL
-		String originalProtocol = connection.getCMISAccess().getSession().getSessionParameters()
+		String originalProtocol = connection
+				.getCMISAccess().getSession().getSessionParameters()
 				.get(SessionParameter.ATOMPUB_URL);
 
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
-		urlb.append((CmisURLConnection.CMIS_PROTOCOL + "://")).append(originalProtocol).append("/");
+		
+		urlb.append((CmisURLConnection.CMIS_PROTOCOL + "://"));
+		urlb.append(originalProtocol).append("/");
 		urlb.append(repo.getId()).append("/");
 
 		return urlb.toString();
 	}
 
+	
 	/**
 	 * Logger for EntryDescriptions
 	 * 
