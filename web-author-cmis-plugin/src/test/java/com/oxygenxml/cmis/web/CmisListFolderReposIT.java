@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;

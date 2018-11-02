@@ -46,7 +46,7 @@ public class CmisAccessProvider extends ExternalResource{
          return new URLStreamHandler() {
            @Override
            protected URLConnection openConnection(URL u) throws IOException {
-             return null;
+             return createConnection(u);
            }
          };
        } else {

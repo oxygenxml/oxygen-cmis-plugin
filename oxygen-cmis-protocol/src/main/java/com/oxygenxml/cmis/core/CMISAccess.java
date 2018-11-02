@@ -93,7 +93,7 @@ public class CMISAccess {
     parameters.put(SessionParameter.READ_TIMEOUT, "5000");
     
 		parameters.put(SessionParameter.HTTP_INVOKER_CLASS,
-		    "org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker");
+		    org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker.class.getName());
 	}
 
 	/**
