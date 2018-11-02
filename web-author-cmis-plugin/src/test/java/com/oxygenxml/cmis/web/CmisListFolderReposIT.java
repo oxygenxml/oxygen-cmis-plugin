@@ -28,8 +28,7 @@ public class CmisListFolderReposIT {
     CmisURLConnection connection = cmisAccessProvider.createConnection(new URL(testRepo));
     CmisBrowsingURLConnection browsing = new CmisBrowsingURLConnection(connection,
         new URL("http://localhost:8080/B/atom11"));
-    List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
-		browsing.rootEntryMethod(list);
+    List<FolderEntryDescriptor> list = browsing.getRootFolderEntriesDescriptiors();
 
 		for (FolderEntryDescriptor fed : list) {
 			assertTrue(fed.getAbsolutePath().equals(testRepo));

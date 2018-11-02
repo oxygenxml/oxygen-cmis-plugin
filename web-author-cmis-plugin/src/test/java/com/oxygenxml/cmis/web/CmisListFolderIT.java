@@ -38,8 +38,7 @@ public class CmisListFolderIT {
 		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/My_Folder-1-0/");
 		testList.add("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-0/My_Folder-1-1/");
 
-		List<FolderEntryDescriptor> list = new ArrayList<FolderEntryDescriptor>();
-		browsing.entryMethod(list);
+		List<FolderEntryDescriptor> list = browsing.getFolderEntriesDescriptiors();
 
 		assertNotNull(browsing);
 		assertNotNull(list);
