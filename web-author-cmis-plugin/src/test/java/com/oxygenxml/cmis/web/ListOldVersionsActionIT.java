@@ -5,16 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisCheckInAction;
 import com.oxygenxml.cmis.web.action.CmisCheckOutAction;
@@ -22,38 +20,31 @@ import com.oxygenxml.cmis.web.action.ListOldVersionsAction;
 
 public class ListOldVersionsActionIT {
 
-	/**
-	 * Executes operations over the resources.
-	 */
-	private CMISAccess cmisAccess;
-	private URL serverUrl;
+  @Rule
+  public CmisAccessProvider cmisAccessProvider = new CmisAccessProvider();
+
 	private ResourceController ctrl;
-	private CmisURLConnection connection;
 
 	@Before
 	public void setUp() throws Exception {
-		serverUrl = new URL("http://localhost:8080/B/atom11");
-
-		cmisAccess = new CMISAccess();
-		cmisAccess.connectToRepo(serverUrl, "A1", new UserCredentials("admin", ""));
+	  CMISAccess cmisAccess = cmisAccessProvider.getCmisAccess();
 		ctrl = cmisAccess.createResourceController();
-
-		connection = new CmisURLConnection(serverUrl, cmisAccess, new UserCredentials("admin", ""));
 	}
 
 	@Test
 	public void testListOldVersions() throws Exception {
-		Document document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "check", "empty", "plain/xml",
-				"VersionableType", VersioningState.MINOR);
-
+	  Document document = null;
 		try {
+      document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "check", "empty", "plain/xml",
+	        "VersionableType", VersioningState.MINOR);
+		  
 			CmisCheckOutAction.checkOutDocument(document);
 
 			assertNotNull(document);
 			assertTrue(document.isVersionable());
 
 			document = document.getObjectOfLatestVersion(false);
-			CmisCheckInAction.checkInDocument(document, connection, "major", "");
+			CmisCheckInAction.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "major", "");
 
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());
@@ -73,7 +64,9 @@ public class ListOldVersionsActionIT {
 			assertTrue(test.contains("admin"));
 			
 		} finally {
-			ctrl.deleteAllVersionsDocument(document);
+		  if (document != null) {
+		    ctrl.deleteAllVersionsDocument(document);
+		  }
 		}
 	}
 }

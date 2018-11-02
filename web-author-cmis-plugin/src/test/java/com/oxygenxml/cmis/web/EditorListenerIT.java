@@ -1,16 +1,15 @@
 package com.oxygenxml.cmis.web;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -19,7 +18,6 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
-import ro.sync.basic.util.URLStreamHandlerFactorySetter;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.AuthorDocumentController;
 import ro.sync.ecss.extensions.api.access.AuthorEditorAccess;
@@ -30,43 +28,25 @@ import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 
 public class EditorListenerIT {
-
-	private URLStreamHandlerFactorySetter setter;
-	private URL serverUrl;
-	private CMISAccess cmisAccess;
+  @Rule
+  public CmisAccessProvider cmisAccessProvider = new CmisAccessProvider();
 	private ResourceController ctrl;
 
 	@Before
 	public void setUp() throws Exception {
-		serverUrl = new URL("http://localhost:8080/B/atom11");
-
-		cmisAccess = new CMISAccess();
-		cmisAccess.connectToRepo(serverUrl, "A1", new UserCredentials("admin", ""));
+	  CMISAccess cmisAccess = cmisAccessProvider.getCmisAccess();
 		ctrl = cmisAccess.createResourceController();
-
-		new CmisURLConnection(serverUrl, cmisAccess, new UserCredentials("admin", ""));
-
-		setter = new URLStreamHandlerFactorySetter();
-		setter.setHandler("cmis", new URLStreamHandler() {
-
-			@Override
-			protected URLConnection openConnection(URL u) throws IOException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
 	}
 
 	@Test
 	public void testUtilityMethod() throws Exception {
-		Document testDocument = ctrl.createVersionedDocument(ctrl.getRootFolder(), "docs33", "content", "plain/text",
-				"cmis:document", VersioningState.NONE);
-
-		assertNotNull(testDocument);
-		assertFalse(testDocument.isVersionable());
-
+	  Document testDocument = null;
 		try {
+      testDocument = ctrl.createVersionedDocument(ctrl.getRootFolder(), "docs33", "content", "plain/text",
+	        "cmis:document", VersioningState.NONE);
 
+	    assertNotNull(testDocument);
+	    assertFalse(testDocument.isVersionable());
 			URL url = new URL(CmisURLConnection.generateURLObject(testDocument, ctrl, "/"));
 			String contextId = "some important info credentials";
 
@@ -108,12 +88,9 @@ public class EditorListenerIT {
 			assertNotNull(listener);
 
 		} finally {
-			ctrl.deleteAllVersionsDocument(testDocument);
+		  if (testDocument != null) {
+		    ctrl.deleteAllVersionsDocument(testDocument);
+		  }
 		}
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		setter.tearDown();
 	}
 }

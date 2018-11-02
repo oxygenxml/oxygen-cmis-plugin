@@ -89,9 +89,11 @@ public class CMISAccess {
 		// connection settings
 		parameters.put(SessionParameter.ATOMPUB_URL, connectionInfo.toString());
 		parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-
+		parameters.put(SessionParameter.CONNECT_TIMEOUT, "5000");
+    parameters.put(SessionParameter.READ_TIMEOUT, "5000");
+    
 		parameters.put(SessionParameter.HTTP_INVOKER_CLASS,
-				"org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker");
+		    "org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker");
 	}
 
 	/**

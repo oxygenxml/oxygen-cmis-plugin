@@ -1,9 +1,8 @@
 package com.oxygenxml.cmis.web.action;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.log4j.Logger;
-
-import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 public class CmisCheckOutAction {
 
@@ -33,10 +32,10 @@ public class CmisCheckOutAction {
 	 * Get the last version and cancel check-out.
 	 * 
 	 * @param document
-	 * @param connection
+	 * @param session The CMIS session.
 	 * @throws Exception
 	 */
-	public static void cancelCheckOutDocument(Document document, CmisURLConnection connection) throws Exception {
+	public static void cancelCheckOutDocument(Document document, Session session) throws Exception {
 
 		if (!document.isVersionSeriesCheckedOut()) {
 			logger.info("Document isn't checked-out!");
@@ -46,7 +45,7 @@ public class CmisCheckOutAction {
 			String pwc = document.getVersionSeriesCheckedOutId();
 
 			if (pwc != null) {
-				Document PWC = (Document) connection.getCMISAccess().getSession().getObject(pwc);
+        Document PWC = (Document) session.getObject(pwc);
 				PWC.cancelCheckOut();
 			}
 

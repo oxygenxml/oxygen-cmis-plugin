@@ -1,9 +1,8 @@
 package com.oxygenxml.cmis.web.action;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.log4j.Logger;
-
-import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 public class CmisCheckInAction {
 
@@ -15,12 +14,12 @@ public class CmisCheckInAction {
 	 * Check in the last version of document.
 	 * 
 	 * @param document
-	 * @param connection
+	 * @param session The CMIS session.
 	 * @param actualState
 	 * @param commitMessage
 	 * @throws Exception
 	 */
-	public static void checkInDocument(Document document, CmisURLConnection connection, String actualState,
+	public static void checkInDocument(Document document, Session session, String actualState,
 			String commitMessage) throws Exception {
 
 		if (!document.isVersionSeriesCheckedOut()) {
@@ -31,7 +30,7 @@ public class CmisCheckInAction {
 			String pwc = document.getVersionSeriesCheckedOutId();
 
 			if (pwc != null) {
-				Document PWC = (Document) connection.getCMISAccess().getSession().getObject(pwc);
+				Document PWC = (Document) session.getObject(pwc);
 
 				if (commitMessage == null || commitMessage == "null") {
 					commitMessage = "";

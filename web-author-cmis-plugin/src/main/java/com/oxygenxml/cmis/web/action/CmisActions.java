@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.web.action;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
@@ -86,6 +87,7 @@ public class CmisActions extends AuthorOperationWithResult {
 				.getResourceBundle();
 
 		oldVersionJson = null;
+		Session session = connection.getCMISAccess().getSession();
 		
 		try {
 			if (actualAction.equals(CHECK_OUT)) {
@@ -97,14 +99,15 @@ public class CmisActions extends AuthorOperationWithResult {
 				errorInformation = errorInfoBuilder("you_shall_not_pass", null);
 			}
 			if (actualAction.equals(CANCEL_CHECK_OUT)) {
-				CmisCheckOutAction.cancelCheckOutDocument(document, connection);
+				
+        CmisCheckOutAction.cancelCheckOutDocument(document, session);
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess()
 							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
 				}
 			}
 			if (actualAction.equals(CHECK_IN)) {
-				CmisCheckInAction.checkInDocument(document, connection, actualState, commitMessage);
+				CmisCheckInAction.checkInDocument(document, session, actualState, commitMessage);
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess()
 							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
@@ -132,19 +135,7 @@ public class CmisActions extends AuthorOperationWithResult {
 		authorAccess.getWorkspaceAccess();
 
 		// Get Session Store
-		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
-		SessionStore sessionStore = workspace.getSessionStore();
-
-		// Get URL and ContextID and create new instance of CmisURLConnection
-		URL url = authorAccess.getEditorAccess().getEditorLocation();
-		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
-		String contextId = url.getUserInfo();
-		credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
-		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
-
-		if (urlWithoutContextId.contains(OLD_VERSION) || urlWithoutContextId.contains("?")) {
-			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf("?"));
-		}
+		String urlWithoutContextId = getUrlWithoutContextId(authorAccess);
 
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
@@ -169,4 +160,21 @@ public class CmisActions extends AuthorOperationWithResult {
 
 		return errorInformation;
 	}
+
+  private String getUrlWithoutContextId(AuthorAccess authorAccess) {
+    WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
+		SessionStore sessionStore = workspace.getSessionStore();
+
+		// Get URL and ContextID and create new instance of CmisURLConnection
+		URL url = authorAccess.getEditorAccess().getEditorLocation();
+		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
+		String contextId = url.getUserInfo();
+		credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
+		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
+
+		if (urlWithoutContextId.contains(OLD_VERSION) || urlWithoutContextId.contains("?")) {
+			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf("?"));
+		}
+    return urlWithoutContextId;
+  }
 }
