@@ -318,7 +318,7 @@ public class CmisURLConnection extends URLConnection {
 
     path = path.replace(fileName, "");
 
-    String mimeType = MimeTypes.getMIMEType(fileName.substring(fileName.indexOf("."), fileName.length()));
+    String mimeType = MimeTypes.getMIMEType(fileName.substring(fileName.indexOf('.'), fileName.length()));
     if (mimeType == "application/octet-stream") {
       mimeType = "text/xml";
     }

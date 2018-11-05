@@ -85,7 +85,7 @@ function login(serverUrl, authenticated) {
                 // form params
                 goog.Uri.QueryData.createFromMap(new goog.structs.Map({
                     user: user,
-                    passwd: passwd,
+                    passwd: passwd
                 })).toString()
             );
         }
@@ -166,8 +166,8 @@ workspace.getFileServersManager().registerFileServerConnector(cmisFileRepository
 var cmisStatus = false;
 
 goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
-    var editor = e.editor;
-
+  var editor = e.editor;
+  if (editor.getUrl().indexOf(prefix) === 0) {
     var root = document.querySelector('[data-root="true"]');
     var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
     var doccheckedout = root.getAttribute('data-pseudoclass-checkedout');
@@ -183,16 +183,18 @@ goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, functi
 
     // Register the newly created action.
     if (nonversionable !== 'true') {
-        editor.getActionsManager().registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
-        editor.getActionsManager().registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
-        editor.getActionsManager().registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
-        editor.getActionsManager().registerAction('listOldVersion.link', new listOldVersionsAction(editor));
+        var actionsManager = editor.getActionsManager();
+        actionsManager.registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor));
+        actionsManager.registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor));
+        actionsManager.registerAction('cmisCheckIn.link', new CmisCheckInAction(editor));
+        actionsManager.registerAction('listOldVersion.link', new listOldVersionsAction(editor));
 
-        addToDitaToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link', 'listOldVersion.link');
+        addToBuiltinToolbar(editor, 'cmisCheckOut.link', 'cmisCheckIn.link', 'cancelCmisCheckOut.link', 'listOldVersion.link');
     }
+  }
 });
 
-function addToDitaToolbar(editor, checkOutId, checkInId, cancelCheckOutId, listOldVersionsId) {
+function addToBuiltinToolbar(editor, checkOutId, checkInId, cancelCheckOutId, listOldVersionsId) {
     goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
         var actionsConfig = e.actionsConfiguration;
 
