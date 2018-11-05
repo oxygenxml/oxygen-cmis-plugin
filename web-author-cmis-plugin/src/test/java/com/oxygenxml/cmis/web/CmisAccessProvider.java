@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
+import org.apache.log4j.Logger;
 import org.junit.rules.ExternalResource;
 
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -20,6 +21,13 @@ import ro.sync.net.protocol.OxygenURLStreamHandlerFactory;
  * @author cristi_talau
  */
 public class CmisAccessProvider extends ExternalResource{
+  private static final Logger logger = Logger.getLogger(CmisAccessProvider.class.getName());
+
+  static {
+    // Logging environment.
+    logger.info("Props: " + System.getProperties());
+    logger.info("Env: " + System.getenv());
+  }
   /**
    * The current CMIS access.
    */
