@@ -54,8 +54,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 				.append("<form style='text-align:left;line-height: 1.7em;'>");
 		// Enforced URL
 		optionsForm.append("<label style='margin-top:6px;display:block;font-size:120%;'>")
-				.append(rb.getMessage(TranslationTags.ENFORCED_SERVER)).append(": ").append("<input placeholder='")
-				.append(rb.getMessage(TranslationTags.SERVER_URL)).append("' name='").append(ENFORCED_URL)
+				.append(rb.getMessage(TranslationTags.SERVER_URL)).append(": ").append("<input name='").append(ENFORCED_URL)
 				.append("' type='text' style='color:#606060;background-color:#FAFAFA;")
 				.append("-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: block;")
 				.append("width:100%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='")
