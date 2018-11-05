@@ -92,6 +92,20 @@
 	-webkit-animation: spin 1s linear infinite;
 	animation: spin 1s linear infinite;
 }
+
+/* Add some space between the dropdown text and the downwards arrow. */
+[name="cmis-actions"] .goog-toolbar-menu-button-caption {
+	margin-right: 5px;
+}
+
+.cmis-login-dialog label {
+  display: block;
+}
+
+#cmis-name, #cmis-passwd {
+  display: block;
+  width: 100%;
+}
   
 @-webkit-keyframes spin {
 	0% { -webkit-transform: rotate(0deg); }

@@ -40,19 +40,21 @@ function login(serverUrl, authenticated) {
         cmisNameInput.setAttribute('autocorrect', 'off');
         cmisNameInput.setAttribute('autocapitalize', 'none');
         cmisNameInput.setAttribute('autofocus', '');
+        cmisNameInput.setAttribute('autocomplete', 'username');
 
         cmisPasswordInput = cD('input', {
             id: 'cmis-passwd',
             type: 'password'
         });
+        cmisPasswordInput.setAttribute('autocomplete', 'current-password');
 
         goog.dom.appendChild(loginDialog_.getElement(),
-            cD('div', 'cmis-login-dialog',
+            cD('form', 'cmis-login-dialog',
                 cD('label', '',
                     tr(msgs.NAME_) + ': ',
                     cmisNameInput
                 ),
-                cD('label', '',
+                cD('label', { style: 'margin-top: 10px;' },
                     tr(msgs.PASSWORD_) + ': ',
                     cmisPasswordInput
                 )
