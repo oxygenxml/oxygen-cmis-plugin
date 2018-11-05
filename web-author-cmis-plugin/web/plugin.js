@@ -212,7 +212,7 @@ function addToBuiltinToolbar(editor, checkOutId, checkInId, cancelCheckOutId, li
 
         if (builtinToolbar) {
             builtinToolbar.children.push({
-                displayName: tr(msgs.CMIS_ACTIONS_),
+                displayName: cmisFileRepositoryDescriptor.name,
                 type: 'list',
                 name: 'cmis-actions',
                 children: [{

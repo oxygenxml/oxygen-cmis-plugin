@@ -40,7 +40,7 @@ public interface TranslationTags {
 	 * 
 	 * en: Icon URL
 	 */
-	String ICON_URL = "Icon_URL";
+	String SERVER_LOGO_URL = "Server_logo_URL";
 
 	/**
 	 * Message if opened document is an old version of actual document.

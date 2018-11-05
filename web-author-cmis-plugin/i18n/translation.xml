@@ -39,13 +39,13 @@
         <val lang="ja_JP">Server name</val>
         <val lang="nl_NL">Server name</val>
 	</key>
-	<key value="Icon_URL" distribution="webauthor">
-		<comment>Label for input icon URL</comment>
-		<val lang="en_US">Icon URL</val>
-		<val lang="de_DE">Icon URL</val>
-        <val lang="fr_FR">Icon URL</val>
-        <val lang="ja_JP">Icon URL</val>
-        <val lang="nl_NL">Icon URL</val>
+	<key value="Server_logo_URL" distribution="webauthor">
+		<comment>Label of input used to set the URL for an image</comment>
+		<val lang="en_US">Server logo URL</val>
+		<val lang="de_DE">Server logo URL</val>
+        <val lang="fr_FR">Server logo URL</val>
+        <val lang="ja_JP">Server logo URL</val>
+        <val lang="nl_NL">Server logo URL</val>
 	</key>
     <key value="Cmis_server_note" distribution="webauthor">
         <comment>Warning for the 'Enforce server' setting.</comment>
@@ -72,7 +72,7 @@
         <val lang="nl_NL">Checked out by</val>
 	</key>
 	<key value="Check_out_required" distribution="webauthor">
-		<comment>Message if check out is required.</comment>
+		<comment>Option to require check-out before editing document.</comment>
         <val lang="en_US">Check-out required</val>
         <val lang="de_DE">Check-out required</val>
         <val lang="fr_FR">Check-out required</val>
@@ -190,14 +190,6 @@
         <val lang="fr_FR">Erreur</val>
         <val lang="ja_JP">エラー</val>
         <val lang="nl_NL">Fout</val>
-    </key>
-    <key value="CMIS_ACTIONS_" distribution="webauthor">
-        <comment>Actions</comment>
-        <val lang="en_US">Actions</val>
-        <val lang="de_DE">Aktionen</val>
-        <val lang="fr_FR">Actions</val>
-        <val lang="ja_JP">アクション</val>
-        <val lang="nl_NL">Acties</val>
     </key>
     <key value="VERSION_" distribution="webauthor">
         <comment>Version</comment>
