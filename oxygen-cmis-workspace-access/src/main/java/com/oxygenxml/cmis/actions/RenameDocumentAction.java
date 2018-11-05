@@ -45,7 +45,7 @@ public class RenameDocumentAction extends AbstractAction {
   public RenameDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super(TranslationResourceController.getMessage("RENAME_ACTION_TITLE"));
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
-    enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME_DOCUMENT_LABEL");
+    enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME");
     
     this.resource = resource;
     this.currentParent = currentParent;

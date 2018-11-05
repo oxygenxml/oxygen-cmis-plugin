@@ -45,7 +45,7 @@ public class RenameFolderAction extends AbstractAction {
    */
   public RenameFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     super(TranslationResourceController.getMessage("RENAME_ACTION_TITLE"));
-    enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME_FOLDER");
+    enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME");
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
     
     this.resource = resource;

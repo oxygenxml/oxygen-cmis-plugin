@@ -291,16 +291,11 @@
     </key>
     <key value="MESSAGE_DELETE_DOCUMENT_DIALOG_LABEL">
         <comment>Main message to be displayed to user.</comment>
-        <val lang="en_US">Are sure you want to delete the selected item/s from the repository?
-            :</val>
-        <val lang="de_DE">Are sure you want to delete the selected item/s from the repository?
-            :</val>
-        <val lang="fr_FR">Are sure you want to delete the selected item/s from the repository?
-            :</val>
-        <val lang="ja_JP">Are sure you want to delete the selected item/s from the repository?
-            :</val>
-        <val lang="nl_NL">Are sure you want to delete the selected item/s from the repository?
-            :</val>
+        <val lang="en_US">Are sure you want to delete the selected item/s from the repository?</val>
+        <val lang="de_DE">Are sure you want to delete the selected item/s from the repository?</val>
+        <val lang="fr_FR">Are sure you want to delete the selected item/s from the repository?</val>
+        <val lang="ja_JP">Are sure you want to delete the selected item/s from the repository?</val>
+        <val lang="nl_NL">Are sure you want to delete the selected item/s from the repository?</val>
     </key>
     <!-- END Delete document Dialog -->
 
@@ -333,7 +328,7 @@
     <!-- END DIALOGS -->
 
     <!-- Actions -->
-    <key value="CANCEL_CHECK_OUT_DOCUMENT_ACTION_TITLE">
+    <key value="CANCEL_CHECK_OUT">
         <comment>Title of the action.</comment>
         <val lang="en_US">Cancel check-out</val>
         <val lang="de_DE">Cancel check-out</val>
@@ -341,15 +336,7 @@
         <val lang="ja_JP">Cancel check-out</val>
         <val lang="nl_NL">Cancel check-out</val>
     </key>
-    <key value="CANCEL_CHECK_OUT_FOLDER_ACTION_TITLE">
-        <comment>Title of the action.</comment>
-        <val lang="en_US">Cancel check-out</val>
-        <val lang="de_DE">Cancel check-out</val>
-        <val lang="fr_FR">Cancel check-out</val>
-        <val lang="ja_JP">Cancel check-out</val>
-        <val lang="nl_NL">Cancel check-out</val>
-    </key>
-    <key value="CHECK_IN_ACTION_TITLE">
+    <key value="CHECK_IN">
         <comment>Title of the action.</comment>
         <val lang="en_US">Check-in</val>
         <val lang="de_DE">Check-in</val>
@@ -357,7 +344,7 @@
         <val lang="ja_JP">Check-in</val>
         <val lang="nl_NL">Check-in</val>
     </key>
-    <key value="CHECK_OUT_ACTION_TITLE">
+    <key value="CHECK_OUT">
         <comment>Title of the action.</comment>
         <val lang="en_US">Check-out</val>
         <val lang="de_DE">Check-out</val>
@@ -367,11 +354,12 @@
     </key>
     <key value="COPY_DOCUMENT_ACTION_TITLE">
         <comment>Title of the action.</comment>
+        <comment>Edit menu option.</comment>
         <val lang="en_US">Copy</val>
-        <val lang="de_DE">Copy</val>
-        <val lang="fr_FR">Copy</val>
-        <val lang="ja_JP">Copy</val>
-        <val lang="nl_NL">Copy</val>
+        <val lang="de_DE">Kopieren</val>
+        <val lang="fr_FR">Copier</val>
+        <val lang="ja_JP">コピー</val>
+        <val lang="nl_NL">Kopieer</val>
     </key>
     <key value="CREATE_DOCUMENT_ACTION_TITLE">
         <comment>Title of the action.</comment>
@@ -398,7 +386,7 @@
         <val lang="ja_JP">myfolder</val>
         <val lang="nl_NL">myfolder</val>
     </key>
-    <key value="ENTER_A_NAME_FOLDER">
+    <key value="ENTER_A_NAME">
         <comment>Label for the name.</comment>
         <val lang="en_US">Please enter a name</val>
         <val lang="de_DE">Please enter a name</val>
@@ -433,7 +421,7 @@
         <val lang="nl_NL">Paste document</val>
     </key>
     <!-- Rename Document Action -->
-    <key value="ENTER_A_NAME_DOCUMENT_LABEL">
+    <key value="ENTER_A_NAME">
         <comment>Label for the field.</comment>
         <val lang="en_US">Enter a name</val>
         <val lang="de_DE">Enter a name</val>
@@ -442,16 +430,6 @@
         <val lang="nl_NL">Enter a name</val>
     </key>
     <!-- END Rename Document Action -->
-
-    <!-- Rename Folder Action -->
-    <key value="ENTER_A_NAME_FOLDER">
-        <comment>Label for the field.</comment>
-        <val lang="en_US">Enter a name</val>
-        <val lang="de_DE">Enter a name</val>
-        <val lang="fr_FR">Enter a name</val>
-        <val lang="ja_JP">Enter a name</val>
-        <val lang="nl_NL">Enter a name</val>
-    </key>
     <key value="RENAME_ACTION_TITLE">
         <comment>Label for the field.</comment>
         <val lang="en_US">Rename</val>

@@ -55,7 +55,7 @@ public class CheckinDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckinDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super(TranslationResourceController.getMessage("CHECK_IN_ACTION_TITLE"));
+    super(TranslationResourceController.getMessage("CHECK_IN"));
 
     this.resourceController = CMISAccess.getInstance().createResourceController();
 

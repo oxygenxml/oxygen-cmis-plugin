@@ -80,7 +80,7 @@ var cancelCmisCheckOutAction = function(editor) {
 cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
 cancelCmisCheckOutAction.prototype.getDisplayName = function() {
-  return tr(msgs.CANCEL_CHECK_OUT_);
+  return tr(msgs.CANCEL_CHECK_OUT);
 };
 
 // PROTOTYPE!!!!
@@ -99,7 +99,7 @@ cancelCmisCheckOutAction.prototype.isEnabled = function() {
 cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   if (!this.dialog) {
       this.dialog = workspace.createDialog();
-      this.dialog.setTitle(tr(msgs.CANCEL_CHECK_OUT_));
+      this.dialog.setTitle(tr(msgs.CANCEL_CHECK_OUT));
       this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.YES_NO);
       this.dialog.setPreferredSize(250, 180);
 

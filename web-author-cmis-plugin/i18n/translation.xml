@@ -103,7 +103,7 @@
         <val lang="ja_JP">Check-out</val>
         <val lang="nl_NL">Check-out</val>
 	</key>
-	<key value="CANCEL_CHECK_OUT_" distribution="webauthor">
+	<key value="CANCEL_CHECK_OUT" distribution="webauthor">
 		<comment>Title for "Cancel check-out" button.</comment>
 		<val lang="en_US">Cancel check-out</val>
 		<val lang="de_DE">Cancel check-out</val>
@@ -111,7 +111,7 @@
         <val lang="ja_JP">Cancel check-out</val>
         <val lang="nl_NL">Cancel check-out</val>
 	</key>
-	<key value="CHECK_IN_" distribution="webauthor">
+	<key value="CHECK_IN" distribution="webauthor">
 		<comment>Title for "Check-in" button.</comment>
 		<val lang="en_US">Check-in</val>
 		<val lang="de_DE">Check-in</val>

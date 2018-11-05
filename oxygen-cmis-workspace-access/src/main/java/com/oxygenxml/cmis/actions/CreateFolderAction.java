@@ -54,7 +54,7 @@ public class CreateFolderAction extends AbstractAction {
         UIManager.getIcon("FileView.directoryIcon"));
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
     defaultNameFolder = TranslationResourceController.getMessage("DEFAULT_NAME_FOLDER");
-    enterNameLabelValue = TranslationResourceController.getMessage("ENTER_A_NAME_FOLDER");
+    enterNameLabelValue = TranslationResourceController.getMessage("ENTER_A_NAME");
 
     this.resourceController = CMISAccess.getInstance().createResourceController();
 
