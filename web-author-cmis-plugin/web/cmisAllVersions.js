@@ -19,11 +19,7 @@ listOldVersionsAction.prototype.actionPerformed = function(callback) {
   var root = document.querySelector('[data-root="true"]');
   var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
-  if (noSupport === 'true') {
-      noSupport = true;
-  } else {
-      noSupport = false;
-  }
+  noSupport = (noSupport === 'true');
 
   allVerDialog = workspace.createDialog();
   allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));

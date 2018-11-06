@@ -11,7 +11,7 @@ cancelCmisCheckOutAction.prototype.getDisplayName = function() {
 
 cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
   return 'http://icons.iconarchive.com/icons/icons8/ios7/256/Very-Basic-Cancel-icon.png';
-}
+};
 
 cancelCmisCheckOutAction.prototype.isEnabled = function() {
   var isEnabled = false;
@@ -19,7 +19,7 @@ cancelCmisCheckOutAction.prototype.isEnabled = function() {
       isEnabled = true;
   }
   return isEnabled;
-}
+};
 
 cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   if (!this.dialog) {
@@ -29,7 +29,6 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
       this.dialog.setPreferredSize(250, 180);
 
       var warningDiv = document.createElement('div');
-      warningDiv.setAttribute('class', 'warningdiv');
       warningDiv.textContent = tr(msgs.CANCEL_WARN_);
 
       this.dialog.getElement().appendChild(warningDiv);
@@ -47,4 +46,4 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
           cmisStatus = false;
       }
   }, this));
-}
+};
