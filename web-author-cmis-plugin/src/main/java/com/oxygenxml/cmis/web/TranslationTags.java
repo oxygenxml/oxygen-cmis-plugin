@@ -36,9 +36,9 @@ public interface TranslationTags {
 	String SERVER_NAME = "Server_name";
 
 	/**
-	 * Icon URL - set from configuration page.
+	 * Label of input used to set the URL for an image
 	 * 
-	 * en: Icon URL
+	 * en: Server logo URL
 	 */
 	String SERVER_LOGO_URL = "Server_logo_URL";
 

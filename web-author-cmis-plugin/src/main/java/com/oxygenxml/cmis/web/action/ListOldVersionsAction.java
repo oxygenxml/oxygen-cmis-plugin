@@ -8,6 +8,11 @@ import ro.sync.basic.util.URLUtil;
 
 public class ListOldVersionsAction {
 
+  /**
+   * Not meant to be instantiated.
+   */
+  private ListOldVersionsAction() {}
+  
 	/**
 	 * Generate json string of old-version with user which modified document, id's
 	 * of version and check-in comment if the repository support it.
@@ -19,7 +24,7 @@ public class ListOldVersionsAction {
 	public static String listOldVersions(Document document, String url) {
 
 		if (url.contains(CmisActions.OLD_VERSION)) {
-			url = url.substring(0, url.indexOf("?"));
+			url = url.substring(0, url.indexOf('?'));
 		}
 
 		document = document.getObjectOfLatestVersion(false);

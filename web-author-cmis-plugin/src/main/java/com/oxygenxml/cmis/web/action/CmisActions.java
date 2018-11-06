@@ -173,7 +173,7 @@ public class CmisActions extends AuthorOperationWithResult {
 		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 
 		if (urlWithoutContextId.contains(OLD_VERSION) || urlWithoutContextId.contains("?")) {
-			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf("?"));
+			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf('?'));
 		}
     return urlWithoutContextId;
   }

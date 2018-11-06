@@ -5,6 +5,11 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.log4j.Logger;
 
 public class CmisCheckInAction {
+  
+  /**
+   * Not meant to be instantiated.
+   */
+  private CmisCheckInAction() {}
 
 	private static final Logger logger = Logger.getLogger(CmisCheckInAction.class.getName());
 
