@@ -47,17 +47,10 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
             dialogElement.appendChild(input);
 
         } else {
-            this.dialog.setPreferredSize(200, 180);
+            this.dialog.setPreferredSize(250, 180);
         }
 
-        var form = document.createElement('form');
-        var text1 = document.createElement('label');
-        var text2 = document.createElement('label');
-
-        form.setAttribute('action', '');
-        radioButtonsCreator(form, text1, text2);
-
-        dialogElement.appendChild(form);
+        dialogElement.appendChild(createVersionForm());
     }
 
     this.dialog.show();
@@ -72,13 +65,13 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
                 var verstate;
 
                 if (noSupport !== 'true') {
-                    commitMessage = this.dialog.getElement().querySelector('#input').value.replace(/["']/g, "");
+                    commitMessage = dialogElement.querySelector('#input').value.replace(/["']/g, "");
                 }
 
-                if (this.dialog.getElement().querySelector('#radio1').checked) {
-                    verstate = this.dialog.getElement().querySelector('#radio1').value;
-                } else if (this.dialog.getElement().querySelector('#radio2').checked) {
-                    verstate = this.dialog.getElement().querySelector('#radio2').value;
+                if (dialogElement.querySelector('#radio1').checked) {
+                    verstate = dialogElement.querySelector('#radio1').value;
+                } else if (dialogElement.querySelector('#radio2').checked) {
+                    verstate = dialogElement.querySelector('#radio2').value;
                 }
 
                 editor.getActionsManager().invokeOperation(
@@ -94,28 +87,36 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
         this));
 };
 
-function radioButtonsCreator(form, text1, text2) {
-    var radio1 = document.createElement('input');
+/**
+ * Create the major/minor version radio button form for the check-in dialog.
+ * @returns {Element} The radio button form.
+ */
+function createVersionForm() {
+    var createDom = goog.dom.createDom;
 
-    radio1.setAttribute('type', 'radio');
-    radio1.setAttribute('name', 'state');
-    radio1.setAttribute('id', 'radio1');
-    radio1.setAttribute('value', 'major');
+    var radio1 = createDom('input', {
+      id: 'radio1',
+      type: 'radio',
+      name: 'state',
+      value: 'major'
+    });
     radio1.setAttribute('checked', '');
-    form.appendChild(radio1);
 
-    text1.textContent = tr(msgs.MAJOR_VERSION_);
-    text1.appendChild(document.createElement('br'));
-    form.appendChild(text1);
+    var radio2 = createDom('input', {
+      id: 'radio2',
+      type: 'radio',
+      name: 'state',
+      value: 'minor'
+    });
 
-    var radio2 = document.createElement('input');
-
-    radio2.setAttribute('type', 'radio');
-    radio2.setAttribute('name', 'state');
-    radio2.setAttribute('id', 'radio2');
-    radio2.setAttribute('value', 'minor');
-    form.appendChild(radio2);
-
-    text2.textContent = tr(msgs.MINOR_VERSION_);
-    form.appendChild(text2);
+    return createDom('form', '',
+      createDom('label', 'cmis-version-label',
+        radio1,
+        tr(msgs.MAJOR_VERSION_)
+      ),
+      createDom('label', 'cmis-version-label',
+        radio2,
+        tr(msgs.MINOR_VERSION_)
+      )
+    );
 }

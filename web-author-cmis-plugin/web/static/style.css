@@ -98,7 +98,7 @@
 	margin-right: 5px;
 }
 
-.cmis-login-dialog label {
+.cmis-login-dialog label, .cmis-version-label {
   display: block;
 }
 
