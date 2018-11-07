@@ -24,7 +24,6 @@
 	text-align: center;
 	margin-right: 25px;
 	color: #323233;
-	text-decoration: underline;
 }
 
 .oldlink:hover {
@@ -71,7 +70,6 @@
 #user {
 	width: 15%;
 	min-width: 80px;
-    text-align: left;
 }
 
 #commit {
@@ -105,6 +103,15 @@
 #cmis-name, #cmis-passwd {
   display: block;
   width: 100%;
+}
+
+.current-version {
+	background-color: #ededed;
+}
+
+.current-version .oldlink {
+	cursor: default;
+	text-decoration: none;
 }
   
 @-webkit-keyframes spin {

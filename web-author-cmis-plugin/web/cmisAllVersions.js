@@ -55,25 +55,35 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
               var div = document.createElement('div');
               div.setAttribute('id', 'head');
 
-              var childDiv = document.createElement('div');
-              childDiv.setAttribute('id', 'versionDiv');
-              childDiv.setAttribute('class', 'headtitle');
-              childDiv.textContent = this.tr(msgs.VERSION_);
-              div.appendChild(childDiv);
+              var createDom = goog.dom.createDom;
+              var commitHeader;
+              var versionHeader = createDom('div', {
+                  id: 'versionDiv',
+                  className: 'headtitle'
+                },
+                tr(msgs.VERSION_)
+              );
 
-              var childDiv1 = document.createElement('div');
-              childDiv1.setAttribute('id', 'userDiv');
-              childDiv1.setAttribute('class', 'headtitle');
-              childDiv1.textContent = this.tr(msgs.MODIFIED_BY_);
-              div.appendChild(childDiv1);
+            var userHeader = createDom('div', {
+                id: 'userDiv',
+                className: 'headtitle'
+              },
+              tr(msgs.MODIFIED_BY_)
+            );
 
               if (!noSupport) {
-                  var childDiv2 = document.createElement('div');
-                  childDiv2.setAttribute('id', 'commitDiv');
-                  childDiv2.setAttribute('class', 'headtitle');
-                  childDiv2.textContent = this.tr(msgs.COMMIT_MESS_);
-                  div.appendChild(childDiv2);
+                commitHeader = createDom('div', {
+                    id: 'commitDiv',
+                    className: 'headtitle'
+                  },
+                  tr(msgs.COMMIT_MESS_)
+                );
               }
+              // Add the headers to the header div.
+              goog.dom.append(div,
+                versionHeader,
+                userHeader,
+                commitHeader);
 
               var table = document.createElement('table');
               table.setAttribute('id', 'table');
@@ -83,16 +93,16 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
                       continue;
                   }
 
-                  var tr = document.createElement('tr');
+                  var tableRow = document.createElement('tr');
                   var versionTd = document.createElement('td');
-                  versionTd.setAttribute('id', 'version');
+                  goog.dom.dataset.set(versionTd, 'version', 'version');
                   versionTd.setAttribute('class', 'td');
 
                   var versionLink = document.createElement('a');
                   var value = jsonFile[key];
 
                   var commitTd = document.createElement('td');
-                  commitTd.setAttribute('id', 'commit');
+                  goog.dom.dataset.set(commitTd, 'commit', 'commit');
                   commitTd.setAttribute('class', 'td');
 
                   if (value[1] !== "" || value[1] !== null) {
@@ -110,17 +120,13 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
                   versionLink.textContent = key;
 
                   var userTd = document.createElement('td');
-                  userTd.setAttribute('id', 'user');
+                  goog.dom.dataset.set(userTd, 'user', 'user');
                   userTd.setAttribute('class', 'td');
                   userTd.textContent = value[2];
 
                   if (window.location.search.indexOf(oldVer) + 1) {
                       versionLink.setAttribute('href', '#');
-                      versionLink.setAttribute('style', 'text-decoration:none;');
-
-                      versionTd.style.backgroundColor = '#ededed';
-                      commitTd.style.backgroundColor = '#ededed';
-                      userTd.style.backgroundColor = '#ededed';
+                      goog.dom.classlist.add(tableRow, 'current-version');
                   }
 
                   if (noSupport) {
@@ -129,14 +135,14 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
                   }
 
                   versionTd.appendChild(versionLink);
-                  tr.appendChild(versionTd);
-                  tr.appendChild(userTd);
+                  tableRow.appendChild(versionTd);
+                  tableRow.appendChild(userTd);
 
                   if (!noSupport) {
-                      tr.appendChild(commitTd);
+                      tableRow.appendChild(commitTd);
                   }
 
-                  table.appendChild(tr);
+                  table.appendChild(tableRow);
               }
 
               document.getElementById("loader").remove();
@@ -144,15 +150,15 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
               allVerDialog.getElement().appendChild(div);
               allVerDialog.getElement().appendChild(table);
 
-              var versionBarWidth = document.getElementById('version').offsetWidth;
-              document.getElementById('versionDiv').style.width = versionBarWidth + 'px';
+              var versionBarWidth = document.querySelector('[data-version="version"]').offsetWidth;
+              versionHeader.style.width = versionBarWidth + 'px';
 
-              var userBarWidth = document.getElementById('user').offsetWidth;
-              document.getElementById('userDiv').style.width = userBarWidth + 'px';
+              var userBarWidth = document.querySelector('[data-user="user"]').offsetWidth;
+              userHeader.style.width = userBarWidth + 'px';
 
               if (!noSupport) {
-                  var commitBarWidth = document.getElementById('commit').offsetWidth;
-                  document.getElementById('commitDiv').style.width = commitBarWidth + 'px';
+                  var commitBarWidth = document.querySelector('[data-commit="commit"]').offsetWidth;
+                  commitHeader.style.width = commitBarWidth + 'px';
               }
 
               allVerDialog.onSelect(function(e) {
@@ -162,4 +168,4 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
       });
 
   callback();
-}
+};
