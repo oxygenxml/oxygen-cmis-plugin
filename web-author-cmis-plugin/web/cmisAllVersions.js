@@ -11,14 +11,11 @@ listOldVersionsAction.prototype.getDisplayName = function() {
 
 listOldVersionsAction.prototype.getSmallIcon = function(devicePixelRation) {
   return 'http://icons.iconarchive.com/icons/icons8/windows-8/256/Data-View-Details-icon.png';
-}
+};
 
 listOldVersionsAction.prototype.actionPerformed = function(callback) {
   var allVerDialog = this.dialog;
-
-  var root = document.querySelector('[data-root="true"]');
-  var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
-
+  var noSupport = document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor');
   noSupport = (noSupport === 'true');
 
   allVerDialog = workspace.createDialog();
@@ -47,124 +44,28 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
           action: 'listOldVersions'
       },
       function(err, data) {
-          var jsonFile = JSON.parse(data);
-
-          allVerDialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
-
           if (allVerDialog) {
-              var div = document.createElement('div');
-              div.setAttribute('id', 'head');
+              allVerDialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
 
-              var createDom = goog.dom.createDom;
-              var commitHeader;
-              var versionHeader = createDom('div', {
-                  id: 'versionDiv',
-                  className: 'headtitle'
-                },
-                tr(msgs.VERSION_)
-              );
-
-            var userHeader = createDom('div', {
-                id: 'userDiv',
-                className: 'headtitle'
-              },
-              tr(msgs.MODIFIED_BY_)
-            );
-
-              if (!noSupport) {
-                commitHeader = createDom('div', {
-                    id: 'commitDiv',
-                    className: 'headtitle'
-                  },
-                  tr(msgs.COMMIT_MESS_)
-                );
-              }
-              // Add the headers to the header div.
-              goog.dom.append(div,
-                versionHeader,
-                userHeader,
-                commitHeader);
-
-              var table = document.createElement('table');
-              table.setAttribute('id', 'table');
-
-              for (var key in jsonFile) {
-                  if (key === 'filename') {
-                      continue;
-                  }
-
-                  var tableRow = document.createElement('tr');
-                  var versionTd = document.createElement('td');
-                  goog.dom.dataset.set(versionTd, 'version', 'version');
-                  versionTd.setAttribute('class', 'td');
-
-                  var versionLink = document.createElement('a');
-                  var value = jsonFile[key];
-
-                  var commitTd = document.createElement('td');
-                  goog.dom.dataset.set(commitTd, 'commit', 'commit');
-                  commitTd.setAttribute('class', 'td');
-
-                  if (value[1] !== "" || value[1] !== null) {
-                      commitTd.textContent = value[1];
-                  }
-
-                  var href = window.location.origin + window.location.pathname + value[0];
-
-                  var oldVer = value[0];
-                  oldVer = oldVer.substring(oldVer.lastIndexOf('='), oldVer.length);
-
-                  versionLink.setAttribute('href', href);
-                  versionLink.setAttribute('target', '_blank');
-                  versionLink.setAttribute('class', 'oldlink');
-                  versionLink.textContent = key;
-
-                  var userTd = document.createElement('td');
-                  goog.dom.dataset.set(userTd, 'user', 'user');
-                  userTd.setAttribute('class', 'td');
-                  userTd.textContent = value[2];
-
-                  if (window.location.search.indexOf(oldVer) + 1 && value[0].indexOf('oldversion') !== -1) {
-                      versionLink.setAttribute('href', '#');
-                      goog.dom.classlist.add(tableRow, 'current-version');
-                  }
-
-                  if(location.href.indexOf('oldversion') === -1 && key === 'Current'){
-                      versionLink.setAttribute('href', '#');
-                      goog.dom.classlist.add(tableRow, 'current-version');
-                  }
-
-                  if (noSupport) {
-                      versionTd.style.width = '150px';
-                      userTd.style.width = '60%';
-                  }
-
-                  versionTd.appendChild(versionLink);
-                  tableRow.appendChild(versionTd);
-                  tableRow.appendChild(userTd);
-
-                  if (!noSupport) {
-                      tableRow.appendChild(commitTd);
-                  }
-
-                  table.appendChild(tableRow);
-              }
+              // Commit message column might not be available on some servers.
+              var versionHeader = createTableHeader('versionDiv', tr(msgs.VERSION_));
+              var userHeader = createTableHeader('userDiv', tr(msgs.MODIFIED_BY_));
+              var commitHeader = (!noSupport) ? createTableHeader('commitDiv', tr(msgs.COMMIT_MESS_)) : '';
 
               document.getElementById("loader").remove();
+              var jsonFile = JSON.parse(data);
+              goog.dom.append(allVerDialog.getElement(),
+                goog.dom.createDom('div', { id: 'head' },
+                  versionHeader,
+                  userHeader,
+                  commitHeader
+                ),
+                createTable(jsonFile, noSupport)
+              );
 
-              allVerDialog.getElement().appendChild(div);
-              allVerDialog.getElement().appendChild(table);
-
-              var versionBarWidth = document.querySelector('[data-version="version"]').offsetWidth;
-              versionHeader.style.width = versionBarWidth + 'px';
-
-              var userBarWidth = document.querySelector('[data-user="user"]').offsetWidth;
-              userHeader.style.width = userBarWidth + 'px';
-
-              if (!noSupport) {
-                  var commitBarWidth = document.querySelector('[data-commit="commit"]').offsetWidth;
-                  commitHeader.style.width = commitBarWidth + 'px';
-              }
+              resizeHeaderWidth(versionHeader, 'version');
+              resizeHeaderWidth(userHeader, 'user');
+              resizeHeaderWidth(commitHeader, 'commit');
 
               allVerDialog.onSelect(function(e) {
                   allVerDialog.dispose();
@@ -174,3 +75,69 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
 
   callback();
 };
+
+function createTable(jsonFile, noSupport) {
+  var table = goog.dom.createDom('table', { id: 'table'});
+  for (var key in jsonFile) {
+    if (key === 'filename') {
+      continue;
+    }
+
+    var value = jsonFile[key];
+    var oldVer = value[0];
+    oldVer = oldVer.substring(oldVer.lastIndexOf('='), oldVer.length);
+
+    var isThisVersionOpenNow = window.location.search.indexOf(oldVer) + 1;
+    var isOldVersionInUrlParam = value[0].indexOf('oldversion') !== -1;
+    var isLatestVersion = location.href.indexOf('oldversion') === -1;
+    var isKeyCurrent = key === 'Current';
+
+    var isCurrentVersion = (isThisVersionOpenNow && isOldVersionInUrlParam) || (isLatestVersion && isKeyCurrent);
+
+    var href = window.location.origin + window.location.pathname + value[0];
+    var versionLink = goog.dom.createDom('a', {
+        className: 'oldlink',
+        href: isCurrentVersion ? '#' : href,
+        target: '_blank'
+      },
+      key
+    );
+
+    var versionTd = createTableCell('version', versionLink);
+    var userTd = createTableCell('user', value[2]);
+    // If file is not versionable, do not create the commit cell.
+    var commitTd = noSupport ? '' : createTableCell('commit', value[1]);
+
+    if (noSupport) {
+      versionTd.style.width = '150px';
+      userTd.style.width = '60%';
+    }
+
+    table.appendChild(
+      goog.dom.createDom('tr', {className: isCurrentVersion ? 'current-version' : ''},
+        versionTd,
+        userTd,
+        commitTd
+      )
+    );
+  }
+  return table;
+}
+
+function createTableHeader(id, text) {
+  return goog.dom.createDom('div', { id: id, className: 'headtitle' }, text);
+}
+
+function createTableCell(customAttribute, textContent) {
+  var cell = goog.dom.createDom('td', 'td', textContent ? textContent : '');
+  // Set some data attributes to set the column header widths later.
+  goog.dom.dataset.set(cell, customAttribute, customAttribute);
+  return cell;
+}
+
+function resizeHeaderWidth(header, attr) {
+  if (header) {
+    var versionBarWidth = document.querySelector('[data-' + attr + '="' + attr + '"]').offsetWidth;
+    header.style.width = versionBarWidth + 'px';
+  }
+}
