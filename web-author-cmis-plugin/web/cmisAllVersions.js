@@ -124,7 +124,12 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
                   userTd.setAttribute('class', 'td');
                   userTd.textContent = value[2];
 
-                  if (window.location.search.indexOf(oldVer) + 1) {
+                  if (window.location.search.indexOf(oldVer) + 1 && value[0].indexOf('oldversion') !== -1) {
+                      versionLink.setAttribute('href', '#');
+                      goog.dom.classlist.add(tableRow, 'current-version');
+                  }
+
+                  if(location.href.indexOf('oldversion') === -1 && key === 'Current'){
                       versionLink.setAttribute('href', '#');
                       goog.dom.classlist.add(tableRow, 'current-version');
                   }

@@ -94,17 +94,27 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		StringBuilder oldBuilder = new StringBuilder();
 
 		oldBuilder.append("{");
+		
+		if(document.isVersionSeriesCheckedOut()) {
+			oldVersionsList.remove(0);
+		}
 
 		for (Document oldDoc : oldVersionsList) {
 			if (oldDoc.getVersionLabel().equals("pwc")) {
 				continue;
 			}
-
-			oldBuilder.append("\"").append("v" + oldDoc.getVersionLabel()).append("\"");
-			oldBuilder.append(":").append("[");
-			oldBuilder.append("\"").append("?url=").append(URLUtil.encodeURIComponent(url));
-			oldBuilder.append("?oldversion=").append(oldDoc.getId()).append("\"");
-
+			
+			if(oldDoc.isLatestVersion()){
+				oldBuilder.append("\"").append("Current\"");
+				oldBuilder.append(":").append("[").append("\"");
+				oldBuilder.append("?url=").append(URLUtil.encodeURIComponent(url)).append("\"");
+			} else {
+				oldBuilder.append("\"").append("v" + oldDoc.getVersionLabel()).append("\"");
+				oldBuilder.append(":").append("[");
+				oldBuilder.append("\"").append("?url=").append(URLUtil.encodeURIComponent(url));
+				oldBuilder.append("?oldversion=").append(oldDoc.getId()).append("\"");
+			}
+			
 			String checkInComment = null;
 
 			if (oldDoc.getCheckinComment() == null) {
