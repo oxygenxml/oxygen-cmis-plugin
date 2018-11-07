@@ -22,36 +22,34 @@ CmisCheckInAction.prototype.isEnabled = function() {
 }
 
 CmisCheckInAction.prototype.actionPerformed = function(callback) {
-    if (!this.dialog) {
-        var root = document.querySelector('[data-root="true"]');
-        var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
+    var root = document.querySelector('[data-root="true"]');
+    var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
-        this.dialog = workspace.createDialog();
-        this.dialog.setTitle(tr(msgs.CHECK_IN));
-        var dialogElement = this.dialog.getElement();
+    this.dialog = workspace.createDialog();
+    this.dialog.setTitle(tr(msgs.CHECK_IN));
+    var dialogElement = this.dialog.getElement();
 
-        if (noSupport !== 'true') {
-            dialogElement.innerHTML = '';
-            var checkInMessageSpan = document.createElement('span');
-            checkInMessageSpan.textContent = tr(msgs.CHECK_IN_MESSAGE_);
-            dialogElement.appendChild(checkInMessageSpan);
-            dialogElement.appendChild(document.createElement('br'));
-            this.dialog.setPreferredSize(300, 350);
+    if (noSupport !== 'true') {
+        dialogElement.innerHTML = '';
+        var checkInMessageSpan = document.createElement('span');
+        checkInMessageSpan.textContent = tr(msgs.CHECK_IN_MESSAGE_);
+        dialogElement.appendChild(checkInMessageSpan);
+        dialogElement.appendChild(document.createElement('br'));
+        this.dialog.setPreferredSize(300, 350);
 
-            var input = document.createElement('textarea');
+        var input = document.createElement('textarea');
 
-            input.setAttribute('style', 'margin:0px;width:255px;height:125px;resize:none;');
-            input.setAttribute('type', 'text');
-            input.setAttribute('id', 'input');
+        input.setAttribute('style', 'margin:0px;width:255px;height:125px;resize:none;');
+        input.setAttribute('type', 'text');
+        input.setAttribute('id', 'input');
 
-            dialogElement.appendChild(input);
+        dialogElement.appendChild(input);
 
-        } else {
-            this.dialog.setPreferredSize(250, 180);
-        }
-
-        dialogElement.appendChild(createVersionForm());
+    } else {
+        this.dialog.setPreferredSize(250, 180);
     }
+
+    dialogElement.appendChild(createVersionForm());
 
     this.dialog.show();
 
@@ -75,14 +73,16 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
                 }
 
                 editor.getActionsManager().invokeOperation(
-                    'com.oxygenxml.cmis.web.action.CmisActions', {
+                    'com.oxygenxml.cmis.web.action.CmisCheckIn', {
                         action: 'cmisCheckin',
                         commit: commitMessage,
                         state: verstate
                     }, callback);
 
                 cmisStatus = false;
-            }
+            } 
+
+            this.dialog.dispose();
         },
         this));
 };

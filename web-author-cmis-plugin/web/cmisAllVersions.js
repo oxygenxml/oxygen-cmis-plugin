@@ -43,7 +43,7 @@ listOldVersionsAction.prototype.actionPerformed = function(callback) {
 
 listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, noSupport) {
   this.editor.getActionsManager().invokeOperation(
-      'com.oxygenxml.cmis.web.action.CmisActions', {
+      'com.oxygenxml.cmis.web.action.CmisOldVersions', {
           action: 'listOldVersions'
       },
       function(err, data) {

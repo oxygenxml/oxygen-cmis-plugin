@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.web.action.CmisCheckOutAction;
+import com.oxygenxml.cmis.web.action.CmisCheckOut;
 
 public class CmisActionsCheckOutIT {
 
@@ -30,7 +30,7 @@ public class CmisActionsCheckOutIT {
 		try {
 			document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkout", "empty", "plain/xml",
 	        "VersionableType", VersioningState.MINOR);
-			CmisCheckOutAction.checkOutDocument(document);
+			CmisCheckOut.checkOutDocument(document);
 
 			assertTrue(document.isVersionable());
 

@@ -12,7 +12,8 @@ import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.web.action.CmisCheckOutAction;
+import com.oxygenxml.cmis.web.action.CmisCancelCheckOut;
+import com.oxygenxml.cmis.web.action.CmisCheckOut;
 
 public class CmisActionsCancelCheckOutIT {
   
@@ -33,10 +34,10 @@ public class CmisActionsCancelCheckOutIT {
 	public void testCancelCheckOut() throws Exception {
 	  Document document = null;
 	  try {
-      document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "cancel", "empty", "plain/xml",
+		  	document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "cancel", "empty", "plain/xml",
 				"VersionableType", VersioningState.MINOR);
 
-			CmisCheckOutAction.checkOutDocument(document);
+			CmisCheckOut.checkOutDocument(document);
 
 			assertNotNull(document);
 			assertTrue(document.isVersionable());
@@ -44,7 +45,7 @@ public class CmisActionsCancelCheckOutIT {
 			document = document.getObjectOfLatestVersion(false);
 			assertTrue(document.isVersionSeriesCheckedOut());
 
-			CmisCheckOutAction.cancelCheckOutDocument(document, cmisAccessProvider.getCmisAccess().getSession());
+			CmisCancelCheckOut.cancelCheckOutDocument(document, cmisAccessProvider.getCmisAccess().getSession());
 
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());

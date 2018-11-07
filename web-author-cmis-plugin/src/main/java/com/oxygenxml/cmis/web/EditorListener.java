@@ -15,7 +15,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.web.action.CmisActions;
+import com.oxygenxml.cmis.web.action.CmisActionsUtills;
 
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
@@ -221,7 +221,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			queryPart.put(pair.substring(0, index), pair.substring(index + 1));
 		}
 		
-		String objectId = queryPart.get(CmisActions.OLD_VERSION);
+		String objectId = queryPart.get(CmisActionsUtills.OLD_VERSION);
 		
 		return objectId;
 	}

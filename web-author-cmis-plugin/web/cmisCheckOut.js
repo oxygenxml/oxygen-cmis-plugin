@@ -24,7 +24,7 @@ CmisCheckOutAction.prototype.isEnabled = function() {
 CmisCheckOutAction.prototype.actionPerformed = function(callback) {
   cmisStatus = true;
   this.editor.getActionsManager().invokeOperation(
-      'com.oxygenxml.cmis.web.action.CmisActions', {
+      'com.oxygenxml.cmis.web.action.CmisCheckOut', {
           action: 'cmisCheckout'
       },
       function(err, data) {

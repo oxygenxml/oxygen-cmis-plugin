@@ -14,9 +14,9 @@ import org.junit.Test;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.web.action.CmisCheckInAction;
-import com.oxygenxml.cmis.web.action.CmisCheckOutAction;
-import com.oxygenxml.cmis.web.action.ListOldVersionsAction;
+import com.oxygenxml.cmis.web.action.CmisCheckIn;
+import com.oxygenxml.cmis.web.action.CmisCheckOut;
+import com.oxygenxml.cmis.web.action.CmisOldVersions;
 
 public class ListOldVersionsActionIT {
 
@@ -30,7 +30,8 @@ public class ListOldVersionsActionIT {
 	  CMISAccess cmisAccess = cmisAccessProvider.getCmisAccess();
 		ctrl = cmisAccess.createResourceController();
 	}
-
+	
+	
 	@Test
 	public void testListOldVersions() throws Exception {
 	  Document document = null;
@@ -38,13 +39,13 @@ public class ListOldVersionsActionIT {
       document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "check", "empty", "plain/xml",
 	        "VersionableType", VersioningState.MINOR);
 		  
-			CmisCheckOutAction.checkOutDocument(document);
+			CmisCheckOut.checkOutDocument(document);
 
 			assertNotNull(document);
 			assertTrue(document.isVersionable());
 
 			document = document.getObjectOfLatestVersion(false);
-			CmisCheckInAction.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "major", "");
+			CmisCheckIn.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "major", "");
 
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());
@@ -54,7 +55,7 @@ public class ListOldVersionsActionIT {
 			assertNotNull(url);
 			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/check", url);
 
-			String test = ListOldVersionsAction.listOldVersions(document, url);
+			String test = CmisOldVersions.listOldVersions(document, url);
 
 			System.out.println(test);
 			assertNotNull(test);

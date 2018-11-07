@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.web.action.CmisCheckInAction;
-import com.oxygenxml.cmis.web.action.CmisCheckOutAction;
+import com.oxygenxml.cmis.web.action.CmisCheckIn;
+import com.oxygenxml.cmis.web.action.CmisCheckOut;
 
 public class CmisActionsCheckInIT {
   @Rule
@@ -31,12 +31,12 @@ public class CmisActionsCheckInIT {
 	public void testCheckIn() throws Exception {
 		Document document = null;
     try {
-      document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkin", "empty", "plain/xml",
+    		document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkin", "empty", "plain/xml",
   				"VersionableType", VersioningState.MINOR);
   		
-  		String commitMessage = "important commit!";
+    		String commitMessage = "important commit!";
 
-			CmisCheckOutAction.checkOutDocument(document);
+			CmisCheckOut.checkOutDocument(document);
 
 			assertNotNull(document);
 			assertTrue(document.isVersionable());
@@ -44,7 +44,7 @@ public class CmisActionsCheckInIT {
 			document = document.getObjectOfLatestVersion(false);
 			assertTrue(document.isVersionSeriesCheckedOut());
 
-			CmisCheckInAction.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "minor", commitMessage);
+			CmisCheckIn.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "minor", commitMessage);
 
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());
