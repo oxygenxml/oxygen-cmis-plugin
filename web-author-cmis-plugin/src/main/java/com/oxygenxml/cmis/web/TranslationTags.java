@@ -15,20 +15,6 @@ public interface TranslationTags {
 	String CMIS_SERVER_NOTE = "Cmis_server_note";
 
 	/**
-	 * Title of login dialog.
-	 * 
-	 * en: Authentication required
-	 */
-	String AUTHENTICATION_REQUIRED = "Authentication_required";
-
-	/**
-	 * Default author name for comments.
-	 * 
-	 * en: Anonymous
-	 */
-	String ANONYMOUS = "Anonymous";
-
-	/**
 	 * Server name - set from configuration page.
 	 * 
 	 * en: Server name
@@ -77,4 +63,11 @@ public interface TranslationTags {
 	 * en: seconds
 	 */
 	String SECONDS = "Seconds";
+	
+	/**
+   * Text preceding an example URL.
+   * 
+   * en: Example
+   */
+  String EXAMPLE = "Example";
 }

@@ -62,11 +62,16 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 		// Enforced server note
 		optionsForm.append(
 				"<div style='background-color: lightyellow;border: 1px solid #dadab4; padding: 8px;margin-top: 5px;'>")
-				.append(rb.getMessage(TranslationTags.CMIS_SERVER_NOTE)).append("</div>");
+		      .append(rb.getMessage(TranslationTags.CMIS_SERVER_NOTE))
+		      .append("<br>")
+		      .append(rb.getMessage(TranslationTags.EXAMPLE) + ":")
+		      .append("<br>")
+		      .append("<span style=\"font-family: monospace;word-break: break-all;\">http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom</span>")
+				.append("</div>");
 		// Server name
 		optionsForm.append("<label style='margin-top:6px;display:block;font-size:120%'>")
-				.append(rb.getMessage(TranslationTags.SERVER_NAME)).append(": ").append("<input placeholder='")
-				.append(rb.getMessage(TranslationTags.SERVER_NAME)).append("' name='").append(ENFORCED_NAME)
+				.append(rb.getMessage(TranslationTags.SERVER_NAME)).append(": ")
+				.append("<input name='").append(ENFORCED_NAME)
 				.append("' type='text' style='color:#606060;background-color:#FAFAFA;")
 				.append("-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: block;")
 				.append("width:100%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='")
@@ -81,8 +86,8 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 		// AutoSave interval
 		optionsForm.append("<label style='margin-top:6px;display:block;font-size:120%'>")
 				.append(rb.getMessage(TranslationTags.AUTOSAVE_INTERVAL)).append(" ")
-				.append("(" + rb.getMessage(TranslationTags.SECONDS) + ")").append(": ").append("<input placeholder='")
-				.append(rb.getMessage(TranslationTags.AUTOSAVE_INTERVAL)).append("' name='").append(AUTOSAVE_INTERVAL)
+				.append("(" + rb.getMessage(TranslationTags.SECONDS) + ")").append(": ")
+				.append("<input name='").append(AUTOSAVE_INTERVAL)
 				.append("' type='text' style='color:#606060;background-color:#FAFAFA;")
 				.append("-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: block;")
 				.append("width:100%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='")

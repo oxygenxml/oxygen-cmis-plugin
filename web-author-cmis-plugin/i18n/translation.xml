@@ -49,11 +49,19 @@
 	</key>
     <key value="Cmis_server_note" distribution="webauthor">
         <comment>Warning for the 'Enforce server' setting.</comment>
-        <val lang="en_US">The user will only be able to access files from this imposed Connection URL. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
-		<val lang="de_DE">The user will only be able to access files from this imposed Connection URL. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
-        <val lang="fr_FR">The user will only be able to access files from this imposed Connection URL. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
-        <val lang="ja_JP">The user will only be able to access files from this imposed Connection URL. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
-        <val lang="nl_NL">The user will only be able to access files from this imposed Connection URL. Example: "http://127.0.0.1:8098/alfresco/api/-default-/public/cmis/versions/1.1/atom"</val>
+        <val lang="en_US">The users will only be able to access files from this Server URL.</val>
+		<val lang="de_DE">The users will only be able to access files from this Server URL.</val>
+        <val lang="fr_FR">The users will only be able to access files from this Server URL.</val>
+        <val lang="ja_JP">The users will only be able to access files from this Server URL.</val>
+        <val lang="nl_NL">The users will only be able to access files from this Server URL.</val>
+    </key>
+    <key value="Example">
+        <comment>Label from the svn merge wizard dialog</comment>
+        <val lang="en_US">Example</val>
+        <val lang="de_DE">Beispiel</val>
+        <val lang="fr_FR">Exemple</val>
+        <val lang="ja_JP">例</val>
+        <val lang="nl_NL">Voorbeeld</val>
     </key>
 	<key value="Old_ver_warning" distribution="webauthor">
 		<comment>Message if opened document is an old version of actual document.</comment>
