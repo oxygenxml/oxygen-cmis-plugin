@@ -74,7 +74,7 @@ public class DocumentImplIT extends ConnectionTestBase {
    */
   @Test
   public void testCheckIn() throws UnsupportedEncodingException {
-    Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text", "plain/text", "VersionableType",
+    Document doc = ctrl.createEmptyVersionedDocument(root, "queryTestFile", "plain/text",
         VersioningState.MINOR);
     ObjectId pwcId = doc.checkOut();
     Document pwc = (Document) CmisAccessTestSingleton.getInstance().getSession().getObject(pwcId);

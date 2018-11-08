@@ -46,7 +46,6 @@ public class CreateDocumentAction extends AbstractAction {
 
   // Internal role
   private static final String VERSIONING_STATE_NONE = "NONE";
-  private static final String VERSIONABLE_TYPE = "VersionableType";
   /**
    * Logging.
    */
@@ -191,7 +190,7 @@ public class CreateDocumentAction extends AbstractAction {
     logger.debug("Versionable");
     try {
       // Create a versioned document with the state of MAJOR
-      doc = resourceController.createVersionedDocument(parentFolder, fileName, "", mimeType, VERSIONABLE_TYPE,
+      doc = resourceController.createEmptyVersionedDocument(parentFolder, fileName, mimeType,
           VersioningState.valueOf(versioningState));
 
       // Checkout the document

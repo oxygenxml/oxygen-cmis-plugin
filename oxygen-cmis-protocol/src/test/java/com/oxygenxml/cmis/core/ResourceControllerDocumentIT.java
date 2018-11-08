@@ -93,6 +93,25 @@ public class ResourceControllerDocumentIT extends ConnectionTestBase {
 		ctrl.deleteAllVersionsDocument(doc);
 	}
 
+	
+  /**
+   * <p><b>Description:</b> Test that document type verification works.</p>
+   * <p><b>Bug ID:</b> WA-2428</p>
+   *
+   * @author cristi_talau
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testSupportedTypes() throws Exception {
+    assertTrue("The default type should be supported", 
+        ctrl.isTypeSupported(ResourceController.DEFAULT_OBJ_TYPE));
+    assertTrue("The versionable type should be supported in tests with the Chemistry Server", 
+        ctrl.isTypeSupported(ResourceController.VERSIONABLE_OBJ_TYPE));
+    assertFalse("A fake type should not be supported", 
+        ctrl.isTypeSupported("fake-type"));
+  }
+	
 	@After
 	public void afterMethod() {
 		if (testFolder != null) {

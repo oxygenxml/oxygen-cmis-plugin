@@ -13,6 +13,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
@@ -48,8 +49,6 @@ public class CmisURLConnection extends URLConnection {
   public static final String CMIS_PROTOCOL = "cmis";
   private static final String REPOSITORY_PARAM = "repo";
   private static final String PATH_PARAM = "path";
-  private static final String CONTENT_SAMPLE = "Empty";
-  private static final String DOC_TYPE = "VersionableType";
 
   // CONSTRUCTOR
   public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
@@ -328,8 +327,8 @@ public class CmisURLConnection extends URLConnection {
     }
 
     Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
-    Document document = resourceController.createVersionedDocument(rootFolder, fileName, CONTENT_SAMPLE, mimeType,
-        DOC_TYPE, VersioningState.MINOR);
+    Document document = resourceController.createEmptyVersionedDocument(
+        rootFolder, fileName, mimeType, VersioningState.MINOR);
 
     return generateURLObject(document, resourceController, path);
   }

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,18 +19,31 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.log4j.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class ResourceController {
+  /**
+   * Default object type.
+   */
+  public static final String DEFAULT_OBJ_TYPE = "cmis:document";
+
+  /**
+   * Type of the versionable objects.
+   */
+  public static final String VERSIONABLE_OBJ_TYPE = "VersionableType";
+  
   /**
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(ResourceController.class);
-  private static final String ENCODING = "UTF-8";
 
+  /**
+   * The CMIS session.
+   */
   private Session session;
-
-  private static final String OBJ_TYPE = "cmis:document";
 
   /**
    * 
@@ -61,7 +75,7 @@ public class ResourceController {
 
     String mimetype = mimeType.concat("; charset=UTF-8");
 
-    byte[] contentBytes = content.getBytes(ENCODING);
+    byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
     ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
 
     ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
@@ -71,87 +85,84 @@ public class ResourceController {
     Map<String, Object> properties = new HashMap<>();
 
     properties.put(PropertyIds.NAME, filename);
-    properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
+    properties.put(PropertyIds.OBJECT_TYPE_ID, DEFAULT_OBJ_TYPE);
 
     // create the document
     return path.createDocument(properties, contentStream, VersioningState.NONE);
   }
 
   /**
-   * CREATE DOCUMENT METHOD
-   * 
-   * @param path
-   * @param filename
-   * @param content
-   * @param versioningState
-   * @return
-   * @throws UnsupportedEncodingException
-   *           Necessary VersionableType in order to get many versions
+   * USE THIS METHOD ONLY IN TESTS. IT DOES NOT TAKE ENCODING INTO ACCOUNT!
    */
-  public Document createVersionedDocument(Folder path, String filename, String content, String mimetype,
+  @VisibleForTesting
+  Document createVersionedDocument(Folder path, String filename, String content, String mimetype,
       String objectType, VersioningState versioningState) throws UnsupportedEncodingException {
 
-    byte[] contentBytes = content.getBytes(ENCODING);
+    byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
     ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
 
     ContentStream contentStream = session.getObjectFactory().createContentStream(filename, contentBytes.length,
         mimetype, stream);
 
-    // prepare properties
-    Map<String, Object> properties = new HashMap<>();
-    properties.put(PropertyIds.NAME, filename);
-
-    /**
-     * If repository or server doesn't support OBJECT_TYPE_ID like
-     * "VersionableType" we catch the error and try to put in properties default
-     * for open-cmis Object Id - "cmis:document".
-     * 
-     */
-    Document document = null;
-    try {
-      properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
-      document = path.createDocument(properties, contentStream, versioningState);
-    } catch (CmisConstraintException e) {
-      logger.debug("Object type " + objectType + " not supported", e);
-      properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
-      document = path.createDocument(properties, contentStream, versioningState);
-    }
-    return document;
+    return createVersionedDocument(path, filename, contentStream, objectType, versioningState);
   }
 
   /**
-   * CREATE DOCUMENT METHOD with the Content stream
+   * Create a new empty document. 
+   *
+   * @param path The path where to file the document.
+   * @param filename The name of the file.
+   * @param mimetype The mime type of the document.
+   * @param versioningState The versioning state.
    * 
-   * @param path
-   * @param filename
-   * @param content
-   * @param versioningState
-   * @return
-   * @throws UnsupportedEncodingException
-   *           Necessary VersionableType in order to get many versions
+   * @return The document.
+   */
+  public Document createEmptyVersionedDocument(
+      Folder path, String filename, String mimetype, VersioningState versioningState) {
+    String content = "<empty/>";
+    ByteArrayInputStream stream = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
+    ContentStream contentStream = session.getObjectFactory().createContentStream(
+        filename, content.length(), mimetype, stream);
+    return createVersionedDocument(path, filename, contentStream, VERSIONABLE_OBJ_TYPE, versioningState);
+  }
+
+  /**
+   * Create a document based on the given content stream.
+   * 
+   * @param path The path where to create the document.
+   * @param filename The name of the file.
+   * @param content The content stream.
+   * @param versioningState The versioning state.
+   * 
+   * @return The created document.
    */
   public Document createVersionedDocument(Folder path, String filename, ContentStream contentStream, String objectType,
-      VersioningState versioningState) throws UnsupportedEncodingException {
-
-    // prepare properties
+      VersioningState versioningState) {
     Map<String, Object> properties = new HashMap<>();
     properties.put(PropertyIds.NAME, filename);
-
-    /**
-     * If repository or server doesn't support OBJECT_TYPE_ID like
-     * "VersionableType" we catch the error and try to put in properties default
-     * for open-cmis Object Id - "cmis:document".
-     * 
-     */
-    Document document = null;
-    try {
-      properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
-      document = path.createDocument(properties, contentStream, versioningState);
-    } catch (Exception e) {
-      properties.put(PropertyIds.OBJECT_TYPE_ID, OBJ_TYPE);
-      document = path.createDocument(properties, contentStream, versioningState);
+    if (!isTypeSupported(objectType)) {
+      // Fallback to the default object type.
+      objectType = DEFAULT_OBJ_TYPE;
     }
-    return document;
+    properties.put(PropertyIds.OBJECT_TYPE_ID, objectType);
+    return path.createDocument(properties, contentStream, versioningState);
+  }
+
+  /**
+   * @param The type to check.
+   * @return <code>true</code> if the type is supported.
+   */
+  @VisibleForTesting
+  boolean isTypeSupported(String objectType) {
+    boolean typeExists = true;
+    if (!DEFAULT_OBJ_TYPE.equals(objectType)) {
+      try {
+        session.getTypeDefinition(objectType);
+      } catch (CmisObjectNotFoundException e) {
+        typeExists = false;
+      }
+    }
+    return typeExists;
   }
 
   /**
@@ -292,7 +303,7 @@ public class ResourceController {
         java.io.InputStream stream = contentStream.getStream();
 
         // TODO Get the encoding dynamically.
-        return new InputStreamReader(stream, ENCODING);
+        return new InputStreamReader(stream, StandardCharsets.UTF_8);
       }
     }
     return null;
