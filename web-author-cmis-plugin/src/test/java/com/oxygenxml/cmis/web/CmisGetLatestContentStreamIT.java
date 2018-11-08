@@ -44,8 +44,13 @@ public class CmisGetLatestContentStreamIT {
 		
 		for(int i = 0; i < 10; i++) {
 			try {
-				document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "docInStream" + i + ".xml", 
-				"<html>", "plain/xml", "VersionableType", VersioningState.MINOR);
+				String filename = "docInStream" + i + ".xml";
+        document = ctrl.createVersionedDocument(
+            ctrl.getRootFolder(), 
+            filename, 
+				    ctrl.createXmlUtf8ContentStream(filename, "<html/>"), 
+				    ResourceController.VERSIONABLE_OBJ_TYPE, 
+				    VersioningState.MINOR);
 		
 				URL url = new URL(CmisURLConnection.generateURLObject(document, ctrl));
 				

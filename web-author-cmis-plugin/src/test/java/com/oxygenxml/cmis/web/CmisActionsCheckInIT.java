@@ -31,8 +31,7 @@ public class CmisActionsCheckInIT {
 	public void testCheckIn() throws Exception {
 		Document document = null;
     try {
-    		document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkin", "empty", "plain/xml",
-  				"VersionableType", VersioningState.MINOR);
+    		document = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "checkin", "plain/xml", VersioningState.MINOR);
   		
     		String commitMessage = "important commit!";
 

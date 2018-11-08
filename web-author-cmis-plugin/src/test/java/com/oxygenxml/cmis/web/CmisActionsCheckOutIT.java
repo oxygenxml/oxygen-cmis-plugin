@@ -28,8 +28,8 @@ public class CmisActionsCheckOutIT {
 	public void testCheckOut() throws Exception {
 	  Document document = null;
 		try {
-			document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "checkout", "empty", "plain/xml",
-	        "VersionableType", VersioningState.MINOR);
+      document = ctrl.createEmptyVersionedDocument(
+          ctrl.getRootFolder(), "checkout", "plain/xml", VersioningState.MINOR);
 			CmisCheckOut.checkOutDocument(document);
 
 			assertTrue(document.isVersionable());

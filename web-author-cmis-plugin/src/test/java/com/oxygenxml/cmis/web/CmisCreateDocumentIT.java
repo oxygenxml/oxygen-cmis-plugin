@@ -57,8 +57,8 @@ public class CmisCreateDocumentIT {
 	        Document document = null;
 	        try {
 	          try {
-	            document = ctrl.createVersionedDocument(ctrl.getRootFolder(), 
-	                name, "empty", "plain/xml", "VersionableType", VersioningState.MINOR);
+	            document = ctrl.createEmptyVersionedDocument(
+	                ctrl.getRootFolder(), name, "plain/xml", VersioningState.MINOR);
 	          } finally {
 	            barrier.await();
 	          }

@@ -36,8 +36,8 @@ public class ListOldVersionsActionIT {
 	public void testListOldVersions() throws Exception {
 	  Document document = null;
 		try {
-      document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "check", "empty", "plain/xml",
-	        "VersionableType", VersioningState.MINOR);
+      document = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "check", 
+          ResourceController.VERSIONABLE_OBJ_TYPE, VersioningState.MINOR);
 		  
 			CmisCheckOut.checkOutDocument(document);
 

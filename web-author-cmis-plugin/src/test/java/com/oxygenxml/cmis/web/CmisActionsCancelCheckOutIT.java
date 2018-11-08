@@ -34,8 +34,8 @@ public class CmisActionsCancelCheckOutIT {
 	public void testCancelCheckOut() throws Exception {
 	  Document document = null;
 	  try {
-		  	document = ctrl.createVersionedDocument(ctrl.getRootFolder(), "cancel", "empty", "plain/xml",
-				"VersionableType", VersioningState.MINOR);
+      document = ctrl.createEmptyVersionedDocument(
+          ctrl.getRootFolder(), "cancel", "plain/xml", VersioningState.MINOR);
 
 			CmisCheckOut.checkOutDocument(document);
 

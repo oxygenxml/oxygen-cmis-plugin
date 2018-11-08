@@ -127,6 +127,18 @@ public class ResourceController {
   }
 
   /**
+   * Create an UTF-8 XML content stream for the given file.
+   * @param fileName The file name.
+   * @param content The file content, needs to be ASCII.
+   * @return The content stream.
+   */
+  public ContentStream createXmlUtf8ContentStream(String fileName, String content) {
+    ByteArrayInputStream stream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+    return session.getObjectFactory().createContentStream(
+        fileName, content.length(), "text/xml", stream);
+  }
+
+  /**
    * Create a document based on the given content stream.
    * 
    * @param path The path where to create the document.

@@ -39,11 +39,11 @@ public class EditorListenerIT {
 	}
 
 	@Test
-	public void testUtilityMethod() throws Exception {
+	public void testSessionStarted() throws Exception {
 	  Document testDocument = null;
 		try {
-      testDocument = ctrl.createVersionedDocument(ctrl.getRootFolder(), "docs33", "content", "plain/text",
-	        "cmis:document", VersioningState.NONE);
+      testDocument = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "docs33.xml", "plain/text",
+	        VersioningState.NONE);
 
 	    assertNotNull(testDocument);
 	    assertFalse(testDocument.isVersionable());
