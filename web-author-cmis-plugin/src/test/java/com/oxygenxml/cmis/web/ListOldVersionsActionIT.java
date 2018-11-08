@@ -57,10 +57,9 @@ public class ListOldVersionsActionIT {
 
 			String test = CmisOldVersions.listOldVersions(document, url);
 
-			System.out.println(test);
 			assertNotNull(test);
-			assertTrue(test.startsWith("{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost"
-					+ "%253A8080%252FB%252Fatom11%2FA1%2Fcheck?oldversion"));
+			assertTrue(test, test.startsWith(
+			    "{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck?oldversion"));
 
 			assertTrue(test.contains("admin"));
 			
