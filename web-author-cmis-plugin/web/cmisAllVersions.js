@@ -14,7 +14,7 @@ listOldVersionsAction.prototype.getSmallIcon = function(devicePixelRation) {
 };
 
 listOldVersionsAction.prototype.actionPerformed = function(callback) {
-  var allVerDialog = this.dialog;
+  var allVerDialog = this.dialog; //NOSONAR: local variable helps with uglifying.
   var noSupport = document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor');
   noSupport = (noSupport === 'true');
 
@@ -67,6 +67,12 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
               resizeHeaderWidth(userHeader, 'user');
               resizeHeaderWidth(commitHeader, 'commit');
 
+              // In case of older version, scroll it into view.
+              var oldVersionSelected = document.querySelector('.current-version:not(:first-child)');
+              if (oldVersionSelected) {
+                oldVersionSelected.scrollIntoView(false);
+              }
+
               allVerDialog.onSelect(function(e) {
                   allVerDialog.dispose();
               });
@@ -78,26 +84,24 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
 
 function createTable(jsonFile, noSupport) {
   var table = goog.dom.createDom('table', { id: 'table'});
+  var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
+
   for (var key in jsonFile) {
     if (key === 'filename') {
       continue;
     }
 
     var value = jsonFile[key];
-    var oldVer = value[0];
-    oldVer = oldVer.substring(oldVer.lastIndexOf('='), oldVer.length);
+    var versionUrlParamFromJson = value[0];
 
-    var isThisVersionOpenNow = window.location.search.indexOf(oldVer) + 1;
-    var isOldVersionInUrlParam = value[0].indexOf('oldversion') !== -1;
-    var isLatestVersion = location.href.indexOf('oldversion') === -1;
-    var isKeyCurrent = key === 'Current';
+    var isThisVersionOpenedNow = window.location.search.indexOf(versionUrlParamFromJson) !== -1;
+    var isThisVersionOld = versionUrlParamFromJson.indexOf('oldversion') !== -1;
+    var isThisCurrentVersion = (isThisVersionOpenedNow && isThisVersionOld) || (isLatestVersionOpenedNow && !isThisVersionOld);
 
-    var isCurrentVersion = (isThisVersionOpenNow && isOldVersionInUrlParam) || (isLatestVersion && isKeyCurrent);
-
-    var href = window.location.origin + window.location.pathname + value[0];
+    var href = window.location.origin + window.location.pathname + versionUrlParamFromJson;
     var versionLink = goog.dom.createDom('a', {
         className: 'oldlink',
-        href: isCurrentVersion ? '#' : href,
+        href: isThisCurrentVersion ? '#' : href,
         target: '_blank'
       },
       key
@@ -113,13 +117,11 @@ function createTable(jsonFile, noSupport) {
       userTd.style.width = '60%';
     }
 
-    table.appendChild(
-      goog.dom.createDom('tr', {className: isCurrentVersion ? 'current-version' : ''},
-        versionTd,
-        userTd,
-        commitTd
-      )
-    );
+    table.appendChild(goog.dom.createDom('tr', {className: isThisCurrentVersion ? 'current-version' : ''},
+      versionTd,
+      userTd,
+      commitTd
+    ));
   }
   return table;
 }
