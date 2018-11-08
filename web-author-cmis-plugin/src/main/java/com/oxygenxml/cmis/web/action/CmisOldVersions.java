@@ -105,7 +105,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			}
 			
 			if(oldDoc.isLatestVersion()){
-				oldBuilder.append("\"").append("Current\"");
+				oldBuilder.append("\"").append("v" + oldDoc.getVersionLabel()).append("\"");
 				oldBuilder.append(":").append("[").append("\"");
 				oldBuilder.append("?url=").append(URLUtil.encodeURIComponent(url)).append("\"");
 			} else {
