@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import java.net.URL;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,7 +43,11 @@ public class EditorListenerIT {
 	public void testSessionStarted() throws Exception {
 	  Document testDocument = null;
 		try {
-      testDocument = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "docs33.xml", "plain/text",
+      String filename = "docs33.xml";
+      ContentStream contentStream = ctrl.createXmlUtf8ContentStream(filename, "<root/>");
+      testDocument = ctrl.createVersionedDocument(ctrl.getRootFolder(), filename, 
+          contentStream,
+          ResourceController.DEFAULT_OBJ_TYPE,
 	        VersioningState.NONE);
 
 	    assertNotNull(testDocument);
