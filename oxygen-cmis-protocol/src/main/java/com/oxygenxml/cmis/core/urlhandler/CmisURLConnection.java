@@ -228,11 +228,15 @@ public class CmisURLConnection extends URLConnection {
     if (document.isVersionSeriesCheckedOut()) {
       String pwcId = document.getVersionSeriesCheckedOutId();
       pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
-    } else {
-      return document.getContentStream().getStream();
+      
+      return pwcDoc.getContentStream().getStream();
     }
-
-    return pwcDoc.getContentStream().getStream();
+    
+    if(document.isVersionable()) {
+    	document = document.getObjectOfLatestVersion(false);
+    }
+    
+    return document.getContentStream().getStream();
   }
 
   @Override
