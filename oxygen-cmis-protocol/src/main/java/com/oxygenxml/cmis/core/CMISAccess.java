@@ -17,11 +17,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
  */
 public class CMISAccess {
 	/**
-	 * Singleton instance.
-	 */
-	private static CMISAccess instance;
-
-	/**
 	 * Session factory.
 	 */
 	private SessionFactoryImpl factory;
@@ -41,13 +36,6 @@ public class CMISAccess {
 	 */
 	public CMISAccess() {
 		factory = SessionFactoryImpl.newInstance();
-	}
-
-	public static CMISAccess getInstance() {
-		if (instance == null) {
-			instance = new CMISAccess();
-		}
-		return instance;
 	}
 
 	public CMISAccess clone() {

@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
@@ -175,7 +175,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
         loggedin = AuthenticatorUtil.isLoggedin(serverURL);
 
         // Get the repositories
-        serverReposList = CMISAccess.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
+        serverReposList = CmisAccessSingleton.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
 
       } while (serverReposList == null && !loggedin);
 

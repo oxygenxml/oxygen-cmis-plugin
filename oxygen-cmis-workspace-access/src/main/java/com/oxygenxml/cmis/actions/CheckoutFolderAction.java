@@ -7,6 +7,7 @@ import javax.swing.AbstractAction;
 
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -127,7 +128,7 @@ public class CheckoutFolderAction extends AbstractAction {
       DocumentImpl doc = (DocumentImpl) iResource;
 
       if (!(doc.isCheckedOut() || doc.isPrivateWorkingCopy())) {
-        doc.checkOut(doc.getDocType());
+        doc.checkOut(doc.getDocType(), CmisAccessTestSingleton.getInstance());
       }
     } catch (Exception ev) {
 

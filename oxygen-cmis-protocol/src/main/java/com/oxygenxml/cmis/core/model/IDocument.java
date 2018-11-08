@@ -4,6 +4,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 
+import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 
 public interface IDocument extends IResource {
@@ -23,7 +24,7 @@ public interface IDocument extends IResource {
   /*
    * Check out the document
    */
-  Document checkOut(DocumentType docType);
+  Document checkOut(DocumentType docType, CMISAccess cmisAccess);
 
   /*
    * Cancel the check-out

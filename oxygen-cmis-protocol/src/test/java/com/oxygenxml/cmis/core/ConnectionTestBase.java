@@ -103,7 +103,7 @@ public class ConnectionTestBase {
 	// Put docs to the memory copy using parent path (folder)
 	public Document createDocument(Folder parent, String docName, String content)
 			throws UnsupportedEncodingException {
-		ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+		ResourceController ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
 
 		Set<String> docs = createdDocs.get(parent.getPath());
 		if (docs == null) {
@@ -120,7 +120,7 @@ public class ConnectionTestBase {
 	 * Cleanup docs
 	 */
 	protected void cleanUpDocuments() {
-		ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+		ResourceController ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
 
 		// Get the keys
 		Set<String> keySet = createdDocs.keySet();
@@ -151,7 +151,7 @@ public class ConnectionTestBase {
 
 	// Put the folders to the memory copy using parent path (folder)
 	protected Folder createFolder(Folder parent, String name) throws UnsupportedEncodingException {
-		ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+		ResourceController ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
 
 		Set<String> folders = createdFolders.get(parent.getPath());
 		if (folders == null) {
@@ -167,7 +167,7 @@ public class ConnectionTestBase {
 	 * Cleanup folders
 	 */
 	protected void cleanUpFolders() {
-		ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+		ResourceController ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
 
 		// Get the keys
 		Set<String> keySet = createdFolders.keySet();
@@ -200,7 +200,7 @@ public class ConnectionTestBase {
 		if (url == null) {
 			throw new NullPointerException();
 		}
-		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CMISAccess.getInstance(),
+		CmisURLConnection cuc = new CmisURLConnection(new URL(serverUrl), CmisAccessTestSingleton.getInstance(),
 				new UserCredentials("admin", "admin"));
 
 		return cuc.getCMISObject(url);

@@ -8,6 +8,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.log4j.Logger;
 
 import com.oxygen.cmis.dialogs.LoginDialog;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.storage.SessionStorage;
@@ -63,7 +64,7 @@ public class AuthenticatorUtil {
         uc = loginDialog.getUserCredentials();
         logger.info("user credentials " + uc.getUsername());
 
-        if (CMISAccess.getInstance().connectToServerGetRepositories(serverURL, uc) != null) {
+        if (CmisAccessSingleton.getInstance().connectToServerGetRepositories(serverURL, uc) != null) {
           // Add the entered credentials to the session
           SessionStorage.getInstance().addUserCredentials(serverURL, uc);
         }
@@ -93,7 +94,7 @@ public class AuthenticatorUtil {
     UserCredentials uc = null;
 
     // Get the instance
-    CMISAccess instance = CMISAccess.getInstance();
+    CMISAccess instance = CmisAccessSingleton.getInstance();
 
     boolean succesLogin = false;
 

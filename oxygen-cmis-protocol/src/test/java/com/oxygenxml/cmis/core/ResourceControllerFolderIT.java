@@ -27,14 +27,14 @@ public class ResourceControllerFolderIT extends ConnectionTestBase {
 
 	@Before
 	public void setUp() throws Exception {
-		CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
+	  CmisAccessTestSingleton.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
 				new UserCredentials("admin", "admin"));
 
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put(PropertyIds.NAME, "testFolderResource");
 		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
 
-		ctrl = CMISAccess.getInstance().createResourceController();
+		ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
 	}
 
 	/**

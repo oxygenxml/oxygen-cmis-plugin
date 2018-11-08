@@ -7,13 +7,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
@@ -40,9 +41,9 @@ public class CustomProtocolIT extends ConnectionTestBase {
 	 */
 	@Before
 	public void setUp() throws MalformedURLException {
-		CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
+		CmisAccessTestSingleton.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
 				new UserCredentials("admin", "admin"));
-		ctrl = CMISAccess.getInstance().createResourceController();
+		ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
 		root = ctrl.getRootFolder();
 	}
 

@@ -11,7 +11,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.log4j.Logger;
 
 import com.oxygen.cmis.dialogs.CheckinDocDialog;
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -58,7 +58,7 @@ public class CheckinFolderAction extends AbstractAction {
 
     super(TranslationResourceController.getMessage("CMIS_CHECK_IN"));
 
-    this.resourceController = CMISAccess.getInstance().createResourceController();
+    this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
     this.resource = resource;
     this.currentParent = currentParent;

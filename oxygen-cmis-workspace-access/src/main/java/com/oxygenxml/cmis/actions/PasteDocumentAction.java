@@ -15,7 +15,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -61,7 +61,7 @@ public class PasteDocumentAction extends AbstractAction {
     super(TranslationResourceController.getMessage("PASTE_DOCUMENT_TITLE"));
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
 
-    this.resourceController = CMISAccess.getInstance().createResourceController();
+    this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
     this.resource = resource;
     this.currentParent = currentParent;

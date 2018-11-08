@@ -20,7 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
@@ -40,9 +40,9 @@ public class DocumentImplIT extends ConnectionTestBase {
    */
   @Before
   public void setUp() throws MalformedURLException {
-    CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
+    CmisAccessTestSingleton.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
         new UserCredentials("admin", "admin"));
-    ctrl = CMISAccess.getInstance().createResourceController();
+    ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
     root = ctrl.getRootFolder();
   }
 
@@ -62,7 +62,7 @@ public class DocumentImplIT extends ConnectionTestBase {
     assertTrue(doc.isVersionSeriesCheckedOut());
     assertEquals("admin", doc.getVersionSeriesCheckedOutBy());
 
-    Document PWC = (Document) CMISAccess.getInstance().getSession().getObject(pwc);
+    Document PWC = (Document) CmisAccessTestSingleton.getInstance().getSession().getObject(pwc);
 
     assertNotNull(PWC);
     assertTrue(PWC.isPrivateWorkingCopy());
@@ -77,7 +77,7 @@ public class DocumentImplIT extends ConnectionTestBase {
     Document doc = ctrl.createVersionedDocument(root, "queryTestFile", "some text", "plain/text", "VersionableType",
         VersioningState.MINOR);
     ObjectId pwcId = doc.checkOut();
-    Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
+    Document pwc = (Document) CmisAccessTestSingleton.getInstance().getSession().getObject(pwcId);
     ObjectId idDoc = pwc.checkIn(true, null, doc.getContentStream(), "new version");
 
     assertNotNull(doc);

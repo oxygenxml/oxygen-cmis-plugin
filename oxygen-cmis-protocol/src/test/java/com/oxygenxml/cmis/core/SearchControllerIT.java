@@ -21,13 +21,13 @@ public class SearchControllerIT extends ConnectionTestBase {
 
   @Before
   public void setUp() throws MalformedURLException {
-     CMISAccess.getInstance().connectToRepo(new
+    CmisAccessTestSingleton.getInstance().connectToRepo(new
      URL("http://localhost:8080/B/atom11"), "A1",
      new UserCredentials("admin", "admin"));
 //    CMISAccess.getInstance().connectToRepo(
 //        new URL("http://localhost:8990/alfresco/api/-default-/cmis/versions/1.1/atom"), "-default-",
 //        new UserCredentials("admin", "1234"));
-    ctrl = CMISAccess.getInstance().createResourceController();
+    ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
   }
 
   @Test
@@ -119,7 +119,7 @@ public class SearchControllerIT extends ConnectionTestBase {
     SearchController search = new SearchController(ctrl);
     String searchKeys = "myfile";
     List<IResource> resources = search.queryDoc(searchKeys);
-    String userName = CMISAccess.getInstance().getSession().getSessionParameters().get(SessionParameter.USER);
+    String userName = CmisAccessTestSingleton.getInstance().getSession().getSessionParameters().get(SessionParameter.USER);
 
     for (IResource iResource : resources) {
       if (iResource.getCreatedBy().equals(userName)) {

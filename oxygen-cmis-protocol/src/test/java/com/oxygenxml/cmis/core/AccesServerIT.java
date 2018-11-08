@@ -13,7 +13,7 @@ public class AccesServerIT {
 	@Test
 	public void testGetRepos() throws MalformedURLException {
 
-		List<Repository> repositoryList = CMISAccess.getInstance().connectToServerGetRepositories(
+		List<Repository> repositoryList = CmisAccessTestSingleton.getInstance().connectToServerGetRepositories(
 				new URL("http://localhost:8080/B/atom11"), new UserCredentials("admin", "admin"));
 
 		Assert.assertNotNull("The repository List should not be null.", repositoryList);

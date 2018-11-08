@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
@@ -99,7 +99,7 @@ public class OpenDocumentAction extends AbstractAction {
 
     // Initialize the URL
     final String urlAsTring = CmisURLConnection.generateURLObject(currDoc.getDoc(),
-        CMISAccess.getInstance().createResourceController());
+        CmisAccessSingleton.getInstance().createResourceController());
 
     // Try opening in the Oxygen the URL
     try {
@@ -151,7 +151,7 @@ public class OpenDocumentAction extends AbstractAction {
    * @return
    */
   private boolean canUserOpenDoc(boolean editable, DocumentImpl currDoc, Boolean allowEditOriginal) {
-    ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    ResourceController resourceController = CmisAccessSingleton.getInstance().createResourceController();
     String pwcId;
     if (currDoc.isVersionable()) {
       pwcId = currDoc.getVersionSeriesCheckedOutId();

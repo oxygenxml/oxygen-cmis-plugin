@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.oxygen.cmis.dialogs.DeleteDocDialog;
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
@@ -52,7 +52,7 @@ public class DeleteDocumentAction extends AbstractAction {
     super(TranslationResourceController.getMessage("DELETE_ACTION_TITLE"));
     unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
     
-    this.resourceController = CMISAccess.getInstance().createResourceController();
+    this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
     this.resource = resource;
     this.currentParent = currentParent;

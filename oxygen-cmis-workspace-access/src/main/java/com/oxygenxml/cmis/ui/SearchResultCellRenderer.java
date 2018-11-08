@@ -24,7 +24,7 @@ import javax.swing.ListCellRenderer;
 
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
@@ -133,7 +133,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   public Component getListCellRendererComponent(JList<? extends IResource> list, IResource value, int index,
       boolean isSelected, boolean cellHasFocus) {
     // Initialize the graphics configurations for the cell
-    final ResourceController ctrl = CMISAccess.getInstance().createResourceController();
+    final ResourceController ctrl = CmisAccessSingleton.getInstance().createResourceController();
 
     String pathValue = null;
     String notifyValue = null;

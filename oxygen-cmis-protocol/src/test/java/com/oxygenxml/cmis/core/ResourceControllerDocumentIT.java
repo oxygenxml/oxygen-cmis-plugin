@@ -35,14 +35,14 @@ public class ResourceControllerDocumentIT extends ConnectionTestBase {
 
 	@Before
 	public void setUp() throws Exception {
-		CMISAccess.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
+	  CmisAccessTestSingleton.getInstance().connectToRepo(new URL("http://localhost:8080/B/atom11"), "A1",
 				new UserCredentials("admin", "admin"));
 
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put(PropertyIds.NAME, "testFolder");
 		properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
 
-		ctrl = CMISAccess.getInstance().createResourceController();
+		ctrl = CmisAccessTestSingleton.getInstance().createResourceController();
 
 		// Create a folder to keep the new documents.
 		testFolder = ctrl.createFolder(ctrl.getRootFolder(), "docTestFolder");

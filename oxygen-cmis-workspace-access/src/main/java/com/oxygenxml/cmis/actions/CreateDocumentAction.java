@@ -17,7 +17,8 @@ import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.log4j.Logger;
 
 import com.oxygen.cmis.dialogs.CreateDocDialog;
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
+import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
@@ -78,7 +79,7 @@ public class CreateDocumentAction extends AbstractAction {
     documentAlreadyExistsException = TranslationResourceController.getMessage("DOCUMENT_ALREADY_EXISTS_EXCEPTION");
     unsupportedEncodingException = TranslationResourceController.getMessage("UNSUPPORTED_ENCODING_EXCEPTION");
 
-    this.resourceController = CMISAccess.getInstance().createResourceController();
+    this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;
@@ -196,7 +197,7 @@ public class CreateDocumentAction extends AbstractAction {
       // Checkout the document
 
       DocumentImpl documentCreated = new DocumentImpl(doc);
-      documentCreated.checkOut(documentCreated.getDocType());
+      documentCreated.checkOut(documentCreated.getDocType(), CmisAccessTestSingleton.getInstance());
       docToOpen = documentCreated.getDoc();
 
     } catch (Exception e2) {

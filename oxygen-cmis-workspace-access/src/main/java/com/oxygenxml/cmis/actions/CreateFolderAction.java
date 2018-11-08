@@ -9,7 +9,7 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
@@ -56,7 +56,7 @@ public class CreateFolderAction extends AbstractAction {
     defaultNameFolder = TranslationResourceController.getMessage("DEFAULT_NAME_FOLDER");
     enterNameLabelValue = TranslationResourceController.getMessage("ENTER_A_NAME");
 
-    this.resourceController = CMISAccess.getInstance().createResourceController();
+    this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
     this.currentParent = currentParent;
     this.itemsPresenter = itemsPresenter;

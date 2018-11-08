@@ -20,6 +20,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
@@ -137,7 +138,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
   public void presentResources(URL connectionInfo, String repositoryID) {
     try {
       // Get the instance
-      CMISAccess instance = CMISAccess.getInstance();
+      CMISAccess instance = CmisAccessSingleton.getInstance();
 
       connectToRepository(connectionInfo, repositoryID, instance);
       // Get the rootFolder and set the model
@@ -258,7 +259,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
     installDefaultRenderer();
 
-    ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    ResourceController resourceController = CmisAccessSingleton.getInstance().createResourceController();
     // Present the folder children
     presentResources(new FolderImpl(resourceController.getFolder(folderID)));
   }
@@ -359,7 +360,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       logger.info("Selected resource is null");
     }
 
-    ResourceController resourceController = CMISAccess.getInstance().createResourceController();
+    ResourceController resourceController = CmisAccessSingleton.getInstance().createResourceController();
     logger.info("Controller " + resourceController);
     if (resourceController != null) {
       logger.info("Sess " + resourceController.getSession());

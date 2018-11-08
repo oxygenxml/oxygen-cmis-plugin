@@ -7,6 +7,7 @@ import javax.swing.AbstractAction;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
@@ -79,7 +80,7 @@ public class CheckoutDocumentAction extends AbstractAction {
     try {
 
       // Get the document
-      res = doc.checkOut(doc.getDocType());
+      res = doc.checkOut(doc.getDocType(), CmisAccessTestSingleton.getInstance());
 
       if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {
         ((IFolder) currentParent).addToModel(res);

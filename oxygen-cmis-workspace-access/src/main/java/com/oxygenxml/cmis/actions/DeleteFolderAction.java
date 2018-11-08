@@ -6,7 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
@@ -73,7 +73,7 @@ public class DeleteFolderAction extends AbstractAction {
 
     // Try deleting the folder
     try {
-      CMISAccess.getInstance().createResourceController().deleteFolderTree(folderToDelete.getFolder());
+      CmisAccessSingleton.getInstance().createResourceController().deleteFolderTree(folderToDelete.getFolder());
 
       // Present the newly updated content of the parent folder
       if (currentParent.getId().equals(SEARCH_RESULTS_ID)) {

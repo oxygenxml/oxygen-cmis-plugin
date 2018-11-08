@@ -266,11 +266,11 @@ public class DocumentImpl implements IDocument {
    * opencmis.client.api.Document)
    */
   @Override
-  public Document checkOut(DocumentType docType) {
+  public Document checkOut(DocumentType docType, CMISAccess cmisAccess) {
     if (Boolean.TRUE.equals(docType.isVersionable())) {
 
       ObjectId pwcId = doc.checkOut();
-      Document pwc = (Document) CMISAccess.getInstance().getSession().getObject(pwcId);
+      Document pwc = (Document) cmisAccess.getSession().getObject(pwcId);
       logger.debug("PWC ID=" + pwcId);
       logger.debug("PWC name=" + pwc.getName());
 

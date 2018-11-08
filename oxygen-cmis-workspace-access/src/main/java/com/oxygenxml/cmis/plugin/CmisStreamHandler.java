@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.ui.AuthenticatorUtil;
@@ -31,7 +31,7 @@ public class CmisStreamHandler extends URLStreamHandler {
       URL serverURL = CmisURLConnection.getServerURL(url.toExternalForm(), new HashMap<String, String>());
       UserCredentials uc = AuthenticatorUtil.getUserCredentials(serverURL);
 
-      return new CmisURLConnection(url, CMISAccess.getInstance(), uc);
+      return new CmisURLConnection(url, CmisAccessSingleton.getInstance(), uc);
 
     } catch (UserCanceledException e) {
 

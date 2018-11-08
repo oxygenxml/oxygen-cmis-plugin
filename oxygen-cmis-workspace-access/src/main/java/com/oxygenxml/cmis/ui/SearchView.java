@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -189,7 +189,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
    */
   private List<IResource> searchItems(String searchText, String option, boolean searchFolders) {
     List<IResource> queryResults = new ArrayList<>();
-    SearchController searchCtrl = new SearchController(CMISAccess.getInstance().createResourceController());
+    SearchController searchCtrl = new SearchController(CmisAccessSingleton.getInstance().createResourceController());
 
     // The results from searching the documents
     ArrayList<IResource> documentsResults = (ArrayList<IResource>) new SearchDocument(searchText, searchCtrl, option)
@@ -221,7 +221,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
    */
   @Override
   public String getLineDoc(IResource doc, String matchPattern) {
-    SearchController searchCtrl = new SearchController(CMISAccess.getInstance().clone().createResourceController());
+    SearchController searchCtrl = new SearchController(CmisAccessSingleton.getInstance().clone().createResourceController());
 
     return searchCtrl.queryFindLine(doc, matchPattern);
   }

@@ -16,7 +16,7 @@ import javax.swing.JTextArea;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.CmisAccessSingleton;
 
 /**
  * Component used for show the documents in tabs
@@ -77,7 +77,7 @@ public class TabComponentsView extends JPanel implements TabsPresenter {
      */
     Reader documentContent = null;
     try {
-      documentContent = CMISAccess.getInstance().createResourceController().getDocumentContent(doc.getId());
+      documentContent = CmisAccessSingleton.getInstance().createResourceController().getDocumentContent(doc.getId());
       char[] ch = new char[1024];
       int l = -1;
 
