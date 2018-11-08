@@ -56,7 +56,7 @@ public class CheckinFolderAction extends AbstractAction {
    */
   public CheckinFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
 
-    super(TranslationResourceController.getMessage("CHECK_IN"));
+    super(TranslationResourceController.getMessage("CMIS_CHECK_IN"));
 
     this.resourceController = CMISAccess.getInstance().createResourceController();
 

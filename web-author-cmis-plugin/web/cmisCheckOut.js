@@ -6,7 +6,7 @@ var CmisCheckOutAction = function(editor) {
 CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
 CmisCheckOutAction.prototype.getDisplayName = function() {
-  return tr(msgs.CHECK_OUT_);
+  return tr(msgs.CMIS_CHECK_OUT);
 };
 
 CmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {

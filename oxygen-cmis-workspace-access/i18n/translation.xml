@@ -336,21 +336,21 @@
         <val lang="ja_JP">Cancel check-out</val>
         <val lang="nl_NL">Cancel check-out</val>
     </key>
-    <key value="CHECK_IN">
+    <key value="CMIS_CHECK_IN">
         <comment>Title of the action.</comment>
-        <val lang="en_US">Check-in</val>
-        <val lang="de_DE">Check-in</val>
-        <val lang="fr_FR">Check-in</val>
-        <val lang="ja_JP">Check-in</val>
-        <val lang="nl_NL">Check-in</val>
+        <val lang="en_US">Check in</val>
+        <val lang="de_DE">Check in</val>
+        <val lang="fr_FR">Check in</val>
+        <val lang="ja_JP">Check in</val>
+        <val lang="nl_NL">Check in</val>
     </key>
-    <key value="CHECK_OUT">
+    <key value="CMIS_CHECK_OUT">
         <comment>Title of the action.</comment>
-        <val lang="en_US">Check-out</val>
-        <val lang="de_DE">Check-out</val>
-        <val lang="fr_FR">Check-out</val>
-        <val lang="ja_JP">Check-out</val>
-        <val lang="nl_NL">Check-out</val>
+        <val lang="en_US">Check out</val>
+        <val lang="de_DE">Check out</val>
+        <val lang="fr_FR">Check out</val>
+        <val lang="ja_JP">Check out</val>
+        <val lang="nl_NL">Check out</val>
     </key>
     <key value="COPY_DOCUMENT_ACTION_TITLE">
         <comment>Title of the action.</comment>

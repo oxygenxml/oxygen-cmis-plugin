@@ -6,7 +6,7 @@ var CmisCheckInAction = function(editor) {
 CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 CmisCheckInAction.prototype.constructor = CmisCheckInAction;
 CmisCheckInAction.prototype.getDisplayName = function() {
-    return tr(msgs.CHECK_IN);
+    return tr(msgs.CMIS_CHECK_IN);
 };
 
 CmisCheckInAction.prototype.getSmallIcon = function(devicePixelRation) {
@@ -26,7 +26,7 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
     var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
     this.dialog = workspace.createDialog();
-    this.dialog.setTitle(tr(msgs.CHECK_IN));
+    this.dialog.setTitle(tr(msgs.CMIS_CHECK_IN));
     var dialogElement = this.dialog.getElement();
 
     if (noSupport !== 'true') {

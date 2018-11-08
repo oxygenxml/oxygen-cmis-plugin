@@ -44,7 +44,7 @@ public class CheckoutDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super(TranslationResourceController.getMessage("CHECK_OUT"));
+    super(TranslationResourceController.getMessage("CMIS_CHECK_OUT"));
 
     // Set logger level
 

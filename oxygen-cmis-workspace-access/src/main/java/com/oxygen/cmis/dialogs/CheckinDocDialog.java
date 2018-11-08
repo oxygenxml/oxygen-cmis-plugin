@@ -40,9 +40,9 @@ public class CheckinDocDialog extends OKCancelDialog {
    */
   public CheckinDocDialog(JFrame frame, String docName) {
 
-    super(frame, TranslationResourceController.getMessage("CHECK_IN") +" "+ docName, true);
+    super(frame, TranslationResourceController.getMessage("CMIS_CHECK_IN") +" "+ docName, true);
 
-    String okButtonCheckinDialog = TranslationResourceController.getMessage("CHECK_IN");
+    String okButtonCheckinDialog = TranslationResourceController.getMessage("CMIS_CHECK_IN");
 
     // Get the parent container
     final Container cont = getContentPane();
