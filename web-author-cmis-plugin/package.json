@@ -6,8 +6,8 @@
   "license": "Apache-2.0",
   
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.0",
+    "gulp": "3.9.1",
+    "gulp-concat": "2.6.0",
     "sync-i18n": "0.0.x"
   }
 }
