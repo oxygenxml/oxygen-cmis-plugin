@@ -38,7 +38,7 @@ public interface TranslationTags {
 	/**
 	 * Message if document is checked out by another user.
 	 * 
-	 * en: Checked - out by
+	 * en: Checked out by {0}.
 	 */
 	String CHECKED_OUT_BY = "Checked_out_by";
 

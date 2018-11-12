@@ -6,7 +6,7 @@ var cancelCmisCheckOutAction = function(editor) {
 cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
 cancelCmisCheckOutAction.prototype.getDisplayName = function() {
-  return tr(msgs.CANCEL_CHECK_OUT);
+  return tr(msgs.CMIS_CANCEL_CHECK_OUT);
 };
 
 cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
@@ -24,20 +24,23 @@ cancelCmisCheckOutAction.prototype.isEnabled = function() {
 cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   if (!this.dialog) {
       this.dialog = workspace.createDialog();
-      this.dialog.setTitle(tr(msgs.CANCEL_CHECK_OUT));
-      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.YES_NO);
-      this.dialog.setPreferredSize(250, 180);
+      this.dialog.setTitle(tr(msgs.CMIS_CANCEL_CHECK_OUT));
+      this.dialog.setButtonConfiguration([
+        {key: 'discard', caption: tr(msgs.CMIS_CANCEL_CHECK_OUT)},
+        {key: 'cancel', caption: tr(msgs.CANCEL_)}
+      ]);
 
-      var warningDiv = document.createElement('div');
-      warningDiv.textContent = tr(msgs.CANCEL_WARN_);
-
+      var warningDiv = goog.dom.createDom('div', '',
+        tr(msgs.CMIS_LOSE_CHANGES_),
+        goog.dom.createDom('br'),
+        tr(msgs.CMIS_CANCEL_WARNING_));
       this.dialog.getElement().appendChild(warningDiv);
   }
 
   this.dialog.show();
 
   this.dialog.onSelect(goog.bind(function(key, e) {
-      if (key === 'yes') {
+      if (key === 'discard') {
           this.editor.getActionsManager().invokeOperation(
               'com.oxygenxml.cmis.web.action.CmisCancelCheckOut', {
                   action: 'cancelCmisCheckout'

@@ -83,7 +83,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	public static String listOldVersions(Document document, String url) {
 		
 		if (url.contains(CmisActionsUtills.OLD_VERSION)) {
-			url = url.substring(0, url.indexOf("?"));
+			url = url.substring(0, url.indexOf('?'));
 		}
 
 		document = document.getObjectOfLatestVersion(false);

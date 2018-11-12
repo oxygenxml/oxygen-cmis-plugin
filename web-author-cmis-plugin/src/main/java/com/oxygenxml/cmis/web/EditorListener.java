@@ -12,6 +12,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.text.MessageFormat;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
@@ -159,7 +160,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		if (!credentials.getUsername().equals(versionSeriesCheckedOutBy)) {
 			
 			documentModel.getAuthorAccess().getEditorAccess().setReadOnly(new ReadOnlyReason(
-					rb.getMessage(TranslationTags.CHECKED_OUT_BY) + " " + versionSeriesCheckedOutBy + "."));
+					MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 					.setPseudoClass(Options.TO_BLOCK.getValue());
 			

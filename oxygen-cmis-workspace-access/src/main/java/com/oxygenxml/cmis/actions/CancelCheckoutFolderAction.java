@@ -48,7 +48,7 @@ public class CancelCheckoutFolderAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CancelCheckoutFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super(TranslationResourceController.getMessage("CANCEL_CHECK_OUT"));
+    super(TranslationResourceController.getMessage("CMIS_CANCEL_CHECK_OUT"));
 
     // Set logger level
 
