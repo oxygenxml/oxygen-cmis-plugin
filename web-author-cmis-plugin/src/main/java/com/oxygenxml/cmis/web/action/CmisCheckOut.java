@@ -23,12 +23,8 @@ public class CmisCheckOut extends AuthorOperationWithResult {
 	
 	private static final Logger logger = Logger.getLogger(CmisCheckOut.class.getName());
 
-	private static final String CHECK_OUT = "cmisCheckout";
-	private static final String ACTION = "action";
-	
 	private CmisURLConnection connection;
-	private Document document;
-	
+	private Document document;	
 
 	/**
 	 * Do CMIS Check out operation.
@@ -53,9 +49,9 @@ public class CmisCheckOut extends AuthorOperationWithResult {
 			logger.debug(e.getStackTrace());
 		}
 		
-		String actualAction = (String) args.getArgumentValue(ACTION);
+		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
 		
-		if (!actualAction.isEmpty() && actualAction.equals(CHECK_OUT)) {
+		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CHECK_OUT.getValue())) {
 			
 			try {
 				checkOutDocument(document);

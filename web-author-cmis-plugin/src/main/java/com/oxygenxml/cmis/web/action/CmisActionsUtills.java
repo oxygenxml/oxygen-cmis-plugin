@@ -13,14 +13,13 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 
 public class CmisActionsUtills {
+	
 	private static final Logger logger = Logger.getLogger(CmisActionsUtills.class.getName());
-
-	public static final String OLD_VERSION = "oldversion";
 
 	/**
 	 * Not meant to be instantiated.
 	 */
-	private CmisActionsUtills() { }
+	private CmisActionsUtills() {}
 	
 	/**
 	 * JSON Builder for error details.
@@ -60,12 +59,13 @@ public class CmisActionsUtills {
 		String contextId = url.getUserInfo();
 		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
 		
-		logger.info("get connection!");
+		logger.info("Getting connection!");
 		
 		return new CmisURLConnection(url, new CMISAccess(), credentials);
 	}
 	
 	/**
+	 * Removing Context Id from URL.
 	 * 
 	 * @param url
 	 * @return URL as String without Context Id.
@@ -74,7 +74,7 @@ public class CmisActionsUtills {
    
 		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
 	
-		if (urlWithoutContextId.contains(OLD_VERSION) || urlWithoutContextId.contains("?")) {
+		if (urlWithoutContextId.contains(CmisAction.OLD_VERSION.getValue()) || urlWithoutContextId.contains("?")) {
 			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf('?'));
 		}
 		

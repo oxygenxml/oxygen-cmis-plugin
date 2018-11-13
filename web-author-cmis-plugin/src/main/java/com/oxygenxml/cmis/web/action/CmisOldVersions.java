@@ -20,11 +20,12 @@ import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
 
 @WebappRestSafe
 public class CmisOldVersions extends AuthorOperationWithResult {
-	private static final Logger logger = Logger.getLogger(CmisOldVersions.class.getName());
-
-	private static final String LIST_VERSIONS = "listOldVersions";
-	private static final String ACTION = "action";
 	
+	private static final Logger logger = Logger.getLogger(CmisOldVersions.class.getName());
+	
+	/**
+	 * JSON String result of operation. 
+	 */
 	private String oldVersionJSON;
 	
 	private CmisURLConnection connection;
@@ -53,9 +54,9 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			logger.debug(e.getStackTrace());
 		}
 		
-		String actualAction = (String) args.getArgumentValue(ACTION);
+		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
 		
-		if (!actualAction.isEmpty() && actualAction.equals(LIST_VERSIONS)) {
+		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
 			
 			try {
 				oldVersionJSON = listOldVersions(document, urlWithoutContextId);
@@ -82,12 +83,14 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 */
 	public static String listOldVersions(Document document, String url) {
 		
-		if (url.contains(CmisActionsUtills.OLD_VERSION)) {
+		// Removing query part of URL, in this way
+		// we escape duplicates of queries.
+		if (url.contains(CmisAction.OLD_VERSION.getValue())) {
 			url = url.substring(0, url.indexOf('?'));
 		}
 
 		document = document.getObjectOfLatestVersion(false);
-
+		
 		List<Document> oldVersionsList = document.getAllVersions();
 		oldVersionsList.remove(oldVersionsList.size() - 1);
 
@@ -95,6 +98,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 
 		oldBuilder.append("{");
 		
+		// Removing useless first minor version of document.
 		if(document.isVersionSeriesCheckedOut()) {
 			oldVersionsList.remove(0);
 		}

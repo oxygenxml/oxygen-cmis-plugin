@@ -28,9 +28,6 @@ import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 public class CmisCancelCheckOut extends AuthorOperationWithResult {
 	
 	private static final Logger logger = Logger.getLogger(CmisCancelCheckOut.class.getName());
-
-	private static final String CANCEL_CHECK_OUT  = "cancelCmisCheckout";
-	private static final String ACTION = "action";
 	
 	private CmisURLConnection connection;
 	private Document document;
@@ -55,9 +52,9 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 			logger.debug(e.getStackTrace());
 		}
 		
-		String actualAction = (String) args.getArgumentValue(ACTION);
+		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
 		
-		if (!actualAction.isEmpty() && actualAction.equals(CANCEL_CHECK_OUT)) {
+		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CANCEL_CHECK_OUT.getValue())) {
 			
 			PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider
 					.getPluginWorkspace()).getResourceBundle();

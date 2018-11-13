@@ -26,14 +26,9 @@ import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 @WebappRestSafe
 public class CmisCheckIn extends AuthorOperationWithResult{
+	
 	private static final Logger logger = Logger.getLogger(CmisCheckIn.class.getName());
 
-	private static final String CHECK_IN = "cmisCheckin";
-	private static final String COMMIT_MESSAGE = "commit";
-	private static final String STATE = "state";
-	private static final String MAJOR_STATE = "major";
-	private static final String ACTION = "action";
-	
 	private CmisURLConnection connection;
 	private Document document;
 	
@@ -62,11 +57,11 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 			logger.debug(e.getStackTrace());
 		}
 		
-		String actualAction = (String) args.getArgumentValue(ACTION);
-		String commitMessage = (String) args.getArgumentValue(COMMIT_MESSAGE);
-		String actualState = (String) args.getArgumentValue(STATE);
+		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
+		String commitMessage = (String) args.getArgumentValue(CmisAction.COMMIT_MESSAGE.getValue());
+		String actualState = (String) args.getArgumentValue(CmisAction.STATE.getValue());
 		
-		if (!actualAction.isEmpty() && actualAction.equals(CHECK_IN)) {
+		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CHECK_IN.getValue())) {
 			
 			PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider
 						.getPluginWorkspace()).getResourceBundle();
@@ -110,12 +105,13 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 
 			if (pwc != null) {
 				Document PWC = (Document) session.getObject(pwc);
-
+				
+				// If commit message is null or value is "null" - assign empty string.
 				if (commitMessage == null || commitMessage == "null") {
 					commitMessage = "";
 				}
 
-				if (actualState.equals(MAJOR_STATE)) {
+				if (actualState.equals(CmisAction.MAJOR_STATE.getValue())) {
 					PWC.checkIn(true, null, null, commitMessage);
 				} else {
 					PWC.checkIn(false, null, null, commitMessage);
