@@ -55,10 +55,11 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	@Override
 	public InputStream getInputStream() throws IOException {
 		try {
-			if (this.url.getQuery() != null) {
-				if(this.url.getQuery().contains(CmisAction.OLD_VERSION.getValue())) {
-					return getOlderVersionInputStream();
-				}
+			String cmisQuery = this.url.getQuery();
+			
+			if (cmisQuery != null && cmisQuery.contains(CmisAction.OLD_VERSION.getValue())) {
+				logger.debug("Old ver. InputStream.");
+				return getOlderVersionInputStream();
 			}
 
 			return super.getInputStream();
@@ -122,7 +123,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * 
 	 */
 	@Override
-	public List<FolderEntryDescriptor> listFolder() throws IOException, UserActionRequiredException {
+	public List<FolderEntryDescriptor> listFolder() throws IOException {
 		List<FolderEntryDescriptor> list = null;
 
 		try {
@@ -145,20 +146,17 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 	
 	/**
-	 * Add CmisObject url into FolderEntryDescriptor list
+	 * Get CmisObjects URL and put it in list.
 	 * 
-	 * @param list
-	 * @return 
+	 * @return List<FolderEntryDescriptor> list.
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 * @throws UserActionRequiredException
 	 */
 	@VisibleForTesting
-	public List<FolderEntryDescriptor> getFolderEntriesDescriptiors()
-			throws MalformedURLException, CmisUnauthorizedException, UnsupportedEncodingException {
+	public List<FolderEntryDescriptor> getFolderEntriesDescriptiors() throws MalformedURLException {
 		List<FolderEntryDescriptor> list = new ArrayList<>();
 			
-		
 		FileableCmisObject parent = null;
 
 		// After connection we get ResourceController for generate URL!
@@ -170,10 +168,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 				Boolean isPrivateWorkingCopy = ((Document) obj).isPrivateWorkingCopy();
 
-				if (isPrivateWorkingCopy != null) {
-					if (isPrivateWorkingCopy) {
-						continue;
-					}
+				if (isPrivateWorkingCopy != null && isPrivateWorkingCopy) {
+					continue;
 				}
 			}
 
@@ -187,23 +183,21 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 			list.add(new FolderEntryDescriptor(entryUrl));
 		}
-		folderEntryLogger(list);
 		
 		return list;
 	}
 
 	
 	/**
-	 * Add Repository url into FolderEntryDescriptor list
+	 * Get repositories URLs and put it in list.
 	 * 
-	 * @param list
+	 * @return List<FolderEntryDescriptor> list.
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 * @throws UserActionRequiredException
 	 */
 	@VisibleForTesting
-	public List<FolderEntryDescriptor> getRootFolderEntriesDescriptiors()
-			throws MalformedURLException, UnsupportedEncodingException, CmisUnauthorizedException {
+	public List<FolderEntryDescriptor> getRootFolderEntriesDescriptiors() throws UnsupportedEncodingException {
 		List<FolderEntryDescriptor> list = new ArrayList<>();
 		
 		List<Repository> reposList = connection.getCMISAccess()
@@ -214,24 +208,20 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			String reposUrl = getRepositoryUrl(repos);
 			list.add(new FolderEntryDescriptor(reposUrl));
 		}
-
-		folderEntryLogger(list);
 		
 		return list;
 	}
 
 	
 	/**
-	 * Generates custom URL for Repositories is used when URL path is empty
+	 * Generates custom URL for Repositories.
 	 * 
 	 * @param repo
-	 * @return
+	 * @return Repository String URL.
 	 * @throws UnsupportedEncodingException
 	 * @throws MalformedURLException
 	 */
-	private String getRepositoryUrl(Repository repo)
-			throws UnsupportedEncodingException, MalformedURLException, CmisUnauthorizedException {
-		
+	private String getRepositoryUrl(Repository repo) throws UnsupportedEncodingException {
 		StringBuilder urlb = new StringBuilder();
 
 		// Connecting to Server to get host
@@ -248,18 +238,5 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		urlb.append(repo.getId()).append("/");
 
 		return urlb.toString();
-	}
-
-	
-	/**
-	 * Logger for EntryDescriptions
-	 * 
-	 * @param list
-	 */
-	private void folderEntryLogger(List<FolderEntryDescriptor> list) {
-		int i = 0;
-		for (FolderEntryDescriptor fed : list) {
-			logger.info(++i + ": " + fed.getAbsolutePath());
-		}
 	}
 }

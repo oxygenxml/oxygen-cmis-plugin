@@ -17,12 +17,12 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 	private static final String ENFORCED_URL 	   = "cmis.enforced_url";
 	private static final String ENFORCED_NAME      = "cmis.enforced_name";
 	private static final String ENFORCED_ICON      = "cmis.enforced_icon";
-	private final static String AUTOSAVE_INTERVAL  = "cmis.autosave_interval";
+	private static final String AUTOSAVE_INTERVAL  = "cmis.autosave_interval";
 
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		HashMap<String, String> defaultOptions = new HashMap<String, String>();
+		HashMap<String, String> defaultOptions = new HashMap<>();
 		defaultOptions.put(CHECKOUT_REQUIRED, "off");
 		defaultOptions.put(ENFORCED_URL, "");
 		defaultOptions.put(ENFORCED_NAME, "Local");
