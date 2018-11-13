@@ -7,6 +7,14 @@
         <language description="Japanese" lang="ja_JP"/>
         <language description="Dutch" lang="nl_NL"/>
     </languageList>
+    <key value="SAVE_CHANGES_BEFORE_CHECK_IN_" distribution="webauthor">
+        <comment>Warning shown when attempting to check in a document with unsaved changes.</comment>
+        <val lang="en_US">Changes need to be saved before you can check in the document.</val>
+        <val lang="de_DE">Changes need to be saved before you can check in the document.</val>
+        <val lang="fr_FR">Changes need to be saved before you can check in the document.</val>
+        <val lang="ja_JP">Changes need to be saved before you can check in the document.</val>
+        <val lang="nl_NL">Changes need to be saved before you can check in the document.</val>
+    </key>
     <key value="Autosave_interval" distribution="webauthor">
         <comment>Label for input for adjusting autosave interval.</comment>
         <val lang="en_US">Autosave interval</val>

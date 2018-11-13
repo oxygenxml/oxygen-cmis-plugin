@@ -11,7 +11,7 @@ CmisCheckInAction.prototype.getDisplayName = function() {
 
 CmisCheckInAction.prototype.getSmallIcon = function(devicePixelRation) {
     return 'https://static.thenounproject.com/png/796161-200.png';
-}
+};
 
 CmisCheckInAction.prototype.isEnabled = function() {
     var isEnabled = false;
@@ -19,9 +19,14 @@ CmisCheckInAction.prototype.isEnabled = function() {
         isEnabled = true;
     }
     return isEnabled;
-}
+};
 
 CmisCheckInAction.prototype.actionPerformed = function(callback) {
+    // Do not allow check in while the document is dirty.
+    if (this.editor.isDirty()) {
+      this.editor.problemReporter.showWarning(msgs.SAVE_CHANGES_BEFORE_CHECK_IN_);
+      return;
+    }
     var root = document.querySelector('[data-root="true"]');
     var noSupport = root.getAttribute('data-pseudoclass-nosupportfor');
 
@@ -80,7 +85,7 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
                     }, callback);
 
                 cmisStatus = false;
-            } 
+            }
 
             this.dialog.dispose();
         },
