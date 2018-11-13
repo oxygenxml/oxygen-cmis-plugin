@@ -211,6 +211,7 @@ function addToBuiltinToolbar(editor, checkOutId, checkInId, cancelCheckOutId, li
         }
 
         if (builtinToolbar) {
+            var lastInBuiltinToolbar = builtinToolbar.children.pop();
             builtinToolbar.children.push({
                 displayName: cmisFileRepositoryDescriptor.name,
                 type: 'list',
@@ -229,6 +230,9 @@ function addToBuiltinToolbar(editor, checkOutId, checkInId, cancelCheckOutId, li
                     type: 'action'
                 }]
             });
+            if (lastInBuiltinToolbar) {
+              builtinToolbar.children.push(lastInBuiltinToolbar);
+            }
         }
     });
 }
