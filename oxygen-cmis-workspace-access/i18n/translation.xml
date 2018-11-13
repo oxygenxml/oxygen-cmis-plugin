@@ -328,13 +328,13 @@
     <!-- END DIALOGS -->
 
     <!-- Actions -->
-    <key value="CANCEL_CHECK_OUT">
+    <key value="CMIS_CANCEL_CHECK_OUT">
         <comment>Title of the action.</comment>
-        <val lang="en_US">Cancel check-out</val>
-        <val lang="de_DE">Cancel check-out</val>
-        <val lang="fr_FR">Cancel check-out</val>
-        <val lang="ja_JP">Cancel check-out</val>
-        <val lang="nl_NL">Cancel check-out</val>
+        <val lang="en_US">Cancel check out</val>
+        <val lang="de_DE">Cancel check out</val>
+        <val lang="fr_FR">Cancel check out</val>
+        <val lang="ja_JP">Cancel check out</val>
+        <val lang="nl_NL">Cancel check out</val>
     </key>
     <key value="CMIS_CHECK_IN">
         <comment>Title of the action.</comment>
@@ -385,14 +385,6 @@
         <val lang="fr_FR">myfolder</val>
         <val lang="ja_JP">myfolder</val>
         <val lang="nl_NL">myfolder</val>
-    </key>
-    <key value="ENTER_A_NAME">
-        <comment>Label for the name.</comment>
-        <val lang="en_US">Please enter a name</val>
-        <val lang="de_DE">Please enter a name</val>
-        <val lang="fr_FR">Please enter a name</val>
-        <val lang="ja_JP">Please enter a name</val>
-        <val lang="nl_NL">Please enter a name</val>
     </key>
     <!-- END Folder action -->
 
