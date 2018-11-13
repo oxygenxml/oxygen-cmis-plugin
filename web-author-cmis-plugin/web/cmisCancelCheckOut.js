@@ -14,11 +14,7 @@ cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
 };
 
 cancelCmisCheckOutAction.prototype.isEnabled = function() {
-  var isEnabled = false;
-  if (cmisStatus && cmisStatus !== 'checkedout') {
-      isEnabled = true;
-  }
-  return isEnabled;
+  return cmisStatus && cmisStatus !== 'checkedout';
 };
 
 cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
@@ -39,12 +35,21 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
 
   this.dialog.show();
 
+  // Reload the document after the callback.
+  // 'this' is already bound on the onSelect function.
+  var callbackAndReload = function () {
+    callback();
+    this.editor.getActionsManager().invokeOperation(
+      'ro.sync.ecss.extensions.commons.operations.ReloadContentOperation',
+      {markAsNotModified: true}
+    );
+  };
   this.dialog.onSelect(goog.bind(function(key, e) {
       if (key === 'discard') {
           this.editor.getActionsManager().invokeOperation(
               'com.oxygenxml.cmis.web.action.CmisCancelCheckOut', {
                   action: 'cancelCmisCheckout'
-              }, callback);
+              }, callbackAndReload);
 
           cmisStatus = false;
       }
