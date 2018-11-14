@@ -19,6 +19,9 @@ import ro.sync.ecss.extensions.api.AuthorOperationException;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.AuthorOperationWithResult;
 import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
+import ro.sync.exml.workspace.api.PluginResourceBundle;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 @WebappRestSafe
 public class CmisOldVersions extends AuthorOperationWithResult {
@@ -105,7 +108,8 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			// Check if server support Private Working Copies.
 			// If PWC is supported we add it builder.
 			if (Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0) {
-				label = isCheckedOut ? TranslationTags.CURRENT : label; 
+			  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
+				label = isCheckedOut ? rb.getMessage(TranslationTags.CURRENT) : label; 
 				
 				builder.append("\"").append(label).append("\"");
 				builder.append(":").append("[").append("\"");
