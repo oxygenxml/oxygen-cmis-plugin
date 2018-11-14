@@ -36,14 +36,13 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   this.dialog.show();
 
   // Reload the document after the callback.
-  // 'this' is already bound on the onSelect function.
-  var callbackAndReload = function () {
+  var callbackAndReload = goog.bind(function () {
     callback();
     this.editor.getActionsManager().invokeOperation(
       'ro.sync.ecss.extensions.commons.operations.ReloadContentOperation',
       {markAsNotModified: true}
     );
-  };
+  }, this);
   this.dialog.onSelect(goog.bind(function(key, e) {
       if (key === 'discard') {
           this.editor.getActionsManager().invokeOperation(
