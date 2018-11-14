@@ -10,6 +10,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.TranslationTags;
+
 import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
@@ -83,63 +85,59 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 */
 	public static String listOldVersions(Document document, String url) {
 		
+		StringBuilder builder = new StringBuilder();
 		// Removing query part of URL, in this way
 		// we escape duplicates of queries.
 		if (url.contains(CmisAction.OLD_VERSION.getValue())) {
 			url = url.substring(0, url.indexOf('?'));
 		}
 
-		document = document.getObjectOfLatestVersion(false);
+		document = document.getObjectOfLatestVersion(false);		
+		List<Document> allVersions = document.getAllVersions();
 		
-		List<Document> oldVersionsList = document.getAllVersions();
-		//oldVersionsList.remove(oldVersionsList.size() - 1);
+		boolean isCheckedOut = document.isVersionSeriesCheckedOut();
 
-		StringBuilder oldBuilder = new StringBuilder();
-
-		oldBuilder.append("{");
+		builder.append("{");
 		
-		// Removing useless first minor version of document.
-		if(document.isVersionSeriesCheckedOut()) {
-			oldVersionsList.remove(0);
-		}
-
-		for (Document oldDoc : oldVersionsList) {
-			if (oldDoc.getVersionLabel().equals("pwc")) {
-				continue;
+		for (int i = 0; i < allVersions.size(); i++) {
+			Document version = allVersions.get(i);
+			String label = "v" + version.getVersionLabel();
+			// Check if server support Private Working Copies.
+			// If PWC is supported we add it builder.
+			if (Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0) {
+				label = isCheckedOut ? TranslationTags.CURRENT : label; 
+				
+				builder.append("\"").append(label).append("\"");
+				builder.append(":").append("[").append("\"");
+				builder.append("?url=").append(URLUtil.encodeURIComponent(url)).append("\"");
+			} else {
+				builder.append("\"").append(label).append("\"");
+				builder.append(":").append("[");
+				builder.append("\"").append("?url=").append(URLUtil.encodeURIComponent(url));
+				builder.append("?oldversion=").append(version.getId()).append("\"");
 			}
 			
-			if(oldDoc.isLatestVersion()){
-				oldBuilder.append("\"").append("v" + oldDoc.getVersionLabel()).append("\"");
-				oldBuilder.append(":").append("[").append("\"");
-				oldBuilder.append("?url=").append(URLUtil.encodeURIComponent(url)).append("\"");
-			} else {
-				oldBuilder.append("\"").append("v" + oldDoc.getVersionLabel()).append("\"");
-				oldBuilder.append(":").append("[");
-				oldBuilder.append("\"").append("?url=").append(URLUtil.encodeURIComponent(url));
-				oldBuilder.append("?oldversion=").append(oldDoc.getId()).append("\"");
-			}
-			
-			String checkInComment = null;
+			String comment = null;
 
-			if (oldDoc.getCheckinComment() == null) {
-				checkInComment = "";
+			if (version.getCheckinComment() == null) {
+				comment = "";
 			} else {
-				checkInComment = oldDoc.getCheckinComment();
-				checkInComment = checkInComment.replaceAll("\\n", "<br/>");
+				comment = version.getCheckinComment();
+				comment = comment.replaceAll("\\n", "<br/>");
 			}
 
-			oldBuilder.append(",").append("\"").append(checkInComment).append("\"");
-			oldBuilder.append(",").append("\"").append(oldDoc.getLastModifiedBy());
-			oldBuilder.append("\"").append("]");
-			oldBuilder.append(",");
+			builder.append(",").append("\"").append(comment).append("\"");
+			builder.append(",").append("\"").append(version.getLastModifiedBy());
+			builder.append("\"").append("]");
+			builder.append(",");
 		}
 
-		oldBuilder.replace(oldBuilder.lastIndexOf(","), oldBuilder.lastIndexOf(",") + 1, "");
-		oldBuilder.append("}");
+		builder.replace(builder.lastIndexOf(","), builder.lastIndexOf(",") + 1, "");
+		builder.append("}");
 
-		logger.info(oldBuilder.toString());
+		logger.info(builder.toString());
 		
-		return oldBuilder.toString();
+		return builder.toString();
 	}
 	
 }

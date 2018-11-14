@@ -71,6 +71,14 @@
         <val lang="ja_JP">例</val>
         <val lang="nl_NL">Voorbeeld</val>
     </key>
+    <key value="Current">
+        <comment>Latest version of document label.</comment>
+        <val lang="en_US">Current</val>
+        <val lang="de_DE">Current</val>
+        <val lang="fr_FR">Current</val>
+        <val lang="ja_JP">Current</val>
+        <val lang="nl_NL">Current</val>
+    </key>
 	<key value="Old_ver_warning" distribution="webauthor">
 		<comment>Message if opened document is an old version of actual document.</comment>
 		<val lang="en_US">Older version of document</val>

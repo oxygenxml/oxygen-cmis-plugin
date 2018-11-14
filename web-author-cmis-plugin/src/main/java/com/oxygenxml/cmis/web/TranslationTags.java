@@ -70,4 +70,11 @@ public interface TranslationTags {
    * en: Example
    */
   String EXAMPLE = "Example";
+	
+	/**
+	 * Latest version of document label.
+	 * 
+	 * en: Current
+	 */
+	String CURRENT = "Current";
 }

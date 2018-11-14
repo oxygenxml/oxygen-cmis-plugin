@@ -62,6 +62,16 @@ public class ListOldVersionsActionIT {
 			assertTrue(test, test.startsWith(
 			    "{\"v5.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
 			
+			CmisCheckOut.checkOutDocument(document);
+			
+			document = document.getObjectOfLatestVersion(false);
+			test = CmisOldVersions.listOldVersions(document, url);
+			
+			System.out.println(test);
+			
+			assertTrue(test, test.startsWith(
+				    "{\"current\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
+			
 			String firstVerID = getFirstVersionID(document);
 			
 			assertTrue(test, test.endsWith(
