@@ -292,6 +292,7 @@ public class CmisURLConnection extends URLConnection {
 
           if (newDocument) {
             pwcDoc.checkIn(true, null, null, " ");
+            deleteUselessVersion(document);
           } else if (wasChecked) {
             pwcDoc.checkIn(false, null, null, " ");
           }
@@ -300,6 +301,18 @@ public class CmisURLConnection extends URLConnection {
     };
   }
 
+  /**
+   * Removing first useless version of newly created document.
+   * 
+   * @param document
+   */
+  private void deleteUselessVersion(Document document) {
+	 document = document.getObjectOfLatestVersion(false);
+	 List<Document> allVersions = document.getAllVersions();
+	 Document usellesVersion = allVersions.get(allVersions.size() - 1);
+	 resourceController.deleteOneVersionDocument(usellesVersion);
+  }
+  
   /**
    * Create new document as versionable and generate URL if doesn't exist.
    * 

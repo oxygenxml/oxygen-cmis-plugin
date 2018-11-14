@@ -92,7 +92,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		document = document.getObjectOfLatestVersion(false);
 		
 		List<Document> oldVersionsList = document.getAllVersions();
-		oldVersionsList.remove(oldVersionsList.size() - 1);
+		//oldVersionsList.remove(oldVersionsList.size() - 1);
 
 		StringBuilder oldBuilder = new StringBuilder();
 
