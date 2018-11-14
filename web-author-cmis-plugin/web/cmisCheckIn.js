@@ -24,7 +24,7 @@ CmisCheckInAction.prototype.isEnabled = function() {
 CmisCheckInAction.prototype.actionPerformed = function(callback) {
     // Do not allow check in while the document is dirty.
     if (this.editor.isDirty()) {
-      this.editor.problemReporter.showWarning(msgs.SAVE_CHANGES_BEFORE_CHECK_IN_);
+      this.editor.problemReporter.showWarning(tr(msgs.SAVE_CHANGES_BEFORE_CHECK_IN_));
       return;
     }
     var root = document.querySelector('[data-root="true"]');
