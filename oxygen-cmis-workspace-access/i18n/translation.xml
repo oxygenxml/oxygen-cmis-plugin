@@ -115,14 +115,6 @@
     <!-- END SearchResultCellRenderer -->
 
     <!-- Search View -->
-    <key value="OPERATION_IS_NOT_SUPPORTED">
-        <comment>Versioning state minor.</comment>
-        <val lang="en_US">Operation is not supported</val>
-        <val lang="de_DE">Operation is not supported</val>
-        <val lang="fr_FR">Operation is not supported</val>
-        <val lang="ja_JP">Operation is not supported</val>
-        <val lang="nl_NL">Operation is not supported</val>
-    </key>
     <key value="SEARCH_LABEL">
         <comment>Label for the search component.</comment>
         <val lang="en_US">Search</val>
@@ -318,11 +310,11 @@
     </key>
     <key value="LOGIN_DIALOG_TITLE">
         <comment>Value for the dialog title.</comment>
-        <val lang="en_US">Login</val>
-        <val lang="de_DE">Login</val>
-        <val lang="fr_FR">Login</val>
-        <val lang="ja_JP">Login</val>
-        <val lang="nl_NL">Login</val>
+        <val lang="en_US">Log in</val>
+        <val lang="de_DE">Anmeldung</val>
+        <val lang="fr_FR">Connexion</val>
+        <val lang="ja_JP">ログイン</val>
+        <val lang="nl_NL">Inloggen</val>
     </key>
     <!-- END Login Dialog -->
     <!-- END DIALOGS -->

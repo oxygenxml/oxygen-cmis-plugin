@@ -57,11 +57,11 @@
 	</key>
     <key value="Cmis_server_note" distribution="webauthor">
         <comment>Warning for the 'Enforce server' setting.</comment>
-        <val lang="en_US">The users will only be able to access files from this Server URL.</val>
-		<val lang="de_DE">The users will only be able to access files from this Server URL.</val>
-        <val lang="fr_FR">The users will only be able to access files from this Server URL.</val>
-        <val lang="ja_JP">The users will only be able to access files from this Server URL.</val>
-        <val lang="nl_NL">The users will only be able to access files from this Server URL.</val>
+        <val lang="en_US">The users will only be able to access files from this server URL.</val>
+		<val lang="de_DE">The users will only be able to access files from this server URL.</val>
+        <val lang="fr_FR">The users will only be able to access files from this server URL.</val>
+        <val lang="ja_JP">The users will only be able to access files from this server URL.</val>
+        <val lang="nl_NL">The users will only be able to access files from this server URL.</val>
     </key>
     <key value="Example">
         <comment>Label from the svn merge wizard dialog</comment>
