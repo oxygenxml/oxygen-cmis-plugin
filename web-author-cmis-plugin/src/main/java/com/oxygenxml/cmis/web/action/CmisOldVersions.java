@@ -64,7 +64,10 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
 			
 			try {
-				oldVersionJSON = listOldVersions(document, urlWithoutContextId);
+				PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
+				String currentVersion = rb.getMessage(TranslationTags.CURRENT);
+				
+				oldVersionJSON = listOldVersions(document, urlWithoutContextId, currentVersion);
 				
 				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
 					return oldVersionJSON;
@@ -84,9 +87,10 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * 
 	 * @param document
 	 * @param url
+	 * @param currentVersion 
 	 * @return
 	 */
-	public static String listOldVersions(Document document, String url) {
+	public static String listOldVersions(Document document, String url, String currentVersion) {
 		
 		StringBuilder builder = new StringBuilder();
 		// Removing query part of URL, in this way
@@ -108,8 +112,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			// Check if server support Private Working Copies.
 			// If PWC is supported we add it builder.
 			if (Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0) {
-			  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
-				label = isCheckedOut ? rb.getMessage(TranslationTags.CURRENT) : label; 
+				label = isCheckedOut ? currentVersion : label; 
 				
 				builder.append("\"").append(label).append("\"");
 				builder.append(":").append("[").append("\"");

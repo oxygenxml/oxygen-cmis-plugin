@@ -10,7 +10,6 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
@@ -57,7 +56,8 @@ public class ListOldVersionsActionIT {
 
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
 			
-			String test = CmisOldVersions.listOldVersions(document, url);
+
+			String test = CmisOldVersions.listOldVersions(document, url, "current");
 
 			assertTrue(test, test.startsWith(
 			    "{\"v5.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
@@ -65,7 +65,7 @@ public class ListOldVersionsActionIT {
 			CmisCheckOut.checkOutDocument(document);
 			
 			document = document.getObjectOfLatestVersion(false);
-			test = CmisOldVersions.listOldVersions(document, url);
+			test = CmisOldVersions.listOldVersions(document, url, "current");
 			
 			System.out.println(test);
 			
