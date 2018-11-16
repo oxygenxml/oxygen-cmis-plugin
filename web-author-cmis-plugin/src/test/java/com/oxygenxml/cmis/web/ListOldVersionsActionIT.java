@@ -24,6 +24,8 @@ public class ListOldVersionsActionIT {
   public CmisAccessProvider cmisAccessProvider = new CmisAccessProvider();
 
 	private ResourceController ctrl;
+	
+	private static final String CURRENT_VERSION_LABEL = "current";
 	private final static String MINOR_VERSION_TYPE = "minor";
 	private final static String MAJOR_VERSION_TYPE = "major";
 
@@ -41,7 +43,7 @@ public class ListOldVersionsActionIT {
 			document = createEmptyVersionedDocument("oneVersion");
 			
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-			String test = CmisOldVersions.listOldVersions(document, url, "current");
+			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
 			
 			assertTrue(test, test
 				.equals("{\"v0.1\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
@@ -55,21 +57,18 @@ public class ListOldVersionsActionIT {
 	}
 	
 	
+	
+	
 	@Test
 	public void testNoCheckOutMajorDocument() throws Exception {
 		Document document = null;
 		
 		try {
 			document = createEmptyVersionedDocument("checkedOutMajor");
-			
-			document = document.getObjectOfLatestVersion(false);
-			CmisCheckOut.checkOutDocument(document);
-			
-			document = document.getObjectOfLatestVersion(false);
-			CmisCheckIn.checkInDocument(document, ctrl.getSession(), "major", "some commit");
+			createNewVersion(document, "major", "some commit");
 
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-			String test = CmisOldVersions.listOldVersions(document, url, "current");
+			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
 			
 			assertTrue(test, test
 				.startsWith("{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
@@ -81,7 +80,6 @@ public class ListOldVersionsActionIT {
 			}
 		}
 	}
-	
 	
   @Test
 	public void testNoCheckOutMajorDocumentWithVersions() throws Exception {
@@ -95,7 +93,7 @@ public class ListOldVersionsActionIT {
 			}
 			
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-			String test = CmisOldVersions.listOldVersions(document, url, "current");
+			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
 			
 			assertTrue(test, test
 				.startsWith("{\"v3.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
@@ -147,7 +145,7 @@ public class ListOldVersionsActionIT {
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
 			
 
-			String test = CmisOldVersions.listOldVersions(document, url, "current");
+			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
 
 			assertTrue(test, test.startsWith(
 			    "{\"v5.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
@@ -155,7 +153,7 @@ public class ListOldVersionsActionIT {
 			CmisCheckOut.checkOutDocument(document);
 			
 			document = document.getObjectOfLatestVersion(false);
-			test = CmisOldVersions.listOldVersions(document, url, "current");
+			test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
 			
 			System.out.println(test);
 			
@@ -174,6 +172,69 @@ public class ListOldVersionsActionIT {
 		  }
 		}
 	}
+	
+	/**
+   * Test that checking out a minor version will create a "current" version.
+   * @throws Exception
+   */
+  @Test
+  public void testLatestVersionCheckOutOnMinorVersion() throws Exception {
+    Document document = null;
+    
+    try {
+      document = createEmptyVersionedDocument("checkedOutMajor");
+      createNewVersion(document, "minor", "some commit");
+
+      String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+      String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+      
+      assertTrue(test, test
+        .startsWith("{\"v0.2\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
+            + "Fatom11%2FA1%2FcheckedOutMajor\",\"some commit\",\"admin\"]"));
+      
+      CmisCheckOut.checkOutDocument(document);
+      document = document.getObjectOfLatestVersion(false);
+      test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+      assertTrue(test, test.startsWith(
+          "{\"current\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
+    } finally {
+      if (document != null) {
+        ctrl.deleteAllVersionsDocument(document);
+      }
+    }
+  }
+  
+  
+  /**
+   * Test that checking out a major version will create a "current" version.
+   * @throws Exception
+   */
+  @Test
+  public void testLatestVersionCheckOutOnMajorVersion() throws Exception {
+    Document document = null;
+    
+    try {
+      document = createEmptyVersionedDocument("checkedOutMajor");
+      createNewVersion(document, "major", "some commit");
+
+      String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+      String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+      
+      assertTrue(test, test
+        .startsWith("{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
+            + "Fatom11%2FA1%2FcheckedOutMajor\",\"some commit\",\"admin\"]"));
+      
+      CmisCheckOut.checkOutDocument(document);
+      document = document.getObjectOfLatestVersion(false);
+      test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+      assertTrue(test, test.startsWith(
+          "{\"current\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
+    } finally {
+      if (document != null) {
+        ctrl.deleteAllVersionsDocument(document);
+      }
+    }
+  }
 	
 	/**
 	 * Create a new empty versioned file.
