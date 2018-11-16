@@ -1,13 +1,20 @@
 package com.oxygenxml.cmis.web.action;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.TranslationTags;
@@ -28,12 +35,6 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	
 	private static final Logger logger = Logger.getLogger(CmisOldVersions.class.getName());
 	
-	/**
-	 * JSON String result of operation. 
-	 */
-	private String oldVersionJSON;
-	
-	private CmisURLConnection connection;
 	private Document document;
 	
 	/**
@@ -41,8 +42,14 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 */
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
-			throws IllegalArgumentException, AuthorOperationException {
+			throws AuthorOperationException {
 
+	  /**
+	   * JSON String result of operation. 
+	   */
+	  String oldVersionJSON;
+	  CmisURLConnection connection;
+	  
 		AuthorAccess authorAccess = model.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 
@@ -89,10 +96,12 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * @param url
 	 * @param currentVersion 
 	 * @return
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonGenerationException 
 	 */
-	public static String listOldVersions(Document document, String url, String currentVersion) {
+	public static String listOldVersions(Document document, String url, String currentVersion) throws IOException {
 		
-		StringBuilder builder = new StringBuilder();
 		// Removing query part of URL, in this way
 		// we escape duplicates of queries.
 		if (url.contains(CmisAction.OLD_VERSION.getValue())) {
@@ -101,50 +110,37 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 
 		document = document.getObjectOfLatestVersion(false);		
 		List<Document> allVersions = document.getAllVersions();
+		HashMap<String, List<String>> versionMap = new LinkedHashMap<>();
 		
 		boolean isCheckedOut = document.isVersionSeriesCheckedOut();
-
-		builder.append("{");
-		
 		for (int i = 0; i < allVersions.size(); i++) {
 			Document version = allVersions.get(i);
-			String label = "v" + version.getVersionLabel();
 			// Check if server support Private Working Copies.
-			// If PWC is supported we add it builder.
-			if (Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0) {
-				label = isCheckedOut ? currentVersion : label; 
-				
-				builder.append("\"").append(label).append("\"");
-				builder.append(":").append("[").append("\"");
-				builder.append("?url=").append(URLUtil.encodeURIComponent(url)).append("\"");
-			} else {
-				builder.append("\"").append(label).append("\"");
-				builder.append(":").append("[");
-				builder.append("\"").append("?url=").append(URLUtil.encodeURIComponent(url));
-				builder.append("?oldversion=").append(version.getId()).append("\"");
-			}
+			boolean isCurrentVersion = Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0; 
 			
-			String comment = null;
-
-			if (version.getCheckinComment() == null) {
-				comment = "";
-			} else {
-				comment = version.getCheckinComment();
-				comment = comment.replaceAll("\\n", "<br/>");
+			String label = isCurrentVersion && isCheckedOut ? currentVersion : "v" + version.getVersionLabel();
+			String urlParam = "?url=" + URLUtil.encodeURIComponent(url);
+			if (!isCurrentVersion) {
+			  urlParam += "?oldversion=" + version.getId();
 			}
-
-			builder.append(",").append("\"").append(comment).append("\"");
-			builder.append(",").append("\"").append(version.getLastModifiedBy());
-			builder.append("\"").append("]");
-			builder.append(",");
+			String commitMessage = version.getCheckinComment() != null ? version.getCheckinComment() : "";
+			String authorName = version.getLastModifiedBy();
+			
+			versionMap.put(label, createProps(urlParam, commitMessage, authorName));
 		}
-
-		builder.replace(builder.lastIndexOf(","), builder.lastIndexOf(",") + 1, "");
-		builder.append("}");
-
-		logger.info(builder.toString());
-		
-		return builder.toString();
+		return new ObjectMapper().writeValueAsString(versionMap);
+	}
+	
+	/**
+	 * Create the properties for a version, currently a list of strings.
+	 * 
+	 * @param urlParam
+	 * @param commitMessage
+	 * @param authorName
+	 * @return
+	 */
+	private static List<String> createProps(String urlParam, String commitMessage, String authorName) {
+    return Arrays.asList(urlParam, commitMessage, authorName);	  
 	}
 	
 }
