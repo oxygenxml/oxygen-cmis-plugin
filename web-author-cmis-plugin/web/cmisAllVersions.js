@@ -44,6 +44,9 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
           action: 'listOldVersions'
       },
       function(err, data) {
+          // remove selection from document.
+          document.activeElement.blur();
+
           if (allVerDialog) {
               allVerDialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
 
