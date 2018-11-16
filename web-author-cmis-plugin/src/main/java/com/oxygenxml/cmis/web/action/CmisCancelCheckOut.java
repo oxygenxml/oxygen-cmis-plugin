@@ -30,13 +30,14 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 	
 	private static final Logger logger = Logger.getLogger(CmisCancelCheckOut.class.getName());
 	
-	private CmisURLConnection connection;
-	private Document document;
 	
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
-			throws IllegalArgumentException, AuthorOperationException {
+			throws AuthorOperationException {
 
+	  Document document;
+	  CmisURLConnection connection;
+	  
 		AuthorAccess authorAccess = model.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 
@@ -51,6 +52,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
 			logger.debug(e.getStackTrace());
+			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
 		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
@@ -81,10 +83,9 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 	/**
 	 * Reload the document after cancel check out to discard changes.
 	 * @param authorAccess
-	 * @throws IllegalArgumentException
 	 * @throws AuthorOperationException
 	 */
-	private void reloadDocument(AuthorAccess authorAccess) throws IllegalArgumentException, AuthorOperationException {
+	private void reloadDocument(AuthorAccess authorAccess) throws AuthorOperationException {
 	  ReloadContentOperation reloadAction = new ReloadContentOperation();
     class ActionIdArgumentsMap implements ArgumentsMap {
       @Override
@@ -97,18 +98,18 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
   }
 
 
-  public static void cancelCheckOutDocument(Document document, Session session) throws Exception {
+  public static void cancelCheckOutDocument(Document document, Session session) {
 
 		if (!document.isVersionSeriesCheckedOut()) {
 			logger.info("Document isn't checked-out!");
 			
 		} else {
 			document = document.getObjectOfLatestVersion(false);
-			String pwc = document.getVersionSeriesCheckedOutId();
+			String pwcId = document.getVersionSeriesCheckedOutId();
 
-			if (pwc != null) {
-				Document PWC = (Document) session.getObject(pwc);
-				PWC.cancelCheckOut();
+			if (pwcId != null) {
+				Document pwc = (Document) session.getObject(pwcId);
+				pwc.cancelCheckOut();
 			}
 
 			document.refresh();
