@@ -20,6 +20,7 @@ import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.AuthorOperationWithResult;
 import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
+import ro.sync.ecss.extensions.commons.operations.ReloadContentOperation;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
@@ -62,6 +63,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 			try {
 				Session session = connection.getCMISAccess().getSession();
 				cancelCheckOutDocument(document, session);
+				reloadDocument(authorAccess);
 				
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess()
@@ -76,8 +78,26 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 		return CmisActionsUtills.errorInfoBuilder("no_error", null);
 	}
 	
-	
-	public static void cancelCheckOutDocument(Document document, Session session) throws Exception {
+	/**
+	 * Reload the document after cancel check out to discard changes.
+	 * @param authorAccess
+	 * @throws IllegalArgumentException
+	 * @throws AuthorOperationException
+	 */
+	private void reloadDocument(AuthorAccess authorAccess) throws IllegalArgumentException, AuthorOperationException {
+	  ReloadContentOperation reloadAction = new ReloadContentOperation();
+    class ActionIdArgumentsMap implements ArgumentsMap {
+      @Override
+      public Object getArgumentValue(String argumentName) {
+        return argumentName.equals("markAsNotModified") ? true : "";
+      }
+    }
+    ArgumentsMap argMap = new ActionIdArgumentsMap();
+    reloadAction.doOperation(authorAccess, argMap);
+  }
+
+
+  public static void cancelCheckOutDocument(Document document, Session session) throws Exception {
 
 		if (!document.isVersionSeriesCheckedOut()) {
 			logger.info("Document isn't checked-out!");

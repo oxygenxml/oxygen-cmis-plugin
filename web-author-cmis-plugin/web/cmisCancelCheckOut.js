@@ -34,23 +34,16 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   }
 
   this.dialog.show();
-
-  // Reload the document after the callback.
-  var callbackAndReload = goog.bind(function () {
-    callback();
-    this.editor.getActionsManager().invokeOperation(
-      'ro.sync.ecss.extensions.commons.operations.ReloadContentOperation',
-      {markAsNotModified: true}
-    );
-  }, this);
   this.dialog.onSelect(goog.bind(function(key, e) {
       if (key === 'discard') {
           this.editor.getActionsManager().invokeOperation(
               'com.oxygenxml.cmis.web.action.CmisCancelCheckOut', {
                   action: 'cancelCmisCheckout'
-              }, callbackAndReload);
+              }, callback);
 
           cmisStatus = false;
+      } else {
+        goog.isFunction(callback) && callback();
       }
   }, this));
 };
