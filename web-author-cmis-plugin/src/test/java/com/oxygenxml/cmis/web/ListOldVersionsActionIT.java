@@ -10,10 +10,10 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.web.action.CmisCancelCheckOut;
 import com.oxygenxml.cmis.web.action.CmisCheckIn;
 import com.oxygenxml.cmis.web.action.CmisCheckOut;
 import com.oxygenxml.cmis.web.action.CmisOldVersions;
@@ -24,6 +24,8 @@ public class ListOldVersionsActionIT {
   public CmisAccessProvider cmisAccessProvider = new CmisAccessProvider();
 
 	private ResourceController ctrl;
+	private final static String MINOR_VERSION_TYPE = "minor";
+	private final static String MAJOR_VERSION_TYPE = "major";
 
 	@Before
 	public void setUp() throws Exception {
@@ -31,18 +33,12 @@ public class ListOldVersionsActionIT {
 		ctrl = cmisAccess.createResourceController();
 	}
 	
-	
 	@Test
-	public void testOneVersionOfDocument() throws Exception {
+	public void testNoCheckOutOneVersionOfDocument() throws Exception {
 		Document document = null;
 		
 		try {
-			document = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "oneVersion", 
-					ResourceController.VERSIONABLE_OBJ_TYPE, VersioningState.MINOR);
-			
-			if (document.isVersionSeriesCheckedOut()) {
-				CmisCancelCheckOut.cancelCheckOutDocument(document, ctrl.getSession());
-			}
+			document = createEmptyVersionedDocument("oneVersion");
 			
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
 			String test = CmisOldVersions.listOldVersions(document, url, "current");
@@ -64,12 +60,7 @@ public class ListOldVersionsActionIT {
 		Document document = null;
 		
 		try {
-			document = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "checkedOutMajor", 
-					ResourceController.VERSIONABLE_OBJ_TYPE, VersioningState.MINOR);
-			
-			if (document.isVersionSeriesCheckedOut()) {
-				CmisCancelCheckOut.cancelCheckOutDocument(document, ctrl.getSession());
-			}
+			document = createEmptyVersionedDocument("checkedOutMajor");
 			
 			document = document.getObjectOfLatestVersion(false);
 			CmisCheckOut.checkOutDocument(document);
@@ -92,32 +83,15 @@ public class ListOldVersionsActionIT {
 	}
 	
 	
-	@Test
+  @Test
 	public void testNoCheckOutMajorDocumentWithVersions() throws Exception {
 		Document document = null;
 		
 		try {
-			document = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "checkedOutMajorWithVersions", 
-					ResourceController.VERSIONABLE_OBJ_TYPE, VersioningState.MINOR);
+			document = createEmptyVersionedDocument("checkedOutMajorWithVersions");
 			
-			if (document.isVersionSeriesCheckedOut()) {
-				CmisCancelCheckOut.cancelCheckOutDocument(document, ctrl.getSession());
-			}
-			
-			int odd = 0;
 			for (int i = 0; i < 5; i++) {
-				document = document.getObjectOfLatestVersion(false);
-				CmisCheckOut.checkOutDocument(document);
-				
-				document = document.getObjectOfLatestVersion(false);
-				
-				if (odd % 2 == 0) {
-					CmisCheckIn.checkInDocument(document, ctrl.getSession(), "major", "some commit");
-				} else {
-					CmisCheckIn.checkInDocument(document, ctrl.getSession(), "minor", "some commit");
-				}
-				
-				odd++;
+			  createNewVersion(document, (i % 2 == 0) ? MAJOR_VERSION_TYPE : MINOR_VERSION_TYPE, "some commit");
 			}
 			
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
@@ -158,18 +132,13 @@ public class ListOldVersionsActionIT {
 	}
 	
 	@Test
-	public void testListOldVersions() throws Exception {
+	public void testListOldVersionsLatestIsMajor() throws Exception {
 	  Document document = null;
 		try {
-			document = ctrl.createEmptyVersionedDocument(ctrl.getRootFolder(), "check", 
-					ResourceController.VERSIONABLE_OBJ_TYPE, VersioningState.MINOR);
+			document = createEmptyVersionedDocument("check");
 			
 			for (int i = 0; i < 5; i++) {
-				document = document.getObjectOfLatestVersion(false);
-				CmisCheckOut.checkOutDocument(document);
-				
-				document = document.getObjectOfLatestVersion(false);
-				CmisCheckIn.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "major", "");
+			  createNewVersion(document, MAJOR_VERSION_TYPE, "major");
 			}
 			
 			document = document.getObjectOfLatestVersion(false);
@@ -205,4 +174,36 @@ public class ListOldVersionsActionIT {
 		  }
 		}
 	}
+	
+	/**
+	 * Create a new empty versioned file.
+	 * @param fileName
+	 * @return
+	 */
+	private Document createEmptyVersionedDocument(String fileName) {
+    Document document = ctrl.createEmptyVersionedDocument(
+      ctrl.getRootFolder(), 
+      fileName, 
+      ResourceController.VERSIONABLE_OBJ_TYPE, 
+      VersioningState.MINOR
+    );
+    // Should not be checked-out right after creation.
+    assertFalse(document.isVersionSeriesCheckedOut());
+    return document;
+  }
+	
+	/**
+	 * Creates a new version for the document.
+	 * @param document
+	 * @param versionType
+	 * @param commitMessage
+	 * @throws Exception
+	 */
+	private void createNewVersion(Document document, String versionType, String commitMessage) throws Exception {
+    document = document.getObjectOfLatestVersion(false);
+    CmisCheckOut.checkOutDocument(document);
+    
+    document = document.getObjectOfLatestVersion(false); // is this needed?
+    CmisCheckIn.checkInDocument(document, ctrl.getSession(), versionType, commitMessage);
+  }
 }
