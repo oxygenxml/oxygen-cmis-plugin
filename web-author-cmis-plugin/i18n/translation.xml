@@ -105,35 +105,35 @@
 	</key>
 	<key value="ALL_VERSIONS_" distribution="webauthor">
 		<comment>Title for "All versions" button.</comment>
-		<val lang="en_US">All versions</val>
-		<val lang="de_DE">All versions</val>
-        <val lang="fr_FR">All versions</val>
-        <val lang="ja_JP">All versions</val>
-        <val lang="nl_NL">All versions</val>
+		<val lang="en_US">Show Version History</val>
+		<val lang="de_DE">Show Version History</val>
+        <val lang="fr_FR">Show Version History</val>
+        <val lang="ja_JP">Show Version History</val>
+        <val lang="nl_NL">Show Version History</val>
 	</key>
 	<key value="CMIS_CHECK_OUT" distribution="webauthor">
 		<comment>Title for "Check out" button.</comment>
-		<val lang="en_US">Check out</val>
-		<val lang="de_DE">Check out</val>
-        <val lang="fr_FR">Check out</val>
-        <val lang="ja_JP">Check out</val>
-        <val lang="nl_NL">Check out</val>
+		<val lang="en_US">Check Out</val>
+		<val lang="de_DE">Check Out</val>
+        <val lang="fr_FR">Check Out</val>
+        <val lang="ja_JP">Check Out</val>
+        <val lang="nl_NL">Check Out</val>
 	</key>
 	<key value="CMIS_CANCEL_CHECK_OUT" distribution="webauthor">
 		<comment>Caption for "Cancel check out" button.</comment>
-		<val lang="en_US">Discard check out</val>
-		<val lang="de_DE">Discard check out</val>
-        <val lang="fr_FR">Discard check out</val>
-        <val lang="ja_JP">Discard check out</val>
-        <val lang="nl_NL">Discard check out</val>
+		<val lang="en_US">Discard Check Out</val>
+		<val lang="de_DE">Discard Check Out</val>
+        <val lang="fr_FR">Discard Check Out</val>
+        <val lang="ja_JP">Discard Check Out</val>
+        <val lang="nl_NL">Discard Check Out</val>
 	</key>
 	<key value="CMIS_CHECK_IN" distribution="webauthor">
 		<comment>Title for "Check in" button.</comment>
-		<val lang="en_US">Check in</val>
-		<val lang="de_DE">Check in</val>
-        <val lang="fr_FR">Check in</val>
-        <val lang="ja_JP">Check in</val>
-        <val lang="nl_NL">Check in</val>
+		<val lang="en_US">Check In</val>
+		<val lang="de_DE">Check In</val>
+        <val lang="fr_FR">Check In</val>
+        <val lang="ja_JP">Check In</val>
+        <val lang="nl_NL">Check In</val>
 	</key>
 	<key value="CHECK_IN_MESSAGE_" distribution="webauthor">
 		<comment>Check in message.</comment>
@@ -169,19 +169,19 @@
 	</key>
     <key value="CMIS_LOSE_CHANGES_" distribution="webauthor">
         <comment>Cancel check out warning</comment>
-        <val lang="en_US">If you discard your check out you will lose all changes made to the document.</val>
-        <val lang="de_DE">If you discard your check out you will lose all changes made to the document.</val>
-        <val lang="fr_FR">If you discard your check out you will lose all changes made to the document.</val>
-        <val lang="ja_JP">If you discard your check out you will lose all changes made to the document.</val>
-        <val lang="nl_NL">If you discard your check out you will lose all changes made to the document.</val>
+        <val lang="en_US">If you discard your Check Out you will lose all changes made to the document.</val>
+        <val lang="de_DE">If you discard your Check Out you will lose all changes made to the document.</val>
+        <val lang="fr_FR">If you discard your Check Out you will lose all changes made to the document.</val>
+        <val lang="ja_JP">If you discard your Check Out you will lose all changes made to the document.</val>
+        <val lang="nl_NL">If you discard your Check Out you will lose all changes made to the document.</val>
     </key>
 	<key value="CMIS_CANCEL_WARNING_" distribution="webauthor">
 		<comment>Cancel check out warning</comment>
-		<val lang="en_US">Are you sure you want to discard your check out?</val>
-		<val lang="de_DE">Are you sure you want to discard your check out?</val>
-        <val lang="fr_FR">Are you sure you want to discard your check out?</val>
-        <val lang="ja_JP">Are you sure you want to discard your check out?</val>
-        <val lang="nl_NL">Are you sure you want to discard your check out?</val>
+		<val lang="en_US">Are you sure you want to discard your Check Out?</val>
+		<val lang="de_DE">Are you sure you want to discard your Check Out?</val>
+        <val lang="fr_FR">Are you sure you want to discard your Check Out?</val>
+        <val lang="ja_JP">Are you sure you want to discard your Check Out?</val>
+        <val lang="nl_NL">Are you sure you want to discard your Check Out?</val>
 	</key>
 	<key value="ERROR_WARN_" distribution="webauthor">
 		<comment>Check-out error warning.</comment>
