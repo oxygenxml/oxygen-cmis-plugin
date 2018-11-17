@@ -50,7 +50,7 @@ public class CustomProtocolIT extends ConnectionTestBase {
 	@Test
 	public void testGenerateURLObject() throws UnsupportedEncodingException {
 		Document doc = ctrl.createDocument(root, "Doc", "some text", "text/plain");
-		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/A1/");
+		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/");
 
 		assertNotNull("Document is null", doc);
 		assertNotNull("URL is null", url);
@@ -62,7 +62,7 @@ public class CustomProtocolIT extends ConnectionTestBase {
 	@Test
 	public void testGetObjectFromURL() throws IOException {
 		Document doc = ctrl.createDocument(root, "urlDoc1", "some text", "text/plain");
-		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/A1/");
+		String url = CmisURLConnection.generateURLObject(doc, ctrl, "/");
 		
 		assertNotNull("Document is null", doc);
 		assertNotNull("URL is null", url);

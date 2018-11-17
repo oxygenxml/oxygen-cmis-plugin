@@ -7,10 +7,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
@@ -174,7 +174,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 				}
 			}
 
-			String parentPath = this.getURL().getPath();
+			String parentPath = CmisURL.parse(this.getURL().toExternalForm()).getFolderPath();
 			String entryUrl = CmisURLConnection.generateURLObject(obj,
 					connection.getResourceController(url.toExternalForm()), parentPath);
 
@@ -223,21 +223,17 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws MalformedURLException
 	 */
 	private String getRepositoryUrl(Repository repo) throws UnsupportedEncodingException {
-		StringBuilder urlb = new StringBuilder();
-
 		// Connecting to Server to get host
 		connection.getCMISAccess().connectToRepo(serverUrl, repo.getId(), connection.getUserCredentials());
 		// Get server URL
-		String originalProtocol = connection
+		String atomPubUrlStr = connection
 				.getCMISAccess().getSession().getSessionParameters()
 				.get(SessionParameter.ATOMPUB_URL);
-
-		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
-		
-		urlb.append((CmisURL.CMIS_PROTOCOL + "://"));
-		urlb.append(originalProtocol).append("/");
-		urlb.append(repo.getId()).append("/");
-
-		return urlb.toString();
+    try {
+      return CmisURL.ofRepo(new URL(atomPubUrlStr), repo.getId()).toExternalForm();
+    } catch (MalformedURLException e) {
+      // Cannot happen - the URL was already used by to retrieve data from the server.
+      throw new RuntimeException(e);
+    }
 	}
 }

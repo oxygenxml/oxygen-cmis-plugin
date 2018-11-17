@@ -2,6 +2,8 @@ package com.oxygenxml.cmis.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import ro.sync.basic.util.URLUtil;
 
@@ -84,6 +86,32 @@ public class CmisURL {
     return new CmisURL(serverHttpUrl, repository, path);
   }
 
+  /**
+   * Create the CMIS URL of the given repository.
+   * 
+   * @param serverHttpUrl The URL of the server.
+   * @param repoId The ID of the repository.
+   * 
+   * @return The CMIS URL.
+   */
+  public static CmisURL ofRepo(URL serverHttpUrl, String repoId) {
+    return new CmisURL(serverHttpUrl, repoId, "");
+  }
+  
+  /**
+   * Returns an URL that has the same details as the current instance, but a different path.
+   * 
+   * @param pathEntries The path (not encoded).
+   * 
+   * @return The CMIS URL object with the given path.
+   */
+  public CmisURL setPath(String path) {
+    return new CmisURL(serverHttpUrl, repsitory, path);
+  }
+  
+  /**
+   * @return The repository ID.
+   */
   public String getRepository() {
     return repsitory;
   }
@@ -129,5 +157,27 @@ public class CmisURL {
       extension = fileName.substring(lastDot + 1, fileName.length()); 
     }
     return extension;
+  }
+  
+  /**
+   * @return The string representation of a CMIS URL.
+   */
+  public String toExternalForm() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(CMIS_PROTOCOL)
+      .append("://")
+      .append(URLUtil.encodeURIComponent(serverHttpUrl.toExternalForm()))
+      .append(SLASH_SYMBOL)
+      .append(URLUtil.encodeURIComponent(repsitory))
+      .append(SLASH_SYMBOL);
+
+    
+    String encodedPath = Arrays.stream(path.split(SLASH_SYMBOL))
+      .skip(1) // The first part is an empty string since path starts with '/'
+      .map(URLUtil::encodeURIComponent)
+      .collect(Collectors.joining(SLASH_SYMBOL));
+    
+    sb.append(encodedPath);
+    return sb.toString();
   }
 }

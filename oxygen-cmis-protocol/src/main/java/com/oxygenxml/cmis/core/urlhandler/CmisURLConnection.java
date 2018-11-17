@@ -29,12 +29,9 @@ import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 
-import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 
 public class CmisURLConnection extends URLConnection {
-  private static final String SLASH_SYMBOL = "/";
-
   /**
    * Logging support.
    */
@@ -52,51 +49,41 @@ public class CmisURLConnection extends URLConnection {
   }
 
   /**
+   * Generates a CMIS URL for an object.
    * 
-   * @param object
-   * @param _ctrl
-   * @return
+   * @param object The object
+   * @param ctrl The resource controller.
+   * @return The path to the parent folder.
+   * 
    * @throws UnsupportedEncodingException
    */
   public static String generateURLObject(CmisObject object, ResourceController ctrl, String parentPath) {
-    StringBuilder urlb = new StringBuilder();
-
     // Get and encode server URL
     String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
     String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
-    originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
 
     // Generate first part of custom URL
-    urlb.append((CmisURL.CMIS_PROTOCOL + "://")).append(originalProtocol).append(SLASH_SYMBOL).append(repository);
-
-    Boolean invalidPath = true;
-    // Get path of Cmis Object
-    List<String> objectPath = ((FileableCmisObject) object).getPaths();
-
-    parentPath = URLUtil.decodeURIComponent(parentPath);
-    if (parentPath.contains(repository)) {
-      parentPath = parentPath.replace(repository + SLASH_SYMBOL, "");
+    CmisURL repoCmisURL; 
+    try {
+      repoCmisURL = CmisURL.ofRepo(new URL(originalProtocol), repository);
+    } catch (MalformedURLException e) {
+      // Canot happen.
+      throw new RuntimeException(e);
     }
+    
+    CmisURL objCmisUrl = repoCmisURL.setPath(parentPath + object.getName());
 
-    // Append object path to URL
-    for (int i = 0; i < objectPath.size(); i++) {
+    // Get path of Cmis Object
+    List<String> objectPaths = ((FileableCmisObject) object).getPaths();
+    for (String objectPath: objectPaths) {
       // Check if path(i) start with path of parent folder
-      if (objectPath.get(i).startsWith(parentPath)) {
-        invalidPath = false;
-        for (String pth : objectPath.get(i).split(SLASH_SYMBOL)) {
-          if (!pth.isEmpty()) {
-            urlb.append(SLASH_SYMBOL).append(URLUtil.encodeURIComponent(pth));
-          }
-        }
+      if (objectPath.startsWith(parentPath)) {
+        objCmisUrl = repoCmisURL.setPath(objectPath);
         break;
       }
     }
 
-    if (invalidPath) {
-      urlb.append(SLASH_SYMBOL).append(parentPath).append(object.getName());
-    }
-
-    return urlb.toString();
+    return objCmisUrl.toExternalForm();
   }
 
   /**
@@ -107,29 +94,31 @@ public class CmisURLConnection extends URLConnection {
    * @return
    */
   public static String generateURLObject(CmisObject object, ResourceController ctrl) {
-    StringBuilder urlb = new StringBuilder();
-
     logger.info("Generate URL for: " + object.getName());
 
     // Get and encode server URL
     String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
     String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
-    originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
 
     // Generate first part of custom URL
-    urlb.append((CmisURL.CMIS_PROTOCOL + "://")).append(originalProtocol).append(SLASH_SYMBOL).append(repository);
+    CmisURL repoCmisURL; 
+    try {
+      repoCmisURL = CmisURL.ofRepo(new URL(originalProtocol), repository);
+    } catch (MalformedURLException e) {
+      // Canot happen.
+      throw new RuntimeException(e);
+    }
 
     // Get and apend to URL path of Cmis Object
-    List<String> objectPath = ((FileableCmisObject) object).getPaths();
-    logger.info("Paths " + objectPath);
-    for (int i = 0; i < objectPath.size(); i++) {
-      for (String pth : objectPath.get(i).split(SLASH_SYMBOL)) {
-        if (!pth.isEmpty()) {
-          urlb.append(SLASH_SYMBOL).append(URLUtil.encodeURIComponent(pth));
-        }
-      }
+    List<String> objectPaths = ((FileableCmisObject) object).getPaths();
+    logger.info("Paths " + objectPaths);
+    CmisURL objCmisUrl;
+    if (!objectPaths.isEmpty()) {
+      objCmisUrl = repoCmisURL.setPath(objectPaths.get(0));
+    } else {
+      objCmisUrl = repoCmisURL;
     }
-    return urlb.toString();
+    return objCmisUrl.toExternalForm();
   }
 
   /**
