@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.CmisAccessSingleton;
+import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.ui.AuthenticatorUtil;
@@ -28,7 +28,7 @@ public class CmisStreamHandler extends URLStreamHandler {
   protected URLConnection openConnection(URL url) throws IOException {
     try {
       logger.info("URL=" + url);
-      URL serverURL = CmisURLConnection.getServerURL(url.toExternalForm(), new HashMap<String, String>());
+      URL serverURL = CmisURL.parse(url.toExternalForm()).getServerHttpUrl();
       UserCredentials uc = AuthenticatorUtil.getUserCredentials(serverURL);
 
       return new CmisURLConnection(url, CmisAccessSingleton.getInstance(), uc);

@@ -9,6 +9,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
@@ -32,7 +33,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
 		CMISAccess cmisAccess = new CMISAccess();
 		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
-		URL serverUrl = CmisURLConnection.getServerURL(url.toExternalForm(), null);
+		URL serverUrl = CmisURL.parse(url.toExternalForm()).getServerHttpUrl();
 
 		logger.info("Server URL: " + serverUrl.toExternalForm());
 

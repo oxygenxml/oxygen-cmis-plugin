@@ -10,9 +10,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -27,6 +25,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 
@@ -44,11 +43,6 @@ public class CmisURLConnection extends URLConnection {
   private CMISAccess cmisAccess;
   private ResourceController resourceController;
   private UserCredentials credentials;
-
-  // KEYWORDS
-  public static final String CMIS_PROTOCOL = "cmis";
-  private static final String REPOSITORY_PARAM = "repo";
-  private static final String PATH_PARAM = "path";
 
   // CONSTRUCTOR
   public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
@@ -73,7 +67,7 @@ public class CmisURLConnection extends URLConnection {
     originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
 
     // Generate first part of custom URL
-    urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append(SLASH_SYMBOL).append(repository);
+    urlb.append((CmisURL.CMIS_PROTOCOL + "://")).append(originalProtocol).append(SLASH_SYMBOL).append(repository);
 
     Boolean invalidPath = true;
     // Get path of Cmis Object
@@ -123,7 +117,7 @@ public class CmisURLConnection extends URLConnection {
     originalProtocol = URLUtil.encodeURIComponent(originalProtocol);
 
     // Generate first part of custom URL
-    urlb.append((CMIS_PROTOCOL + "://")).append(originalProtocol).append(SLASH_SYMBOL).append(repository);
+    urlb.append((CmisURL.CMIS_PROTOCOL + "://")).append(originalProtocol).append(SLASH_SYMBOL).append(repository);
 
     // Get and apend to URL path of Cmis Object
     List<String> objectPath = ((FileableCmisObject) object).getPaths();
@@ -153,65 +147,20 @@ public class CmisURLConnection extends URLConnection {
    */
   public CmisObject getCMISObject(String url)
       throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
-    // Decompose the custom URL in query elements
-    Map<String, String> param = new HashMap<>();
-
     // Get from custom URL server URL for connection
-    URL serverURL = getServerURL(url, param);
+    CmisURL cmisUrl = CmisURL.parse(url);
 
     // Get repository ID from custom URL for connection
-    String repoID = param.get(REPOSITORY_PARAM);
-    if (repoID == null) {
-      throw new MalformedURLException("Mising repository ID inside: " + url);
-    }
+    String repoID = cmisUrl.getRepository();
 
     // Accessing the server using params which we gets
-    cmisAccess.connectToRepo(serverURL, repoID, credentials);
+    cmisAccess.connectToRepo(cmisUrl.getServerHttpUrl(), repoID, credentials);
     resourceController = cmisAccess.createResourceController();
 
     // Get the object path
-    String path = param.get(PATH_PARAM);
+    String path = cmisUrl.getPath();
 
     return resourceController.getSession().getObjectByPath(path);
-  }
-
-  /**
-   * Builder server URL form given custom URL.
-   * 
-   * @param customURL
-   * @param queryParams
-   * @return
-   * @throws MalformedURLException
-   * @throws UnsupportedEncodingException
-   */
-  public static URL getServerURL(String customURL, Map<String, String> param) throws MalformedURLException {
-    // Replace CMIS part
-    if (customURL.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
-      customURL = customURL.replaceFirst((CMIS_PROTOCOL + "://"), "");
-    }
-
-    String originalProtocol = customURL;
-    // Get server URL, put it into originalProtocol and replace from customURL
-    originalProtocol = originalProtocol.substring(0, originalProtocol.indexOf(SLASH_SYMBOL));
-    customURL = customURL.replaceFirst(originalProtocol, "");
-    customURL = customURL.replaceFirst(SLASH_SYMBOL, "");
-
-    // Save Repository and object path in HashMap
-    if (param != null) {
-      param.put(REPOSITORY_PARAM, customURL.substring(0, customURL.indexOf(SLASH_SYMBOL)));
-      customURL = customURL.replaceFirst(param.get(REPOSITORY_PARAM), "");
-      customURL = URLUtil.decodeURIComponent(customURL);
-      param.put(PATH_PARAM, customURL);
-    }
-
-    // Creating server URL
-    originalProtocol = URLUtil.decodeURIComponent(originalProtocol);
-    String protocol = originalProtocol.substring(0, originalProtocol.indexOf("://"));
-
-    URL url = new URL(originalProtocol + SLASH_SYMBOL);
-
-    return new URL(protocol, url.getHost(), url.getPort(),
-        url.getPath().substring(0, url.getPath().lastIndexOf(SLASH_SYMBOL)));
   }
 
   @Override
@@ -326,24 +275,21 @@ public class CmisURLConnection extends URLConnection {
    * @throws IOException
    */
   public String createDocument() throws MalformedURLException, UnsupportedEncodingException {
-    HashMap<String, String> param = new HashMap<>();
-    getServerURL(url.toExternalForm(), param);
+    CmisURL cmisUrl = CmisURL.parse(url.toExternalForm());
 
-    String path = param.get(PATH_PARAM);
-    String fileName = path.substring(path.lastIndexOf(SLASH_SYMBOL) + 1, path.length());
+    String folderPath = cmisUrl.getFolderPath();
+    String fileName = cmisUrl.getFileName();
 
-    path = path.replace(fileName, "");
-
-    String mimeType = MimeTypes.getMIMEType(fileName.substring(fileName.indexOf('.'), fileName.length()));
+    String mimeType = MimeTypes.getMIMEType(cmisUrl.getExtension());
     if (mimeType == "application/octet-stream") {
       mimeType = "text/xml";
     }
 
-    Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(path);
+    Folder rootFolder = (Folder) cmisAccess.getSession().getObjectByPath(folderPath);
     Document document = resourceController.createEmptyVersionedDocument(
         rootFolder, fileName, mimeType, VersioningState.MINOR);
 
-    return generateURLObject(document, resourceController, path);
+    return generateURLObject(document, resourceController, folderPath);
   }
 
   /**

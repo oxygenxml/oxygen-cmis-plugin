@@ -4,7 +4,7 @@ import java.net.URLStreamHandler;
 
 import org.apache.log4j.Logger;
 
-import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.core.CmisURL;
 
 import ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension;
 
@@ -18,7 +18,7 @@ public class CmisURLExtension implements URLStreamHandlerPluginExtension {
 	@Override
 	public URLStreamHandler getURLStreamHandler(String protocol) {
 		logger.info("CmisURLExtension.getURLStreamHandler() ---> " + protocol);
-		if (protocol.startsWith(CmisURLConnection.CMIS_PROTOCOL)) {
+		if (protocol.startsWith(CmisURL.CMIS_PROTOCOL)) {
 			return new CmisStreamHandler();
 		}
 		return null;

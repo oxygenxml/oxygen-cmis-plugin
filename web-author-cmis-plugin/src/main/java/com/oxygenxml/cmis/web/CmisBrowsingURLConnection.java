@@ -21,6 +21,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisAction;
 
@@ -233,7 +234,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 		originalProtocol = URLEncoder.encode(originalProtocol, "UTF-8");
 		
-		urlb.append((CmisURLConnection.CMIS_PROTOCOL + "://"));
+		urlb.append((CmisURL.CMIS_PROTOCOL + "://"));
 		urlb.append(originalProtocol).append("/");
 		urlb.append(repo.getId()).append("/");
 
