@@ -58,29 +58,39 @@ public class CmisURL {
    */
   public static CmisURL parse(String cmisUrl) throws MalformedURLException {
     String prefix = CMIS_PROTOCOL + "://";
+    String invalidMsg = "Invalid CMIS URL. ";
+    
+    // [cmis://]CMIS_SERVER_HOST/REPOSITORY/PATH
     if (!cmisUrl.startsWith(prefix)) {
-      throw new MalformedURLException(cmisUrl);
+      throw new MalformedURLException(invalidMsg + "Must start with \"" + prefix  + "\": " + cmisUrl);
     }
     
+    
+    // cmis://CMIS_SERVER_HOST->/REPOSITORY/PATH
     int serverUrlEnd = cmisUrl.indexOf(SLASH_SYMBOL, prefix.length() + 1);
     if (serverUrlEnd == -1) {
-      throw new MalformedURLException(cmisUrl);
+      throw new MalformedURLException(invalidMsg + "Missing CMIS server URL: " + cmisUrl);
     }
+    // cmis://[CMIS_SERVER_HOST]/REPOSITORY/PATH
     String encodedServerHttpUrl = cmisUrl.substring(
         prefix.length(),
         serverUrlEnd
     );
-    URL serverHttpUrl = new URL(URLUtil.decodeURIComponent(encodedServerHttpUrl));
+    String decodedHttpServerUrl = URLUtil.decodeURIComponent(encodedServerHttpUrl);
+    URL serverHttpUrl = new URL(decodedHttpServerUrl);
     
     
+    // cmis://[CMIS_SERVER_HOST]/REPOSITORY->/PATH
     int repositoryEnd = cmisUrl.indexOf(SLASH_SYMBOL, serverUrlEnd + 1);
     if (repositoryEnd == -1) {
-      throw new MalformedURLException(cmisUrl);
+      throw new MalformedURLException(invalidMsg + "Missing repository: " + cmisUrl);
     }
     String repository = URLUtil.decodeURIComponent(cmisUrl.substring(
         serverUrlEnd + 1, 
         repositoryEnd));
     
+    
+    // cmis://[CMIS_SERVER_HOST]/REPOSITORY/[PATH]
     String path = URLUtil.decodeURIComponent(cmisUrl.substring(repositoryEnd));
     
     return new CmisURL(serverHttpUrl, repository, path);
