@@ -1,10 +1,18 @@
-var CmisCheckOutAction = function(editor) {
+/**
+ * The CMIS checkout action.
+ *
+ * @param editor the editor.
+ * @param {CmisStatus} status the document status.
+ *
+ * @constructor
+ */
+var CmisCheckOutAction = function(editor, status) {
   sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
+  this.status = status;
 };
 
 CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-CmisCheckOutAction.prototype.constructor = CmisCheckOutAction;
 CmisCheckOutAction.prototype.getDisplayName = function() {
   return tr(msgs.CMIS_CHECK_OUT);
 };
@@ -14,26 +22,21 @@ CmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
 };
 
 CmisCheckOutAction.prototype.isEnabled = function() {
-  var isEnabled = true;
-  if (cmisStatus || cmisStatus === 'checkedout') {
-      isEnabled = false;
-  }
-  return isEnabled;
+  return !this.status.isCheckedout() && !this.status.isLocked();
 };
 
 CmisCheckOutAction.prototype.actionPerformed = function(callback) {
-  cmisStatus = true;
   this.editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisCheckOut', {
           action: 'cmisCheckout'
       },
-      function(err, data) {
+      goog.bind(function(err, data) {
 
           if (data !== null) {
               var cause = JSON.parse(data);
 
               if (cause.error === 'denied') {
-                  cmisStatus = false;
+                this.status.setCheckedout(false);
 
                   if (!this.dialog) {
                       this.dialog = workspace.createDialog();
@@ -67,9 +70,9 @@ CmisCheckOutAction.prototype.actionPerformed = function(callback) {
                   }
                   this.dialog.show();
               } else {
-                  cmisStatus = true;
+                this.status.setCheckedout(true);
               }
           }
           callback();
-      });
+      }, this));
 };

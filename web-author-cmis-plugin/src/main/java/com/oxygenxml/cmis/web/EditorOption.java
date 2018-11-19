@@ -9,7 +9,7 @@ public enum EditorOption {
 	
 	OLD_VERSION("oldversion"),
 	
-	TO_BLOCK("block");
+	LOCKED("locked");
 	
 	
 	private final String value;

@@ -35,10 +35,10 @@ listOldVersionsAction.prototype.actionPerformed = function(callback) {
 
   allVerDialog.show();
 
-  this.afterList_(callback, allVerDialog, noSupport);
+  this.getVersions_(callback, allVerDialog, noSupport);
 };
 
-listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, noSupport) {
+listOldVersionsAction.prototype.getVersions_ = function(callback, allVerDialog, noSupport) {
   this.editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisOldVersions', {
           action: 'listOldVersions'
@@ -46,47 +46,42 @@ listOldVersionsAction.prototype.afterList_ = function(callback, allVerDialog, no
       function(err, data) {
           // remove selection from document.
           document.activeElement.blur();
+          allVerDialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
 
-          if (allVerDialog) {
-              allVerDialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
+          // Commit message column might not be available on some servers.
+          var versionHeader = createTableHeader('versionDiv', tr(msgs.VERSION_));
+          var userHeader = createTableHeader('userDiv', tr(msgs.MODIFIED_BY_));
+          var commitHeader = (!noSupport) ? createTableHeader('commitDiv', tr(msgs.COMMIT_MESS_)) : '';
 
-              // Commit message column might not be available on some servers.
-              var versionHeader = createTableHeader('versionDiv', tr(msgs.VERSION_));
-              var userHeader = createTableHeader('userDiv', tr(msgs.MODIFIED_BY_));
-              var commitHeader = (!noSupport) ? createTableHeader('commitDiv', tr(msgs.COMMIT_MESS_)) : '';
+          allVerDialog.getElement().querySelector("#loader").remove();
+          var jsonFile = JSON.parse(data);
+          goog.dom.append(allVerDialog.getElement(),
+            goog.dom.createDom('div', { id: 'head' },
+              versionHeader,
+              userHeader,
+              commitHeader
+            ),
+            createTable(jsonFile, noSupport)
+          );
 
-              document.getElementById("loader").remove();
-              var jsonFile = JSON.parse(data);
-              goog.dom.append(allVerDialog.getElement(),
-                goog.dom.createDom('div', { id: 'head' },
-                  versionHeader,
-                  userHeader,
-                  commitHeader
-                ),
-                createTable(jsonFile, noSupport)
-              );
+          resizeHeaderWidth(versionHeader, 'version');
+          resizeHeaderWidth(userHeader, 'user');
+          resizeHeaderWidth(commitHeader, 'commit');
 
-              resizeHeaderWidth(versionHeader, 'version');
-              resizeHeaderWidth(userHeader, 'user');
-              resizeHeaderWidth(commitHeader, 'commit');
-
-              // In case of older version, scroll it into view.
-              var oldVersionSelected = document.querySelector('.current-version:not(:first-child)');
-              if (oldVersionSelected) {
-                oldVersionSelected.scrollIntoView(false);
-              }
-
-              allVerDialog.onSelect(function(e) {
-                  allVerDialog.dispose();
-              });
+          // In case of older version, scroll it into view.
+          var oldVersionSelected = document.querySelector('.current-version:not(:first-child)');
+          if (oldVersionSelected) {
+            oldVersionSelected.scrollIntoView(false);
           }
+          allVerDialog.onSelect(function(e) {
+              callback();
+              allVerDialog.dispose();
+          });
       });
-
-  callback();
 };
 
 function createTable(jsonFile, noSupport) {
-  var table = goog.dom.createDom('table', { id: 'table'});
+  var table = goog.dom.createDom('table', { id: 'cmis-all-versions-table'});
   var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
   for (var key in jsonFile) {
@@ -140,9 +135,24 @@ function createTableCell(customAttribute, textContent) {
   return cell;
 }
 
+/**
+ * Resize the header cell accordingly to it's cells.
+ *
+ * @param header the header cell
+ * @param attr the cell type.
+ */
 function resizeHeaderWidth(header, attr) {
+
   if (header) {
-    var versionBarWidth = document.querySelector('[data-' + attr + '="' + attr + '"]').offsetWidth;
-    header.style.width = versionBarWidth + 'px';
+    var tableCell = document.querySelector('[data-' + attr + '="' + attr + '"]');
+    var headerSectionWidth;
+    if(tableCell) {
+      headerSectionWidth = tableCell.offsetWidth;
+    } else {
+      // no entries in table.
+      var headerContainer = header.parentElement;
+      headerSectionWidth = headerContainer.offsetWidth / headerContainer.children.length;
+    }
+    header.style.width = headerSectionWidth + 'px';
   }
 }

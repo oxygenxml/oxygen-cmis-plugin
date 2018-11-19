@@ -1,10 +1,18 @@
-var cancelCmisCheckOutAction = function(editor) {
+/**
+ * The Cancel Checkout action.
+ *
+ * @param editor the editor.
+ * @param {CmisStatus} status the document status.
+ */
+cancelCmisCheckOutAction = function(editor,status) {
   sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
+  this.status = status;
 };
 
 cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
 cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
+
 cancelCmisCheckOutAction.prototype.getDisplayName = function() {
   return tr(msgs.CMIS_CANCEL_CHECK_OUT);
 };
@@ -14,7 +22,7 @@ cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
 };
 
 cancelCmisCheckOutAction.prototype.isEnabled = function() {
-  return cmisStatus && cmisStatus !== 'checkedout';
+  return this.status.isCheckedout();
 };
 
 cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
@@ -40,8 +48,7 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
               'com.oxygenxml.cmis.web.action.CmisCancelCheckOut', {
                   action: 'cancelCmisCheckout'
               }, callback);
-
-          cmisStatus = false;
+        this.status.setCheckedout(false);
       } else {
         goog.isFunction(callback) && callback();
       }

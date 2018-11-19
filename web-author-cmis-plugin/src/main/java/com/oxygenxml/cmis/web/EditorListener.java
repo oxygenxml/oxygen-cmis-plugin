@@ -149,8 +149,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			documentModel.getAuthorAccess().getEditorAccess().setReadOnly(new ReadOnlyReason(
 					MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.TO_BLOCK.getValue());
-			
+					.setPseudoClass(EditorOption.LOCKED.getValue());
 		} else {
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 					.setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue());
@@ -184,7 +183,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		documentModel.getAuthorAccess().getEditorAccess().setReadOnly(
 				new ReadOnlyReason(rb.getMessage(TranslationTags.OLD_VER_WARNING) + " : " + df.format(lastMod)));
 		documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-				.setPseudoClass(EditorOption.TO_BLOCK.getValue());
+				.setPseudoClass(EditorOption.OLD_VERSION.getValue());
 		
 		if(oldDoc.isPrivateWorkingCopy() == null || oldDoc.getCheckinComment() == null) {
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()

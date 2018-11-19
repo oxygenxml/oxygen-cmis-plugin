@@ -1,9 +1,9 @@
-#table, .td {
+#cmis-all-versions-table, .td {
 	text-align: left;
 	border: 1px solid lightgray;
 }
 
-#table {
+#cmis-all-versions-table {
 	border-collapse: collapse;
 	display: block;
 	width: 100%;

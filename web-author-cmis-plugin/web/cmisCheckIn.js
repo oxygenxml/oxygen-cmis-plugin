@@ -1,6 +1,15 @@
-var CmisCheckInAction = function(editor) {
-    sync.actions.AbstractAction.call(this, '');
-    this.editor = editor;
+/**
+ * The CMIS Checkin Action.
+ *
+ * @param editor the editor.
+ * @param {CmisStatus} status the document status.
+ *
+ * @constructor
+ */
+CmisCheckInAction = function(editor, status) {
+  sync.actions.AbstractAction.call(this, '');
+  this.editor = editor;
+  this.status = status;
 };
 
 CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
@@ -14,7 +23,7 @@ CmisCheckInAction.prototype.getSmallIcon = function(devicePixelRation) {
 };
 
 CmisCheckInAction.prototype.isEnabled = function() {
-    return window.cmisStatus && window.cmisStatus !== 'checkedout';
+    return this.status.isCheckedout();
 };
 
 CmisCheckInAction.prototype.actionPerformedInternal_ = function (callback) {
@@ -56,8 +65,7 @@ CmisCheckInAction.prototype.actionPerformedInternal_ = function (callback) {
             commit: commitMessage,
             state: selectedVersionRadio ? selectedVersionRadio.value : ''
           }, callback);
-
-        window.cmisStatus = false;
+        this.status.setCheckedout(false);
       } else {
         goog.isFunction(callback) && callback()
       }
