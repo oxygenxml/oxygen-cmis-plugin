@@ -1,13 +1,17 @@
 sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
 
-var initialUrl = decodeURIComponent(sync.util.getURLParameter('url'));
+
 var prefix = 'cmis://';
 
-var limit = initialUrl.substring(prefix.length).indexOf('/') + prefix.length;
-var rootUrl = initialUrl.substring(0, limit);
+var rootUrl;
+var urlQuery = sync.util.getURLParameter('url');
+if (urlQuery) {
+  var initialUrl = decodeURIComponent(urlQuery);
+  var limit = initialUrl.substring(prefix.length).indexOf('/') + prefix.length;
+  rootUrl = initialUrl.substring(0, limit);
+}
 
 var urlFromOptions = sync.options.PluginsOptions.getClientOption("cmis.enforced_url");
-
 if (urlFromOptions) {
     rootUrl = 'cmis://' + encodeURIComponent(urlFromOptions);
     if (urlFromOptions.lastIndexOf('/') !== urlFromOptions.length) {
