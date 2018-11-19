@@ -52,7 +52,6 @@ public class CmisCheckOut extends AuthorOperationWithResult {
 		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
 		
 		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CHECK_OUT.getValue())) {
-			
 			try {
 				checkOutDocument(document);
 				
@@ -61,11 +60,11 @@ public class CmisCheckOut extends AuthorOperationWithResult {
 				}
 				
 			} catch (Exception e) {
-				return CmisActionsUtills.errorInfoBuilder("denied", e.getMessage());
+				return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
 			}
 		}
 		
-		return CmisActionsUtills.errorInfoBuilder("no_error", null);
+		return CmisActionsUtills.returnErrorInfoJSON("no_error", null);
 	}
 	
 	/**

@@ -1,7 +1,11 @@
 package com.oxygenxml.cmis.web.action;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
@@ -27,25 +31,39 @@ public class CmisActionsUtills {
 	 * @param errorType
 	 * @param errorInfo
 	 * @return Error info JSON String.
+	 * @throws IOException 
 	 */
-	public static String errorInfoBuilder(String errorType, String errorInfo) {
-		StringBuilder infoBuilder = new StringBuilder();
-
-		infoBuilder.append("{");
-		infoBuilder.append("\"error\"").append(":");
-		infoBuilder.append("\"" + errorType + "\"");
+	private static String getErrorInfoJSON(String errorType, String errorInfo) throws IOException {	
+		HashMap<String, String> errorMap = new HashMap<>();
+		errorMap.put("error", errorType);
 		
-		if(errorInfo != null) {
-			infoBuilder.append(",");
-			infoBuilder.append("\"message\"").append(":");
-			infoBuilder.append("\"" + errorInfo + "\"");
+		if (errorInfo != null && !errorMap.isEmpty()) {
+			errorMap.put("message", errorInfo);
 		}
 		
-		infoBuilder.append("}");
-		
-		return infoBuilder.toString();
+		return new ObjectMapper().writeValueAsString(errorMap);
 	}
 
+	/**
+	 * Get JSON result from errorInfoBuilder,
+	 * Handle exceptions if it's thrown.
+	 * 
+	 * @param errorType
+	 * @param errorMessage
+	 * @return
+	 */
+	public static String returnErrorInfoJSON(String errorType, String errorMessage) {
+		String errorInfoJSON = null;
+		
+		try {
+			errorInfoJSON = CmisActionsUtills.getErrorInfoJSON(errorType, errorMessage);
+		} catch (IOException e) {
+			logger.debug(e.getMessage());
+		}
+		
+		return errorInfoJSON;
+	}
+	
 	/**
 	 * Open connection for CMIS operations.
 	 * 
