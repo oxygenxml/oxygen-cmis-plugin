@@ -14,7 +14,7 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 	private static final String defaultAutoSaveInterval = "5";
 
 	public static final String 	CHECKOUT_REQUIRED  = "cmis.checkout_required";
-	private static final String ENFORCED_URL 	   = "cmis.enforced_url";
+	public static final String ENFORCED_URL 	   = "cmis.enforced_url";
 	private static final String ENFORCED_NAME      = "cmis.enforced_name";
 	private static final String ENFORCED_ICON      = "cmis.enforced_icon";
 	private static final String AUTOSAVE_INTERVAL  = "cmis.autosave_interval";
@@ -22,11 +22,18 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 	@Override
 	public void init() throws ServletException {
 		super.init();
+		String defaultName = "CMIS";
+		
 		HashMap<String, String> defaultOptions = new HashMap<>();
 		defaultOptions.put(CHECKOUT_REQUIRED, "off");
 		defaultOptions.put(ENFORCED_URL, "");
-		defaultOptions.put(ENFORCED_NAME, "Local");
+		defaultOptions.put(ENFORCED_NAME, defaultName);
 		defaultOptions.put(ENFORCED_ICON, "");
+
+		// Set default name if missing to show the tab on dashboard.
+		if (getOption(ENFORCED_NAME, null) == null) {
+		  setOption(ENFORCED_NAME, defaultName);
+		}
 		setDefaultOptions(defaultOptions);
 	}
 
