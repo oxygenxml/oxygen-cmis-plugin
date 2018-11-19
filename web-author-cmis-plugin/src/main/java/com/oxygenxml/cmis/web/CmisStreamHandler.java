@@ -33,7 +33,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
 		CMISAccess cmisAccess = new CMISAccess();
 		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
-		URL serverUrl = CmisURL.parse(url.toExternalForm()).getServerHttpUrl();
+		URL serverUrl = CmisURL.parseServerUrl(url.toExternalForm());
 
 		logger.info("Server URL: " + serverUrl.toExternalForm());
 

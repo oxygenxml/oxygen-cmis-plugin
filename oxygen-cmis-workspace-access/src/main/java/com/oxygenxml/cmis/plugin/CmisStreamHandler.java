@@ -28,7 +28,7 @@ public class CmisStreamHandler extends URLStreamHandler {
   protected URLConnection openConnection(URL url) throws IOException {
     try {
       logger.info("URL=" + url);
-      URL serverURL = CmisURL.parse(url.toExternalForm()).getServerHttpUrl();
+      URL serverURL = CmisURL.parseServerUrl(url.toExternalForm());
       UserCredentials uc = AuthenticatorUtil.getUserCredentials(serverURL);
 
       return new CmisURLConnection(url, CmisAccessSingleton.getInstance(), uc);

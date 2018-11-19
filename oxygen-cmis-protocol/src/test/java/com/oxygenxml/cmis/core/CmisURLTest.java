@@ -57,4 +57,18 @@ public class CmisURLTest {
     assertEquals(cmisUrlStr, CmisURL.parse(cmisUrlStr).toExternalForm());
 
   }
+  
+  /**
+   * <p><b>Description:</b> Test that the server URL is parsed correctly.</p>
+   *
+   * @author cristi_talau
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testParseServerUrl() throws Exception {
+    // Normal case
+    String cmisUrlStr = "cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/";
+    assertEquals("http://localhost:8080/B/atom11", CmisURL.parseServerUrl(cmisUrlStr).toExternalForm());
+  }
 }
