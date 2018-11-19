@@ -29,32 +29,10 @@ import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 
 
-enum Options {
-	NON_VERSIONABLE("nonversionable"),
-	IS_CHECKED_OUT("checkedout"),
-	NO_SUPPORT("nosupportfor"),
-	OLD_VERSION("oldversion"),
-	TO_BLOCK("block");
-	
-	
-	private final String value;
-	
-	
-	Options(String value) {
-		this.value = value;
-	}
-	
-	public String getValue() {
-		return this.value;
-	}
-}
-
-
 public class EditorListener implements WorkspaceAccessPluginExtension {
 
 	private static final Logger logger = Logger.getLogger(EditorListener.class.getName());
 
-	private AuthorAccess authorAccess;
 	private PluginResourceBundle rb;
 
 	private URL url;
@@ -62,6 +40,8 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	private String urlWithoutContextId;
 	private UserCredentials credentials;
 	private CmisURLConnection connection;
+
+	private Document document;
 	
 	@Override
 	public void applicationStarted(StandalonePluginWorkspace pluginWorkspaceAccess) {
@@ -84,7 +64,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	 */
 	@VisibleForTesting
 	public void editingSessionStarted(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
-		authorAccess = documentModel.getAuthorAccess();
+		AuthorAccess authorAccess = documentModel.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 
 		SessionStore sessionStore = webappPluginWorkspace.getSessionStore();
@@ -108,39 +88,49 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		try {
 			logger.info("EditorListener was loaded!");
 
-			if (url.getQuery() != null && url.getQuery().contains(Options.OLD_VERSION.getValue())) {
+			if (url.getQuery() != null && url.getQuery().contains(EditorOption.OLD_VERSION.getValue())) {
 				
 				setOldVersionsOptions(webappPluginWorkspace, documentModel);
 
 			} else {
-				Document document = (Document) connection.getCMISObject(urlWithoutContextId);
+				document = (Document) connection.getCMISObject(urlWithoutContextId);
 
 				// If server doesn't support private working copy and check in comments features
 				// we disable this actions in editor.
 				if(document.isPrivateWorkingCopy() == null || document.getCheckinComment() == null) {
 					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(Options.NO_SUPPORT.getValue());
+					.setPseudoClass(EditorOption.NO_SUPPORT.getValue());
 				}
 				
-				// If server doesn't support version control system
-				// we disable this feature in editor.
-				if (!document.isVersionable()) {
-					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-							.setPseudoClass(Options.NON_VERSIONABLE.getValue());
-				} else if (document.isVersionSeriesCheckedOut()) {
-					
-					setVersionableOptions(documentModel, document);
-
-				} else {
-					if (isCheckOutRequired() && !document.isVersionSeriesCheckedOut()) {
-						documentModel.getAuthorAccess().getEditorAccess()
-								.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
-					}
-				}
+				setEditorsOptions(documentModel);
 			}
 
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e1) {
 			logger.info(e1.getMessage());
+		}
+	}
+
+	/**
+	 * If Server or repository doesn't support versionable features
+	 * we set Web Author's editor to non-versionable document options.
+	 * 
+	 * @param documentModel
+	 * @param document
+	 */
+	private void setEditorsOptions(AuthorDocumentModel documentModel) {
+		// If server doesn't support version control system
+		// we disable this feature in editor.
+		if (!document.isVersionable()) {
+			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
+					.setPseudoClass(EditorOption.NON_VERSIONABLE.getValue());
+		} else if (document.isVersionSeriesCheckedOut()) {
+			//
+			setVersionableOptions(documentModel);
+		} else {
+			if (isCheckOutRequired() && !document.isVersionSeriesCheckedOut()) {
+				documentModel.getAuthorAccess().getEditorAccess()
+						.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
+			}
 		}
 	}
 
@@ -152,21 +142,18 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	 * @param rb
 	 * @param document
 	 */
-	private void setVersionableOptions(AuthorDocumentModel documentModel, Document document) {
+	private void setVersionableOptions(AuthorDocumentModel documentModel) {
 		String versionSeriesCheckedOutBy = document.getVersionSeriesCheckedOutBy();
 
 		if (!credentials.getUsername().equals(versionSeriesCheckedOutBy)) {
-			
 			documentModel.getAuthorAccess().getEditorAccess().setReadOnly(new ReadOnlyReason(
 					MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(Options.TO_BLOCK.getValue());
+					.setPseudoClass(EditorOption.TO_BLOCK.getValue());
 			
 		} else {
-			
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(Options.IS_CHECKED_OUT.getValue());
-			
+					.setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue());
 		}
 	}
 
@@ -197,17 +184,17 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		documentModel.getAuthorAccess().getEditorAccess().setReadOnly(
 				new ReadOnlyReason(rb.getMessage(TranslationTags.OLD_VER_WARNING) + " : " + df.format(lastMod)));
 		documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-				.setPseudoClass(Options.TO_BLOCK.getValue());
+				.setPseudoClass(EditorOption.TO_BLOCK.getValue());
 		
 		if(oldDoc.isPrivateWorkingCopy() == null || oldDoc.getCheckinComment() == null) {
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-			.setPseudoClass(Options.NO_SUPPORT.getValue());
+			.setPseudoClass(EditorOption.NO_SUPPORT.getValue());
 			
 		}
 	}
 	
 	/**
-	 * Get ObjectId from query part of our custom url.
+	 * Get ObjectId from query part of our custom URL.
 	 * 
 	 * @param url
 	 * @return objectId of old version of document.
@@ -220,9 +207,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			queryPart.put(pair.substring(0, index), pair.substring(index + 1));
 		}
 		
-		String objectId = queryPart.get(Options.OLD_VERSION.getValue());
-		
-		return objectId;
+		return queryPart.get(EditorOption.OLD_VERSION.getValue());
 	}
 	
 	/**
