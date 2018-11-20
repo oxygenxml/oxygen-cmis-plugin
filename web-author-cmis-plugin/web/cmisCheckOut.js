@@ -11,68 +11,82 @@ var CmisCheckOutAction = function(editor, status) {
   this.editor = editor;
   this.status = status;
 };
+goog.inherits(CmisCheckOutAction, sync.actions.AbstractAction);
 
-CmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
+/** @override */
 CmisCheckOutAction.prototype.getDisplayName = function() {
   return tr(msgs.CMIS_CHECK_OUT);
 };
 
+/** @override */
 CmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
   return 'https://static.thenounproject.com/png/978469-200.png';
 };
 
+/** @override */
 CmisCheckOutAction.prototype.isEnabled = function() {
   return !this.status.isCheckedout() && !this.status.isLocked();
 };
 
+/** @override */
 CmisCheckOutAction.prototype.actionPerformed = function(callback) {
   this.editor.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisCheckOut', {
           action: 'cmisCheckout'
-      },
-      goog.bind(function(err, data) {
+      }, goog.bind(this.handleOperationResult, this, callback));
+};
 
-          if (data !== null) {
-              var cause = JSON.parse(data);
+/**
+ * Handles the operation result.
+ *
+ * @param err error data.
+ * @param data response data.
+ * @param callback function to call when handling finished.
+ */
+CmisCheckOutAction.prototype.handleOperationResult = function(err, data, callback) {
+  if (data === null) {
+    callback();
+    return;
+  }
+  var cause = JSON.parse(data);
 
-              if (cause.error === 'denied') {
-                this.status.setCheckedout(false);
+  if (cause.error === 'denied') {
+    this.status.setCheckedout(false);
 
-                  if (!this.dialog) {
-                      this.dialog = workspace.createDialog();
-                      this.dialog.setTitle(tr(msgs.ERROR_TITLE_));
-                      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-                      this.dialog.setPreferredSize(350, 300);
+    if (!this.dialog) {
+      this.dialog = workspace.createDialog();
+      this.dialog.setTitle(tr(msgs.ERROR_TITLE_));
+      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+      this.dialog.setPreferredSize(350, 300);
+    }
+    var warningDiv = document.createElement('div');
+    warningDiv.setAttribute('class', 'warningdiv');
+    warningDiv.textContent = tr(msgs.ERROR_WARN_);
 
-                      var warningDiv = document.createElement('div');
-                      warningDiv.setAttribute('class', 'warningdiv');
-                      warningDiv.textContent = tr(msgs.ERROR_WARN_);
+    var messageDiv = document.createElement('div');
+    messageDiv.setAttribute('id', 'messdiv');
 
-                      var messageDiv = document.createElement('div');
-                      messageDiv.setAttribute('id', 'messdiv');
+    var errorMessage = cause.message;
 
-                      var errorMessage = cause.message;
+    if (err) {
+      errorMessage = err.message;
+    }
 
-                      if (err) {
-                          errorMessage = err.message;
-                      }
+    messageDiv.textContent = errorMessage;
 
-                      messageDiv.textContent = errorMessage;
+    var warnHr = document.createElement('hr');
+    warnHr.setAttribute('id', 'warnhr');
 
-                      var warnHr = document.createElement('hr');
-                      warnHr.setAttribute('id', 'warnhr');
+    var dialogContent = this.dialog.getElement();
+    goog.dom.removeChildren(dialogContent);
+    goog.dom.append(dialogContent,
+      warningDiv,
+      warnHr,
+      messageDiv
+    );
 
-                      goog.dom.append(this.dialog.getElement(),
-                        warningDiv,
-                        warnHr,
-                        messageDiv
-                      );
-                  }
-                  this.dialog.show();
-              } else {
-                this.status.setCheckedout(true);
-              }
-          }
-          callback();
-      }, this));
+    this.dialog.show();
+  } else {
+    this.status.setCheckedout(true);
+  }
 };

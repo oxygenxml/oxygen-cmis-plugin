@@ -9,9 +9,7 @@ cancelCmisCheckOutAction = function(editor,status) {
   this.editor = editor;
   this.status = status;
 };
-
-cancelCmisCheckOutAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-cancelCmisCheckOutAction.prototype.constructor = cancelCmisCheckOutAction;
+goog.inherits(cancelCmisCheckOutAction, sync.actions.AbstractAction);
 
 cancelCmisCheckOutAction.prototype.getDisplayName = function() {
   return tr(msgs.CMIS_CANCEL_CHECK_OUT);

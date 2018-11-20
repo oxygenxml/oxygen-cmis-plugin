@@ -11,9 +11,9 @@ CmisCheckInAction = function(editor, status) {
   this.editor = editor;
   this.status = status;
 };
+goog.inherits(CmisCheckInAction, sync.actions.AbstractAction);
 
-CmisCheckInAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-CmisCheckInAction.prototype.constructor = CmisCheckInAction;
+
 CmisCheckInAction.prototype.getDisplayName = function() {
     return tr(msgs.CMIS_CHECK_IN);
 };
