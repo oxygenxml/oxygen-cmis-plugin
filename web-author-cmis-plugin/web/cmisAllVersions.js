@@ -1,86 +1,119 @@
-var listOldVersionsAction = function(editor) {
+/**
+ * Action that displays the document's older versions in a dialog.
+ *
+ * @param editor the current editor.
+ */
+listOldVersionsAction = function(editor) {
   sync.actions.AbstractAction.call(this, '');
   this.editor = editor;
 };
+goog.inherits(listOldVersionsAction, sync.actions.AbstractAction);
 
-listOldVersionsAction.prototype = Object.create(sync.actions.AbstractAction.prototype);
-listOldVersionsAction.prototype.constructor = listOldVersionsAction;
+/** @override */
 listOldVersionsAction.prototype.getDisplayName = function() {
   return tr(msgs.ALL_VERSIONS_);
 };
 
+/** @override */
 listOldVersionsAction.prototype.getSmallIcon = function(devicePixelRation) {
   return 'http://icons.iconarchive.com/icons/icons8/windows-8/256/Data-View-Details-icon.png';
 };
 
+/** @override */
 listOldVersionsAction.prototype.actionPerformed = function(callback) {
-  var allVerDialog = this.dialog; //NOSONAR: local variable helps with uglifying.
-  var noSupport = document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor');
-  noSupport = (noSupport === 'true');
+  // supports Private Working Copy and Commit Message
+  var supportsPWC = document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor') !== 'true';
 
-  allVerDialog = workspace.createDialog();
-  allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));
-  allVerDialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-
-  if (!noSupport) {
-      allVerDialog.setPreferredSize(750, 550);
-      allVerDialog.setResizable(true);
-  } else {
-      allVerDialog.setPreferredSize(430, 500);
-  }
-
-  var loader = document.createElement('div');
-  loader.setAttribute('id', 'loader');
-  allVerDialog.getElement().appendChild(loader);
-
+  var allVerDialog = this.getDialog(supportsPWC);
   allVerDialog.show();
 
-  this.getVersions_(callback, allVerDialog, noSupport);
-};
+  allVerDialog.onSelect(function(e) {
+    callback();
+  });
 
-listOldVersionsAction.prototype.getVersions_ = function(callback, allVerDialog, noSupport) {
   this.editor.getActionsManager().invokeOperation(
-      'com.oxygenxml.cmis.web.action.CmisOldVersions', {
-          action: 'listOldVersions'
-      },
-      function(err, data) {
-          // remove selection from document.
-          document.activeElement.blur();
-          allVerDialog.setTitle(this.tr(msgs.ALL_VERSIONS_));
-
-          // Commit message column might not be available on some servers.
-          var versionHeader = createTableHeader('versionDiv', tr(msgs.VERSION_));
-          var userHeader = createTableHeader('userDiv', tr(msgs.MODIFIED_BY_));
-          var commitHeader = (!noSupport) ? createTableHeader('commitDiv', tr(msgs.COMMIT_MESS_)) : '';
-
-          allVerDialog.getElement().querySelector("#loader").remove();
-          var jsonFile = JSON.parse(data);
-          goog.dom.append(allVerDialog.getElement(),
-            goog.dom.createDom('div', { id: 'head' },
-              versionHeader,
-              userHeader,
-              commitHeader
-            ),
-            createTable(jsonFile, noSupport)
-          );
-
-          resizeHeaderWidth(versionHeader, 'version');
-          resizeHeaderWidth(userHeader, 'user');
-          resizeHeaderWidth(commitHeader, 'commit');
-
-          // In case of older version, scroll it into view.
-          var oldVersionSelected = document.querySelector('.current-version:not(:first-child)');
-          if (oldVersionSelected) {
-            oldVersionSelected.scrollIntoView(false);
-          }
-          allVerDialog.onSelect(function(e) {
-              callback();
-              allVerDialog.dispose();
-          });
-      });
+    'com.oxygenxml.cmis.web.action.CmisOldVersions', {
+      action: 'listOldVersions'
+    }, goog.bind(this.handleOperationResult, this, allVerDialog.getElement(), supportsPWC));
 };
 
-function createTable(jsonFile, noSupport) {
+/**
+ * Creates the versions display dialog.
+ *
+ * @param supportsPWC if the server supports Private Working Copy and commit messages.
+ *
+ * @return the versions display dialog.
+ */
+listOldVersionsAction.prototype.getDialog = function(supportsPWC) {
+  var allVerDialog = this.dialog;
+  if(!allVerDialog) {
+    allVerDialog = workspace.createDialog();
+    allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));
+    allVerDialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+    this.dialog = allVerDialog;
+  }
+
+  if (!supportsPWC) {
+    allVerDialog.setPreferredSize(750, 550);
+    allVerDialog.setResizable(true);
+  } else {
+    allVerDialog.setPreferredSize(430, 500);
+  }
+  var loader = document.createElement('div');
+  loader.setAttribute('id', 'cmis-loader');
+  allVerDialog.getElement().appendChild(loader);
+
+  return allVerDialog;
+};
+
+/**
+ * Handles the version information received from the operation.
+ *
+ * @param container the container in which to display the versions.
+ * @param supportsPWC whether the server supports private working copies.
+ * @param err errors that appeared.
+ * @param data the data.
+ */
+listOldVersionsAction.prototype.handleOperationResult = function(container, supportsPWC, err, data) {
+  // remove selection from document.
+  document.activeElement.blur();
+
+  // Commit message column might not be available on some servers.
+  var versionHeader = this.createHeaderCell(tr(msgs.VERSION_));
+  var userHeader = this.createHeaderCell(tr(msgs.MODIFIED_BY_));
+  var commitHeader = supportsPWC ? this.createHeaderCell(tr(msgs.COMMIT_MESS_)) : '';
+
+  container.querySelector("#cmis-loader").remove();
+  var jsonFile = JSON.parse(data);
+  goog.dom.append(container,
+    goog.dom.createDom('div', { id: 'cmis-head' },
+      versionHeader,
+      userHeader,
+      commitHeader
+    ),
+    this.createTable(jsonFile, supportsPWC)
+  );
+
+  this.resizeHeaderWidth(versionHeader, 'cmis-version');
+  this.resizeHeaderWidth(userHeader, 'cmis-user');
+  this.resizeHeaderWidth(commitHeader, 'cmis-commit');
+
+  // In case of older version, scroll it into view.
+  var oldVersionSelected = document.querySelector('.current-version:not(:first-child)');
+  if (oldVersionSelected) {
+    oldVersionSelected.scrollIntoView(false);
+  }
+};
+
+/**
+ * Creates the versions table.
+ *
+ * @param jsonFile the versions descriptor.
+ * @param supportsPWC whether the server supports private working copies.
+ *
+ * @return {*} the HTML table.
+ */
+listOldVersionsAction.prototype.createTable = function(jsonFile, supportsPWC) {
   var table = goog.dom.createDom('table', { id: 'cmis-all-versions-table'});
   var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
@@ -101,16 +134,14 @@ function createTable(jsonFile, noSupport) {
         className: 'oldlink',
         href: isThisCurrentVersion ? '#' : href,
         target: '_blank'
-      },
-      key
-    );
+      }, key);
 
-    var versionTd = createTableCell('version', versionLink);
-    var userTd = createTableCell('user', value[2]);
+    var versionTd = this.createTableCell('version', versionLink);
+    var userTd = this.createTableCell('user', value[2]);
     // If file is not versionable, do not create the commit cell.
-    var commitTd = noSupport ? '' : createTableCell('commit', value[1]);
+    var commitTd = supportsPWC ? this.createTableCell('commit', value[1]) : '';
 
-    if (noSupport) {
+    if (! supportsPWC) {
       versionTd.style.width = '150px';
       userTd.style.width = '60%';
     }
@@ -122,18 +153,32 @@ function createTable(jsonFile, noSupport) {
     ));
   }
   return table;
-}
+};
 
-function createTableHeader(id, text) {
-  return goog.dom.createDom('div', { id: id, className: 'headtitle' }, text);
-}
+/**
+ * Creates a table header cell.
+ *
+ * @param text the cells text content.
+ *
+ * @return {*} the header cell element.
+ */
+listOldVersionsAction.prototype.createHeaderCell = function(text) {
+  return goog.dom.createDom('div', 'headtitle', text);
+};
 
-function createTableCell(customAttribute, textContent) {
+/**
+ * Create cell element.
+ *
+ * @param customAttribute custom attribute.
+ * @param textContent the cells text content.
+ * @return {*} the cell.
+ */
+listOldVersionsAction.prototype.createTableCell = function(customAttribute, textContent) {
   var cell = goog.dom.createDom('td', 'td', textContent ? textContent : '');
   // Set some data attributes to set the column header widths later.
   goog.dom.dataset.set(cell, customAttribute, customAttribute);
   return cell;
-}
+};
 
 /**
  * Resize the header cell accordingly to it's cells.
@@ -141,7 +186,7 @@ function createTableCell(customAttribute, textContent) {
  * @param header the header cell
  * @param attr the cell type.
  */
-function resizeHeaderWidth(header, attr) {
+listOldVersionsAction.prototype.resizeHeaderWidth = function(header, attr) {
 
   if (header) {
     var tableCell = document.querySelector('[data-' + attr + '="' + attr + '"]');
@@ -155,4 +200,4 @@ function resizeHeaderWidth(header, attr) {
     }
     header.style.width = headerSectionWidth + 'px';
   }
-}
+};

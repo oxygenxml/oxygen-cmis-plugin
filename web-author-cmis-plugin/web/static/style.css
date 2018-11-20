@@ -46,20 +46,20 @@
 	font-size: 18px;
 }
 
-#messdiv {
+#cmis-messdiv {
 	text-align: center;
 	font-family: robotolight, Arial, Helvetica, sans-serif;
 	font-size: 16px;
 }
 
-#warnhr {
+#cmis-warnhr {
 	border: 0;
     height: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-#head {
+#cmis-head {
 	width: 100%;
 	position: absolute;
 	font-size: 100%;
@@ -67,16 +67,16 @@
 	overflow: hidden;
 }
 
-#user {
+#cmis-user {
 	width: 15%;
 	min-width: 80px;
 }
 
-#commit {
+#cmis-commit {
 	width: 100%;
 }
 
-#loader {
+#cmis-loader {
 	position: absolute;
 	left: 50%;
 	top: 50%;

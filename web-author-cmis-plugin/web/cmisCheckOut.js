@@ -39,13 +39,14 @@ CmisCheckOutAction.prototype.actionPerformed = function(callback) {
 /**
  * Handles the operation result.
  *
+ * @param callback function to call when handling finished.
  * @param err error data.
  * @param data response data.
- * @param callback function to call when handling finished.
  */
-CmisCheckOutAction.prototype.handleOperationResult = function(err, data, callback) {
+CmisCheckOutAction.prototype.handleOperationResult = function(callback, err, data) {
+
   if (data === null) {
-    callback();
+    goog.isFunction(callback) && callback();
     return;
   }
   var cause = JSON.parse(data);
@@ -64,7 +65,7 @@ CmisCheckOutAction.prototype.handleOperationResult = function(err, data, callbac
     warningDiv.textContent = tr(msgs.ERROR_WARN_);
 
     var messageDiv = document.createElement('div');
-    messageDiv.setAttribute('id', 'messdiv');
+    messageDiv.setAttribute('id', 'cmis-messdiv');
 
     var errorMessage = cause.message;
 
@@ -75,7 +76,7 @@ CmisCheckOutAction.prototype.handleOperationResult = function(err, data, callbac
     messageDiv.textContent = errorMessage;
 
     var warnHr = document.createElement('hr');
-    warnHr.setAttribute('id', 'warnhr');
+    warnHr.setAttribute('id', 'cmis-warnhr');
 
     var dialogContent = this.dialog.getElement();
     goog.dom.removeChildren(dialogContent);
