@@ -4,3 +4,7 @@ web-author-cmis-plugin/node_modules/
 *.DS_Store
 *.log
 .idea
+.project
+.externalToolBuilders/
+.settings/
+*/.classpath
