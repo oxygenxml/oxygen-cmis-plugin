@@ -14,7 +14,10 @@ var CmisFileServer = function() {
       rootUrl += '/';
     }
   }
-  this.rootUrl = rootUrl;
+  this.rootUrl_ = rootUrl;
+  this.rootUrlSet_ = false;
+
+  this.loginDialog_ = null;
 };
 
 /**
@@ -27,10 +30,11 @@ CmisFileServer.PROTOCOL_PREFIX = 'cmis://';
 /**
  * Login the user and call this callback at the end.
  *
+ * @param {string} serverUrl The server URL.
  * @param {function} authenticated The callback when the user was authenticated - successfully or not.
  */
 CmisFileServer.prototype.login = function(serverUrl, authenticated) {
-  var loginDialog = this.getLoginDialog();
+  var loginDialog = this.getLoginDialog_();
 
   loginDialog.onSelect(function(key) {
     if (key === 'ok') {
@@ -70,10 +74,11 @@ CmisFileServer.prototype.login = function(serverUrl, authenticated) {
 
 /**
  * Create the CMIS login dialog.
+ * @private
  */
-CmisFileServer.prototype.getLoginDialog = function() {
+CmisFileServer.prototype.getLoginDialog_ = function() {
   if (! this.loginDialog_) {
-    this.loginDialog_ = workspace.createDialog();
+    var loginDialog = workspace.createDialog();
     var cD = goog.dom.createDom;
 
     var cmisNameInput = cD('input', {
@@ -91,7 +96,7 @@ CmisFileServer.prototype.getLoginDialog = function() {
     });
     cmisPasswordInput.setAttribute('autocomplete', 'current-password');
 
-    goog.dom.appendChild(this.loginDialog_.getElement(),
+    goog.dom.appendChild(loginDialog.getElement(),
       cD('form', 'cmis-login-dialog',
         cD('label', '',
           tr(msgs.NAME_) + ': ',
@@ -103,8 +108,9 @@ CmisFileServer.prototype.getLoginDialog = function() {
         )
       )
     );
-    this.loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
-    this.loginDialog_.setPreferredSize(300, null);
+    loginDialog.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
+    loginDialog.setPreferredSize(300, null);
+    this.loginDialog_ = loginDialog;
   }
 
   return this.loginDialog_;
@@ -115,7 +121,7 @@ CmisFileServer.prototype.getUserName = function() {
 };
 
 CmisFileServer.prototype.getDefaultRootUrl = function() {
-  return this.rootUrl;
+  return this.rootUrl_;
 };
 
 CmisFileServer.prototype.logout = function(logoutCallback) {
@@ -135,12 +141,12 @@ CmisFileServer.prototype.logout = function(logoutCallback) {
 CmisFileServer.prototype.createRootUrlComponent = function(rootUrlParam, rootURLChangedCallback, readOnly) {
   var div = document.createElement('div');
 
-  if (this.rootUrl) {
+  if (this.rootUrl_) {
     if (! rootUrlParam) {
-      if (! this.rootUrlSet) {
-        this.rootUrlSet = true;
+      if (! this.rootUrlSet_) {
+        this.rootUrlSet_ = true;
         setTimeout(function() {
-          rootURLChangedCallback(this.rootUrl, this.rootUrl); // TODO: bug in web author.
+          rootURLChangedCallback(this.rootUrl_, this.rootUrl_); // TODO: bug in web author.
         }, 0);
       }
     }
@@ -152,5 +158,5 @@ CmisFileServer.prototype.createRootUrlComponent = function(rootUrlParam, rootURL
 };
 
 CmisFileServer.prototype.getUrlInfo = function(url, urlInfoCallback, showErrorMessageCallback) {
-  urlInfoCallback(this.rootUrl, url);
+  urlInfoCallback(this.rootUrl_, url);
 };

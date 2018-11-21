@@ -4,12 +4,11 @@
   "description": "This plugin enables oXygen XML Web Author to open and edit files on CMIS",
   "author": "",
   "license": "Apache-2.0",
-  
   "devDependencies": {
     "gulp": "3.9.1",
     "gulp-concat": "2.6.0",
-    "gulp-uglify": "1.5.3",
     "gulp-iife": "0.3.0",
+    "gulp-uglify": "3.0.1",
     "sync-i18n": "0.0.x"
   }
 }

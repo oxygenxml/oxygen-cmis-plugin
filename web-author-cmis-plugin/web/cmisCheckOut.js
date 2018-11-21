@@ -8,8 +8,9 @@
  */
 var CmisCheckOutAction = function(editor, status) {
   sync.actions.AbstractAction.call(this, '');
-  this.editor = editor;
-  this.status = status;
+  this.editor_ = editor;
+  this.status_ = status;
+  this.dialog_ = null;
 };
 goog.inherits(CmisCheckOutAction, sync.actions.AbstractAction);
 
@@ -25,15 +26,15 @@ CmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
 
 /** @override */
 CmisCheckOutAction.prototype.isEnabled = function() {
-  return !this.status.isCheckedout() && !this.status.isLocked();
+  return !this.status_.isCheckedout() && !this.status_.isLocked();
 };
 
 /** @override */
 CmisCheckOutAction.prototype.actionPerformed = function(callback) {
-  this.editor.getActionsManager().invokeOperation(
+  this.editor_.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisCheckOut', {
           action: 'cmisCheckout'
-      }, goog.bind(this.handleOperationResult, this, callback));
+      }, goog.bind(this.handleOperationResult_, this, callback));
 };
 
 /**
@@ -42,8 +43,10 @@ CmisCheckOutAction.prototype.actionPerformed = function(callback) {
  * @param callback function to call when handling finished.
  * @param err error data.
  * @param data response data.
+ *
+ * @private
  */
-CmisCheckOutAction.prototype.handleOperationResult = function(callback, err, data) {
+CmisCheckOutAction.prototype.handleOperationResult_ = function(callback, err, data) {
 
   if (data === null) {
     goog.isFunction(callback) && callback();
@@ -52,42 +55,27 @@ CmisCheckOutAction.prototype.handleOperationResult = function(callback, err, dat
   var cause = JSON.parse(data);
 
   if (cause.error === 'denied') {
-    this.status.setCheckedout(false);
+    this.status_.setCheckedout(false);
 
-    if (!this.dialog) {
-      this.dialog = workspace.createDialog();
-      this.dialog.setTitle(tr(msgs.ERROR_TITLE_));
-      this.dialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-      this.dialog.setPreferredSize(350, 300);
-    }
-    var warningDiv = document.createElement('div');
-    warningDiv.setAttribute('class', 'warningdiv');
-    warningDiv.textContent = tr(msgs.ERROR_WARN_);
-
-    var messageDiv = document.createElement('div');
-    messageDiv.setAttribute('id', 'cmis-messdiv');
-
-    var errorMessage = cause.message;
-
-    if (err) {
-      errorMessage = err.message;
+    if (!this.dialog_) {
+      this.dialog_ = workspace.createDialog();
+      this.dialog_.setTitle(tr(msgs.ERROR_TITLE_));
+      this.dialog_.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+      this.dialog_.setPreferredSize(350, 300);
     }
 
-    messageDiv.textContent = errorMessage;
+    var errorMessage = err ? err.message : cause.message;
 
-    var warnHr = document.createElement('hr');
-    warnHr.setAttribute('id', 'cmis-warnhr');
-
-    var dialogContent = this.dialog.getElement();
+    var dialogContent = this.dialog_.getElement();
     goog.dom.removeChildren(dialogContent);
     goog.dom.append(dialogContent,
-      warningDiv,
-      warnHr,
-      messageDiv
+      goog.dom.createDom('div', 'warningdiv', tr(msgs.ERROR_WARN_)),
+      goog.dom.createDom('hr', {id: 'cmis-warnhr'}),
+      goog.dom.createDom('div', {id: 'cmis-messdiv'}, errorMessage)
     );
 
-    this.dialog.show();
+    this.dialog_.show();
   } else {
-    this.status.setCheckedout(true);
+    this.status_.setCheckedout(true);
   }
 };

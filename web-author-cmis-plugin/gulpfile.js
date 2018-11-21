@@ -4,6 +4,13 @@ var concat = require('gulp-concat');
 var Synci18n = require('sync-i18n');
 var iife = require("gulp-iife");
 var uglify = require('gulp-uglify');
+var uglifyOptions = {
+  mangle: {
+    properties: {
+      regex: /_$/
+    }
+  }
+};
 
 
 var fs = require('fs');
@@ -13,7 +20,7 @@ gulp.task('prepare-package', ['i18n'], function() {
   return gulp.src(['web/*.js'])
     .pipe(concat('plugin.js'))
     .pipe(iife({useStrict: false, prependSemicolon: true}))
-    .pipe(uglify())
+    .pipe(uglify(uglifyOptions))
     .pipe(gulp.dest('target/'));
 });
 

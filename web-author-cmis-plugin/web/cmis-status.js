@@ -7,8 +7,8 @@
  * @constructor
  */
 CmisStatus = function(checkedout, locked) {
-  this.checkedout = checkedout;
-  this.locked = locked;
+  this.checkedout_ = checkedout;
+  this.locked_ = locked;
 };
 
 /**
@@ -17,7 +17,7 @@ CmisStatus = function(checkedout, locked) {
  * @param checkedout the new checkedout state.
  */
 CmisStatus.prototype.setCheckedout = function(checkedout) {
-  this.checkedout = checkedout;
+  this.checkedout_ = checkedout;
 };
 
 
@@ -25,7 +25,7 @@ CmisStatus.prototype.setCheckedout = function(checkedout) {
  * Getter for the current document status.
  */
 CmisStatus.prototype.isCheckedout = function() {
-  return this.checkedout;
+  return this.checkedout_;
 };
 
 /**
@@ -34,7 +34,7 @@ CmisStatus.prototype.isCheckedout = function() {
  * @param locked the new locked state.
  */
 CmisStatus.prototype.setLocked = function(locked) {
-  this.locked = locked;
+  this.locked_ = locked;
 };
 
 
@@ -42,6 +42,6 @@ CmisStatus.prototype.setLocked = function(locked) {
  * Whether the current document is locked by another user.
  */
 CmisStatus.prototype.isLocked = function() {
-  return this.locked;
+  return this.locked_;
 };
 

@@ -8,8 +8,9 @@
  */
 CmisCheckInAction = function(editor, status) {
   sync.actions.AbstractAction.call(this, '');
-  this.editor = editor;
-  this.status = status;
+  this.editor_ = editor;
+  this.status_ = status;
+  this.dialog_ = null;
 };
 goog.inherits(CmisCheckInAction, sync.actions.AbstractAction);
 
@@ -25,7 +26,7 @@ CmisCheckInAction.prototype.getSmallIcon = function(devicePixelRation) {
 
 /** @override */
 CmisCheckInAction.prototype.isEnabled = function() {
-    return this.status.isCheckedout();
+    return this.status_.isCheckedout();
 };
 
 /**
@@ -36,43 +37,43 @@ CmisCheckInAction.prototype.isEnabled = function() {
  * @private
  */
 CmisCheckInAction.prototype.actionPerformedInternal_ = function (callback) {
-  if (this.editor.isDirty()) {
+  if (this.editor_.isDirty()) {
     // Should only happen if save action failed.
-    this.editor.problemReporter.showWarning(tr(msgs.SAVE_CHANGES_BEFORE_CHECK_IN_));
+    this.editor_.problemReporter.showWarning(tr(msgs.SAVE_CHANGES_BEFORE_CHECK_IN_));
     return;
   }
-  // supports Private Working Copy and Commit Message
-  var supportsPWC = document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor') !== 'true';
+  // Check if the server supports Commit Messages.
+  var supportsCommitMessage = !(document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor') === 'true');
 
-  var dialog = this.getDialog(supportsPWC);
+  var dialog = this.getDialog_(supportsCommitMessage);
   dialog.show();
-  dialog.onSelect(goog.bind(this.handleDialogSelect, this, callback));
+  dialog.onSelect(goog.bind(this.handleDialogSelect_, this, callback));
 };
 
 /**
  * Create the checkin dialog.
  *
- * @param supportsPWC if the server supports Private Working Copy and commit messages.
+ * @param supportsCommitMessage if the server supports commit messages.
  *
  * @return {*} the checkin dialog.
  */
-CmisCheckInAction.prototype.getDialog = function(supportsPWC) {
-  var dialog = this.dialog;
+CmisCheckInAction.prototype.getDialog_ = function(supportsCommitMessage) {
+  var dialog = this.dialog_;
   if(!dialog) {
     dialog = workspace.createDialog();
     dialog.setTitle(tr(msgs.CMIS_CHECK_IN));
-    this.dialog = dialog;
+    this.dialog_ = dialog;
   }
   var dialogElement = dialog.getElement();
   dialogElement.innerHTML = '';
 
-  if (supportsPWC) {
-    goog.dom.append(dialogElement, this.createCommitMessageElements());
+  if (supportsCommitMessage) {
+    goog.dom.append(dialogElement, this.createCommitMessageElements_());
     dialog.setPreferredSize(300, 350);
   } else {
     dialog.setPreferredSize(250, 180);
   }
-  dialogElement.appendChild(this.createVersionForm());
+  dialogElement.appendChild(this.createVersionForm_());
 
   return dialog;
 };
@@ -83,23 +84,25 @@ CmisCheckInAction.prototype.getDialog = function(supportsPWC) {
  * @param callback callback function.
  * @param key the button key.
  * @param e the event.
+ *
+ * @private
  */
-CmisCheckInAction.prototype.handleDialogSelect = function(callback, key, e) {
+CmisCheckInAction.prototype.handleDialogSelect_ = function(callback, key, e) {
   if (key === 'ok') {
-    var dialogElement = this.dialog.getElement();
+    var dialogElement = this.dialog_.getElement();
     // If commit message is not supported, the textarea is not present.
     var commitMessageTextarea = dialogElement.querySelector('#cmis-commit-message');
     var commitMessage = commitMessageTextarea ? commitMessageTextarea.value.replace(/["']/g, "") : null;
 
     // Get the selected version type.
     var selectedVersionRadio = dialogElement.querySelector('.cmis-version-label input[type="radio"]:checked');
-    this.editor.getActionsManager().invokeOperation(
+    this.editor_.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisCheckIn', {
         action: 'cmisCheckin',
         commit: commitMessage,
         state: selectedVersionRadio ? selectedVersionRadio.value : ''
       }, callback);
-    this.status.setCheckedout(false);
+    this.status_.setCheckedout(false);
   } else {
     goog.isFunction(callback) && callback();
   }
@@ -108,8 +111,8 @@ CmisCheckInAction.prototype.handleDialogSelect = function(callback, key, e) {
 /** @override */
 CmisCheckInAction.prototype.actionPerformed = function(callback) {
   // Save document immediately if it is dirty.
-  if (this.editor.isDirty()) {
-    var saveAction = this.editor.getActionsManager().getActionById('Author/Save');
+  if (this.editor_.isDirty()) {
+    var saveAction = this.editor_.getActionsManager().getActionById('Author/Save');
     saveAction.actionPerformed(goog.bind(this.actionPerformedInternal_, this, callback));
   } else {
     this.actionPerformedInternal_(callback);
@@ -119,8 +122,10 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
 /**
  * Create the major/minor version radio button form for the check-in dialog.
  * @returns {Element} The radio button form.
+ *
+ * @private
  */
-CmisCheckInAction.prototype.createVersionForm = function() {
+CmisCheckInAction.prototype.createVersionForm_ = function() {
   var createDom = goog.dom.createDom;
   var majorVersionRadio = createDom('input', { type: 'radio', name: 'state', value: 'major' });
   majorVersionRadio.setAttribute('checked', '');
@@ -141,8 +146,10 @@ CmisCheckInAction.prototype.createVersionForm = function() {
 /**
  * Create the commit message textarea.
  * @returns Array<Element> A list of commit message related elements to be appended to the dialog element.
+ *
+ * @private
  */
-CmisCheckInAction.prototype.createCommitMessageElements = function() {
+CmisCheckInAction.prototype.createCommitMessageElements_ = function() {
   return [
     goog.dom.createDom('div', '', tr(msgs.CHECK_IN_MESSAGE_)),
     goog.dom.createDom('textarea', {

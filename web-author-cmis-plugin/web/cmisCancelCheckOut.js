@@ -6,8 +6,9 @@
  */
 cancelCmisCheckOutAction = function(editor,status) {
   sync.actions.AbstractAction.call(this, '');
-  this.editor = editor;
-  this.status = status;
+  this.editor_ = editor;
+  this.status_ = status;
+  this.dialog_ = null;
 };
 goog.inherits(cancelCmisCheckOutAction, sync.actions.AbstractAction);
 
@@ -20,33 +21,33 @@ cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
 };
 
 cancelCmisCheckOutAction.prototype.isEnabled = function() {
-  return this.status.isCheckedout();
+  return this.status_.isCheckedout();
 };
 
 cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
-  if (!this.dialog) {
-      this.dialog = workspace.createDialog();
-      this.dialog.setTitle(tr(msgs.CMIS_CANCEL_CHECK_OUT));
-      this.dialog.setButtonConfiguration([
+  if (!this.dialog_) {
+      this.dialog_ = workspace.createDialog();
+      this.dialog_.setTitle(tr(msgs.CMIS_CANCEL_CHECK_OUT));
+      this.dialog_.setButtonConfiguration([
         {key: 'discard', caption: tr(msgs.CMIS_CANCEL_CHECK_OUT)},
         {key: 'cancel', caption: tr(msgs.CANCEL_)}
       ]);
 
-      var warningDiv = goog.dom.createDom('div', '',
+      goog.dom.append(this.dialog_.getElement(),
         tr(msgs.CMIS_LOSE_CHANGES_),
         goog.dom.createDom('br'),
-        tr(msgs.CMIS_CANCEL_WARNING_));
-      this.dialog.getElement().appendChild(warningDiv);
+        tr(msgs.CMIS_CANCEL_WARNING_)
+      );
   }
 
-  this.dialog.show();
-  this.dialog.onSelect(goog.bind(function(key, e) {
+  this.dialog_.show();
+  this.dialog_.onSelect(goog.bind(function(key, e) {
       if (key === 'discard') {
-          this.editor.getActionsManager().invokeOperation(
+          this.editor_.getActionsManager().invokeOperation(
               'com.oxygenxml.cmis.web.action.CmisCancelCheckOut', {
                   action: 'cancelCmisCheckout'
               }, callback);
-        this.status.setCheckedout(false);
+        this.status_.setCheckedout(false);
       } else {
         goog.isFunction(callback) && callback();
       }

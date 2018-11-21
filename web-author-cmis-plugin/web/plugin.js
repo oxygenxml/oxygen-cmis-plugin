@@ -19,7 +19,6 @@
       var root = document.querySelector('[data-root="true"]');
       var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
       var checkedout = root.getAttribute('data-pseudoclass-checkedout') === 'true';
-      var oldversion = root.getAttribute('data-pseudoclass-oldversion');
       var locked = root.getAttribute('data-pseudoclass-locked') === 'true';
 
       var status = new CmisStatus(checkedout, locked);
