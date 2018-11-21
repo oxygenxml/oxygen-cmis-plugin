@@ -198,7 +198,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UserActionRequiredException
 	 */
 	@VisibleForTesting
-	public List<FolderEntryDescriptor> getRootFolderEntriesDescriptiors() throws UnsupportedEncodingException {
+	public List<FolderEntryDescriptor> getRootFolderEntriesDescriptiors() {
 		List<FolderEntryDescriptor> list = new ArrayList<>();
 		
 		List<Repository> reposList = connection.getCMISAccess()
@@ -222,18 +222,18 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @throws UnsupportedEncodingException
 	 * @throws MalformedURLException
 	 */
-	private String getRepositoryUrl(Repository repo) throws UnsupportedEncodingException {
+	private String getRepositoryUrl(Repository repo) {
 		// Connecting to Server to get host
 		connection.getCMISAccess().connectToRepo(serverUrl, repo.getId(), connection.getUserCredentials());
 		// Get server URL
 		String atomPubUrlStr = connection
 				.getCMISAccess().getSession().getSessionParameters()
 				.get(SessionParameter.ATOMPUB_URL);
-    try {
-      return CmisURL.ofRepo(new URL(atomPubUrlStr), repo.getId()).toExternalForm();
-    } catch (MalformedURLException e) {
-      // Cannot happen - the URL was already used by to retrieve data from the server.
-      throw new RuntimeException(e);
-    }
+	    try {
+	        return CmisURL.ofRepo(new URL(atomPubUrlStr), repo.getId()).toExternalForm();
+	      } catch (MalformedURLException e) {
+	        // Cannot happen - the URL was already used by to retrieve data from the server.
+	        throw new RuntimeException(e);
+	      }
 	}
 }

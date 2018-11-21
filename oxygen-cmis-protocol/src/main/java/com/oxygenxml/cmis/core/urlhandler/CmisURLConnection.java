@@ -19,7 +19,6 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.log4j.Logger;
@@ -37,11 +36,27 @@ public class CmisURLConnection extends URLConnection {
    */
   private static Logger logger = Logger.getLogger(CmisURLConnection.class);
 
+  /**
+   * CMISAcces Instance.
+   */
   private CMISAccess cmisAccess;
+  
+  /**
+   * ResourceController Instance for CMISObjects manipulations.
+   */
   private ResourceController resourceController;
+  
+  /**
+   * UserCredentials Instance.
+   */
   private UserCredentials credentials;
 
-  // CONSTRUCTOR
+  /**
+   * CmisURLConnection constructor.
+   * @param url
+   * @param cmisAccess
+   * @param credentials
+   */
   public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
     super(url);
     this.cmisAccess = cmisAccess;
@@ -134,8 +149,7 @@ public class CmisURLConnection extends URLConnection {
    * @throws UnsupportedEncodingException
    * @throws UserActionRequiredException
    */
-  public CmisObject getCMISObject(String url)
-      throws CmisUnauthorizedException, CmisObjectNotFoundException, MalformedURLException {
+  public CmisObject getCMISObject(String url) throws MalformedURLException {
     // Get from custom URL server URL for connection
     CmisURL cmisUrl = CmisURL.parse(url);
 
@@ -154,7 +168,7 @@ public class CmisURLConnection extends URLConnection {
 
   @Override
   public void connect() throws IOException {
-    // Not implemented
+    // Pass
   }
 
   @Override
@@ -263,7 +277,7 @@ public class CmisURLConnection extends URLConnection {
    * @throws MalformedURLException
    * @throws IOException
    */
-  public String createDocument() throws MalformedURLException, UnsupportedEncodingException {
+  public String createDocument() throws MalformedURLException {
     CmisURL cmisUrl = CmisURL.parse(url.toExternalForm());
 
     String folderPath = cmisUrl.getFolderPath();

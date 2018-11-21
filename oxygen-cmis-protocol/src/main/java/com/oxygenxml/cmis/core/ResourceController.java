@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.core;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
@@ -18,7 +19,6 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.log4j.Logger;
 
@@ -69,8 +69,7 @@ public class ResourceController {
    * @return
    * @throws UnsupportedEncodingException
    */
-  public Document createDocument(Folder path, String filename, String content, String mimeType)
-      throws UnsupportedEncodingException, CmisConstraintException {
+  public Document createDocument(Folder path, String filename, String content, String mimeType) {
     // TODO Pass a Reader instead of a String as content.
 
     String mimetype = mimeType.concat("; charset=UTF-8");
@@ -96,7 +95,7 @@ public class ResourceController {
    */
   @VisibleForTesting
   Document createVersionedDocument(Folder path, String filename, String content, String mimetype,
-      String objectType, VersioningState versioningState) throws UnsupportedEncodingException {
+      String objectType, VersioningState versioningState) {
 
     byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
     ByteArrayInputStream stream = new ByteArrayInputStream(contentBytes);
@@ -301,18 +300,19 @@ public class ResourceController {
    * @return
    * @throws UnsupportedEncodingException
    */
-  public Reader getDocumentContent(String docID) throws UnsupportedEncodingException {
+  public Reader getDocumentContent(String docID) {
     Document document = null;
     if (docID != null) {
       try {
         document = (Document) session.getObject(docID);
-      } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException e) {
+      } catch (CmisObjectNotFoundException e) {
         logger.info("No object found");
       }
+      
       if (document != null) {
         ContentStream contentStream = document.getContentStream();
 
-        java.io.InputStream stream = contentStream.getStream();
+        InputStream stream = contentStream.getStream();
 
         // TODO Get the encoding dynamically.
         return new InputStreamReader(stream, StandardCharsets.UTF_8);
