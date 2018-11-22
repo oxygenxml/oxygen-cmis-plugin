@@ -97,9 +97,9 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 				// If server doesn't support private working copy and check in comments features
 				// we disable this actions in editor.
-				if(document.isPrivateWorkingCopy() == null || document.getCheckinComment() == null) {
+				if(document.getCheckinComment() != null) {
 					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.NO_SUPPORT.getValue());
+					.setPseudoClass(EditorOption.SUPPORTS_COMMIT_MESSAGE.getValue());
 				}
 				
 				setEditorsOptions(documentModel);
@@ -185,10 +185,9 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 				.setPseudoClass(EditorOption.OLD_VERSION.getValue());
 		
-		if(oldDoc.isPrivateWorkingCopy() == null || oldDoc.getCheckinComment() == null) {
+		if(oldDoc.getCheckinComment() != null) {
 			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-			.setPseudoClass(EditorOption.NO_SUPPORT.getValue());
-			
+			.setPseudoClass(EditorOption.SUPPORTS_COMMIT_MESSAGE.getValue());
 		}
 	}
 	

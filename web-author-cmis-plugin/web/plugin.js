@@ -20,8 +20,10 @@
       var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
       var checkedout = root.getAttribute('data-pseudoclass-checkedout') === 'true';
       var locked = root.getAttribute('data-pseudoclass-locked') === 'true';
+      // Check if the server supports Commit Message.
+      var supportsCommitMessage = document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-supports-commit-message') === 'true';
 
-      var status = new CmisStatus(checkedout, locked);
+      var status = new CmisStatus(checkedout, locked, supportsCommitMessage);
 
       // Register the newly created action.
       if (nonversionable !== 'true') {
@@ -41,7 +43,7 @@
     actionsManager.registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor, status));
     actionsManager.registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor, status));
     actionsManager.registerAction('cmisCheckIn.link', new CmisCheckInAction(editor, status));
-    actionsManager.registerAction('listOldVersion.link', new listOldVersionsAction(editor));
+    actionsManager.registerAction('listOldVersion.link', new listOldVersionsAction(editor, status));
 
     goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
       var toolbars = e.actionsConfiguration.toolbars;

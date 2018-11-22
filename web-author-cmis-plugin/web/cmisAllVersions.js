@@ -2,10 +2,12 @@
  * Action that displays the document's older versions in a dialog.
  *
  * @param editor the current editor.
+ * @param {CmisStatus} status the document status.
  */
-listOldVersionsAction = function(editor) {
+listOldVersionsAction = function(editor, status) {
   sync.actions.AbstractAction.call(this, '');
   this.editor_ = editor;
+  this.status_ = status;
   this.dialog_ = null;
 };
 goog.inherits(listOldVersionsAction, sync.actions.AbstractAction);
@@ -23,7 +25,7 @@ listOldVersionsAction.prototype.getSmallIcon = function(devicePixelRation) {
 /** @override */
 listOldVersionsAction.prototype.actionPerformed = function(callback) {
   // Check if the server supports Commit Message.
-  var supportsCommitMessage = !(document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor') === 'true');
+  var supportsCommitMessage = this.status_.supportsCommitMessage();
 
   var allVerDialog = this.getDialog_(supportsCommitMessage);
   allVerDialog.show();
@@ -90,14 +92,14 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
 
   container.querySelector("#cmis-loader").remove();
 
-  var jsonFile = JSON.parse(data);
+  var versions = JSON.parse(data);
   goog.dom.append(container,
     goog.dom.createDom('div', { id: 'cmis-head' },
       versionHeader,
       userHeader,
       commitHeader
     ),
-    this.createTable_(jsonFile, supportsCommitMessage)
+    this.createTable_(versions, supportsCommitMessage)
   );
 
   this.resizeHeaderWidth_(versionHeader, 'version');
@@ -114,39 +116,38 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
 /**
  * Creates the versions table.
  *
- * @param jsonFile the versions descriptor.
+ * @param versions the versions list.
  * @param supportsCommitMessage whether the server supports commit messages.
  *
  * @return {*} the HTML table.
  * @private
  */
-listOldVersionsAction.prototype.createTable_ = function(jsonFile, supportsCommitMessage) {
+listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
   var table = goog.dom.createDom('table', { id: 'cmis-all-versions-table'});
   var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
-  for (var key in jsonFile) {
-    if (key === 'filename') {
+  for(var i = 0; i < versions.length; i++) {
+    var version = versions[i];
+    if (version.version === 'filename') {
       continue;
     }
+    var versionUrl = version.url;
 
-    var value = jsonFile[key];
-    var versionUrlParamFromJson = value[0];
-
-    var isThisVersionOpenedNow = window.location.search.indexOf(versionUrlParamFromJson) !== -1;
-    var isThisVersionOld = versionUrlParamFromJson.indexOf('oldversion') !== -1;
+    var isThisVersionOpenedNow = window.location.search.indexOf(versionUrl) !== -1;
+    var isThisVersionOld = versionUrl.indexOf('oldversion') !== -1;
     var isThisCurrentVersion = (isThisVersionOpenedNow && isThisVersionOld) || (isLatestVersionOpenedNow && !isThisVersionOld);
 
-    var href = window.location.origin + window.location.pathname + versionUrlParamFromJson;
+    var href = window.location.origin + window.location.pathname + versionUrl;
     var versionLink = goog.dom.createDom('a', {
         className: 'oldlink',
         href: isThisCurrentVersion ? '#' : href,
         target: '_blank'
-      }, key);
+      }, version.version);
 
     var versionTd = this.createTableCell_('version', versionLink);
-    var userTd = this.createTableCell_('user', value[2]);
+    var userTd = this.createTableCell_('user', version.author);
     // If file is not versionable, do not create the commit cell.
-    var commitTd = supportsCommitMessage ? this.createTableCell_('commit', value[1]) : '';
+    var commitTd = supportsCommitMessage ? this.createTableCell_('commit', version.commitMessage) : '';
 
     // Fill the dialog with only version/user columns.
     if (!supportsCommitMessage) {

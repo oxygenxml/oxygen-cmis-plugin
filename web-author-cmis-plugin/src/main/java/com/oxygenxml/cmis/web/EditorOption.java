@@ -5,7 +5,7 @@ public enum EditorOption {
 	
 	IS_CHECKED_OUT("checkedout"),
 	
-	NO_SUPPORT("nosupportfor"),
+	SUPPORTS_COMMIT_MESSAGE("supports-commit-message"),
 	
 	OLD_VERSION("oldversion"),
 	

@@ -6,9 +6,10 @@
  *
  * @constructor
  */
-CmisStatus = function(checkedout, locked) {
+CmisStatus = function(checkedout, locked, supportsCommitMessage) {
   this.checkedout_ = checkedout;
   this.locked_ = locked;
+  this.supportsCommitMessage_ = supportsCommitMessage;
 };
 
 /**
@@ -43,5 +44,13 @@ CmisStatus.prototype.setLocked = function(locked) {
  */
 CmisStatus.prototype.isLocked = function() {
   return this.locked_;
+};
+
+
+/**
+ * @return {boolean} Whether the current server supports commit messages.
+ */
+CmisStatus.prototype.supportsCommitMessage = function() {
+  return this.supportsCommitMessage_;
 };
 

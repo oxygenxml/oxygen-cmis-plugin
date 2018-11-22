@@ -42,10 +42,7 @@ CmisCheckInAction.prototype.actionPerformedInternal_ = function (callback) {
     this.editor_.problemReporter.showWarning(tr(msgs.SAVE_CHANGES_BEFORE_CHECK_IN_));
     return;
   }
-  // Check if the server supports Commit Messages.
-  var supportsCommitMessage = !(document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-nosupportfor') === 'true');
-
-  var dialog = this.getDialog_(supportsCommitMessage);
+  var dialog = this.getDialog_(this.status_.supportsCommitMessage());
   dialog.show();
   dialog.onSelect(goog.bind(this.handleDialogSelect_, this, callback));
 };
