@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 
+var fs = require('fs');
 var concat = require('gulp-concat');
 var Synci18n = require('sync-i18n');
 var iife = require("gulp-iife");
@@ -11,9 +12,10 @@ var uglifyOptions = {
     }
   }
 };
-
-
-var fs = require('fs');
+var i18nOptions = {
+  // use this flag only if sure that the plugin will be surrounded by IIFE.
+  useLocalMsgs:true
+};
 
 
 gulp.task('prepare-package', ['i18n'], function() {
@@ -25,7 +27,7 @@ gulp.task('prepare-package', ['i18n'], function() {
 });
 
 gulp.task('i18n', function () {
-  Synci18n().generateTranslations();
+  Synci18n(i18nOptions).generateTranslations();
 });
 
 gulp.task('default', ['i18n']);
