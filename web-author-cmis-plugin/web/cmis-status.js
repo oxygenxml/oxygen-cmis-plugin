@@ -1,15 +1,14 @@
 /**
  * The CMIS document status.
  *
- * @param checkedout the document's checkedout status.
- * @param locked whether the document is locked by another user.
+ * @param {Element} root The element to check for cmis status attributes.
  *
  * @constructor
  */
-CmisStatus = function(checkedout, locked, supportsCommitMessage) {
-  this.checkedout_ = checkedout;
-  this.locked_ = locked;
-  this.supportsCommitMessage_ = supportsCommitMessage;
+CmisStatus = function(root) {
+  this.checkedout_ = root.getAttribute('data-pseudoclass-checkedout') === 'true';
+  this.locked_ = root.getAttribute('data-pseudoclass-locked') === 'true';
+  this.supportsCommitMessage_ = root.getAttribute('data-pseudoclass-supports-commit-message') === 'true';
 };
 
 /**

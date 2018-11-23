@@ -26,18 +26,19 @@ cancelCmisCheckOutAction.prototype.isEnabled = function() {
 
 cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   if (!this.dialog_) {
-      this.dialog_ = workspace.createDialog();
-      this.dialog_.setTitle(tr(msgs.CMIS_CANCEL_CHECK_OUT));
-      this.dialog_.setButtonConfiguration([
+      var dialog = workspace.createDialog();
+      dialog.setTitle(tr(msgs.CMIS_CANCEL_CHECK_OUT));
+      dialog.setButtonConfiguration([
         {key: 'discard', caption: tr(msgs.CMIS_CANCEL_CHECK_OUT)},
         {key: 'cancel', caption: tr(msgs.CANCEL_)}
       ]);
 
-      goog.dom.append(this.dialog_.getElement(),
+      goog.dom.append(dialog.getElement(),
         tr(msgs.CMIS_LOSE_CHANGES_),
         goog.dom.createDom('br'),
         tr(msgs.CMIS_CANCEL_WARNING_)
       );
+      this.dialog_ = dialog;
   }
 
   this.dialog_.show();

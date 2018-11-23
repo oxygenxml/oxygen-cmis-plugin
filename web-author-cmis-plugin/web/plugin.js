@@ -18,16 +18,9 @@
     if (editor.getUrl().indexOf(CmisFileServer.PROTOCOL_PREFIX) === 0) {
       var root = document.querySelector('[data-root="true"]');
       var nonversionable = root.getAttribute('data-pseudoclass-nonversionable');
-      var checkedout = root.getAttribute('data-pseudoclass-checkedout') === 'true';
-      var locked = root.getAttribute('data-pseudoclass-locked') === 'true';
-      // Check if the server supports Commit Message.
-      var supportsCommitMessage = document.querySelector('[data-root="true"]').getAttribute('data-pseudoclass-supports-commit-message') === 'true';
-
-      var status = new CmisStatus(checkedout, locked, supportsCommitMessage);
-
       // Register the newly created action.
       if (nonversionable !== 'true') {
-        addCustomActions(editor, status);
+        addCustomActions(editor, new CmisStatus(root));
       }
     }
   });
