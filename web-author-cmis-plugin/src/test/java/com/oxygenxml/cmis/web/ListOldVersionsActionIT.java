@@ -220,7 +220,7 @@ public class ListOldVersionsActionIT {
       
       assertEquals("current", latestVersion.get("version"));
       assertEquals("admin", latestVersion.get("author"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck",
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
           latestVersion.get("url"));
     } finally {
       if (document != null) {
@@ -261,7 +261,7 @@ public class ListOldVersionsActionIT {
       
       assertEquals("current", latestVersion.get("version"));
       assertEquals("admin", latestVersion.get("author"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck",
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
           latestVersion.get("url"));
     } finally {
       if (document != null) {
