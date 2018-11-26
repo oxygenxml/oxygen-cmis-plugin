@@ -1,12 +1,19 @@
 package com.oxygenxml.cmis.web;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,20 +50,20 @@ public class ListOldVersionsActionIT {
 			document = createEmptyVersionedDocument("oneVersion");
 			
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
 			
-			assertTrue(test, test
-				.equals("{\"v0.1\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-						+ "Fatom11%2FA1%2FoneVersion\",\"\",\"admin\"]}"));
-			
+      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      
+      HashMap<String, String> latestVersion = versions.get(0);
+      assertEquals("v0.1", latestVersion.get("version"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FoneVersion",
+          latestVersion.get("url"));
+      assertEquals("admin", latestVersion.get("author"));
 		} finally {
 			if (document != null) {
 				ctrl.deleteAllVersionsDocument(document);
 			}
 		}
 	}
-	
-	
 	
 	
 	@Test
@@ -68,12 +75,14 @@ public class ListOldVersionsActionIT {
 			createNewVersion(document, "major", "some commit");
 
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+			ArrayList<HashMap<String, String>> versions = getVersions(document, url);
 			
-			assertTrue(test, test
-				.startsWith("{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-						+ "Fatom11%2FA1%2FcheckedOutMajor\",\"some commit\",\"admin\"]"));
-			
+      HashMap<String, String> latestVersion = versions.get(0);
+      assertEquals("v1.0", latestVersion.get("version"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+          latestVersion.get("url"));
+      assertEquals("some commit", latestVersion.get("commitMessage"));
+      assertEquals("admin", latestVersion.get("author"));
 		} finally {
 			if (document != null) {
 				ctrl.deleteAllVersionsDocument(document);
@@ -93,29 +102,20 @@ public class ListOldVersionsActionIT {
 			}
 			
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+			ArrayList<HashMap<String, String>> versions = getVersions(document, url);
 			
-			assertTrue(test, test
-				.startsWith("{\"v3.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-						+ "Fatom11%2FA1%2FcheckedOutMajorWithVersions\",\"some commit\",\"admin\"]"));
+			HashMap<String, String> latestVersion = versions.get(0);
+			assertEquals("v3.0", latestVersion.get("version"));
+		  assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajorWithVersions",
+		      latestVersion.get("url"));
+      assertEquals("some commit", latestVersion.get("commitMessage"));
+      assertEquals("admin", latestVersion.get("author"));
 			
-			String[] otherVersion = new String[5];
-			
-			otherVersion[0] = "\"v2.1\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-					+ "Fatom11%2FA1%2FcheckedOutMajorWithVersions?oldversion";
-			otherVersion[1] = "\"v2.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-					+ "Fatom11%2FA1%2FcheckedOutMajorWithVersions?oldversion";
-			otherVersion[2] = "\"v1.1\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-					+ "Fatom11%2FA1%2FcheckedOutMajorWithVersions?oldversion";
-			otherVersion[3] = "\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-					+ "Fatom11%2FA1%2FcheckedOutMajorWithVersions?oldversion";
-			otherVersion[4] = "\"v0.1\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-					+ "Fatom11%2FA1%2FcheckedOutMajorWithVersions?oldversion";
-			
-			for (int i = 0; i < otherVersion.length; i++) {
-				assertTrue(test, test.contains(otherVersion[i]));
-			}
-				
+      assertEquals("v2.1", versions.get(1).get("version"));
+      assertEquals("v2.0", versions.get(2).get("version"));
+      assertEquals("v1.1", versions.get(3).get("version"));
+      assertEquals("v1.0", versions.get(4).get("version"));
+      assertEquals("v0.1", versions.get(5).get("version"));
 		} finally {
 			if (document != null) {
 				ctrl.deleteAllVersionsDocument(document);
@@ -141,37 +141,54 @@ public class ListOldVersionsActionIT {
 			
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());
-
 			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
 			
-
-			String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
-
-			assertTrue(test, test.startsWith(
-			    "{\"v5.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
+      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
 			
+			HashMap<String, String> latestVersion = versions.get(0);
+			assertEquals("v5.0", latestVersion.get("version"));
+			assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck", latestVersion.get("url"));
+			
+			// checkout document to create current version.
 			CmisCheckOut.checkOutDocument(document);
+			versions = getVersions(document, url);
 			
 			document = document.getObjectOfLatestVersion(false);
-			test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
-			
-			System.out.println(test);
-			
-			assertTrue(test, test.startsWith(
-				    "{\"current\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
+      latestVersion = versions.get(0);
+      assertEquals("current", latestVersion.get("version"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck", latestVersion.get("url"));
 			
 			String firstVerID = getFirstVersionID(document);
-			
-			assertTrue(test, test.endsWith(
-				"\"v0.1\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11"
-				+ "%2FA1%2Fcheck?oldversion="+ firstVerID +"\",\"\",\"admin\"]}"));
-			
+
+			HashMap<String, String> firstVersion = versions.get(versions.size() - 1);
+      assertEquals("v0.1", firstVersion.get("version"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck?oldversion="+ firstVerID, 
+          firstVersion.get("url"));
 		} finally {
 		  if (document != null) {
 		    ctrl.deleteAllVersionsDocument(document);
 		  }
 		}
 	}
+
+	/**
+	 * Retrieves the versions of the document as an map array.
+	 * 
+	 * @param document the document.
+	 * @param url the document's url.
+	 * 
+	 * @return the versions of the document as an map array.
+	 * 
+	 * @throws IOException
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 */
+  private ArrayList<HashMap<String, String>> getVersions(Document document, String url)
+      throws IOException, JsonParseException, JsonMappingException {
+    String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+    ArrayList<HashMap<String, String>> versions = new ObjectMapper().readValue(test, new TypeReference<ArrayList<HashMap<String, String>>>() {});
+    return versions;
+  }
 	
 	/**
    * Test that checking out a minor version will create a "current" version.
@@ -186,17 +203,25 @@ public class ListOldVersionsActionIT {
       createNewVersion(document, "minor", "some commit");
 
       String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-      String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
       
-      assertTrue(test, test
-        .startsWith("{\"v0.2\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-            + "Fatom11%2FA1%2FcheckedOutMajor\",\"some commit\",\"admin\"]"));
+      HashMap<String, String> latestVersion = versions.get(0);
+      assertEquals("v0.2", latestVersion.get("version"));
+      assertEquals("some commit", latestVersion.get("commitMessage"));
+      assertEquals("admin", latestVersion.get("author"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+          latestVersion.get("url"));
       
       CmisCheckOut.checkOutDocument(document);
       document = document.getObjectOfLatestVersion(false);
-      test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
-      assertTrue(test, test.startsWith(
-          "{\"current\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
+      
+      versions = getVersions(document, url);
+      latestVersion = versions.get(0);
+      
+      assertEquals("current", latestVersion.get("version"));
+      assertEquals("admin", latestVersion.get("author"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck",
+          latestVersion.get("url"));
     } finally {
       if (document != null) {
         ctrl.deleteAllVersionsDocument(document);
@@ -218,17 +243,26 @@ public class ListOldVersionsActionIT {
       createNewVersion(document, "major", "some commit");
 
       String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
-      String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
       
-      assertTrue(test, test
-        .startsWith("{\"v1.0\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252"
-            + "Fatom11%2FA1%2FcheckedOutMajor\",\"some commit\",\"admin\"]"));
+      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      
+      HashMap<String, String> latestVersion = versions.get(0);
+      assertEquals("v1.0", latestVersion.get("version"));
+      assertEquals("some commit", latestVersion.get("commitMessage"));
+      assertEquals("admin", latestVersion.get("author"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+          latestVersion.get("url"));
       
       CmisCheckOut.checkOutDocument(document);
       document = document.getObjectOfLatestVersion(false);
-      test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
-      assertTrue(test, test.startsWith(
-          "{\"current\":[\"?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck"));
+      
+      versions = getVersions(document, url);
+      latestVersion = versions.get(0);
+      
+      assertEquals("current", latestVersion.get("version"));
+      assertEquals("admin", latestVersion.get("author"));
+      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck",
+          latestVersion.get("url"));
     } finally {
       if (document != null) {
         ctrl.deleteAllVersionsDocument(document);
