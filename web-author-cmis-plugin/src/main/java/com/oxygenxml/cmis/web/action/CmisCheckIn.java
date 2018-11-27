@@ -39,8 +39,6 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
 			throws IllegalArgumentException, AuthorOperationException {
 
-		logger.info("i'm here");
-		
 		AuthorAccess authorAccess = model.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 		
