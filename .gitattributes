@@ -1,1 +1,4 @@
 * text eol=lf
+
+# Patterns for binary files
+*.png binary
