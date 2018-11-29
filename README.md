@@ -2,9 +2,12 @@
 
 Integration plugin between any CMIS enabled server and Oxygen XML Editor and Web Author.
 
+# Download
+You can download the CMIS plugin for Web Author from the [releases page](https://github.com/oxygenxml/oxygen-cmis-plugin/releases).
+
 # Build
 
-To build the project run
+Alternatively, to build the project run:
 
 ```
 mvn clean install
