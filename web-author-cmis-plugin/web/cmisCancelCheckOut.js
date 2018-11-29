@@ -12,14 +12,22 @@ cancelCmisCheckOutAction = function(editor,status) {
 };
 goog.inherits(cancelCmisCheckOutAction, sync.actions.AbstractAction);
 
+/** @override */
 cancelCmisCheckOutAction.prototype.getDisplayName = function() {
   return tr(msgs.CMIS_CANCEL_CHECK_OUT);
 };
 
+/** @override */
 cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
-  return 'http://icons.iconarchive.com/icons/icons8/ios7/256/Very-Basic-Cancel-icon.png';
+  return '../plugin-resources/cmis/icons/DiscardCheckOut16.png';
 };
 
+/** @override */
+cancelCmisCheckOutAction.prototype.getLargeIcon = function(devicePixelRation) {
+  return '../plugin-resources/cmis/icons/DiscardCheckOut16@2x.png';
+};
+
+/** @override */
 cancelCmisCheckOutAction.prototype.isEnabled = function() {
   return this.status_.isCheckedout();
 };

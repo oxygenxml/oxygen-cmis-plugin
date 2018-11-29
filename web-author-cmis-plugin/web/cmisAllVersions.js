@@ -19,8 +19,13 @@ listOldVersionsAction.prototype.getDisplayName = function() {
 
 /** @override */
 listOldVersionsAction.prototype.getSmallIcon = function(devicePixelRation) {
-  return 'http://icons.iconarchive.com/icons/icons8/windows-8/256/Data-View-Details-icon.png';
+  return '../plugin-resources/cmis/icons/ShowVersionHistory16.png';
 };
+
+/** @override */
+listOldVersionsAction.prototype.getLargeIcon = function(devicePixelRation) {
+  return '../plugin-resources/cmis/icons/ShowVersionHistory16@2x.png'
+}
 
 /** @override */
 listOldVersionsAction.prototype.actionPerformed = function(callback) {

@@ -21,7 +21,12 @@ CmisCheckInAction.prototype.getDisplayName = function() {
 
 /** @override */
 CmisCheckInAction.prototype.getSmallIcon = function(devicePixelRation) {
-    return 'https://static.thenounproject.com/png/796161-200.png';
+    return '../plugin-resources/cmis/icons/CheckIn16.png';
+};
+
+/** @override */
+CmisCheckInAction.prototype.getLargeIcon = function(devicePixelRation) {
+  return '../plugin-resources/cmis/icons/CheckIn16@2x.png';
 };
 
 /** @override */
