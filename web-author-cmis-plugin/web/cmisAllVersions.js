@@ -18,14 +18,10 @@ listOldVersionsAction.prototype.getDisplayName = function() {
 };
 
 /** @override */
-listOldVersionsAction.prototype.getSmallIcon = function(devicePixelRation) {
-  return '../plugin-resources/cmis/icons/ShowVersionHistory16.png';
+listOldVersionsAction.prototype.getSmallIcon = function() {
+  return sync.util.computeHdpiIcon('../plugin-resources/cmis/icons/ShowVersionHistory16.png');
 };
 
-/** @override */
-listOldVersionsAction.prototype.getLargeIcon = function(devicePixelRation) {
-  return '../plugin-resources/cmis/icons/ShowVersionHistory16@2x.png'
-}
 
 /** @override */
 listOldVersionsAction.prototype.actionPerformed = function(callback) {

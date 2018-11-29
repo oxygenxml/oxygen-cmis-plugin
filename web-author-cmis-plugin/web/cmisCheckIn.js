@@ -20,13 +20,8 @@ CmisCheckInAction.prototype.getDisplayName = function() {
 };
 
 /** @override */
-CmisCheckInAction.prototype.getSmallIcon = function(devicePixelRation) {
-    return '../plugin-resources/cmis/icons/CheckIn16.png';
-};
-
-/** @override */
-CmisCheckInAction.prototype.getLargeIcon = function(devicePixelRation) {
-  return '../plugin-resources/cmis/icons/CheckIn16@2x.png';
+CmisCheckInAction.prototype.getSmallIcon = function() {
+    return sync.util.computeHdpiIcon('../plugin-resources/cmis/icons/CheckIn16.png');
 };
 
 /** @override */

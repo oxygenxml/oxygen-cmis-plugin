@@ -18,13 +18,8 @@ cancelCmisCheckOutAction.prototype.getDisplayName = function() {
 };
 
 /** @override */
-cancelCmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
-  return '../plugin-resources/cmis/icons/DiscardCheckOut16.png';
-};
-
-/** @override */
-cancelCmisCheckOutAction.prototype.getLargeIcon = function(devicePixelRation) {
-  return '../plugin-resources/cmis/icons/DiscardCheckOut16@2x.png';
+cancelCmisCheckOutAction.prototype.getSmallIcon = function() {
+  return sync.util.computeHdpiIcon('../plugin-resources/cmis/icons/DiscardCheckOut16.png');
 };
 
 /** @override */

@@ -20,13 +20,8 @@ CmisCheckOutAction.prototype.getDisplayName = function() {
 };
 
 /** @override */
-CmisCheckOutAction.prototype.getSmallIcon = function(devicePixelRation) {
-  return '../plugin-resources/cmis/icons/CheckOut16.png';
-};
-
-/** @override */
-CmisCheckOutAction.prototype.getLargeIcon = function(devicePixelRation) {
-  return '../plugin-resources/cmis/icons/CheckOut16@2x.png';
+CmisCheckOutAction.prototype.getSmallIcon = function() {
+  return sync.util.computeHdpiIcon('../plugin-resources/cmis/icons/CheckOut16.png');
 };
 
 /** @override */
