@@ -97,6 +97,9 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
 
   container.querySelector("#cmis-loader").remove();
 
+  // todo: (WA-2472) disabled the commit message column until the table is reworked.
+  supportsCommitMessage = false;
+
   var versions = JSON.parse(data);
   goog.dom.append(container,
     goog.dom.createDom('div', { id: 'cmis-head' },
