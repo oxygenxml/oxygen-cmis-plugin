@@ -196,7 +196,7 @@ public class CreateDocumentAction extends AbstractAction {
       // Checkout the document
 
       DocumentImpl documentCreated = new DocumentImpl(doc);
-      documentCreated.checkOut(documentCreated.getDocType(), CmisAccessTestSingleton.getInstance());
+      documentCreated.checkOut(documentCreated.getDocType(), CmisAccessSingleton.getInstance());
       docToOpen = documentCreated.getDoc();
 
     } catch (Exception e2) {
