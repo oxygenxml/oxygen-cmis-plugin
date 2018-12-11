@@ -11,6 +11,7 @@ import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
@@ -22,6 +23,7 @@ import com.oxygenxml.cmis.ui.ResourcesBrowser;
  *
  */
 public class CheckoutDocumentAction extends AbstractAction {
+
   // Internal role
   private static final String SEARCH_RESULTS_ID = "#search.results";
 
@@ -45,7 +47,7 @@ public class CheckoutDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super(TranslationResourceController.getMessage("CMIS_CHECK_OUT"));
+    super(TranslationResourceController.getMessage(Tags.CMIS_CHECK_OUT));
 
     // Set logger level
 

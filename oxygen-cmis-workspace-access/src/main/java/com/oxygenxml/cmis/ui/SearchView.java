@@ -24,6 +24,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.search.SearchDocument;
 import com.oxygenxml.cmis.search.SearchFolder;
@@ -55,8 +56,8 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
   private String option = null;
 
   public SearchView() {
-    String searchLabel = TranslationResourceController.getMessage("SEARCH_LABEL");
-    String operationIsNotSupported = TranslationResourceController.getMessage("OPERATION_IS_NOT_SUPPORTED");
+    String searchLabel = TranslationResourceController.getMessage(Tags.SEARCH_LABEL);
+    String operationIsNotSupported = TranslationResourceController.getMessage(Tags.OPERATION_IS_NOT_SUPPORTED);
 
     setOpaque(true);
 

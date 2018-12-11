@@ -4,10 +4,10 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.storage.SessionStorage;
 
@@ -54,11 +55,6 @@ public class ServerView extends JPanel {
    * @exception MalformedURLException
    */
   public ServerView(RepositoriesPresenter repoPresenter, SearchPresenter searchPresenter) {
-    // Elements constants
-    String operationIsNotSupported = TranslationResourceController.getMessage("OPERATION_IS_NOT_SUPPORTED");
-    String serverUrlLabelValue = TranslationResourceController.getMessage("SERVER_URL_LABEL") + ":";
-    String connectButtonValue = TranslationResourceController.getMessage("CONNECT_BUTTON");
-
     /*
      * TESTING in comments Arrays.assList has a fixed range no add allowed
      */
@@ -85,6 +81,7 @@ public class ServerView extends JPanel {
     c.weightx = 0.0;
     c.insets = new Insets(1, 10, 1, 10);
     c.fill = GridBagConstraints.NONE;
+    String serverUrlLabelValue = TranslationResourceController.getMessage(Tags.SERVER_URL_LABEL) + ":";
     JLabel serverUrlLabel = new JLabel(serverUrlLabelValue);
 
     serverUrlLabel.setOpaque(true);
@@ -102,14 +99,7 @@ public class ServerView extends JPanel {
     serverItemsCombo.setEditable(true);
     serverItemsCombo.setEnabled(true);
     serverItemsCombo.setOpaque(true);
-    serverItemsCombo.addFocusListener(new FocusListener() {
-
-      @Override
-      public void focusLost(FocusEvent e) {
-        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
-
-      }
-
+    serverItemsCombo.addFocusListener(new FocusAdapter() {
       @Override
       public void focusGained(FocusEvent e) {
         serverItemsCombo.setFocusable(true);
@@ -119,23 +109,9 @@ public class ServerView extends JPanel {
     serverItemsCombo.validate();
     serverItemsCombo.requestFocus();
 
-    serverItemsCombo.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
-
-      @Override
-      public void keyTyped(KeyEvent e) {
-        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
-
-      }
-
-      @Override
-      public void keyReleased(KeyEvent e) {
-        logger.debug(new UnsupportedOperationException(operationIsNotSupported));
-
-      }
-
+    serverItemsCombo.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
           loadButton.doClick();
         }
@@ -149,6 +125,7 @@ public class ServerView extends JPanel {
     c.gridy = 0;
     c.weightx = 0.0;
     c.fill = GridBagConstraints.NONE;
+    String connectButtonValue = TranslationResourceController.getMessage(Tags.CONNECT_BUTTON);
     loadButton = new JButton(connectButtonValue);
 
     loadButton.addActionListener(e -> {

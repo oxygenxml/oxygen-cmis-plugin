@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
@@ -31,12 +32,10 @@ public class LoginDialog extends OKCancelDialog {
 
   // Constructor
   public LoginDialog(JFrame frame) {
-    super(frame, TranslationResourceController.getMessage("LOGIN_DIALOG_TITLE"), true);
+    super(frame, TranslationResourceController.getMessage(Tags.LOGIN_DIALOG_TITLE), true);
     
-    new Exception("Show login").printStackTrace(System.out);
-
-    String passwordLabelValue = TranslationResourceController.getMessage("PASSWORD_LOGIN_DIALOG_LABEL") + ":";
-    String usernameLabelValue = TranslationResourceController.getMessage("USERNAME_LOGIN_DIALOG_LABEL") + ":";
+    String passwordLabelValue = TranslationResourceController.getMessage(Tags.PASSWORD_LOGIN_DIALOG_LABEL) + ":";
+    String usernameLabelValue = TranslationResourceController.getMessage(Tags.USERNAME_LOGIN_DIALOG_LABEL) + ":";
 
     // Get the parent container
     Container cont = getContentPane();

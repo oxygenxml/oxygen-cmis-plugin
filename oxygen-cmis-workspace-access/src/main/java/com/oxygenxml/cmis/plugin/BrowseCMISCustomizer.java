@@ -9,31 +9,29 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
-import org.apache.log4j.Logger;
-
 import ro.sync.exml.workspace.api.standalone.InputURLChooser;
 import ro.sync.exml.workspace.api.standalone.InputURLChooserCustomizer;
 
+/**
+ * Contributes CMIS related actions to the URL choosers.
+ */
 public class BrowseCMISCustomizer implements InputURLChooserCustomizer {
-  // Get the workspace of the plugin
-
   private final Action browseAction;
   private InputURLChooser inputUrlChooser;
-  /**
-   * Logging.
-   */
-  private static final Logger logger = Logger.getLogger(BrowseCMISCustomizer.class);
 
-  BrowseCMISCustomizer(JFrame frame) {
-    String browseCmis = TranslationResourceController.getMessage("BROWSE_CMIS");
-    String cmisDialog = TranslationResourceController.getMessage("CMIS_DIALOG");
+  /**
+   * Constructor.
+   * 
+   * @param frame Application frame. Used as parent for all the fialogs presented by the actions.
+   */
+  public BrowseCMISCustomizer(JFrame frame) {
+    String browseCmis = TranslationResourceController.getMessage(Tags.BROWSE_CMIS);
 
     URL urlIcon = getClass().getClassLoader().getResource("images/cmis.png");
     browseAction = new AbstractAction(browseCmis, new ImageIcon(urlIcon)) {
-
       @Override
       public void actionPerformed(ActionEvent e) {
-        new CmisDialog(frame, cmisDialog, inputUrlChooser, true);
+        new CmisDialog(frame, inputUrlChooser, true);
 
       }
     };
@@ -42,9 +40,7 @@ public class BrowseCMISCustomizer implements InputURLChooserCustomizer {
 
   @Override
   public void customizeBrowseActions(List<Action> existingBrowseActions, InputURLChooser chooser) {
-
     this.inputUrlChooser = chooser;
     existingBrowseActions.add(browseAction);
   }
-
 }

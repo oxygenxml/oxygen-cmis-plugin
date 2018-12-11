@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 /**
@@ -21,6 +22,7 @@ import com.oxygenxml.cmis.plugin.TranslationResourceController;
  *
  */
 public class CopyDocumentAction extends AbstractAction {
+
   /**
    * Logging.
    */
@@ -37,7 +39,7 @@ public class CopyDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CopyDocumentAction(IResource resource) {
-    super(TranslationResourceController.getMessage("COPY_DOCUMENT_ACTION_TITLE"));
+    super(TranslationResourceController.getMessage(Tags.COPY_DOCUMENT_ACTION_TITLE));
 
     this.resource = resource;
 

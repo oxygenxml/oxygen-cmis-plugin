@@ -14,10 +14,10 @@ import ro.sync.exml.plugin.option.OptionPagePluginExtension;
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
+/**
+ * Cmis options page.
+ */
 public class CmisOptionPageExtension extends OptionPagePluginExtension {
-
-  private final String optionsTitle;
-  private final String allowEditLabel;
 
   // Internal role
   private static final String ALLOW_EDIT_OPTION_TRUE = "true";
@@ -33,10 +33,6 @@ public class CmisOptionPageExtension extends OptionPagePluginExtension {
 
   public CmisOptionPageExtension() {
 
-
-    optionsTitle = TranslationResourceController.getMessage("OPTIONS_CMIS_TITLE");
-    allowEditLabel = TranslationResourceController.getMessage("ALLOW_EDIT_WITHOUT_CHECKOUT");
-
     // Set logger level
 
     mainPanel = new JPanel(new GridBagLayout());
@@ -49,6 +45,8 @@ public class CmisOptionPageExtension extends OptionPagePluginExtension {
     c.ipadx = 10;
     c.insets = new Insets(3, 5, 3, 5);
     c.fill = GridBagConstraints.HORIZONTAL;
+    
+    String allowEditLabel = TranslationResourceController.getMessage(Tags.ALLOW_EDIT_WITHOUT_CHECKOUT);
     allowEditCheckout = new JCheckBox(allowEditLabel);
 
     mainPanel.add(allowEditCheckout, c);
@@ -79,8 +77,7 @@ public class CmisOptionPageExtension extends OptionPagePluginExtension {
 
   @Override
   public String getTitle() {
-
-    return optionsTitle;
+    return TranslationResourceController.getMessage(Tags.OPTIONS_CMIS_TITLE);
   }
 
   @Override

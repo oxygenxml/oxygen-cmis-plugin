@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
@@ -22,13 +23,9 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class RenameFolderAction extends AbstractAction {
-  private final String unknownException;
-  private final String enterNameLabel;
 
   // Internal role
   private static final String SEARCH_RESULTS_ID = "#search.results";
-  private static transient PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
-  private static JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
   private transient IResource resource = null;
   private transient IResource currentParent = null;
@@ -44,9 +41,7 @@ public class RenameFolderAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public RenameFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
-    super(TranslationResourceController.getMessage("RENAME_ACTION_TITLE"));
-    enterNameLabel = TranslationResourceController.getMessage("ENTER_A_NAME");
-    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
+    super(TranslationResourceController.getMessage(Tags.RENAME_ACTION_TITLE));
     
     this.resource = resource;
     this.currentParent = currentParent;
@@ -60,7 +55,12 @@ public class RenameFolderAction extends AbstractAction {
     FolderImpl folder = ((FolderImpl) resource);
 
     // Get input from user
-    String getInput = JOptionPane.showInputDialog(mainFrame, enterNameLabel, resource.getDisplayName());
+    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+    JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
+    String getInput = JOptionPane.showInputDialog(
+        mainFrame,  
+        TranslationResourceController.getMessage(Tags.ENTER_A_NAME), 
+        resource.getDisplayName());
 
     // Try to rename
     try {
@@ -80,7 +80,7 @@ public class RenameFolderAction extends AbstractAction {
     } catch (Exception ev) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, unknownException + ev.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.ENTER_A_NAME) + ev.getMessage());
     }
 
   }

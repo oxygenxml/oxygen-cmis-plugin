@@ -15,6 +15,7 @@ import javax.swing.JRadioButton;
 
 import org.apache.batik.ext.swing.GridBagConstants;
 
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
@@ -27,13 +28,14 @@ import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
  *
  */
 public class DeleteDocDialog extends OKCancelDialog {
+  
   private final DeleteInputPanel inputPanel;
 
   public DeleteDocDialog(JFrame frame) {
-    super(frame, TranslationResourceController.getMessage("DELETE_DOCUMENT_DIALOG_TITLE"), true);
+    super(frame, TranslationResourceController.getMessage(Tags.DELETE_DOCUMENT_DIALOG_TITLE), true);
 
-    String cancelButtonValue = TranslationResourceController.getMessage("CANCEL_BUTTON_DELETE_DOCUMENT_DIALOG");
-    String okButtonValue = TranslationResourceController.getMessage("OK_BUTTON_DELETE_DOCUMENT_DIALOG");
+    String cancelButtonValue = TranslationResourceController.getMessage(Tags.CANCEL_BUTTON_DELETE_DOCUMENT_DIALOG);
+    String okButtonValue = TranslationResourceController.getMessage(Tags.OK_BUTTON_DELETE_DOCUMENT_DIALOG);
 
     // Get the parent container
     final Container cont = getContentPane();
@@ -72,10 +74,10 @@ class DeleteInputPanel extends JPanel implements ActionListener {
     setLayout(new GridBagLayout());
 
     // To be translated
-    String allVersionsLabel = TranslationResourceController.getMessage("ALL_VERSIONS_LABEL");
-    String messageValueLabel = TranslationResourceController.getMessage("MESSAGE_DELETE_DOCUMENT_DIALOG_LABEL");
-    String singleVersionLabel = TranslationResourceController.getMessage("SINGLE_VERSION_LABEL");
-    String versionLabelValue = TranslationResourceController.getMessage("VERSION_LABEL") + ":";
+    String allVersionsLabel = TranslationResourceController.getMessage(Tags.ALL_VERSIONS_LABEL);
+    String messageValueLabel = TranslationResourceController.getMessage(Tags.MESSAGE_DELETE_DOCUMENT_DIALOG_LABEL);
+    String singleVersionLabel = TranslationResourceController.getMessage(Tags.SINGLE_VERSION_LABEL);
+    String versionLabelValue = TranslationResourceController.getMessage(Tags.VERSION_LABEL) + ":";
     
     // --MessageLabel
     messageLabel = new JLabel(messageValueLabel);

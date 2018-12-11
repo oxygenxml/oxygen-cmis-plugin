@@ -15,6 +15,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
@@ -52,7 +53,7 @@ public class OpenDocumentAction extends AbstractAction {
      * Logging.
      */
     // Set a name and a native icon
-    super(TranslationResourceController.getMessage("OPEN_DOCUMENT_ACTION_TITLE"), UIManager.getIcon("Tree.openIcon"));
+    super(TranslationResourceController.getMessage(Tags.OPEN_DOCUMENT_ACTION_TITLE), UIManager.getIcon("Tree.openIcon"));
 
     this.resource = resource;
     this.currentParent = currentParent;

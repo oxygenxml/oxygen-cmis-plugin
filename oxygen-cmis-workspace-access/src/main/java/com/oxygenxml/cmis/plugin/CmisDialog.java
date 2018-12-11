@@ -23,8 +23,12 @@ public class CmisDialog extends OKCancelDialog {
   private final ControlComponents inputPanel;
   private transient final InputURLChooser chooser;
 
-  public CmisDialog(JFrame parentFrame, String title, InputURLChooser chooser, boolean modal) {
-    super(parentFrame, title, modal);
+  public CmisDialog(JFrame parentFrame, InputURLChooser chooser, boolean modal) {
+    super(parentFrame, "", modal);
+    
+    String title = TranslationResourceController.getMessage(Tags.CMIS_DIALOG);
+    setTitle(title);
+    
     this.chooser = chooser;
 
     // Get the parent container

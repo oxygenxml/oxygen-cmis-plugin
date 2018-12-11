@@ -38,7 +38,7 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
         viewInfo.setIcon(new ImageIcon(resource));
 
         // Set name for the plugin
-        String cmisExplorerName = TranslationResourceController.getMessage("CMIS_EXPLORER_NAME");
+        String cmisExplorerName = TranslationResourceController.getMessage(Tags.CMIS_EXPLORER_NAME);
         viewInfo.setTitle(cmisExplorerName);
       }
     });

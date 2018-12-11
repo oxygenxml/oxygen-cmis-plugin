@@ -13,6 +13,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 /**
@@ -43,8 +44,8 @@ public class CacheSearchProvider implements ContentSearcher {
    * @param list
    */
   CacheSearchProvider(ContentSearcher searchProvider, JList<IResource> list) {
-    timeCreated = TranslationResourceController.getMessage("TIME_CREATED");
-    emptyResult = TranslationResourceController.getMessage("EMPTY_RESULT");
+    timeCreated = TranslationResourceController.getMessage(Tags.TIME_CREATED);
+    emptyResult = TranslationResourceController.getMessage(Tags.EMPTY_RESULT);
 
     cacheLine = new HashMap<>();
     cachePath = new HashMap<>();

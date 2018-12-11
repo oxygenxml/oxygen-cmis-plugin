@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.batik.ext.swing.GridBagConstants;
 
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
@@ -26,7 +27,7 @@ public class CreateDocDialog extends OKCancelDialog {
   private final CreateDocInputPanel inputPanel;
 
   public CreateDocDialog(JFrame frame) {
-    super(frame, TranslationResourceController.getMessage("CREATE_DOCUMENT_DIALOG_TITLE"), true);
+    super(frame, TranslationResourceController.getMessage(Tags.CREATE_DOCUMENT_DIALOG_TITLE), true);
 
     // Get the parent container
     Container cont = getContentPane();
@@ -70,12 +71,12 @@ class CreateDocInputPanel extends JPanel implements ActionListener {
 
   public CreateDocInputPanel() {
     // To be translated
-    String versioningStateNoneLabel = TranslationResourceController.getMessage("VERSIONING_STATE_NONE_LABEL");
-    String versioningStateMinorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MINOR_LABEL");
-    String versioningStateMajorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MAJOR_LABEL");
-    String versionLabelValue = TranslationResourceController.getMessage("VERSION_LABEL") + ":";
-    String deafultFilenameValue = TranslationResourceController.getMessage("DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG");
-    String messageLabelValue = TranslationResourceController.getMessage("MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL") + ":";
+    String versioningStateNoneLabel = TranslationResourceController.getMessage(Tags.VERSIONING_STATE_NONE_LABEL);
+    String versioningStateMinorLabel = TranslationResourceController.getMessage(Tags.VERSIONING_STATE_MINOR_LABEL);
+    String versioningStateMajorLabel = TranslationResourceController.getMessage(Tags.VERSIONING_STATE_MAJOR_LABEL);
+    String versionLabelValue = TranslationResourceController.getMessage(Tags.VERSION_LABEL) + ":";
+    String deafultFilenameValue = TranslationResourceController.getMessage(Tags.DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG);
+    String messageLabelValue = TranslationResourceController.getMessage(Tags.MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL) + ":";
     setLayout(new GridBagLayout());
 
     messageLabel = new JLabel(messageLabelValue);

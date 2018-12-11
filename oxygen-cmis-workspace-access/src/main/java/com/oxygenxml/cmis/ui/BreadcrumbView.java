@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.standalone.ui.ToolbarButton;
@@ -39,7 +40,6 @@ import ro.sync.exml.workspace.api.standalone.ui.ToolbarButton;
  */
 public class BreadcrumbView extends JPanel implements BreadcrumbPresenter, RepositoryListener {
 
-  private static final String GO_BACK_TOOLTIP = TranslationResourceController.getMessage("GO_BACK_TOOLTIP");
   private static final Logger logger = Logger.getLogger(BreadcrumbView.class);
   private final JToolBar breadcrumbToolBar;
   private final JPanel breadcrumbPanel;
@@ -86,7 +86,7 @@ public class BreadcrumbView extends JPanel implements BreadcrumbPresenter, Repos
     // Set up the icon.
     goUpIcon.setOpaque(true);
     // Add the tooltip.
-    goUpIcon.setToolTipText(GO_BACK_TOOLTIP);
+    goUpIcon.setToolTipText(TranslationResourceController.getMessage(Tags.GO_BACK_TOOLTIP));
 
     // Set cursor
     goUpIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

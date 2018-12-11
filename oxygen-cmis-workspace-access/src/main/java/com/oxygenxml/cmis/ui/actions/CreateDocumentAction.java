@@ -17,12 +17,12 @@ import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.CmisAccessSingleton;
-import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 import com.oxygenxml.cmis.ui.dialogs.CreateDocDialog;
@@ -37,12 +37,6 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class CreateDocumentAction extends AbstractAction {
-
-  private final String unknownException;
-  private final String invalidUrlException;
-
-  private final String documentAlreadyExistsException;
-  private final String unsupportedEncodingException;
 
   // Internal role
   private static final String VERSIONING_STATE_NONE = "NONE";
@@ -70,13 +64,8 @@ public class CreateDocumentAction extends AbstractAction {
    */
   public CreateDocumentAction(IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name and use a native icon
-    super(TranslationResourceController.getMessage("CREATE_DOCUMENT_ACTION_TITLE"),
+    super(TranslationResourceController.getMessage(Tags.CREATE_DOCUMENT_ACTION_TITLE),
         UIManager.getIcon("FileView.fileIcon"));
-
-    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
-    invalidUrlException = TranslationResourceController.getMessage("INVALID_URL_EXCEPTION");
-    documentAlreadyExistsException = TranslationResourceController.getMessage("DOCUMENT_ALREADY_EXISTS_EXCEPTION");
-    unsupportedEncodingException = TranslationResourceController.getMessage("UNSUPPORTED_ENCODING_EXCEPTION");
 
     this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
@@ -143,11 +132,11 @@ public class CreateDocumentAction extends AbstractAction {
       } catch (UnsupportedEncodingException e1) {
 
         // Show the exception if there is one
-        JOptionPane.showMessageDialog(mainFrame, unsupportedEncodingException + e1.getMessage());
+        JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNSUPPORTED_ENCODING_EXCEPTION) + e1.getMessage());
 
       } catch (org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException e2) {
         // Show the exception if there is one
-        JOptionPane.showMessageDialog(mainFrame, documentAlreadyExistsException + e2.getMessage());
+        JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.DOCUMENT_ALREADY_EXISTS_EXCEPTION) + e2.getMessage());
       }
 
     }
@@ -175,7 +164,7 @@ public class CreateDocumentAction extends AbstractAction {
         } catch (MalformedURLException e1) {
 
           // Show the exception if there is one
-          JOptionPane.showMessageDialog(mainFrame, invalidUrlException + e1.getMessage());
+          JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.INVALID_URL_EXCEPTION) + e1.getMessage());
         }
 
       }
@@ -201,7 +190,7 @@ public class CreateDocumentAction extends AbstractAction {
 
     } catch (Exception e2) {
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, unknownException + e2.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + e2.getMessage());
     }
     return docToOpen;
   }

@@ -19,6 +19,7 @@ import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
@@ -33,7 +34,6 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class PasteDocumentAction extends AbstractAction {
-  private static String unknownException;
   // Internal role
   private static final String DEFAULT_VERSIONING_STATE = "MAJOR";
   private static final String VERSIONING_STATE_NONE = "NONE";
@@ -58,8 +58,7 @@ public class PasteDocumentAction extends AbstractAction {
    */
   public PasteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super(TranslationResourceController.getMessage("PASTE_DOCUMENT_TITLE"));
-    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
+    super(TranslationResourceController.getMessage(Tags.PASTE_DOCUMENT_TITLE));
 
     this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
@@ -95,7 +94,7 @@ public class PasteDocumentAction extends AbstractAction {
       } catch (Exception e) {
 
         // Show the exepction if there is one
-        JOptionPane.showMessageDialog(mainFrame, unknownException + e.getMessage());
+        JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + e.getMessage());
       }
 
     }
@@ -162,7 +161,7 @@ public class PasteDocumentAction extends AbstractAction {
       } catch (Exception ev) {
 
         // Show the exception if there is one
-        JOptionPane.showMessageDialog(null, unknownException + ev.getMessage());
+        JOptionPane.showMessageDialog(null, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + ev.getMessage());
       }
     }
   }

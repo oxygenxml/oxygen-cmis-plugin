@@ -13,6 +13,7 @@ import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
@@ -27,9 +28,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class CreateFolderAction extends AbstractAction {
-  private final String unknownException;
-  private final String defaultNameFolder;
-  private final String enterNameLabelValue;
+  
   private final transient ResourceController resourceController;
   /**
    * Logging.
@@ -50,11 +49,8 @@ public class CreateFolderAction extends AbstractAction {
    */
   public CreateFolderAction(IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Give a name and a native icon
-    super(TranslationResourceController.getMessage("CREATE_FOLDER_ACTION_TITLE"),
+    super(TranslationResourceController.getMessage(Tags.CREATE_FOLDER_ACTION_TITLE),
         UIManager.getIcon("FileView.directoryIcon"));
-    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
-    defaultNameFolder = TranslationResourceController.getMessage("DEFAULT_NAME_FOLDER");
-    enterNameLabelValue = TranslationResourceController.getMessage("ENTER_A_NAME");
 
     this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
@@ -78,7 +74,10 @@ public class CreateFolderAction extends AbstractAction {
     JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
     // Get input from user
-    String getInput = JOptionPane.showInputDialog(mainFrame, enterNameLabelValue, defaultNameFolder);
+    String getInput = JOptionPane.showInputDialog(
+        mainFrame, 
+        TranslationResourceController.getMessage(Tags.ENTER_A_NAME), 
+        TranslationResourceController.getMessage(Tags.DEFAULT_NAME_FOLDER));
     logger.debug("The input=" + getInput);
 
     // Set current folder where we want a new folder
@@ -92,7 +91,7 @@ public class CreateFolderAction extends AbstractAction {
     } catch (Exception e1) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, unknownException + e1.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + e1.getMessage());
 
     }
 

@@ -10,6 +10,7 @@ import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 import com.oxygenxml.cmis.ui.dialogs.DeleteDocDialog;
@@ -25,7 +26,6 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class DeleteDocumentAction extends AbstractAction {
-  private final String unknownException ;
 
   // Internal role
   private static final String SEARCH_RESULTS_ID = "#search.results";
@@ -49,8 +49,7 @@ public class DeleteDocumentAction extends AbstractAction {
    */
   public DeleteDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super(TranslationResourceController.getMessage("DELETE_ACTION_TITLE"));
-    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
+    super(TranslationResourceController.getMessage(Tags.DELETE_ACTION_TITLE));
     
     this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 
@@ -125,7 +124,7 @@ public class DeleteDocumentAction extends AbstractAction {
       } catch (final Exception ev) {
 
         // Show the exception if there is one
-        JOptionPane.showMessageDialog(mainFrame, unknownException + ev.getMessage());
+        JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + ev.getMessage());
       }
     }
   }

@@ -29,14 +29,13 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class SearchResultCellRenderer extends JPanel implements ListCellRenderer<IResource> {
 
-  private  final String createdByLabel;
-  private  final String noDataLabel;
   // Internal role
   private static final String HTML_ENCLOSING_TAG = "</code></html>";
   private static final String HTML_TAG = "<html><code style=' overflow-wrap: break-word; word-wrap: break-word; margin: 5px; padding: 5px; text-align: center;vertical-align: middle;'>";
@@ -62,8 +61,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
   private final String matchPattern;
 
   public SearchResultCellRenderer(ContentSearcher contentProvider, String matchPattern) {
-    createdByLabel = TranslationResourceController.getMessage("CREATED_BY");
-    noDataLabel = TranslationResourceController.getMessage("NO_DATA");
     
     contentProv = contentProvider;
     this.matchPattern = matchPattern;
@@ -146,6 +143,9 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     if (resourceText != null) {
       resourceText = styleString(resourceText);
     }
+    
+    String createdByLabel = TranslationResourceController.getMessage(Tags.CREATED_BY);
+    String noDataLabel = TranslationResourceController.getMessage(Tags.NO_DATA);
 
     if (value instanceof DocumentImpl) {
 

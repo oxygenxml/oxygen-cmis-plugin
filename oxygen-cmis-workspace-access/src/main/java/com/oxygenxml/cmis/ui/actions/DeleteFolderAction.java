@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
@@ -23,8 +24,6 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  *
  */
 public class DeleteFolderAction extends AbstractAction {
-
-  private final String unknownException;
 
   // Internal role
   private static final String SEARCH_RESULTS_ID = "#search.results";
@@ -45,8 +44,7 @@ public class DeleteFolderAction extends AbstractAction {
    */
   public DeleteFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
     // Set a name
-    super(TranslationResourceController.getMessage("DELETE_ACTION_TITLE"));
-    unknownException = TranslationResourceController.getMessage("UNKNOWN_EXCEPTION");
+    super(TranslationResourceController.getMessage(Tags.DELETE_ACTION_TITLE));
 
     this.resource = resource;
     this.currentParent = currentParent;
@@ -87,7 +85,7 @@ public class DeleteFolderAction extends AbstractAction {
     } catch (Exception ev) {
 
       // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, unknownException + ev.getMessage());
+      JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + ev.getMessage());
     }
 
   }

@@ -16,6 +16,7 @@ import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 import com.oxygenxml.cmis.ui.dialogs.CheckinDocDialog;
@@ -56,7 +57,7 @@ public class CheckinFolderAction extends AbstractAction {
    */
   public CheckinFolderAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
 
-    super(TranslationResourceController.getMessage("CMIS_CHECK_IN"));
+    super(TranslationResourceController.getMessage(Tags.CMIS_CHECK_IN));
 
     this.resourceController = CmisAccessSingleton.getInstance().createResourceController();
 

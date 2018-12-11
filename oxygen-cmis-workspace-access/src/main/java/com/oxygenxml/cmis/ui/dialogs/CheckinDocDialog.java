@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.batik.ext.swing.GridBagConstants;
 
+import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 
 import ro.sync.exml.workspace.api.standalone.ui.OKCancelDialog;
@@ -40,9 +41,9 @@ public class CheckinDocDialog extends OKCancelDialog {
    */
   public CheckinDocDialog(JFrame frame, String docName) {
 
-    super(frame, TranslationResourceController.getMessage("CMIS_CHECK_IN") +" "+ docName, true);
+    super(frame, TranslationResourceController.getMessage(Tags.CMIS_CHECK_IN) + " " + docName, true);
 
-    String okButtonCheckinDialog = TranslationResourceController.getMessage("CMIS_CHECK_IN");
+    String okButtonCheckinDialog = TranslationResourceController.getMessage(Tags.CMIS_CHECK_IN);
 
     // Get the parent container
     final Container cont = getContentPane();
@@ -96,13 +97,13 @@ class CheckinInputPanel extends JPanel implements ActionListener {
    */
   public CheckinInputPanel() {
     // To be translated
-    String versioningStateMinorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MINOR_LABEL");
-    String versioningStateMajorLabel = TranslationResourceController.getMessage("VERSIONING_STATE_MAJOR_LABEL");
-    String versionLabelValue = TranslationResourceController.getMessage("VERSION_LABEL");
+    String versioningStateMinorLabel = TranslationResourceController.getMessage(Tags.VERSIONING_STATE_MINOR_LABEL);
+    String versioningStateMajorLabel = TranslationResourceController.getMessage(Tags.VERSIONING_STATE_MAJOR_LABEL);
+    String versionLabelValue = TranslationResourceController.getMessage(Tags.VERSION_LABEL);
     String commitAreaLabelValue = TranslationResourceController
-        .getMessage("COMMIT_AREA_CHECKIN_DIALOG_LABEL");
+        .getMessage(Tags.COMMIT_AREA_CHECKIN_DIALOG_LABEL);
     String commitMessageValueLabel = TranslationResourceController
-        .getMessage("COMMIT_MESSAGE_CHECKIN_DIALOG_LABEL");
+        .getMessage(Tags.COMMIT_MESSAGE_CHECKIN_DIALOG_LABEL);
     // Set the layout
     setLayout(new GridBagLayout());
 
