@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.ui;
+package com.oxygenxml.cmis.ui.test;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -17,6 +17,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.CmisAccessSingleton;
+import com.oxygenxml.cmis.ui.TabsPresenter;
 
 /**
  * Component used for show the documents in tabs

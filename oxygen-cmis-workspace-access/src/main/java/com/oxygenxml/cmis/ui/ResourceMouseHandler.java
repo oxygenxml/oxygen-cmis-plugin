@@ -11,26 +11,26 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Supplier;
-import com.oxygenxml.cmis.actions.CancelCheckoutDocumentAction;
-import com.oxygenxml.cmis.actions.CancelCheckoutFolderAction;
-import com.oxygenxml.cmis.actions.CheckinDocumentAction;
-import com.oxygenxml.cmis.actions.CheckinFolderAction;
-import com.oxygenxml.cmis.actions.CheckoutDocumentAction;
-import com.oxygenxml.cmis.actions.CheckoutFolderAction;
-import com.oxygenxml.cmis.actions.CopyDocumentAction;
-import com.oxygenxml.cmis.actions.CopyFolderAction;
-import com.oxygenxml.cmis.actions.CreateDocumentAction;
-import com.oxygenxml.cmis.actions.CreateFolderAction;
-import com.oxygenxml.cmis.actions.DeleteDocumentAction;
-import com.oxygenxml.cmis.actions.DeleteFolderAction;
-import com.oxygenxml.cmis.actions.OpenDocumentAction;
-import com.oxygenxml.cmis.actions.PasteDocumentAction;
-import com.oxygenxml.cmis.actions.RenameDocumentAction;
-import com.oxygenxml.cmis.actions.RenameFolderAction;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.ui.actions.CancelCheckoutDocumentAction;
+import com.oxygenxml.cmis.ui.actions.CancelCheckoutFolderAction;
+import com.oxygenxml.cmis.ui.actions.CheckinDocumentAction;
+import com.oxygenxml.cmis.ui.actions.CheckinFolderAction;
+import com.oxygenxml.cmis.ui.actions.CheckoutDocumentAction;
+import com.oxygenxml.cmis.ui.actions.CheckoutFolderAction;
+import com.oxygenxml.cmis.ui.actions.CopyDocumentAction;
+import com.oxygenxml.cmis.ui.actions.CopyFolderAction;
+import com.oxygenxml.cmis.ui.actions.CreateDocumentAction;
+import com.oxygenxml.cmis.ui.actions.CreateFolderAction;
+import com.oxygenxml.cmis.ui.actions.DeleteDocumentAction;
+import com.oxygenxml.cmis.ui.actions.DeleteFolderAction;
+import com.oxygenxml.cmis.ui.actions.OpenDocumentAction;
+import com.oxygenxml.cmis.ui.actions.PasteDocumentAction;
+import com.oxygenxml.cmis.ui.actions.RenameDocumentAction;
+import com.oxygenxml.cmis.ui.actions.RenameFolderAction;
 
 /**
  * Mouse interaction support.

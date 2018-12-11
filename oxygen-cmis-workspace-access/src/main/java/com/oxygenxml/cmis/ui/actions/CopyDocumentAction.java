@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.actions;
+package com.oxygenxml.cmis.ui.actions;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

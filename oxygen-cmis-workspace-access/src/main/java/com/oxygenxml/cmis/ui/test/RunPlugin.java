@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.ui;
+package com.oxygenxml.cmis.ui.test;
 
 import java.awt.BorderLayout;
 
@@ -6,6 +6,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
+
+import com.oxygenxml.cmis.ui.ControlComponents;
+import com.oxygenxml.cmis.ui.RepoComboBoxView;
+import com.oxygenxml.cmis.ui.SearchView;
+import com.oxygenxml.cmis.ui.ServerView;
 /**
  * Main frame of the desktop version that serves also the TabComponentsView
  * @author bluecc
@@ -35,9 +40,11 @@ public class RunPlugin extends JFrame {
     TabComponentsView bottomPanel = new TabComponentsView();
     
     /*
-     * Create the top of the separator that includes the itemList and repoList 
+     * Create the top of the separator that includes the itemList and repoList
+     * 
+     *  TODO This test dialog is no longer bound to a document presenter.
      */
-    ControlComponents topPanel = new ControlComponents(bottomPanel);
+    ControlComponents topPanel = new ControlComponents();
 
 
     // Create the splitPanel from center
@@ -75,6 +82,7 @@ public class RunPlugin extends JFrame {
     // Schedule a job for the event-dispatching thread:
     // creating and showing this application's GUI.
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
       public void run() {
         createAndShowGUI();
       }

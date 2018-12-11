@@ -7,11 +7,11 @@ import javax.swing.JFrame;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
-import com.oxygen.cmis.dialogs.LoginDialog;
 import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.storage.SessionStorage;
+import com.oxygenxml.cmis.ui.dialogs.LoginDialog;
 
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
@@ -48,9 +48,9 @@ public class AuthenticatorUtil {
     uc = SessionStorage.getInstance().getUserCredentials(serverURL);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("user credentials " + uc);
+      logger.debug("Storage user credentials: " + uc);
     }
-
+    
     // While no valid credentials the login dialog will appear
     while (uc == null) {
 
@@ -62,7 +62,6 @@ public class AuthenticatorUtil {
 
         // Get the user credentials
         uc = loginDialog.getUserCredentials();
-        logger.info("user credentials " + uc.getUsername());
 
         if (CmisAccessSingleton.getInstance().connectToServerGetRepositories(serverURL, uc) != null) {
           // Add the entered credentials to the session

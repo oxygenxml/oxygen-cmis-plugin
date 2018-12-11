@@ -8,7 +8,6 @@ import java.net.URL;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.ui.ControlComponents;
@@ -31,9 +30,7 @@ public class CmisDialog extends OKCancelDialog {
     // Get the parent container
     final Container cont = getContentPane();
 
-    inputPanel = new ControlComponents((Document doc) ->
-
-    logger.debug("Open " + doc.getName()));
+    inputPanel = new ControlComponents();
 
     cont.add(inputPanel, BorderLayout.CENTER);
 

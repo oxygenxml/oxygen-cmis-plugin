@@ -14,7 +14,7 @@ import ro.sync.exml.plugin.option.OptionPagePluginExtension;
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
-public class OptionsCMIS extends OptionPagePluginExtension {
+public class CmisOptionPageExtension extends OptionPagePluginExtension {
 
   private final String optionsTitle;
   private final String allowEditLabel;
@@ -26,12 +26,12 @@ public class OptionsCMIS extends OptionPagePluginExtension {
   /**
    * Logging.
    */
-  private static final Logger logger = Logger.getLogger(OptionsCMIS.class);
+  private static final Logger logger = Logger.getLogger(CmisOptionPageExtension.class);
   private final JPanel mainPanel;
 
   private final JCheckBox allowEditCheckout;
 
-  public OptionsCMIS() {
+  public CmisOptionPageExtension() {
 
 
     optionsTitle = TranslationResourceController.getMessage("OPTIONS_CMIS_TITLE");

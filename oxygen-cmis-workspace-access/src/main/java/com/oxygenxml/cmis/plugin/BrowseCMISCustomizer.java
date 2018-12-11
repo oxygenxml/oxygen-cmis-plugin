@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import ro.sync.exml.workspace.api.standalone.InputURLChooser;
 import ro.sync.exml.workspace.api.standalone.InputURLChooserCustomizer;
 
-public class BrowseCMIS implements InputURLChooserCustomizer {
+public class BrowseCMISCustomizer implements InputURLChooserCustomizer {
   // Get the workspace of the plugin
 
   private final Action browseAction;
@@ -22,9 +22,9 @@ public class BrowseCMIS implements InputURLChooserCustomizer {
   /**
    * Logging.
    */
-  private static final Logger logger = Logger.getLogger(BrowseCMIS.class);
+  private static final Logger logger = Logger.getLogger(BrowseCMISCustomizer.class);
 
-  BrowseCMIS(JFrame frame) {
+  BrowseCMISCustomizer(JFrame frame) {
     String browseCmis = TranslationResourceController.getMessage("BROWSE_CMIS");
     String cmisDialog = TranslationResourceController.getMessage("CMIS_DIALOG");
 

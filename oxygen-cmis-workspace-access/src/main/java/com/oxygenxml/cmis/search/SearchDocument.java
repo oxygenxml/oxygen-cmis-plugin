@@ -3,11 +3,11 @@ package com.oxygenxml.cmis.search;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.oxygenxml.cmis.actions.ShowAllResourcesAction;
-import com.oxygenxml.cmis.actions.ShowCheckedoutResourcesAction;
-import com.oxygenxml.cmis.actions.ShowForeignCheckoutResourcesAction;
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
+import com.oxygenxml.cmis.ui.actions.ShowAllResourcesAction;
+import com.oxygenxml.cmis.ui.actions.ShowCheckedoutResourcesAction;
+import com.oxygenxml.cmis.ui.actions.ShowForeignCheckoutResourcesAction;
 
 /**
  * @see com.oxygenxml.core.model.impl

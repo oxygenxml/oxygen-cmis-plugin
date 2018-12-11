@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.actions;
+package com.oxygenxml.cmis.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.UnsupportedEncodingException;
@@ -16,7 +16,6 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.log4j.Logger;
 
-import com.oxygen.cmis.dialogs.CreateDocDialog;
 import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -26,6 +25,7 @@ import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
+import com.oxygenxml.cmis.ui.dialogs.CreateDocDialog;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;

@@ -13,10 +13,10 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.CmisAccessSingleton;
@@ -98,22 +98,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     /*
      * Render all the elements of the listRepo
      */
-    repoItems.setRenderer(new DefaultListCellRenderer() {
-      @Override
-      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-          boolean cellHasFocus) {
-        String renderTex = "";
-        if (value != null) {
-          renderTex = ((Repository) value).getName();
-
-          if (renderTex.length() == 0) {
-            renderTex = ((Repository) value).getId();
-          }
-        }
-
-        return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
-      }
-    });
+    repoItems.setRenderer(new RepositoryRenderer());
   }
 
   /**
@@ -148,36 +133,32 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
     this.serverURL = serverURL;
     repoItems.setEnabled(true);
 
-    // Create the listRepo of repos.
-    if (logger.isDebugEnabled()) {
-      logger.debug("Load repositories from: " + serverURL);
-    }
-
     // Check credentials for the URL
     UserCredentials userCredentials = null;
+
+    List<Repository> serverReposList = null;
+    // Check if is logged in and there repositories to present
+    boolean connected = false;
     try {
-      userCredentials = AuthenticatorUtil.getUserCredentials(serverURL);
-
-    } catch (Exception e1) {
-      logger.error(e1, e1);
-
-      JOptionPane.showMessageDialog(null, "Exception " + e1.getMessage());
-    }
-
-    if (userCredentials != null) {
-      boolean loggedin = false;
-
-      List<Repository> serverReposList = null;
-      // Check if is logged in and there repositories to present
       do {
+        userCredentials = AuthenticatorUtil.getUserCredentials(serverURL);
 
-        // Check if logged in
-        loggedin = AuthenticatorUtil.isLoggedin(serverURL);
+        // Create the listRepo of repos.
+        if (logger.isDebugEnabled()) {
+          logger.debug("Load repositories from: " + serverURL + " credentials: " + userCredentials);
+        }
 
-        // Get the repositories
-        serverReposList = CmisAccessSingleton.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
-
-      } while (serverReposList == null && !loggedin);
+        try {
+          // Get the repositories
+          serverReposList = CmisAccessSingleton.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
+          connected = true;
+        } catch (CmisUnauthorizedException e) {
+          // Will try again.
+          if (logger.isDebugEnabled()) {
+            logger.debug(e, e);
+          }
+        }
+      } while (!connected);
 
       if (logger.isDebugEnabled()) {
         logger.debug(serverReposList + "repos");
@@ -185,17 +166,40 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
 
       // If there some put them in the model to be shown
       if (serverReposList != null && !serverReposList.isEmpty()) {
-
-        fireRepositoryChangedEvent(serverURL, serverReposList.get(0).getId());
-
         DefaultComboBoxModel<Repository> model = new DefaultComboBoxModel<>();
         // Iterate all the elements
         for (Repository element : serverReposList) {
           model.addElement(element);
         }
-
         repoItems.setModel(model);
+
+        fireRepositoryChangedEvent(serverURL, serverReposList.get(0).getId());
       }
+    } catch (UserCanceledException e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug(e, e);
+      }
+    }
+  }
+  
+
+  /**
+   * Renders the name or the ID for a repository.
+   */
+  private final class RepositoryRenderer extends DefaultListCellRenderer {
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
+      String renderTex = "";
+      if (value != null) {
+        renderTex = ((Repository) value).getName();
+
+        if (renderTex.length() == 0) {
+          renderTex = ((Repository) value).getId();
+        }
+      }
+
+      return super.getListCellRendererComponent(list, renderTex, index, isSelected, cellHasFocus);
     }
   }
 }

@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.actions;
+package com.oxygenxml.cmis.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
@@ -15,7 +15,6 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.plugin.OptionsCMIS;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
 
@@ -89,7 +88,7 @@ public class OpenDocumentAction extends AbstractAction {
 
     boolean editable = false;
     DocumentImpl currDoc = (DocumentImpl) resource;
-    String allowEditOption = pluginWorkspace.getOptionsStorage().getOption(OptionsCMIS.ALLOW_EDIT,
+    String allowEditOption = pluginWorkspace.getOptionsStorage().getOption(com.oxygenxml.cmis.plugin.CmisOptionPageExtension.ALLOW_EDIT,
         ALLOW_EDIT_OPTION_FALSE);
     Boolean allowEditOriginal = Boolean.valueOf(allowEditOption);
 

@@ -34,7 +34,7 @@ public class ControlComponents extends JPanel {
    * 
    * @param tabs
    */
-  public ControlComponents(TabsPresenter tabs) {
+  public ControlComponents() {
 
     // Configure the breadcrumb for initialization
     breadcrumbList = new BreadcrumbView(new ResourcesBrowser() {
@@ -57,7 +57,7 @@ public class ControlComponents extends JPanel {
     });
 
     // Initialization of the items
-    itemsPanel = new ItemListView(tabs, breadcrumbList);
+    itemsPanel = new ItemListView(breadcrumbList);
 
     // Initialization of the search
     searchPanel = new SearchView();

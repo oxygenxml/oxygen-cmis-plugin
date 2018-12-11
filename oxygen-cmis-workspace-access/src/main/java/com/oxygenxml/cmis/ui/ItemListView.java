@@ -70,7 +70,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    * @param tabsPresenter
    * @param breadcrumbPresenter
    */
-  public ItemListView(TabsPresenter tabsPresenter, BreadcrumbPresenter breadcrumbPresenter) {
+  public ItemListView(BreadcrumbPresenter breadcrumbPresenter) {
 
     // Create the listItem
     resourceList = new JList<>();
@@ -172,18 +172,21 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
     // Connect
     UserCredentials uc = null;
     do {
-      try {
+      uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
 
+      if (logger.isDebugEnabled()) {
+        logger.debug("Connect to url: " + connectionInfo + " repoID: " + repositoryID + " credentials: " + uc);
+      }
+
+      try {
         // Try to connect to the repository
         instance.connectToRepo(connectionInfo, repositoryID, uc);
         connected = true;
 
       } catch (CmisUnauthorizedException e) {
-        // Get the credentials and show login dialog if necessary
-        uc = AuthenticatorUtil.getUserCredentials(connectionInfo);
-
+        // Will try again.
         if (logger.isDebugEnabled()) {
-          logger.debug("User credit item list" + uc.getUsername());
+          logger.debug(e, e);
         }
       }
 
@@ -346,9 +349,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
     CmisObject object = null;
     IResource selectedResource = resourceList.getSelectedValue();
 
-    logger.info("Reaches present SelectedURL?");
     if (selectedResource != null) {
-      logger.info("Selected resource exists");
       if (selectedResource instanceof DocumentImpl) {
         object = ((DocumentImpl) selectedResource).getDoc();
 
@@ -356,19 +357,9 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
         object = ((FolderImpl) selectedResource).getFolder();
 
       }
-    } else {
-      logger.info("Selected resource is null");
     }
 
     ResourceController resourceController = CmisAccessSingleton.getInstance().createResourceController();
-    logger.info("Controller " + resourceController);
-    if (resourceController != null) {
-      logger.info("Sess " + resourceController.getSession());
-
-      if (resourceController.getSession() != null) {
-        logger.info("params " + resourceController.getSession().getSessionParameters());
-      }
-    }
 
     return object != null ? CmisURLConnection.generateURLObject(object, resourceController) : null;
   }

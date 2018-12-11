@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.ui;
+package com.oxygenxml.cmis.ui.test;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

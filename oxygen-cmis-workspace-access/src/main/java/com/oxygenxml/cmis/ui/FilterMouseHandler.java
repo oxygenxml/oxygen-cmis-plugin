@@ -7,9 +7,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import com.oxygenxml.cmis.actions.ShowAllResourcesAction;
-import com.oxygenxml.cmis.actions.ShowCheckedoutResourcesAction;
-import com.oxygenxml.cmis.actions.ShowForeignCheckoutResourcesAction;
+import com.oxygenxml.cmis.ui.actions.ShowAllResourcesAction;
+import com.oxygenxml.cmis.ui.actions.ShowCheckedoutResourcesAction;
+import com.oxygenxml.cmis.ui.actions.ShowForeignCheckoutResourcesAction;
 
 public class FilterMouseHandler extends MouseAdapter {
   private final ContentSearcher contentSearcher;

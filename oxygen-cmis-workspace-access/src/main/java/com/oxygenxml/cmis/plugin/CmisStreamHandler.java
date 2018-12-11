@@ -14,27 +14,27 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.ui.AuthenticatorUtil;
 import com.oxygenxml.cmis.ui.UserCanceledException;
 
+/**
+ * CMIS protocol handler. 
+ */
 public class CmisStreamHandler extends URLStreamHandler {
   /**
    * Logging.
    */
   private static final Logger logger = Logger.getLogger(CmisStreamHandler.class);
 
-  CmisStreamHandler() {
-
-  }
-
   @Override
   protected URLConnection openConnection(URL url) throws IOException {
     try {
-      logger.info("URL=" + url);
+      if (logger.isDebugEnabled()) {
+        logger.debug("URL: " + url);
+      }
       URL serverURL = CmisURL.parseServerUrl(url.toExternalForm());
       UserCredentials uc = AuthenticatorUtil.getUserCredentials(serverURL);
 
       return new CmisURLConnection(url, CmisAccessSingleton.getInstance(), uc);
 
     } catch (UserCanceledException e) {
-
       logger.debug("Exception", e);
     }
     return null;

@@ -1,4 +1,4 @@
-package com.oxygen.cmis.dialogs;
+package com.oxygenxml.cmis.ui.dialogs;
 
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -31,8 +31,9 @@ public class LoginDialog extends OKCancelDialog {
 
   // Constructor
   public LoginDialog(JFrame frame) {
-
     super(frame, TranslationResourceController.getMessage("LOGIN_DIALOG_TITLE"), true);
+    
+    new Exception("Show login").printStackTrace(System.out);
 
     String passwordLabelValue = TranslationResourceController.getMessage("PASSWORD_LOGIN_DIALOG_LABEL") + ":";
     String usernameLabelValue = TranslationResourceController.getMessage("USERNAME_LOGIN_DIALOG_LABEL") + ":";

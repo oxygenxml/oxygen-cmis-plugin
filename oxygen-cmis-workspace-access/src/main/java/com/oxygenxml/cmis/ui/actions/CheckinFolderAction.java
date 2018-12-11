@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.actions;
+package com.oxygenxml.cmis.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
@@ -10,7 +10,6 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.log4j.Logger;
 
-import com.oxygen.cmis.dialogs.CheckinDocDialog;
 import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
@@ -19,6 +18,7 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
+import com.oxygenxml.cmis.ui.dialogs.CheckinDocDialog;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;

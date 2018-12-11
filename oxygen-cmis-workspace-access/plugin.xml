@@ -16,6 +16,7 @@
         <librariesFolder name="lib/"/>
   
         <library name="target/classes"/>
+        <librariesFolder name="target/lib"/>
  </runtime>
  
  <extension type="WorkspaceAccess" 
@@ -23,7 +24,7 @@
   
  <extension type="URLHandler" 
   class="com.oxygenxml.cmis.plugin.CmisURLExtension"/>
- <extension type="OptionPage" class="com.oxygenxml.cmis.plugin.OptionsCMIS"/>
+ <extension type="OptionPage" class="com.oxygenxml.cmis.plugin.CmisOptionPageExtension"/>
   
  <view id="com.oxygenxml.cmis.plugin.CMISPlugin.View" initialSide="WEST" initialRow="0"/>
 </plugin>

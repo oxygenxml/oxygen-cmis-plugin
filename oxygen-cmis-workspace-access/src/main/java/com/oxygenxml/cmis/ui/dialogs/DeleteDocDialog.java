@@ -1,4 +1,4 @@
-package com.oxygen.cmis.dialogs;
+package com.oxygenxml.cmis.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Container;

@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.actions;
+package com.oxygenxml.cmis.ui.actions;
 
 import java.awt.event.ActionEvent;
 
@@ -6,13 +6,13 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.oxygen.cmis.dialogs.DeleteDocDialog;
 import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.ui.ResourcesBrowser;
+import com.oxygenxml.cmis.ui.dialogs.DeleteDocDialog;
 
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
