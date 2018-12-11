@@ -109,7 +109,9 @@ public class CmisURLConnection extends URLConnection {
    * @return
    */
   public static String generateURLObject(CmisObject object, ResourceController ctrl) {
-    logger.info("Generate URL for: " + object.getName());
+    if (logger.isDebugEnabled()) {
+      logger.debug("Generate URL for: " + object.getName());
+    }
 
     // Get and encode server URL
     String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
@@ -126,7 +128,9 @@ public class CmisURLConnection extends URLConnection {
 
     // Get and apend to URL path of Cmis Object
     List<String> objectPaths = ((FileableCmisObject) object).getPaths();
-    logger.info("Paths " + objectPaths);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Paths: " + objectPaths);
+    }
     CmisURL objCmisUrl;
     if (!objectPaths.isEmpty()) {
       objCmisUrl = repoCmisURL.setPath(objectPaths.get(0));

@@ -89,8 +89,10 @@ public class CMISAccess {
 	 * 
 	 * @param connectionInfo
 	 * @return List<Repository>
+	 * 
+	 * @throws CmisUnauthorizedException bad credentials.
 	 */
-	public List<Repository> connectToServerGetRepositories(URL connectionInfo, UserCredentials uc) {
+	public List<Repository> connectToServerGetRepositories(URL connectionInfo, UserCredentials uc) throws CmisUnauthorizedException {
 		HashMap<String, String> conParameters = new HashMap<>();
 		populateParameters(connectionInfo, conParameters, uc);
 

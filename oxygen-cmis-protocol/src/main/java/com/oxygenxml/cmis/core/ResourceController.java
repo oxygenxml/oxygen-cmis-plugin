@@ -306,7 +306,7 @@ public class ResourceController {
       try {
         document = (Document) session.getObject(docID);
       } catch (CmisObjectNotFoundException e) {
-        logger.info("No object found");
+        logger.warn("No object found for: " + docID);
       }
       
       if (document != null) {
