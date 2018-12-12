@@ -145,9 +145,9 @@ CmisFileServer.prototype.createRootUrlComponent = function(rootUrlParam, rootURL
     if (! rootUrlParam) {
       if (! this.rootUrlSet_) {
         this.rootUrlSet_ = true;
-        setTimeout(function() {
+        goog.bind(setTimeout(function() {
           rootURLChangedCallback(this.rootUrl_, this.rootUrl_); // TODO: bug in web author.
-        }, 0);
+        }, this), 0);
       }
     }
     div.textContent = sync.options.PluginsOptions.getClientOption("cmis.enforced_name");
