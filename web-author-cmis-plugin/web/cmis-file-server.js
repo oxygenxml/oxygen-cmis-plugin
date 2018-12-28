@@ -145,7 +145,7 @@ CmisFileServer.prototype.createRootUrlComponent = function(rootUrlParam, rootURL
     if (! rootUrlParam) {
       if (! this.rootUrlSet_) {
         this.rootUrlSet_ = true;
-        goog.bind(setTimeout(function() {
+        setTimeout(goog.bind(function() {
           rootURLChangedCallback(this.rootUrl_, this.rootUrl_); // TODO: bug in web author.
         }, this), 0);
       }
