@@ -1,5 +1,6 @@
 package com.oxygenxml.cmis.web;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,6 +18,7 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
@@ -70,7 +72,9 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 					.MESSAGE_TYPE_ERROR, ERROR_CODE, ERROR_MESSAGE, true);
 			
 			throw new UserActionRequiredException(webappMessage);
-		}
+		} catch (CmisObjectNotFoundException e) {
+		  throw new FileNotFoundException(e.getMessage());
+    }
 	}
 
 	
