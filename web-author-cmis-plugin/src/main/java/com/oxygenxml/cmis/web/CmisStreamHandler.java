@@ -44,8 +44,10 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 			try {
 				cmisAccess.pureConnectToServer(serverUrl, credentials);
 			} catch (CmisUnauthorizedException e) {
+			  logger.error(e, e);
 				throw new UserActionRequiredException(webappMessage);
 			} catch (Exception e) {
+			  logger.error(e, e);
 				throw new UserActionRequiredException(webappMessage);
 			}
 		} else {
