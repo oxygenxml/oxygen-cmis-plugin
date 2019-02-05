@@ -170,10 +170,14 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
 			if (obj instanceof Document) {
-
-				Boolean isPrivateWorkingCopy = ((Document) obj).isPrivateWorkingCopy();
+				Document doc = (Document) obj;
+				Boolean isPrivateWorkingCopy = doc.isPrivateWorkingCopy();
 
 				if (isPrivateWorkingCopy != null && isPrivateWorkingCopy) {
+					continue;
+				}
+				// In case if isPrivateWorkingCopy is null.
+				if (isPrivateWorkingCopy == null && checkPWCForAlfresco(doc)) {
 					continue;
 				}
 			}
@@ -192,7 +196,19 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		return list;
 	}
 
-	
+	/**
+	 * If isPrivateWorkingCopy result is null we check document using
+	 * isVersionSeriesPrivateWorkingCopy. 
+	 * (In case if server doesn't support isPWC, ex. Alfresco).
+	 * 
+	 * @param doc Current document.
+	 * @return true if is Version Series PWC else false.
+	 */
+	private boolean checkPWCForAlfresco(Document doc) {
+		Boolean isVersionSeriesPWC = doc.isVersionSeriesPrivateWorkingCopy();
+		return isVersionSeriesPWC != null && isVersionSeriesPWC;
+	}
+
 	/**
 	 * Get repositories URLs and put it in list.
 	 * 
