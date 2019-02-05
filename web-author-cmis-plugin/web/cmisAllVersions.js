@@ -4,7 +4,7 @@
  * @param editor the current editor.
  * @param {CmisStatus} status the document status.
  */
-listOldVersionsAction = function(editor, status) {
+var listOldVersionsAction = function(editor, status) {
   sync.actions.AbstractAction.call(this, '');
   this.editor_ = editor;
   this.status_ = status;
@@ -26,7 +26,8 @@ listOldVersionsAction.prototype.getSmallIcon = function() {
 /** @override */
 listOldVersionsAction.prototype.actionPerformed = function(callback) {
   // Check if the server supports Commit Message.
-  var supportsCommitMessage = this.status_.supportsCommitMessage();
+  // todo: (WA-2472/WA-2709) disabled the commit message column until the table is reworked.
+  var supportsCommitMessage = false/*this.status_.supportsCommitMessage()*/;
 
   var allVerDialog = this.getDialog_(supportsCommitMessage);
   allVerDialog.show();
@@ -92,9 +93,6 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
   var commitHeader = supportsCommitMessage ? this.createHeaderCell_(tr(msgs.COMMIT_MESS_)) : '';
 
   container.querySelector("#cmis-loader").remove();
-
-  // todo: (WA-2472) disabled the commit message column until the table is reworked.
-  supportsCommitMessage = false;
 
   var versions = JSON.parse(data);
   goog.dom.append(container,
