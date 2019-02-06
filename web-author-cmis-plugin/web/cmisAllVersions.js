@@ -92,7 +92,7 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
   var userHeader = this.createHeaderCell_(tr(msgs.MODIFIED_BY_));
   var commitHeader = supportsCommitMessage ? this.createHeaderCell_(tr(msgs.COMMIT_MESS_)) : '';
 
-  container.querySelector("#cmis-loader").remove();
+  goog.dom.removeNode(container.querySelector("#cmis-loader"));
 
   var versions = JSON.parse(data);
   goog.dom.append(container,
