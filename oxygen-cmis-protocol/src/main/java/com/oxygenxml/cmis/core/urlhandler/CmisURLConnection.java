@@ -17,6 +17,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
@@ -178,20 +179,22 @@ public class CmisURLConnection extends URLConnection {
   @Override
   public InputStream getInputStream() throws IOException {
     Document document = (Document) getCMISObject(getURL().toExternalForm());
-    Document pwcDoc = null;
 
     if (document.isVersionSeriesCheckedOut()) {
       String pwcId = document.getVersionSeriesCheckedOutId();
-      pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
-      
-      return pwcDoc.getContentStream().getStream();
+      document = (Document) resourceController.getSession().getObject(pwcId);
+    } else if (document.isVersionable()) {
+      document = document.getObjectOfLatestVersion(false);
     }
     
-    if(document.isVersionable()) {
-    	document = document.getObjectOfLatestVersion(false);
-    }
+    ContentStream contentStream = document.getContentStream();
     
-    return document.getContentStream().getStream();
+    if (contentStream != null) {
+      return contentStream.getStream();
+    } else {
+      logger.error("contentStream is null in com.oxygenxml.cmis.core.urlhandler.CmisURLConnection.getInputStream()");
+      throw new IOException();
+    }
   }
 
   @Override
