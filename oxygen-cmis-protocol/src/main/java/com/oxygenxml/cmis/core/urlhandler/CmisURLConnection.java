@@ -193,7 +193,7 @@ public class CmisURLConnection extends URLConnection {
       return contentStream.getStream();
     } else {
       logger.error("contentStream is null in com.oxygenxml.cmis.core.urlhandler.CmisURLConnection.getInputStream()");
-      throw new IOException();
+      throw new IOException("Document content stream in null");
     }
   }
 
