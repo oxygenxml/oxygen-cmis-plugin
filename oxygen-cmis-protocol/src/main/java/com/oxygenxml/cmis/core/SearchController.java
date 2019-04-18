@@ -283,7 +283,9 @@ public class SearchController {
 
     String where = strBuild.toString();
 
-    logger.debug("Where statement : " + where);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Where statement : " + where);
+    }
 
     // The results after the search.
     ItemIterable<CmisObject> results = ctrl.getSession().queryObjects(scope, where, false, oc);

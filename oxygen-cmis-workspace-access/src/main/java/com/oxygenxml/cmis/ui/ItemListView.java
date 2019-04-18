@@ -105,13 +105,11 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
      * 
      * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
      */
-    resourceList.addMouseListener(new ResourceMouseHandler(breadcrumbPresenter, () -> {
-
-      return resourceList;
-    }, () -> {
-
-      return currentParent;
-    }, this));
+    resourceList.addMouseListener(new ResourceMouseHandler(
+        breadcrumbPresenter, 
+        () -> resourceList, 
+        () -> currentParent, 
+        this));
 
     // Set layout
     setLayout(new BorderLayout(0, 0));
@@ -229,10 +227,12 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
     this.currentParent = parentResource;
 
-    logger.debug("Current item=" + parentResource.getDisplayName());
+    if (logger.isDebugEnabled()) {
+      logger.debug("Present children of resource: " + parentResource.getDisplayName());
+    }
     // Get all the children of the item in an iterator
     final Iterator<IResource> childrenIterator = parentResource.iterator();
-
+    
     // Iterate them till it has a child
     if (childrenIterator != null) {
 
@@ -242,12 +242,19 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
         IResource iResource = childrenIterator.next();
+        if (logger.isDebugEnabled()) {
+          logger.debug("  Child " + iResource.getDisplayName() + " id " + iResource.getId());
+        }
 
         // Only if it's not a PWC document add to the model
-        boolean notPWC = !(iResource instanceof DocumentImpl && ((DocumentImpl) iResource).isCheckedOut()
+        boolean notPWC = !(
+            iResource instanceof DocumentImpl 
+            && ((DocumentImpl) iResource).isCheckedOut()
             && ((DocumentImpl) iResource).isPrivateWorkingCopy());
-
+        
         if (notPWC) {
+          // Private Working Copies are not presented. The user works with the original file transparently.
+          // The application knows how to interpret the PWC.
           model.addElement(iResource);
         }
       }
