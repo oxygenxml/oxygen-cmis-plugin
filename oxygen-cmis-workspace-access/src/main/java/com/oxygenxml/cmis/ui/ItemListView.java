@@ -17,6 +17,7 @@ import javax.swing.TransferHandler;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
@@ -29,6 +30,8 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes how the folders and documents are: displayed, rendered, their
@@ -105,13 +108,11 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
      * 
      * @see com.oxygenxml.cmis.core.model.model.impl.DocumentImpl
      */
-    resourceList.addMouseListener(new ResourceMouseHandler(breadcrumbPresenter, () -> {
-
-      return resourceList;
-    }, () -> {
-
-      return currentParent;
-    }, this));
+    resourceList.addMouseListener(new ResourceMouseHandler(
+        breadcrumbPresenter, 
+        () -> resourceList, 
+        () -> currentParent, 
+        this));
 
     // Set layout
     setLayout(new BorderLayout(0, 0));
@@ -136,6 +137,9 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    */
   @Override
   public void presentResources(URL connectionInfo, String repositoryID) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Present resources from server: " + connectionInfo + ", repository id: " + repositoryID);
+    }
     try {
       // Get the instance
       CMISAccess instance = CmisAccessSingleton.getInstance();
@@ -143,14 +147,22 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       connectToRepository(connectionInfo, repositoryID, instance);
       // Get the rootFolder and set the model
       Folder rootFolder = instance.createResourceController().getRootFolder();
+      
+      if (logger.isDebugEnabled()) {
+        logger.debug("Root folder " + rootFolder);
+      }
 
       final FolderImpl origin = new FolderImpl(rootFolder);
       setFolder(origin);
     } catch (UserCanceledException e1) {
       // The user canceled the process.
       logger.error("Error ", e1);
-
-    }
+    } catch (CmisRuntimeException e) {
+      // Unexpected exception
+      logger.debug(e, e);
+      
+      PluginWorkspaceProvider.getPluginWorkspace().showErrorMessage("Unable to retrieve repositories because of: " + e.getMessage(), e);
+    } 
   }
 
   /**
@@ -229,10 +241,12 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
     this.currentParent = parentResource;
 
-    logger.debug("Current item=" + parentResource.getDisplayName());
+    if (logger.isDebugEnabled()) {
+      logger.debug("Present children of resource: " + parentResource.getDisplayName());
+    }
     // Get all the children of the item in an iterator
     final Iterator<IResource> childrenIterator = parentResource.iterator();
-
+    
     // Iterate them till it has a child
     if (childrenIterator != null) {
 
@@ -242,12 +256,19 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       // While has a child, add to the model
       while (childrenIterator.hasNext()) {
         IResource iResource = childrenIterator.next();
+        if (logger.isDebugEnabled()) {
+          logger.debug("  Child " + iResource.getDisplayName() + " id " + iResource.getId());
+        }
 
         // Only if it's not a PWC document add to the model
-        boolean notPWC = !(iResource instanceof DocumentImpl && ((DocumentImpl) iResource).isCheckedOut()
+        boolean notPWC = !(
+            iResource instanceof DocumentImpl 
+            && ((DocumentImpl) iResource).isCheckedOut()
             && ((DocumentImpl) iResource).isPrivateWorkingCopy());
-
+        
         if (notPWC) {
+          // Private Working Copies are not presented. The user works with the original file transparently.
+          // The application knows how to interpret the PWC.
           model.addElement(iResource);
         }
       }

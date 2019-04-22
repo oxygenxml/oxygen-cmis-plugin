@@ -10,6 +10,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.log4j.Logger;
@@ -30,7 +31,7 @@ public class DocumentImpl implements IDocument {
   /**
    * Wrapped CMIS document.
    */
-  private Document doc;
+  private final Document doc;
 
   public DocumentImpl(Document doc) {
     this.doc = doc;
@@ -242,8 +243,14 @@ public class DocumentImpl implements IDocument {
   public boolean isCheckedOut() {
     // A property needed to be set on creation of the document in order to get
     // this property
-    logger.debug("Checked out=" + doc.getProperty("cmis:isVersionSeriesCheckedOut").getValuesAsString());
-    return doc.isVersionSeriesCheckedOut();
+    if (logger.isDebugEnabled()) {
+      Property<Object> property = doc.getProperty("cmis:isVersionSeriesCheckedOut");
+      if (property != null) {
+        logger.debug(getDisplayName() + " is checked out=" + property.getValuesAsString());
+      }
+    }
+    Boolean versionSeriesCheckedOut = doc.isVersionSeriesCheckedOut();
+    return Boolean.TRUE.equals(versionSeriesCheckedOut);
   }
 
   /*
@@ -255,8 +262,15 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public boolean isPrivateWorkingCopy() {
-    logger.debug("CPWC=" + doc.getProperty("cmis:isPrivateWorkingCopy").getValuesAsString());
-    return doc.isPrivateWorkingCopy();
+    if (logger.isDebugEnabled()) {
+      Property<Object> property = doc.getProperty("cmis:isPrivateWorkingCopy");
+      if (property != null) {
+        logger.debug("CPWC=" + property.getValuesAsString());
+      }
+    }
+    
+    Boolean isPrivateWC = doc.isPrivateWorkingCopy();
+    return Boolean.TRUE.equals(isPrivateWC);
   }
 
   /*
@@ -271,11 +285,14 @@ public class DocumentImpl implements IDocument {
 
       ObjectId pwcId = doc.checkOut();
       Document pwc = (Document) cmisAccess.getSession().getObject(pwcId);
-      logger.debug("PWC ID=" + pwcId);
-      logger.debug("PWC name=" + pwc.getName());
+      if (logger.isDebugEnabled()) {
+        logger.debug("PWC ID=" + pwcId);
+        logger.debug("PWC name=" + pwc.getName());
+      }
 
       return pwc;
     }
+    
     return doc;
   }
 
