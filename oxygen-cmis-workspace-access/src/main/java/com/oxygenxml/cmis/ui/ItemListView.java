@@ -17,6 +17,7 @@ import javax.swing.TransferHandler;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
@@ -29,6 +30,8 @@ import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes how the folders and documents are: displayed, rendered, their
@@ -134,6 +137,9 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    */
   @Override
   public void presentResources(URL connectionInfo, String repositoryID) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Present resources from server: " + connectionInfo + ", repository id: " + repositoryID);
+    }
     try {
       // Get the instance
       CMISAccess instance = CmisAccessSingleton.getInstance();
@@ -141,14 +147,22 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       connectToRepository(connectionInfo, repositoryID, instance);
       // Get the rootFolder and set the model
       Folder rootFolder = instance.createResourceController().getRootFolder();
+      
+      if (logger.isDebugEnabled()) {
+        logger.debug("Root folder " + rootFolder);
+      }
 
       final FolderImpl origin = new FolderImpl(rootFolder);
       setFolder(origin);
     } catch (UserCanceledException e1) {
       // The user canceled the process.
       logger.error("Error ", e1);
-
-    }
+    } catch (CmisRuntimeException e) {
+      // Unexpected exception
+      logger.debug(e, e);
+      
+      PluginWorkspaceProvider.getPluginWorkspace().showErrorMessage("Unable to retrieve repositories because of: " + e.getMessage(), e);
+    } 
   }
 
   /**

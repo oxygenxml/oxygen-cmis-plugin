@@ -246,7 +246,7 @@ public class DocumentImpl implements IDocument {
     if (logger.isDebugEnabled()) {
       Property<Object> property = doc.getProperty("cmis:isVersionSeriesCheckedOut");
       if (property != null) {
-        logger.debug("Checked out=" + property.getValuesAsString());
+        logger.debug(getDisplayName() + " is checked out=" + property.getValuesAsString());
       }
     }
     Boolean versionSeriesCheckedOut = doc.isVersionSeriesCheckedOut();

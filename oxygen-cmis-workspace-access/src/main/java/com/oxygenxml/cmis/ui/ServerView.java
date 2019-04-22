@@ -132,6 +132,10 @@ public class ServerView extends JPanel {
 
       // Try presentRepositories using the URL
       Object selectedItem = serverItemsCombo.getSelectedItem();
+      
+      if (logger.isDebugEnabled()) {
+        logger.debug("Connect to URL: " + selectedItem);
+      }
 
       if (selectedItem != null) {
         try {
@@ -172,6 +176,10 @@ public class ServerView extends JPanel {
   private void presentRepositories(RepositoriesPresenter repoPresenter, SearchPresenter searchPresenter,
       URL serverURL) {
     try {
+      
+      if (logger.isDebugEnabled()) {
+        logger.debug("Present repositories for: " + serverURL);
+      }
 
       repoPresenter.presentRepositories(serverURL);
       searchPresenter.activateSearch();

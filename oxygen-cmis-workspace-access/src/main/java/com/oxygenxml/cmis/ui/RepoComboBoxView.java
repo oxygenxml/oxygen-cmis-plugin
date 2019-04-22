@@ -16,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
@@ -23,6 +24,8 @@ import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
+
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Describes how the repositories a shown and their behaviors
@@ -110,6 +113,10 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
    * @param repositoryID
    */
   protected void fireRepositoryChangedEvent(URL serverURL, String repositoryID) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Notify repository changed event. Server url: " + serverURL + ", repository id: "  + repositoryID);
+    }
+    
     for (RepositoryListener repositoryListener : listeners) {
       repositoryListener.repositoryConnected(serverURL, repositoryID);
     }
@@ -152,6 +159,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
         try {
           // Get the repositories
           serverReposList = CmisAccessSingleton.getInstance().connectToServerGetRepositories(serverURL, userCredentials);
+          
           connected = true;
         } catch (CmisUnauthorizedException e) {
           // Will try again.
@@ -180,7 +188,12 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
       if (logger.isDebugEnabled()) {
         logger.debug(e, e);
       }
-    }
+    } catch (CmisRuntimeException e) {
+      // Unexpected exception
+      logger.debug(e, e);
+      
+      PluginWorkspaceProvider.getPluginWorkspace().showErrorMessage("Unable to retrieve repositories because of: " + e.getMessage(), e);
+    } 
   }
   
 
