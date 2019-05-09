@@ -22,7 +22,10 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
    * ID of the specialized CMIS explorer view.
    */
   private static final String COM_OXYGENXML_CMIS_PLUGIN_CMIS_PLUGIN_VIEW = "com.oxygenxml.cmis.plugin.CMISPlugin.View";
-  ControlComponents component;
+  /**
+   * Controls every component from the app. Holds the main layout of the view.
+   */
+  private ControlComponents controlComponents;
 
   /**
    * @see ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension#applicationStarted(ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace)
@@ -32,8 +35,8 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
 
     pluginWorkspaceAccess.addViewComponentCustomizer(viewInfo -> {
       if (COM_OXYGENXML_CMIS_PLUGIN_CMIS_PLUGIN_VIEW.equals(viewInfo.getViewID())) {
-        component = new ControlComponents();
-        viewInfo.setComponent(component);
+        controlComponents = new ControlComponents();
+        viewInfo.setComponent(controlComponents);
 
         viewInfo.setIcon(ImageConstants.getImage(ImageConstants.CMIS_ICON));
 
@@ -67,8 +70,8 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
           @Override
           public void editorSaved(int operationType) {
             URL savedURL = editorAccess.getEditorLocation();
-            if (component != null) {
-              component.refresh(savedURL);
+            if (controlComponents != null) {
+              controlComponents.refresh(savedURL);
             }
           }
         });
