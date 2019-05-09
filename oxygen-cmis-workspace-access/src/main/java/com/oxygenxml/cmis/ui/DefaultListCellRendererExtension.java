@@ -6,7 +6,6 @@ import java.net.URL;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.UIManager;
@@ -16,6 +15,7 @@ import org.apache.log4j.Logger;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
+import com.oxygenxml.cmis.ui.constants.ImageConstants;
 
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
@@ -75,7 +75,7 @@ class DefaultListCellRendererExtension extends DefaultListCellRenderer {
       // Check if it's checked-out.
       if (doc.isCheckedOut()) {
 
-        comLabel.setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
+        comLabel.setIcon(ImageConstants.getImage(ImageConstants.LOCK_ICON));
 
       } else {
         // ---------Use Oxygen Icons.

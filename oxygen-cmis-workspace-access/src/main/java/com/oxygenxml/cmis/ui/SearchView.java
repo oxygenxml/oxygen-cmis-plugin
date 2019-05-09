@@ -28,6 +28,7 @@ import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.search.SearchDocument;
 import com.oxygenxml.cmis.search.SearchFolder;
+import com.oxygenxml.cmis.ui.constants.ImageConstants;
 
 /**
  * Search componenet that takes care of the searching for resources
@@ -120,8 +121,7 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     c.gridy = 0;
     c.weightx = 0.0;
 
-    URL filterIconUrl = getClass().getClassLoader().getResource("images/settings.png");
-    filterLabel = new JLabel(new ImageIcon(filterIconUrl));
+    filterLabel = new JLabel(ImageConstants.getImage(ImageConstants.SETTINGS_ICON));
     filterLabel.addMouseListener(new FilterMouseHandler(this, searchField));
     filterLabel.setEnabled(false);
 

@@ -31,6 +31,7 @@ import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
+import com.oxygenxml.cmis.ui.constants.ImageConstants;
 
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
@@ -151,8 +152,7 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       final DocumentImpl doc = ((DocumentImpl) value);
       if (doc.getId() != null) {
-
-        renderDocIcon(value, doc);
+        renderDocIcon(doc);
 
         // Get the path
         pathValue = contentProv.getPath(doc, ctrl);
@@ -172,11 +172,10 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
 
       }
     } else if (value instanceof FolderImpl) {
-
       final FolderImpl folder = ((FolderImpl) value);
 
       if (folder.getId() != null) {
-        iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/folder.png")));
+        iconLabel.setIcon(ImageConstants.getImage(ImageConstants.FOLDER_TREE_ICON));
 
         pathValue = contentProv.getPath(folder, ctrl);
         propertiesValues = contentProv.getProperties(folder);
@@ -234,20 +233,20 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     }
   }
 
-  private void renderDocIcon(IResource value, final DocumentImpl doc) {
+  /**
+   * Sets a proper image on the renderer depending on the resource type.
+   * 
+   * @param doc Resource being rendered.
+   */
+  private void renderDocIcon(final DocumentImpl doc) {
     if (!doc.isPrivateWorkingCopy() && doc.isCheckedOut()) {
-
-      iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/padlock.png")));
-
+      iconLabel.setIcon(ImageConstants.getImage(ImageConstants.LOCK_ICON));
     } else {
-
       try {
         iconLabel.setIcon((Icon) PluginWorkspaceProvider.getPluginWorkspace().getImageUtilities()
-            .getIconDecoration(new URL("http://localhost/" + value.getDisplayName())));
-
+            .getIconDecoration(new URL("http://localhost/" + doc.getDisplayName())));
       } catch (final MalformedURLException e) {
-
-        iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/file.png")));
+        iconLabel.setIcon(ImageConstants.getImage(ImageConstants.FILE_ICON));
       }
 
     }

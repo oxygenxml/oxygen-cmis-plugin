@@ -1,11 +1,9 @@
 package com.oxygenxml.cmis.plugin;
 
-import java.net.URL;
-
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.oxygenxml.cmis.ui.ControlComponents;
+import com.oxygenxml.cmis.ui.constants.ImageConstants;
 
 import ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
@@ -30,12 +28,7 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
 
         viewInfo.setComponent(new ControlComponents());
 
-        // Accepts only PNGs
-        // You can have images located inside the JAR library and use them...
-        // getClassLoader because no '/' is present in the front of the path
-        URL resource = getClass().getClassLoader().getResource("images/cmis.png");
-
-        viewInfo.setIcon(new ImageIcon(resource));
+        viewInfo.setIcon(ImageConstants.getImage(ImageConstants.CMIS_ICON));
 
         // Set name for the plugin
         String cmisExplorerName = TranslationResourceController.getMessage(Tags.CMIS_EXPLORER_NAME);

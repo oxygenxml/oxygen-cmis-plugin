@@ -1,13 +1,13 @@
 package com.oxygenxml.cmis.plugin;
 
 import java.awt.event.ActionEvent;
-import java.net.URL;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+
+import com.oxygenxml.cmis.ui.constants.ImageConstants;
 
 import ro.sync.exml.workspace.api.standalone.InputURLChooser;
 import ro.sync.exml.workspace.api.standalone.InputURLChooserCustomizer;
@@ -27,8 +27,7 @@ public class BrowseCMISCustomizer implements InputURLChooserCustomizer {
   public BrowseCMISCustomizer(JFrame frame) {
     String browseCmis = TranslationResourceController.getMessage(Tags.BROWSE_CMIS);
 
-    URL urlIcon = getClass().getClassLoader().getResource("images/cmis.png");
-    browseAction = new AbstractAction(browseCmis, new ImageIcon(urlIcon)) {
+    browseAction = new AbstractAction(browseCmis, ImageConstants.getImage(ImageConstants.CMIS_ICON)) {
       @Override
       public void actionPerformed(ActionEvent e) {
         new CmisDialog(frame, inputUrlChooser, true);
