@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.ui;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.swing.TransferHandler;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
@@ -23,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.CmisAccessSingleton;
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.model.IFolder;
@@ -366,10 +369,18 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
     presentResources(serverURL, repositoryID);
   }
 
-  public String getSelectedObjectUrl() {
+  /**
+   * @return The selected CMIS object.
+   */
+  public CmisObject getSelectedCmisObject() {
     CmisObject object = null;
     IResource selectedResource = resourceList.getSelectedValue();
 
+    if (selectedResource == null) {
+      // Consider the parent resource as the selected resource.
+      selectedResource = currentParent;
+    }
+    
     if (selectedResource != null) {
       if (selectedResource instanceof DocumentImpl) {
         object = ((DocumentImpl) selectedResource).getDoc();
@@ -379,9 +390,45 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
       }
     }
+    
+    return object;
+  }
 
-    ResourceController resourceController = CmisAccessSingleton.getInstance().createResourceController();
+  /**
+   * Refresh the presented resources if needed.
+   * 
+   * @param savedURL A new resource that was changed.
+   */
+  public void refresh(URL savedURL) {
+    try {
+      if (savedURL.getProtocol().equals(CmisURL.CMIS_PROTOCOL)) {
+        // The given URL points to a CMIS resource.
+        CmisURLConnection connection = (CmisURLConnection) savedURL.openConnection();
+        CmisObject cmisObject = connection.getCMISObject(savedURL.toString());
 
-    return object != null ? CmisURLConnection.generateURLObject(object, resourceController) : null;
+        if (logger.isDebugEnabled()) {
+          logger.debug("refresh for " + savedURL);
+        }
+        if (cmisObject instanceof FileableCmisObject) {
+          String folderPath = ((IFolder) currentParent).getFolderPath();
+          if (logger.isDebugEnabled()) {
+            logger.debug("Current path: " + folderPath);
+          }
+          List<Folder> parents = ((FileableCmisObject) cmisObject).getParents();
+          for (Folder folder : parents) {
+            if (logger.isDebugEnabled()) {
+              logger.debug("parent path " + folder.getPath());
+            }
+            if (folder.getPath().equals(folderPath)) {
+              // Refresh.
+              presentResources(currentParent);
+               break;
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      logger.error(e, e);
+    }
   }
 }

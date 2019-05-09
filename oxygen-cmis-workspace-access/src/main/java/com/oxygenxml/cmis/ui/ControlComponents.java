@@ -8,6 +8,8 @@ import java.net.URL;
 
 import javax.swing.JPanel;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+
 import com.oxygenxml.cmis.core.model.IResource;
 
 /**
@@ -118,9 +120,16 @@ public class ControlComponents extends JPanel {
 
   }
 
-  public String getSelectedURL() {
-
-    return itemsPanel.getSelectedObjectUrl();
+  public CmisObject getSelectedCmisObject() {
+    return itemsPanel.getSelectedCmisObject();
   }
 
+  /**
+   * Refresh the presented resources if needed.
+   * 
+   * @param savedURL A new resource that was changed.
+   */
+  public void refresh(URL savedURL) {
+    itemsPanel.refresh(savedURL);
+  }
 }

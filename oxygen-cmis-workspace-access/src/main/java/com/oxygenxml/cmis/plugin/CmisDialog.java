@@ -8,13 +8,21 @@ import java.net.URL;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.runtime.FolderImpl;
 import org.apache.log4j.Logger;
 
+import com.oxygenxml.cmis.CmisAccessSingleton;
+import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.ui.ControlComponents;
 
 import ro.sync.ecss.extensions.commons.ui.OKCancelDialog;
 import ro.sync.exml.workspace.api.standalone.InputURLChooser;
 
+/**
+ * Browse through CMIS resources. 
+ */
 public class CmisDialog extends OKCancelDialog {
   /**
    * Logging.
@@ -23,11 +31,11 @@ public class CmisDialog extends OKCancelDialog {
   private final ControlComponents inputPanel;
   private transient final InputURLChooser chooser;
 
-  public CmisDialog(JFrame parentFrame, InputURLChooser chooser, boolean modal) {
-    super(parentFrame, "", modal);
-    
-    String title = TranslationResourceController.getMessage(Tags.CMIS_DIALOG);
-    setTitle(title);
+  public CmisDialog(JFrame parentFrame, InputURLChooser chooser) {
+    super(
+        parentFrame, 
+        TranslationResourceController.getMessage(Tags.CMIS_DIALOG), 
+        true);
     
     this.chooser = chooser;
 
@@ -41,7 +49,7 @@ public class CmisDialog extends OKCancelDialog {
     // Show it in the center of the frame
     setLocationRelativeTo(parentFrame);
     setResizable(true);
-    setModal(true);
+    
     pack();
     setVisible(true);
 
@@ -49,14 +57,33 @@ public class CmisDialog extends OKCancelDialog {
     // focus the second time it was displayed
     SwingUtilities.invokeLater(this::requestFocusInWindow);
   }
+  
+  
 
   @Override
   protected void doOK() {
     try {
-      chooser.urlChosen(new URL(inputPanel.getSelectedURL()));
+      CmisObject cmisObject = inputPanel.getSelectedCmisObject();
+      
+      if (cmisObject != null) {
+        ResourceController resourceController = CmisAccessSingleton.getInstance().createResourceController();
+        
+        String url = CmisURLConnection.generateURLObject(cmisObject, resourceController);
+        if (chooser.getBrowseMode() == InputURLChooser.SAVE_RESOURCE 
+            &&  cmisObject instanceof FolderImpl) {
+          // The user wants to save inside a folder. Append something.
+          url = url + "/untitled.xml";
+        }
+        
+        if (logger.isDebugEnabled()) {
+          logger.debug("Save to " + url);
+        }
+        
+        chooser.urlChosen(new URL(url));
+      }
+      
     } catch (MalformedURLException e) {
-
-      logger.debug("Exception", e);
+      logger.error(e, e);
     }
 
     super.doOK();

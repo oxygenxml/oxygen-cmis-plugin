@@ -30,7 +30,9 @@ public class BrowseCMISCustomizer implements InputURLChooserCustomizer {
     browseAction = new AbstractAction(browseCmis, ImageConstants.getImage(ImageConstants.CMIS_ICON)) {
       @Override
       public void actionPerformed(ActionEvent e) {
-        new CmisDialog(frame, inputUrlChooser, true);
+        new CmisDialog(
+            frame, 
+            inputUrlChooser);
 
       }
     };
