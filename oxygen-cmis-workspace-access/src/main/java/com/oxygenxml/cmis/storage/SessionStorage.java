@@ -195,11 +195,26 @@ public class SessionStorage {
    * @see com.oxygenxnl.cmis.storage.Options
    */
   public void addServer(String currentServerURL) {
-
     // Add server URL to the options
     options.addServer(currentServerURL);
 
     // Store the new options in the memory
     SessionStorage.getInstance().store();
+  }
+  
+  /**
+   * @param filteringCriteria Filtering criteria for the search match. One of {@link SearchConstants}.
+   */
+  public void setFilteringCriteria(String filteringCriteria) {
+    options.setFilteringCriteria(filteringCriteria);
+    SessionStorage.getInstance().store();
+  }
+  
+  /**
+   * @return Filtering criteria for the search match. One of {@link SearchConstants}.
+   */
+  public String getFilteringCriteria() {
+    String filteringCriteria = options.getFilteringCriteria();
+    return filteringCriteria != null ? filteringCriteria : SearchConstants.SHOW_ALL_OPTION;
   }
 }

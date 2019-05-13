@@ -144,19 +144,9 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       logger.debug("Present resources from server: " + connectionInfo + ", repository id: " + repositoryID);
     }
     try {
-      // Get the instance
-      CMISAccess instance = CmisAccessSingleton.getInstance();
-
-      connectToRepository(connectionInfo, repositoryID, instance);
-      // Get the rootFolder and set the model
-      Folder rootFolder = instance.createResourceController().getRootFolder();
+      connectToRepository(connectionInfo, repositoryID, CmisAccessSingleton.getInstance());
+      loadRepositoryRoot();
       
-      if (logger.isDebugEnabled()) {
-        logger.debug("Root folder " + rootFolder);
-      }
-
-      final FolderImpl origin = new FolderImpl(rootFolder);
-      setFolder(origin);
     } catch (UserCanceledException e1) {
       // The user canceled the process.
       logger.error("Error ", e1);
@@ -166,6 +156,25 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       
       PluginWorkspaceProvider.getPluginWorkspace().showErrorMessage("Unable to retrieve repositories because of: " + e.getMessage(), e);
     } 
+  }
+
+  private void loadRepositoryRoot() {
+    // Get the instance
+    CMISAccess instance = CmisAccessSingleton.getInstance();
+    // Get the rootFolder and set the model
+    Folder rootFolder = instance.createResourceController().getRootFolder();
+    
+    if (logger.isDebugEnabled()) {
+      logger.debug("Root folder " + rootFolder);
+    }
+
+    final FolderImpl origin = new FolderImpl(rootFolder);
+    
+    DefaultListModel<IResource> model = new DefaultListModel<>();
+
+    installDefaultRenderer();
+    model.addElement(origin);
+    resourceList.setModel(model);
   }
 
   /**
@@ -209,19 +218,6 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
   }
 
   /**
-   * Set the root folder and use the model to be rendered
-   * 
-   * @param origin
-   */
-  private void setFolder(final FolderImpl origin) {
-    DefaultListModel<IResource> model = new DefaultListModel<>();
-
-    installDefaultRenderer();
-    model.addElement(origin);
-    resourceList.setModel(model);
-  }
-
-  /**
    * Presents all the children of the resource inside the list.
    * 
    * @param resource
@@ -229,6 +225,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    */
   @Override
   public void presentResources(IResource parentResource) {
+    beforeSearchParent = null;
     // Install a renderer
     installDefaultRenderer();
 
@@ -295,73 +292,87 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
     resourceList.setCellRenderer(new DefaultListCellRendererExtension());
   }
 
+  private IResource beforeSearchParent = null;
+
   @Override
   public void searchFinished(String filter, final List<IResource> resources, String option, boolean searchFolders) {
+    if (filter != null && filter.length() > 0) {
+      // Provides the threads needed for async response
+      final CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
 
-    // Provides the threads needed for async response
-    final CacheSearchProvider csp = new CacheSearchProvider(contentProvider, resourceList);
+      // Create a rendered by using the custom renderer with the resources from
+      // cache (data gotten and the filter(text to search))
+      SearchResultCellRenderer seachRenderer = new SearchResultCellRenderer(csp, filter);
+      resourceList.setCellRenderer(seachRenderer);
 
-    // Create a rendered by using the custom renderer with the resources from
-    // cache (data gotten and the filter(text to search))
-    SearchResultCellRenderer seachRenderer = new SearchResultCellRenderer(csp, filter);
-    resourceList.setCellRenderer(seachRenderer);
+      final IResource parentResource = new IFolder() {
+        @Override
+        public Iterator<IResource> iterator() {
+          return resources.iterator();
+        }
 
-    final IResource parentResource = new IFolder() {
-      @Override
-      public Iterator<IResource> iterator() {
-        return resources.iterator();
+        @Override
+        public boolean isCheckedOut() {
+          return false;
+        }
+
+        @Override
+        public String getId() {
+          return SEARCH_RESULTS_ID;
+        }
+
+        @Override
+        public String getDisplayName() {
+          return SEARCH_RESULTS_VALUE;
+        }
+
+        @Override
+        public String getCreatedBy() {
+          return null;
+        }
+
+        @Override
+        public void refresh() {
+          contentProvider.doSearch(filter, searchFolders);
+        }
+
+        @Override
+        public String getFolderPath() {
+          return null;
+        }
+
+        @Override
+        public String getDescription() {
+          return null;
+        }
+
+        @Override
+        public void addToModel(Document doc) {
+
+          ((DefaultListModel<IResource>) resourceList.getModel()).addElement(new DocumentImpl(doc));
+        }
+
+        @Override
+        public void removeFromModel(IResource resource) {
+          final int index = ((DefaultListModel<IResource>) resourceList.getModel()).indexOf(resource);
+          ((DefaultListModel<IResource>) resourceList.getModel()).remove(index);
+
+        }
+      };
+      
+      if (currentParent != null 
+          && !SEARCH_RESULTS_ID.equals(currentParent.getId())) {
+        // Keep the parent before a search event so we can restore it.
+        beforeSearchParent = currentParent;
       }
 
-      @Override
-      public boolean isCheckedOut() {
-        return false;
-      }
-
-      @Override
-      public String getId() {
-        return SEARCH_RESULTS_ID;
-      }
-
-      @Override
-      public String getDisplayName() {
-        return SEARCH_RESULTS_VALUE;
-      }
-
-      @Override
-      public String getCreatedBy() {
-        return null;
-      }
-
-      @Override
-      public void refresh() {
-        contentProvider.doSearch(filter, option, searchFolders);
-      }
-
-      @Override
-      public String getFolderPath() {
-        return null;
-      }
-
-      @Override
-      public String getDescription() {
-        return null;
-      }
-
-      @Override
-      public void addToModel(Document doc) {
-
-        ((DefaultListModel<IResource>) resourceList.getModel()).addElement(new DocumentImpl(doc));
-      }
-
-      @Override
-      public void removeFromModel(IResource resource) {
-        final int index = ((DefaultListModel<IResource>) resourceList.getModel()).indexOf(resource);
-        ((DefaultListModel<IResource>) resourceList.getModel()).remove(index);
-
-      }
-    };
-
-    presentResourcesInternal(parentResource);
+      presentResourcesInternal(parentResource);
+    } else if (beforeSearchParent != null) {
+      presentResources(beforeSearchParent);
+      beforeSearchParent = null;
+    } else {
+      loadRepositoryRoot();
+    }
   }
 
   @Override

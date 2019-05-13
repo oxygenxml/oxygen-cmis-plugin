@@ -38,6 +38,25 @@ public class Options {
    */
   @XmlElementWrapper(name = "credentials")
   private HashMap<String, UserCredentials> credentials;
+  
+  /**
+   * Filtering criteria for the search match.
+   */
+  private String filteringCriteria;
+  
+  /**
+   * @param filteringCriteria Filtering criteria for the search match. One of {@link SearchConstants}.
+   */
+  public void setFilteringCriteria(String filteringCriteria) {
+    this.filteringCriteria = filteringCriteria;
+  }
+  
+  /**
+   * @return Filtering criteria for the search match. One of {@link SearchConstants}.
+   */
+  public String getFilteringCriteria() {
+    return filteringCriteria;
+  }
 
   /**
    * @return Gets the CMIS servers URLs.

@@ -7,11 +7,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,6 +26,7 @@ import com.oxygenxml.cmis.plugin.Tags;
 import com.oxygenxml.cmis.plugin.TranslationResourceController;
 import com.oxygenxml.cmis.search.SearchDocument;
 import com.oxygenxml.cmis.search.SearchFolder;
+import com.oxygenxml.cmis.storage.SessionStorage;
 import com.oxygenxml.cmis.ui.constants.ImageConstants;
 
 /**
@@ -37,9 +36,6 @@ import com.oxygenxml.cmis.ui.constants.ImageConstants;
  *
  */
 public class SearchView extends JPanel implements ContentSearcher, SearchPresenter {
-
-  // Internal role
-  private static final String DEFAULT_SELECTED_OPTION_SEARCH = "null";
 
   private static final Logger logger = Logger.getLogger(SearchView.class);
   /**
@@ -52,9 +48,6 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
   private JTextField searchField = null;
   private JButton searchButton = null;
   private JLabel filterLabel = null;
-
-  // Option of the search (name, title)
-  private String option = null;
 
   public SearchView() {
     String searchLabel = TranslationResourceController.getMessage(Tags.SEARCH_LABEL);
@@ -133,13 +126,11 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
      */
     searchButton.addActionListener(e -> {
       // The option will be orderer
-      option = DEFAULT_SELECTED_OPTION_SEARCH;
       // Get the entered text and trim of white space from both sides
       final String searchText = searchField.getText().trim();
 
-      doSearch(searchText, option, true);
+      doSearch(searchText, true);
     }
-
     );
     searchButton.setOpaque(true);
 
@@ -147,9 +138,13 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
   }
 
   @Override
-  public void doSearch(final String searchText, String option, boolean searchFolders) {
+  public void doSearch(final String searchText, boolean searchFolders) {
     // Get the search results of the query
-    List<IResource> queryResults = searchItems(searchText, option, searchFolders);
+    String option = SessionStorage.getInstance().getFilteringCriteria();
+    List<IResource> queryResults = null;
+    if (searchText != null && searchText.length() > 0) {
+      queryResults = searchItems(searchText, option, searchFolders);
+    }
 
     // Fire the search for each listener
     fireSearchFinished(searchText, queryResults, option, searchFolders);

@@ -7,9 +7,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import com.oxygenxml.cmis.ui.actions.ShowAllResourcesAction;
-import com.oxygenxml.cmis.ui.actions.ShowCheckedoutResourcesAction;
-import com.oxygenxml.cmis.ui.actions.ShowForeignCheckoutResourcesAction;
+import com.oxygenxml.cmis.ui.actions.ShowAllResourcesMenuItem;
+import com.oxygenxml.cmis.ui.actions.ShowCheckedoutResourcesMenuItem;
+import com.oxygenxml.cmis.ui.actions.ShowForeignCheckoutResourcesMenuItem;
 
 public class FilterMouseHandler extends MouseAdapter {
   private final ContentSearcher contentSearcher;
@@ -26,9 +26,10 @@ public class FilterMouseHandler extends MouseAdapter {
     if (event.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(event) && event.getComponent().isEnabled()) {
 
       JPopupMenu menu = new JPopupMenu();
-      menu.add(new ShowAllResourcesAction(contentSearcher,searchText));
-      menu.add(new ShowCheckedoutResourcesAction(contentSearcher,searchText));
-      menu.add(new ShowForeignCheckoutResourcesAction(contentSearcher,searchText));
+      menu.add(new ShowAllResourcesMenuItem(contentSearcher,searchText));
+      menu.add(new ShowCheckedoutResourcesMenuItem(contentSearcher,searchText));
+      menu.add(new ShowForeignCheckoutResourcesMenuItem(contentSearcher,searchText));
+      
       menu.show(event.getComponent(), event.getX(), event.getY());
     }
   }

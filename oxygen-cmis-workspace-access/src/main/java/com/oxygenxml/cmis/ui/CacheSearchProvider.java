@@ -143,8 +143,8 @@ public class CacheSearchProvider implements ContentSearcher {
   }
 
   @Override
-  public void doSearch(String searchText, String option, boolean searchFolders) {
-    searchProvider.doSearch(searchText, option, searchFolders);
+  public void doSearch(String searchText, boolean searchFolders) {
+    searchProvider.doSearch(searchText, searchFolders);
   }
 
   @Override
