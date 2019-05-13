@@ -5,7 +5,7 @@ import java.awt.event.ItemEvent;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JTextField;
 
-import com.oxygenxml.cmis.storage.SearchConstants;
+import com.oxygenxml.cmis.storage.SearchScopeConstants;
 import com.oxygenxml.cmis.storage.SessionStorage;
 import com.oxygenxml.cmis.ui.ContentSearcher;
 
@@ -31,7 +31,7 @@ public class ShowAllResourcesMenuItem extends JCheckBoxMenuItem {
     this.searchText = searchText;
     
     String option = SessionStorage.getInstance().getFilteringCriteria();
-    if (option == null || SearchConstants.SHOW_ALL_OPTION.equals(option)) {
+    if (option == null || SearchScopeConstants.SHOW_ALL_OPTION.equals(option)) {
       setState(Boolean.TRUE);
     }
     
@@ -42,9 +42,9 @@ public class ShowAllResourcesMenuItem extends JCheckBoxMenuItem {
 
   public void itemSelected(ItemEvent e) {
     String option = SessionStorage.getInstance().getFilteringCriteria();
-    if (option != null && !SearchConstants.SHOW_ALL_OPTION.equals(option)) {
+    if (option != null && !SearchScopeConstants.SHOW_ALL_OPTION.equals(option)) {
       // Another option was active.
-      SessionStorage.getInstance().setFilteringCriteria(SearchConstants.SHOW_ALL_OPTION);
+      SessionStorage.getInstance().setFilteringCriteria(SearchScopeConstants.SHOW_ALL_OPTION);
       contentSearcher.doSearch(searchText.getText().trim(), true);
     }
   }

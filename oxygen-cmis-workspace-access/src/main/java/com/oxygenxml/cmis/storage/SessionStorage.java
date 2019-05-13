@@ -203,7 +203,7 @@ public class SessionStorage {
   }
   
   /**
-   * @param filteringCriteria Filtering criteria for the search match. One of {@link SearchConstants}.
+   * @param filteringCriteria Filtering criteria for the search match. One of {@link SearchScopeConstants}.
    */
   public void setFilteringCriteria(String filteringCriteria) {
     options.setFilteringCriteria(filteringCriteria);
@@ -211,10 +211,10 @@ public class SessionStorage {
   }
   
   /**
-   * @return Filtering criteria for the search match. One of {@link SearchConstants}.
+   * @return Filtering criteria for the search match. One of {@link SearchScopeConstants}.
    */
   public String getFilteringCriteria() {
     String filteringCriteria = options.getFilteringCriteria();
-    return filteringCriteria != null ? filteringCriteria : SearchConstants.SHOW_ALL_OPTION;
+    return filteringCriteria != null ? filteringCriteria : SearchScopeConstants.SHOW_ALL_OPTION;
   }
 }

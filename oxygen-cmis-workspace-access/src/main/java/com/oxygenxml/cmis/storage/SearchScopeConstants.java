@@ -3,7 +3,7 @@ package com.oxygenxml.cmis.storage;
 /**
  * Possible filtering criteria. 
  */
-public interface SearchConstants {
+public interface SearchScopeConstants {
   /**
    * Show all documents that match the search criteria.
    */

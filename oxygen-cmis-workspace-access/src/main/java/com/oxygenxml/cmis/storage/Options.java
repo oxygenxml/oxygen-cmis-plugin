@@ -45,14 +45,14 @@ public class Options {
   private String filteringCriteria;
   
   /**
-   * @param filteringCriteria Filtering criteria for the search match. One of {@link SearchConstants}.
+   * @param filteringCriteria Filtering criteria for the search match. One of {@link SearchScopeConstants}.
    */
   public void setFilteringCriteria(String filteringCriteria) {
     this.filteringCriteria = filteringCriteria;
   }
   
   /**
-   * @return Filtering criteria for the search match. One of {@link SearchConstants}.
+   * @return Filtering criteria for the search match. One of {@link SearchScopeConstants}.
    */
   public String getFilteringCriteria() {
     return filteringCriteria;

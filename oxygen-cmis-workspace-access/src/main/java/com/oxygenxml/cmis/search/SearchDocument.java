@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.oxygenxml.cmis.core.SearchController;
 import com.oxygenxml.cmis.core.model.IResource;
-import com.oxygenxml.cmis.storage.SearchConstants;
+import com.oxygenxml.cmis.storage.SearchScopeConstants;
 
 /**
  * @see com.oxygenxml.core.model.impl
@@ -27,13 +27,13 @@ public class SearchDocument {
   public SearchDocument(String toSearch, SearchController searchCtrl, String option) {
     this.resultsQueries = new ArrayList<>();
     switch (option) {
-    case SearchConstants.SHOW_ALL_OPTION:
+    case SearchScopeConstants.SHOW_ALL_OPTION:
       resultsQueries.addAll(searchCtrl.queryDoc(toSearch));
       break;
-    case SearchConstants.SHOW_ONLY_PERSONAL_CHECKED_OUT:
+    case SearchScopeConstants.SHOW_ONLY_PERSONAL_CHECKED_OUT:
       resultsQueries.addAll(searchCtrl.queryPersonalCheckedout(toSearch));
       break;
-    case SearchConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT:
+    case SearchScopeConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT:
       resultsQueries.addAll(searchCtrl.queryForeignCheckedoutDocs(toSearch));
       break;
     case "name":

@@ -6,7 +6,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JTextField;
 
 import com.oxygenxml.cmis.search.SearchDocument;
-import com.oxygenxml.cmis.storage.SearchConstants;
+import com.oxygenxml.cmis.storage.SearchScopeConstants;
 import com.oxygenxml.cmis.storage.SessionStorage;
 import com.oxygenxml.cmis.ui.ContentSearcher;
 
@@ -28,7 +28,7 @@ public class ShowForeignCheckoutResourcesMenuItem extends JCheckBoxMenuItem {
     this.searchText = searchText;
     
     String option = SessionStorage.getInstance().getFilteringCriteria();
-    if (SearchConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT.equals(option)) {
+    if (SearchScopeConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT.equals(option)) {
       setSelected(true);
     }
     
@@ -37,9 +37,9 @@ public class ShowForeignCheckoutResourcesMenuItem extends JCheckBoxMenuItem {
 
   public void perform(ItemEvent e) {
     String option = SessionStorage.getInstance().getFilteringCriteria();
-    if (!SearchConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT.equals(option)) {
+    if (!SearchScopeConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT.equals(option)) {
       // Another option was active.
-      SessionStorage.getInstance().setFilteringCriteria(SearchConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT);
+      SessionStorage.getInstance().setFilteringCriteria(SearchScopeConstants.SHOW_ONLY_FOREIGN_CHECKED_OUT);
       // True option is for checking if you want and the folders
       contentSearcher.doSearch(searchText.getText().trim(), true);
     }
