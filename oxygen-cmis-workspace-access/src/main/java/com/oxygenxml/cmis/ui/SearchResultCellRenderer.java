@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -71,7 +70,6 @@ public class SearchResultCellRenderer extends JPanel implements ListCellRenderer
     // Drawing will occur in paintComponent
     iconPanel = new JPanel(new BorderLayout());
     iconLabel = new JLabel();
-    iconLabel.setIcon(new ImageIcon(getClass().getResource("/images/tip.png")));
     iconPanel.add(iconLabel);
     iconPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
