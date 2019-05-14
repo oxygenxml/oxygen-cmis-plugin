@@ -71,6 +71,10 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    * Search support.
    */
   private transient ContentSearcher contentProvider;
+  /**
+   * Breadcrumb presenter.
+   */
+  private final BreadcrumbPresenter breadcrumbPresenter;
 
   /**
    * Constructor that gets the tabPresenter to show documents in tabs and
@@ -80,7 +84,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    * @param breadcrumbPresenter
    */
   public ItemListView(BreadcrumbPresenter breadcrumbPresenter) {
-
+    this.breadcrumbPresenter = breadcrumbPresenter;
     // Create the listItem
     resourceList = new JList<>();
     resourceList.setSelectedIndex(0);
@@ -299,12 +303,29 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
 
   @Override
   public void presentResources(String folderID) {
-
     installDefaultRenderer();
-
+    
     ResourceController resourceController = CmisAccessSingleton.getInstance().createResourceController();
+
     // Present the folder children
-    presentResources(new FolderImpl(resourceController.getFolder(folderID)));
+    Folder folder = resourceController.getFolder(folderID);
+    boolean isCurrentParent = folderID.equals(currentParent.getId());
+    LinkedList<Folder> ancestors = new LinkedList<>();
+    if (!isCurrentParent) {
+      ancestors.addFirst(folder);
+      // Update breadcrumb. Collect all ancestors.
+      Folder p = folder.getFolderParent();
+      while (p != null) {
+        ancestors.addFirst(p);
+        p = p.getFolderParent();
+      }
+      
+      breadcrumbPresenter.resetBreadcrumb();
+      for (Folder ancestor : ancestors) {
+        breadcrumbPresenter.addBreadcrumb(new FolderImpl(ancestor));
+      }
+     }
+    presentResources(new FolderImpl(folder));
   }
 
   private void installDefaultRenderer() {

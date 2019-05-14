@@ -74,28 +74,28 @@ public class CreateFolderAction extends AbstractAction {
     JFrame mainFrame = (JFrame) pluginWorkspace.getParentFrame();
 
     // Get input from user
-    String getInput = JOptionPane.showInputDialog(
+    String folderName = JOptionPane.showInputDialog(
         mainFrame, 
         TranslationResourceController.getMessage(Tags.ENTER_A_NAME), 
         TranslationResourceController.getMessage(Tags.DEFAULT_NAME_FOLDER));
-    logger.debug("The input=" + getInput);
+    logger.debug("The input=" + folderName);
 
-    // Set current folder where we want a new folder
-    logger.debug("Current parrent=" + currentParent.getDisplayName());
-    FolderImpl currentFolder = (FolderImpl) currentParent;
+    if (folderName != null && folderName.length() > 0) {
+      // Set current folder where we want a new folder
+      logger.debug("Current parrent=" + currentParent.getDisplayName());
+      FolderImpl currentFolder = (FolderImpl) currentParent;
 
-    // Try creating the folder in the currentParent using the input
-    try {
-      resourceController.createFolder(((FolderImpl) currentParent).getFolder(), getInput);
+      // Try creating the folder in the currentParent using the input
+      try {
+        resourceController.createFolder(((FolderImpl) currentParent).getFolder(), folderName);
 
-    } catch (Exception e1) {
+      } catch (Exception e1) {
+        // Show the exception if there is one
+        JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + e1.getMessage());
+      }
 
-      // Show the exception if there is one
-      JOptionPane.showMessageDialog(mainFrame, TranslationResourceController.getMessage(Tags.UNKNOWN_EXCEPTION) + e1.getMessage());
-
+      // Present the updated content of the current folder
+      itemsPresenter.presentResources(currentFolder.getId());
     }
-
-    // Present the updated content of the current folder
-    itemsPresenter.presentResources(currentFolder.getId());
   }
 }
