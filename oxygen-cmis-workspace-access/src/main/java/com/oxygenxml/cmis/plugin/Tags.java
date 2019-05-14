@@ -13,6 +13,7 @@ public interface Tags {
   public static final String CREATED_BY = "CREATED_BY";
   public static final String NO_DATA = "NO_DATA";
   public static final String SEARCH_LABEL = "SEARCH_LABEL";
+  public static final String SEARCH_HINT = "Search_hint";
   public static final String OPERATION_IS_NOT_SUPPORTED = "OPERATION_IS_NOT_SUPPORTED";
   public static final String SERVER_URL_LABEL = "SERVER_URL_LABEL";
   public static final String CONNECT_BUTTON = "CONNECT_BUTTON";

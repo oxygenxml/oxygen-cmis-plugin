@@ -61,11 +61,10 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     // Search JTextField constraints
     c.fill = GridBagConstraints.HORIZONTAL;
     c.weightx = 1;
-    c.gridwidth = 3;
     c.gridx = 0;
     c.gridy = 0;
     c.insets = new Insets(1, 10, 1, 10);
-    searchField = new JTextField(searchLabel);
+    searchField = new JTextField(TranslationResourceController.getMessage(Tags.SEARCH_HINT));
     searchField.setOpaque(true);
     searchField.addFocusListener(new FocusListener() {
 
@@ -109,14 +108,9 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     add(searchField, c);
 
     // Search JButton constraints
-    c.gridwidth = 0;
-    c.gridx = 3;
-    c.gridy = 0;
+    c.gridwidth = 1;
+    c.gridx ++;
     c.weightx = 0.0;
-
-    filterLabel = new JLabel(ImageConstants.getImage(ImageConstants.SETTINGS_ICON));
-    filterLabel.addMouseListener(new FilterMouseHandler(this, searchField));
-    filterLabel.setEnabled(false);
 
     searchButton = new JButton(searchLabel);
     searchButton.setEnabled(false);
@@ -133,8 +127,14 @@ public class SearchView extends JPanel implements ContentSearcher, SearchPresent
     }
     );
     searchButton.setOpaque(true);
-
+//    add(searchButton, c);
+    
+    c.gridx ++;
+    filterLabel = new JLabel(ImageConstants.getImage(ImageConstants.SETTINGS_ICON));
+    filterLabel.addMouseListener(new FilterMouseHandler(this, searchField));
+    filterLabel.setEnabled(false);
     add(filterLabel, c);
+
   }
 
   @Override
