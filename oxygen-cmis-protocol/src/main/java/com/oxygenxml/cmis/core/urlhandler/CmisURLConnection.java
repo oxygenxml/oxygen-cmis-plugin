@@ -154,8 +154,9 @@ public class CmisURLConnection extends URLConnection {
    *           If the URL doesn't contain the expected syntax.
    * @throws UnsupportedEncodingException
    * @throws UserActionRequiredException
+   * @throws CmisObjectNotFoundException If the URL doesn't point to an existing object.
    */
-  public CmisObject getCMISObject(String url) throws MalformedURLException {
+  public CmisObject getCMISObject(String url) throws MalformedURLException, CmisObjectNotFoundException {
     // Get from custom URL server URL for connection
     CmisURL cmisUrl = CmisURL.parse(url);
 
@@ -179,6 +180,7 @@ public class CmisURLConnection extends URLConnection {
 
   @Override
   public InputStream getInputStream() throws IOException {
+    try {
     Document document = (Document) getCMISObject(getURL().toExternalForm());
 
     if (document.isVersionSeriesCheckedOut()) {
@@ -195,6 +197,9 @@ public class CmisURLConnection extends URLConnection {
     } else {
       logger.error("contentStream is null in com.oxygenxml.cmis.core.urlhandler.CmisURLConnection.getInputStream()");
       throw new IOException("Document content stream in null for URL: " + url);
+    }
+    } catch (CmisObjectNotFoundException ex) {
+      throw new IOException(ex);
     }
   }
 
