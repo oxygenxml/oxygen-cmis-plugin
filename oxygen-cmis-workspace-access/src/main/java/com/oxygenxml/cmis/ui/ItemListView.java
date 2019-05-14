@@ -3,7 +3,9 @@ package com.oxygenxml.cmis.ui;
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -12,6 +14,7 @@ import javax.swing.DropMode;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 
@@ -250,10 +253,8 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
     // Iterate them till it has a child
     if (childrenIterator != null) {
 
-      // Define a model for the list in order to render the items
-      final DefaultListModel<IResource> model = new DefaultListModel<>();
-
       // While has a child, add to the model
+      List<IResource> resources = new LinkedList<>();
       while (childrenIterator.hasNext()) {
         IResource iResource = childrenIterator.next();
         if (logger.isDebugEnabled()) {
@@ -269,8 +270,26 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
         if (notPWC) {
           // Private Working Copies are not presented. The user works with the original file transparently.
           // The application knows how to interpret the PWC.
-          model.addElement(iResource);
+          resources.add(iResource);
         }
+      }
+      
+      Collections.sort(resources, (a, b) -> {
+        // Folders should go first.
+        int aPriority = a instanceof IFolder ? 0 : 1;
+        int bPriority = b instanceof IFolder ? 0 : 1;
+        int folderPriority = aPriority - bPriority;
+        return 
+            // If one is a folder, that one should go first.
+            folderPriority != 0 ? folderPriority :
+            // If both are folders or both are documents, compare their named.
+            a.getDisplayName().compareTo(b.getDisplayName()); 
+      });
+      
+      // Define a model for the list in order to render the items
+      final DefaultListModel<IResource> model = new DefaultListModel<>();
+      for (IResource iResource : resources) {
+        model.addElement(iResource);
       }
 
       // Set the model to the list
@@ -420,18 +439,25 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
         if (logger.isDebugEnabled()) {
           logger.debug("refresh for " + savedURL);
         }
+        logger.info("refresh for " + savedURL);
         if (cmisObject instanceof FileableCmisObject) {
-          String folderPath = ((IFolder) currentParent).getFolderPath();
+          String currentFolderPath = ((IFolder) currentParent).getFolderPath();
           if (logger.isDebugEnabled()) {
-            logger.debug("Current path: " + folderPath);
+            logger.debug("Current path: " + currentFolderPath);
           }
+          logger.info("Current path: " + currentFolderPath);
+          
           List<Folder> parents = ((FileableCmisObject) cmisObject).getParents();
           for (Folder folder : parents) {
             if (logger.isDebugEnabled()) {
               logger.debug("parent path " + folder.getPath());
             }
-            if (folder.getPath().equals(folderPath)) {
-              // Refresh.
+            logger.info("parent path " + folder.getPath());
+            
+            if (folder.getPath().equals(currentFolderPath)
+                &&!isResourcePresentInModel(cmisObject)) {
+              logger.info("Do it");
+              // Refresh only if the resource is not already presented.
               presentResources(currentParent);
                break;
             }
@@ -441,5 +467,26 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
     } catch (IOException e) {
       logger.error(e, e);
     }
+  }
+
+  /**
+   * Checks if the given resource is already presented in the list model.
+   * 
+   * @param cmisObject Resource to check if it exists.
+   * 
+   * @return true if the resource is already present in tyhe model.
+   */
+  private boolean isResourcePresentInModel(CmisObject cmisObject) {
+    boolean found = false;
+    ListModel<IResource> model = resourceList.getModel();
+    int size = model.getSize();
+    for (int i = 0; i < size; i++) {
+      IResource elementAt = model.getElementAt(i);
+      if (elementAt.getId().equals(cmisObject.getId())) {
+        found = true;
+        break;
+      }
+    }
+    return found;
   }
 }

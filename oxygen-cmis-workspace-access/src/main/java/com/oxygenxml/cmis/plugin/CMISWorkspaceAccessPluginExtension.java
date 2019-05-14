@@ -66,6 +66,8 @@ public class CMISWorkspaceAccessPluginExtension implements WorkspaceAccessPlugin
       @Override
       public void editorOpened(URL editorLocation) {
         final WSEditor editorAccess = pluginWorkspaceAccess.getEditorAccess(editorLocation, area);
+        // When you create a new document you can choose to save it right away.
+        controlComponents.refresh(editorLocation);
         editorAccess.addEditorListener(new WSEditorListener() {
           @Override
           public void editorSaved(int operationType) {
