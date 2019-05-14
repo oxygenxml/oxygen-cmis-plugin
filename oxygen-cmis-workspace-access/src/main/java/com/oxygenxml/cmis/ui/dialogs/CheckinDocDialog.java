@@ -2,6 +2,7 @@ package com.oxygenxml.cmis.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -12,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
@@ -57,6 +59,7 @@ public class CheckinDocDialog extends OKCancelDialog {
     // Show it in the center of the frame
     setLocationRelativeTo(frame);
     setResizable(true);
+    setPreferredSize(new Dimension(450, 300));
     setModal(true);
     pack();
     setVisible(true);
@@ -111,22 +114,26 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     messageLabel = new JLabel(commitMessageValueLabel);
 
     final GridBagConstraints c = new GridBagConstraints();
+    c.anchor = GridBagConstants.WEST;
     c.gridx = 0;
     c.gridy = 0;
-    c.gridwidth = 1;
+    c.gridwidth = 3;
     c.insets = new Insets(1, 5, 3, 5);
-    c.fill = GridBagConstants.BOTH;
+    c.fill = GridBagConstants.NONE;
     add(messageLabel, c);
 
     // Commit area
     commitArea = new JTextArea(commitAreaLabelValue, 5, 4);
+    commitArea.setLineWrap(true);
+    commitArea.setWrapStyleWord(true);
     commitArea.selectAll();
     c.gridx = 0;
     c.gridy = 1;
     c.gridwidth = 3;
     c.weightx = 1;
+    c.weighty = 1;
     c.fill = GridBagConstants.BOTH;
-    add(commitArea, c);
+    add(new JScrollPane(commitArea), c);
 
     // Version
     versionLabel = new JLabel(versionLabelValue);
@@ -135,7 +142,8 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     c.anchor = GridBagConstants.WEST;
     c.gridwidth = 1;
     c.weightx = 0;
-    c.fill = GridBagConstants.VERTICAL;
+    c.weighty = 0;
+    c.fill = GridBagConstants.NONE;
     add(versionLabel, c);
 
     // MAJOR
@@ -147,10 +155,9 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     versioningState = MAJOR_VERSION;
     c.gridx = 1;
     c.gridy = 2;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstants.WEST;
-    c.weightx = 0.5;
-    c.fill = GridBagConstants.BOTH;
+    c.weightx = 0;
+    c.weighty = 0;
+    c.fill = GridBagConstants.NONE;
     add(radioItemMajor, c);
 
     // MINOR
@@ -160,9 +167,9 @@ class CheckinInputPanel extends JPanel implements ActionListener {
     c.anchor = GridBagConstants.WEST;
     c.gridx = 2;
     c.gridy = 2;
-    c.gridwidth = 1;
-    c.weightx = 0.5;
-    c.fill = GridBagConstants.BOTH;
+    c.weightx = 0;
+    c.weighty = 0;
+    c.fill = GridBagConstants.NONE;
     add(radioItemMinor, c);
 
     // This solves the problem where the dialog was not getting
