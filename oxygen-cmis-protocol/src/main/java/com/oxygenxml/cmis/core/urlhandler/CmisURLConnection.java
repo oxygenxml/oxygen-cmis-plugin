@@ -10,7 +10,6 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
