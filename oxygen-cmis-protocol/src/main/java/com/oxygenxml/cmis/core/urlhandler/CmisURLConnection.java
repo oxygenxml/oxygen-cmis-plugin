@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -181,22 +182,29 @@ public class CmisURLConnection extends URLConnection {
   @Override
   public InputStream getInputStream() throws IOException {
     try {
-    Document document = (Document) getCMISObject(getURL().toExternalForm());
-
-    if (document.isVersionSeriesCheckedOut()) {
+    Document initialDocument = (Document) getCMISObject(getURL().toExternalForm());
+    Document document = initialDocument;
+    
+    Boolean isVersionSeriesCheckedOut = document.isVersionSeriesCheckedOut();
+    if (isVersionSeriesCheckedOut != null && isVersionSeriesCheckedOut) {
       String pwcId = document.getVersionSeriesCheckedOutId();
       document = (Document) resourceController.getSession().getObject(pwcId);
     } else if (document.isVersionable()) {
       document = document.getObjectOfLatestVersion(false);
     }
     
-    ContentStream contentStream = document.getContentStream();
+    ContentStream contentStream = null;
+    if (document != null) {
+      contentStream = document.getContentStream();
+    }
+    if (contentStream == null) {
+      contentStream = initialDocument.getContentStream();
+    }
     
     if (contentStream != null) {
       return contentStream.getStream();
     } else {
-      logger.error("contentStream is null in com.oxygenxml.cmis.core.urlhandler.CmisURLConnection.getInputStream()");
-      throw new IOException("Document content stream in null for URL: " + url);
+      throw new IOException("This document does not have any content");
     }
     } catch (CmisObjectNotFoundException ex) {
       throw new IOException(ex);
@@ -226,8 +234,14 @@ public class CmisURLConnection extends URLConnection {
         // All bytes have been written.
         byte[] byteArray = toByteArray();
 
+        // If this document is a null document it won't have a mime type.
+        String contentStreamMimeType = document.getContentStreamMimeType();
+        if (contentStreamMimeType == null) {
+          contentStreamMimeType = "text/xml";
+        }
+        
         ContentStreamImpl contentStream = new ContentStreamImpl(document.getName(),
-            BigInteger.valueOf(byteArray.length), document.getContentStreamMimeType(),
+            BigInteger.valueOf(byteArray.length), contentStreamMimeType,
             new ByteArrayInputStream(byteArray));
 
         /**
