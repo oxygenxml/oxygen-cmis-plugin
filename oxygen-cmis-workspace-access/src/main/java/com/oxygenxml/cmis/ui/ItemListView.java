@@ -452,7 +452,10 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
    */
   public void refresh(URL savedURL) {
     try {
-      if (savedURL.getProtocol().equals(CmisURL.CMIS_PROTOCOL)) {
+      if (// We present the children of a resource.
+          currentParent != null
+          // The saved resource is from CMIS.
+          && savedURL.getProtocol().equals(CmisURL.CMIS_PROTOCOL)) {
         // The given URL points to a CMIS resource.
         CmisURLConnection connection = (CmisURLConnection) savedURL.openConnection();
         CmisObject cmisObject = connection.getCMISObject(savedURL.toString());
