@@ -463,20 +463,17 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
         if (logger.isDebugEnabled()) {
           logger.debug("refresh for " + savedURL);
         }
-        logger.info("refresh for " + savedURL);
         if (cmisObject instanceof FileableCmisObject) {
           String currentFolderPath = ((IFolder) currentParent).getFolderPath();
           if (logger.isDebugEnabled()) {
             logger.debug("Current path: " + currentFolderPath);
           }
-          logger.info("Current path: " + currentFolderPath);
           
           List<Folder> parents = ((FileableCmisObject) cmisObject).getParents();
           for (Folder folder : parents) {
             if (logger.isDebugEnabled()) {
               logger.debug("parent path " + folder.getPath());
             }
-            logger.info("parent path " + folder.getPath());
             
             if (folder.getPath().equals(currentFolderPath)
                 &&!isResourcePresentInModel(cmisObject)) {
