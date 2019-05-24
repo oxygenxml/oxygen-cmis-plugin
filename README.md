@@ -21,7 +21,7 @@ The plugin for Oxygen XML Web Author can be found in `web-author-cmis-plugin/tar
 
 To install the plugin in Oxygen XML Web Author you can use the Administration Page to upload the resulting JAR.
 
-## Install the CMIS plugin in Oxygen XML Editor/Author (desktop)
+# Install the CMIS plugin in Oxygen XML Editor/Author (desktop)
 
 This add-on is compatible with Oxygen XML Editor/Author/Developer version 18.1 or higher. 
 
