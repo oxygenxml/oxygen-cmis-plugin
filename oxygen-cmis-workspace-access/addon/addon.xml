@@ -3,17 +3,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.oxygenxml.com/ns/extension http://www.oxygenxml.com/ns/extension/extensions.xsd">
 	<xt:extension xmlns:xt="http://www.oxygenxml.com/ns/extension"
-		id="com.oxygenxml.git">
-		<xt:location href="https://github.com/oxygenxml/oxygen-cmis-plugin/releases/download/${project.version}/${project.build.finalName}-plugin.jar" />
-		<xt:version>${project.version}</xt:version> 
+		id="com.oxygenxml.cmis">
+		<xt:location href="https://github.com/oxygenxml/oxygen-cmis-plugin/releases/download/v1-sa/oxygen-cmis-workspace-access-1.0-SNAPSHOT-plugin.zip" />
+		<xt:version>1.0.0</xt:version> 
 		<xt:oxy_version>18.1+</xt:oxy_version>
 		<xt:type>plugin</xt:type>
 		<xt:author>Syncro Soft</xt:author>
-		<xt:name>Git Support</xt:name>
+		<xt:name>Oxygen CMIS plugin</xt:name>
 		<xt:description>
 			<html xmlns="http://www.w3.org/1999/xhtml">
 				<head>
-					<title>CMIS support plugin</title>
+					<title>Oxygen CMIS plugin</title>
 					<style type="text/css">
 						ol {margin-top:0px;}
 						p {margin-top:0px;margin-bottom:5px;}
@@ -21,10 +21,11 @@
 				</head>
 				<body>
 					<div>
-						<h1>Using the plugin</h1>
-						<p>The plugin contributes a new view, named <b>CMIS Explorer</b>. If the <b>CMIS
-							Explorer</b> view is not visible, you can open it from the <b>Window > Show
-								View</b> menu.</p>
+						<h1>About the plugin</h1>
+						<p>The plugin enables users to browse and edit resources from CMIS-enabled servers, like <a href="https://docs.alfresco.com/4.0/concepts/content-server-about.html">Alfresco</a>
+							or <a href="https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.0/com.ibm.installingp8cmis.doc/cmidv000.htm">IBM FileNet</a>. It contributes a new view, named <b>CMIS Explorer</b>. If the <b>CMIS
+								Explorer</b> view is not visible, you can open it from the <b>Window > Show
+									View</b> menu.</p>
 						<div>
 							
 							<h1>Connecting to a CMIS server</h1>
@@ -54,15 +55,14 @@
 								inside the <b>Server URL</b> combo box and click <b>Connect</b>. If there are
 								multiple repositories available, you can change between them from the
 								<b>Repository</b> combo box.</p>
-							<p><img src="img/connect.jpg" alt="connect.jpg"
-							/></p></div>
+							<p><img src="img/connect.png" alt="Connecting to server"/></p></div>
 						
 						<div>
 							<h2>Browsing the resources</h2>
 							<p>In the view you can browse through resources by double clicking on folders. As
 								you navigate, you can use the <b>Breadcrumb</b> view to return to a previous
 								location.</p>
-							<p><img src="img/browse.jpg" alt="browse.jpg" /></p>
+							<p><img src="img/browse.png" alt="Browsing resources" /></p>
 						</div>
 						
 						<div>
@@ -72,44 +72,57 @@
 								document will be opened in <b>Read-Only</b> mode. If you want to edit the
 								document you'll have to first choose <b>Check out</b> and after that <b>Open
 									document</b></p>
-							<p><img src="img/contextualMenu.jpg" alt="contextualMenu.jpg" /></p>
+							<p><img src="img/contextualMenu.jpg" alt="Resource contextual menu." /></p>
 							<p>Once you've checked-out a document, nobody else will be able to perform a
 								check-out and edit it. You will be the only person that can change that
 								document. After you've finished working on a document, you can commit it using
 								the <b>Check in</b> action.</p>
-							<p><img src="img/checkIn.png" alt="checkIn.png" /></p>
+							<p><img src="img/checkIn.png" alt="Document Check in" /></p>
 							<p>A dialog will appear in which you can give a commit message and choose if this
 								will be a minor version or a major version:</p>
-							<p><img src="img/commit.png" alt="commit.png" /></p>
+							<p><img src="img/commit.png" alt="Commit message dialog" /></p>
 							<p>You can also <b>Rename</b>, <b>Delete</b> or <b>Copy</b> a document by using the
 								coresponding actions from the contextual menu.</p>
 						</div>
 						
 						<div>
-							<h2>Create a new document</h2>
-							<p>After you create a new file, you need to do the following:</p>
-							<ul>
-								<li>
-									Go to the File menu > Save to URL, and in the dialog that pops up choose "Browse CMIS".
-								</li>
-								<li>In the dialog from below, provide the needed information and click OK.</li>
-							</ul>
+							<h2>Creating new documents</h2>
+							<div>
+								<p>When you create a new document, you have the possibility to save it directly to the Server:</p>
+								<p><img src="img/create_new_doc_1.png" alt="Create a new document"/></p>
+								<ol>
+									<li><p>Invoke the <b>New...</b> action on the toolbar. </p></li>
+									<li><p>Select the <b>Save As</b> check box.</p></li>
+									<li>Browse for a folder on the CMIS server.</li>
+									<li>Set a proper file name.</li>
+								</ol>
+							</div>
 							
 							<div>
-								<h2>Searching for documents</h2>
-								<p>There is a search field in the top part of the view in which you type words to
-									search. Press <b>Enter</b> and the results will be presented.</p>
-								<p><img src="img/search.png" alt="search.png" /></p>
+								<p>In case if you've create a document without saving it to the server or is it's a local file, you need to do the following:</p>
+								<ul>
+									<li>
+										Go to the File menu > Save to URL and choose "Browse CMIS" in the dialog that pops up.
+									</li>
+									<li>A dialog will appear in which you can browse for a folder on the server. Select a folder and press OK.</li>
+								</ul>
+								
+								<div>
+									<h2>Searching for documents</h2>
+									<p>There is a search field in the top part of the view in which you type words to
+										search. Press <b>Enter</b> and the results will be presented.</p>
+									<p><img src="img/search.png" alt="Search for documents" /></p>
+								</div>
 							</div>
 						</div>
-					</div>
 						
 						
 						
-						
-						
+					</div>            
+					
 				</body>
 			</html>
+			
 		</xt:description>
 		<xt:license><![CDATA[
 			Copyright 2018 Syncro Soft SRL
