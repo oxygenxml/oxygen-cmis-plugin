@@ -1,5 +1,3 @@
-  sync.util.loadCSSFile("../plugin-resources/cmis/style.css");
-
 // -------- Initialize the file browser information ------------
   var cmisFileRepositoryDescriptor = {
     'id': 'cmis',

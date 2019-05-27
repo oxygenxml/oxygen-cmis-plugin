@@ -34,4 +34,6 @@
 
 	<extension type="WebappServlet" role="config"
 		class="com.oxygenxml.cmis.web.CmisPluginConfigExtension" />
+		
+  <extension type="WebappCSSResource" href="web/static/style.css"/>
 </plugin>
