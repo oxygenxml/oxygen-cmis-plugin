@@ -72,7 +72,7 @@
 								document will be opened in <b>Read-Only</b> mode. If you want to edit the
 								document you'll have to first choose <b>Check out</b> and after that <b>Open
 									document</b></p>
-							<p><img src="img/contextualMenu.jpg" alt="Resource contextual menu." /></p>
+							<p><img src="img/contextualMenu.png" alt="Resource contextual menu." /></p>
 							<p>Once you've checked-out a document, nobody else will be able to perform a
 								check-out and edit it. You will be the only person that can change that
 								document. After you've finished working on a document, you can commit it using
