@@ -2,3 +2,4 @@
 
 # Patterns for binary files
 *.png binary
+*.war binary
