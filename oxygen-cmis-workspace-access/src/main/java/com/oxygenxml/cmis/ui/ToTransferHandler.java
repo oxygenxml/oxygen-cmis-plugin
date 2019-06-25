@@ -30,7 +30,6 @@ class ToTransferHandler extends TransferHandler {
 
   // Initialize the action given
   public ToTransferHandler(JList<IResource> resourceList, int action) {
-    System.out.println("Transfer constructor");
     this.dragList = resourceList;
     this.action = action;
   }
