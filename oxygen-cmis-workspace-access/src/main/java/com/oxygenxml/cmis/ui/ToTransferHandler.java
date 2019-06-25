@@ -30,7 +30,7 @@ class ToTransferHandler extends TransferHandler {
 
   // Initialize the action given
   public ToTransferHandler(JList<IResource> resourceList, int action) {
-    System.out.println("Transfer constructor");
+    //System.out.println("Transfer constructor");
     this.dragList = resourceList;
     this.action = action;
   }
@@ -56,10 +56,10 @@ class ToTransferHandler extends TransferHandler {
   // Remove the element if the action was a move
   public void exportDone(JComponent comp, Transferable trans, int action) {
     if (action != MOVE) {
-      System.out.println("Not move");
+      //System.out.println("Not move");
       return;
     }
-    System.out.println("Export done");
+    //System.out.println("Export done");
     // System.out.println("Index=" + oldIndex);
     // System.out.println("Element=" + from.getElementAt(oldIndex));
     // from.removeElementAt(oldIndex);
@@ -82,7 +82,7 @@ class ToTransferHandler extends TransferHandler {
     boolean actionSupported = (action & support.getSourceDropActions()) == action;
     if (actionSupported) {
       support.setDropAction(action);
-      System.out.println("Action done=" + action);
+      //System.out.println("Action done=" + action);
       return true;
     }
 
@@ -92,7 +92,7 @@ class ToTransferHandler extends TransferHandler {
   public boolean importData(TransferHandler.TransferSupport support) {
     // if we can't handle the import, say so
     if (!canImport(support)) {
-      System.out.println("Can import?");
+      //System.out.println("Can import?");
       return false;
     }
     // Get the drop location
@@ -106,7 +106,7 @@ class ToTransferHandler extends TransferHandler {
     // Get the current string under the drop.
     String valueName = ((IResource) listModel.getElementAt(dropIndex)).getDisplayName();
 
-    System.out.println("Value from import =" + valueName);
+    //System.out.println("Value from import =" + valueName);
 
     // Get the string that is being dropped.
     Transferable t = support.getTransferable();
@@ -166,8 +166,8 @@ class ToTransferHandler extends TransferHandler {
 
     // If it's a location to drop
     if (insert) {
-      System.out.println("Old index=" + oldIndex);
-      System.out.println("Drop index=" + dropIndex);
+      //System.out.println("Old index=" + oldIndex);
+      //System.out.println("Drop index=" + dropIndex);
 
       // If is lower then it does destroy the original order
       if (dropIndex < oldIndex) {
