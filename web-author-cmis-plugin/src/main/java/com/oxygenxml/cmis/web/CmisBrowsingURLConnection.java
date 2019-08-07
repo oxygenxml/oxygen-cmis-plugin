@@ -144,6 +144,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 					.MESSAGE_TYPE_ERROR, ERROR_CODE, ERROR_MESSAGE, true);
 			
 			throw new UserActionRequiredException(webappMessage);
+		} catch (CmisObjectNotFoundException e) {
+		  throw new FileNotFoundException(this.url.getPath());
 		}
 
 		return list;
