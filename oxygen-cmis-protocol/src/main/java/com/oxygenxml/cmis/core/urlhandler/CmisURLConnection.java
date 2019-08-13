@@ -207,7 +207,7 @@ public class CmisURLConnection extends URLConnection {
       throw new IOException("This document does not have any content");
     }
     } catch (CmisObjectNotFoundException ex) {
-      throw new FileNotFoundException(ex.getMessage());
+      throw new FileNotFoundException(getURL().getPath());
     }
   }
 
