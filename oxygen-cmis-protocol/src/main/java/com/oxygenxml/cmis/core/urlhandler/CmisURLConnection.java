@@ -2,6 +2,7 @@ package com.oxygenxml.cmis.core.urlhandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -206,7 +207,7 @@ public class CmisURLConnection extends URLConnection {
       throw new IOException("This document does not have any content");
     }
     } catch (CmisObjectNotFoundException ex) {
-      throw new IOException(ex);
+      throw new FileNotFoundException(ex.getMessage());
     }
   }
 
