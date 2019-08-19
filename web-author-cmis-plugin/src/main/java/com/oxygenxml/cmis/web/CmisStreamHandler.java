@@ -5,13 +5,13 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
@@ -43,10 +43,8 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		if (credentials != null && !credentials.isEmpty()) {
 			try {
 				cmisAccess.pureConnectToServer(serverUrl, credentials);
-			} catch (CmisUnauthorizedException e) {
-			  logger.error(e, e);
-				throw new UserActionRequiredException(webappMessage);
 			} catch (Exception e) {
+			  // may be CmisUnauthorizedException
 			  logger.error(e, e);
 				throw new UserActionRequiredException(webappMessage);
 			}
