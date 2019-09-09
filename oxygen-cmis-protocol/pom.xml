@@ -20,6 +20,12 @@
 			<groupId>org.apache.chemistry.opencmis</groupId>
 			<artifactId>chemistry-opencmis-client-impl</artifactId>
 			<version>1.1.0</version>
+      <!-- Apache CXF is used only for Web Services binding. We use only ATOM Pub bindings. -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+        </exclusion>
+      </exclusions>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
