@@ -17,6 +17,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import ro.sync.ecss.extensions.api.AuthorAccess;
+import ro.sync.ecss.extensions.api.access.EditingSessionContext;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappEditingSessionLifecycleListener;
@@ -127,7 +128,13 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			//
 			setVersionableOptions(documentModel);
 		} else {
-			if (isCheckOutRequired() && !document.isVersionSeriesCheckedOut()) {
+		  EditingSessionContext editingContext = documentModel.getAuthorAccess().getEditorAccess().getEditingContext();
+		  
+		  Object previewMode = editingContext.getAttribute("previewMode");
+		  boolean isPreview = "true".equals(previewMode) || Boolean.TRUE.equals(previewMode);
+		  
+		  // on preview there is no checkout action.
+			if (!isPreview && isCheckOutRequired() && !document.isVersionSeriesCheckedOut()) {
 				documentModel.getAuthorAccess().getEditorAccess()
 						.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
 			}
