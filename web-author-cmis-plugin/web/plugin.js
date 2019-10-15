@@ -35,6 +35,7 @@
     actionsManager.registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor, status));
     actionsManager.registerAction('cmisCheckIn.link', new CmisCheckInAction(editor, status));
     actionsManager.registerAction('listOldVersion.link', new listOldVersionsAction(editor, status));
+    actionsManager.registerAction('diffOldVersion.link', new CompareBetweenVersionsAction(editor, status));
 
     goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
       var toolbars = e.actionsConfiguration.toolbars;
@@ -43,6 +44,7 @@
         return;
       }
       for (var i = 0; i < toolbars.length; i ++) {
+        console.log("toolbar ", toolbars[i]);
         var toolbar = toolbars[i];
         if (toolbar.name === "Builtin") {
           toolbar.children.push({
@@ -52,7 +54,12 @@
             children: [{
               id: 'listOldVersion.link',
               type: 'action'
-            }, {
+            },
+            {
+              id: 'diffOldVersion.link',
+              type: 'action'
+            },
+            {
               id: 'cmisCheckOut.link',
               type: 'action'
             }, {

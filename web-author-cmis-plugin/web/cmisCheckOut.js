@@ -34,7 +34,7 @@ CmisCheckOutAction.prototype.actionPerformed = function(callback) {
   this.editor_.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisCheckOut', {
           action: 'cmisCheckout'
-      }, goog.bind(this.handleOperationResult_, this, callback));
+      }, goog.bind(this.onHistoryReceived_, this, callback));
 };
 
 /**
@@ -46,7 +46,7 @@ CmisCheckOutAction.prototype.actionPerformed = function(callback) {
  *
  * @private
  */
-CmisCheckOutAction.prototype.handleOperationResult_ = function(callback, err, data) {
+CmisCheckOutAction.prototype.onHistoryReceived_ = function(callback, err, data) {
 
   if (data === null) {
     goog.isFunction(callback) && callback();

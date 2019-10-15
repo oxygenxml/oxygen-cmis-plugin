@@ -20,9 +20,15 @@
     vertical-align: inherit;
 }
 
+.td[data-version] {
+	padding-right: 25px;
+}
+.td .opened-label {
+	font-size: 0.9em;
+}
+
 .oldlink {
 	text-align: center;
-	margin-right: 25px;
 	color: #323233;
 }
 
