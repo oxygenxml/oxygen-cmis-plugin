@@ -12,7 +12,7 @@
     <key value="Search_hint">
         <comment>A hint presented inside the search field.</comment>
         <val lang="en_US">Type filter text and press ENTER</val>
-        <val lang="de_DE">Type filter text and press ENTER</val>
+        <val lang="de_DE">Geben Sie den Filtertext ein und drücken Sie ENTER</val>
         <val lang="fr_FR">Type filter text and press ENTER</val>
         <val lang="ja_JP">Type filter text and press ENTER</val>
         <val lang="nl_NL">Type filter text and press ENTER</val>
