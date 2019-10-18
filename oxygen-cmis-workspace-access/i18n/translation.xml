@@ -14,8 +14,8 @@
         <val lang="en_US">Type filter text and press ENTER</val>
         <val lang="de_DE">Geben Sie den Filtertext ein und drücken Sie ENTER</val>
         <val lang="fr_FR">Tapez le texte du filtre et appuyez sur ENTRÉE</val>
-        <val lang="ja_JP">Type filter text and press ENTER</val>
-        <val lang="nl_NL">Type filter text and press ENTER</val>
+        <val lang="ja_JP">フィルター テキストを入力し、ENTER キーを押す</val>
+        <val lang="nl_NL">Typ de filtertekst en druk op ENTER</val>
     </key>
 
     <!-- Plugin -->
