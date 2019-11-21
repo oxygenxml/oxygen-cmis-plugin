@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<translation>
+<?xml version="1.0" encoding="UTF-8"?><translation>
     <languageList>
         <language description="English" lang="en_US"/>
         <language description="German" lang="de_DE"/>
         <language description="French" lang="fr_FR"/>
         <language description="Japanese" lang="ja_JP"/>
         <language description="Dutch" lang="nl_NL"/>
+        <language description="Dutch" lang="zh_CN"/>
     </languageList>
     <!-- CMIS EXPLORER ACCESS -->
     
@@ -16,6 +16,7 @@
         <val lang="fr_FR">Tapez le texte du filtre et appuyez sur ENTRÉE</val>
         <val lang="ja_JP">フィルター テキストを入力し、ENTER キーを押す</val>
         <val lang="nl_NL">Typ de filtertekst en druk op ENTER</val>
+      <val lang="zh_CN">Type filter text and press ENTER</val>
     </key>
 
     <!-- Plugin -->
@@ -26,6 +27,7 @@
         <val lang="fr_FR">Feuilleter CMIS</val>
         <val lang="ja_JP">ブラウズ CMIS</val>
         <val lang="nl_NL">Doorbladeren CMIS</val>
+      <val lang="zh_CN">Browse CMIS</val>
     </key>
     <key value="CMIS_DIALOG">
         <comment>Title of the browser dialog.</comment>
@@ -34,6 +36,7 @@
         <val lang="fr_FR">Dialogue CMIS</val>
         <val lang="ja_JP">CMISダイアログ</val>
         <val lang="nl_NL">Dialoogvenster CMIS</val>
+      <val lang="zh_CN">CMIS Dialog</val>
     </key>
     <key value="CMIS_EXPLORER_NAME">
         <comment>Name of the plugin.</comment>
@@ -42,6 +45,7 @@
         <val lang="fr_FR">Explorateur CMIS</val>
         <val lang="ja_JP">CMISエクスプローラー</val>
         <val lang="nl_NL">CMIS-verkenner</val>
+      <val lang="zh_CN">CMIS Explorer</val>
     </key>
     <key value="ALLOW_EDIT_WITHOUT_CHECKOUT">
         <comment>Label for the checkbox.</comment>
@@ -50,6 +54,7 @@
         <val lang="fr_FR">Autoriser l'édition sans extraction (s'applique aux documents Versionnables)</val>
         <val lang="ja_JP">チェックアウトなしで編集を許可する（バージョン管理可能ドキュメントに適用）</val>
         <val lang="nl_NL">Bewerken zonder uitchecken toestaan (van toepassing op documenten waarvan meerdere versies mogelijk zijn)</val>
+      <val lang="zh_CN">Allow edit without checkout (applies on Versionable documents)</val>
     </key>
     <key value="OPTIONS_CMIS_TITLE">
         <comment>Name of the frame.</comment>
@@ -58,6 +63,7 @@
         <val lang="fr_FR">Options CMIS</val>
         <val lang="ja_JP">オプションCMIS</val>
         <val lang="nl_NL">CMIS-opties</val>
+      <val lang="zh_CN">Options CMIS</val>
     </key>
     <!-- END Plugin -->
 
@@ -71,6 +77,7 @@
         <val lang="fr_FR">Retour</val>
         <val lang="ja_JP">戻る</val>
         <val lang="nl_NL">Terug</val>
+      <val lang="zh_CN">Go back</val>
     </key>
     <!-- END Breacrumb View -->
 
@@ -82,6 +89,7 @@
         <val lang="fr_FR">Crée le:</val>
         <val lang="ja_JP">作成された時刻：</val>
         <val lang="nl_NL">Gemaakt om:</val>
+      <val lang="zh_CN">Time created:</val>
     </key>
     <key value="EMPTY_RESULT">
         <comment>Default result.</comment>
@@ -90,6 +98,7 @@
         <val lang="fr_FR">Vide</val>
         <val lang="ja_JP">空</val>
         <val lang="nl_NL">Leeg</val>
+      <val lang="zh_CN">Empty</val>
     </key>
     <!-- END CacheSearchProvider -->
 
@@ -101,6 +110,7 @@
         <val lang="fr_FR">Dépôt</val>
         <val lang="ja_JP">レポジトリ</val>
         <val lang="nl_NL">Opslagplaats</val>
+      <val lang="zh_CN">Repository</val>
     </key>
     <!-- END RepoCombobox View -->
 
@@ -112,6 +122,7 @@
         <val lang="fr_FR">Par:</val>
         <val lang="ja_JP">以下による：</val>
         <val lang="nl_NL">Door:</val>
+      <val lang="zh_CN">By:</val>
     </key>
     <key value="NO_DATA">
         <comment>Default result.</comment>
@@ -120,6 +131,7 @@
         <val lang="fr_FR">Aucune donnée</val>
         <val lang="ja_JP">データなし</val>
         <val lang="nl_NL">Geen gegevens</val>
+      <val lang="zh_CN">No data</val>
     </key>
     <!-- END SearchResultCellRenderer -->
 
@@ -131,6 +143,7 @@
         <val lang="fr_FR">Rechercher</val>
         <val lang="ja_JP">検索</val>
         <val lang="nl_NL">Zoek</val>
+      <val lang="zh_CN">Search</val>
     </key>
     <!-- END Search View -->
 
@@ -142,6 +155,7 @@
         <val lang="fr_FR">Opération non prise en charge</val>
         <val lang="ja_JP">操作はサポートされていません</val>
         <val lang="nl_NL">Bewerking wordt niet ondersteund</val>
+      <val lang="zh_CN">Operation is not supported</val>
     </key>
     <key value="SERVER_URL_LABEL">
         <comment>Label for the server component.</comment>
@@ -150,6 +164,7 @@
         <val lang="fr_FR">URL du serveur</val>
         <val lang="ja_JP">サーバー URL</val>
         <val lang="nl_NL">Server-URL</val>
+      <val lang="zh_CN">Server URL</val>
     </key>
     <key value="CONNECT_BUTTON">
         <comment>Value for the connect button.</comment>
@@ -158,6 +173,7 @@
         <val lang="fr_FR">Connexion</val>
         <val lang="ja_JP">接続</val>
         <val lang="nl_NL">Verbind</val>
+      <val lang="zh_CN">Connect</val>
     </key>
     <!-- END Server View -->
     <!-- END UI -->
@@ -173,6 +189,7 @@
         <val lang="fr_FR">Mineur</val>
         <val lang="ja_JP">マイナー</val>
         <val lang="nl_NL">Secundair</val>
+      <val lang="zh_CN">Minor</val>
     </key>
     <key value="VERSIONING_STATE_MAJOR_LABEL">
         <comment>Versioning state major.</comment>
@@ -181,6 +198,7 @@
         <val lang="fr_FR">Majeur</val>
         <val lang="ja_JP">メジャー</val>
         <val lang="nl_NL">Primair</val>
+      <val lang="zh_CN">Major</val>
     </key>
     <key value="VERSIONING_STATE_NONE_LABEL">
         <comment>Versioning state None.</comment>
@@ -189,6 +207,7 @@
         <val lang="fr_FR">Aucun</val>
         <val lang="ja_JP">なし</val>
         <val lang="nl_NL">Geen</val>
+      <val lang="zh_CN">None</val>
     </key>
     <!-- END Versioning -->
     <!-- END Common -->
@@ -203,6 +222,7 @@
         <val lang="fr_FR">Entrez votre message ici</val>
         <val lang="ja_JP">ここにメッセージを入力してください</val>
         <val lang="nl_NL">Typ hier uw bericht</val>
+      <val lang="zh_CN">Enter your message here</val>
     </key>
     <key value="COMMIT_MESSAGE_CHECKIN_DIALOG_LABEL">
         <comment>Short message for the commit label.</comment>
@@ -211,6 +231,7 @@
         <val lang="fr_FR">Message de livraison:</val>
         <val lang="ja_JP">コミットメッセージ：</val>
         <val lang="nl_NL">Vastlegbericht:</val>
+      <val lang="zh_CN">Commit message:</val>
     </key>
     <!-- END Checkin Dialog-->
 
@@ -222,6 +243,7 @@
         <val lang="fr_FR">Créer un document</val>
         <val lang="ja_JP">ドキュメントを作成する</val>
         <val lang="nl_NL">Document maken</val>
+      <val lang="zh_CN">Create document</val>
     </key>
     <key value="VERSION_LABEL">
         <comment>Version label.</comment>
@@ -230,6 +252,7 @@
         <val lang="fr_FR">Version</val>
         <val lang="ja_JP">バージョン</val>
         <val lang="nl_NL">Versie</val>
+      <val lang="zh_CN">Version</val>
     </key>
     <key value="DEFAULT_FILENAME_CREATE_DOCUMENT_DIALOG">
         <comment>Default filename with an extension</comment>
@@ -238,6 +261,7 @@
         <val lang="fr_FR">monfichier.txt</val>
         <val lang="ja_JP">myfile.txt</val>
         <val lang="nl_NL">mijnbestand.txt</val>
+      <val lang="zh_CN">myfile.txt</val>
     </key>
     <key value="MESSAGE_CREATE_DOCUMENT_DIALOG_LABEL">
         <comment>Label for filename.</comment>
@@ -246,6 +270,7 @@
         <val lang="fr_FR">Nom du fichier</val>
         <val lang="ja_JP">ファイル名</val>
         <val lang="nl_NL">Bestandsnaam</val>
+      <val lang="zh_CN">File name</val>
     </key>
     <!-- END Create document Dialog -->
 
@@ -257,6 +282,7 @@
         <val lang="fr_FR">Non</val>
         <val lang="ja_JP">いいえ</val>
         <val lang="nl_NL">Nee</val>
+      <val lang="zh_CN">No</val>
     </key>
     <key value="OK_BUTTON_DELETE_DOCUMENT_DIALOG">
         <comment>Value of the ok button</comment>
@@ -265,6 +291,7 @@
         <val lang="fr_FR">Oui</val>
         <val lang="ja_JP">はい</val>
         <val lang="nl_NL">Ja</val>
+      <val lang="zh_CN">Yes</val>
     </key>
     <key value="DELETE_DOCUMENT_DIALOG_TITLE">
         <comment>Value of the dialog title</comment>
@@ -273,6 +300,7 @@
         <val lang="fr_FR">Supprimer un document</val>
         <val lang="ja_JP">ドキュメントを削除する</val>
         <val lang="nl_NL">Document verwijderen</val>
+      <val lang="zh_CN">Delete document</val>
     </key>
     <key value="SINGLE_VERSION_LABEL">
         <comment>Value of the single version label</comment>
@@ -281,6 +309,7 @@
         <val lang="fr_FR">Version individuelle</val>
         <val lang="ja_JP">シングルバージョン</val>
         <val lang="nl_NL">Eén versie</val>
+      <val lang="zh_CN">Single version</val>
     </key>
     <key value="ALL_VERSIONS_LABEL">
         <comment>Value of the all versions label.</comment>
@@ -289,6 +318,7 @@
         <val lang="fr_FR">Toutes les versions</val>
         <val lang="ja_JP">すべてのバージョン</val>
         <val lang="nl_NL">Alle versies</val>
+      <val lang="zh_CN">All versions</val>
     </key>
     <key value="MESSAGE_DELETE_DOCUMENT_DIALOG_LABEL">
         <comment>Main message to be displayed to user.</comment>
@@ -297,6 +327,7 @@
         <val lang="fr_FR">Êtes-vous sûr de vouloir supprimer le(s) élément(s) sélectionné(s) du dépôt?</val>
         <val lang="ja_JP">選択した項目をリポジトリから削除しますか？</val>
         <val lang="nl_NL">Weet u zeker dat u de geselecteerde items wilt verwijderen uit de opslagplaats?</val>
+      <val lang="zh_CN">Are sure you want to delete the selected item/s from the repository?</val>
     </key>
     <!-- END Delete document Dialog -->
 
@@ -308,6 +339,7 @@
         <val lang="fr_FR">Mot de passe</val>
         <val lang="ja_JP">パスワード</val>
         <val lang="nl_NL">Wachtwoord</val>
+      <val lang="zh_CN">Password</val>
     </key>
     <key value="USERNAME_LOGIN_DIALOG_LABEL">
         <comment>Value for the username label.</comment>
@@ -316,6 +348,7 @@
         <val lang="fr_FR">Nom d'utilisateur</val>
         <val lang="ja_JP">ユーザー名</val>
         <val lang="nl_NL">Gebruikersnaam</val>
+      <val lang="zh_CN">Username</val>
     </key>
     <key value="LOGIN_DIALOG_TITLE">
         <comment>Value for the dialog title.</comment>
@@ -324,6 +357,7 @@
         <val lang="fr_FR">Connexion</val>
         <val lang="ja_JP">ログイン</val>
         <val lang="nl_NL">Inloggen</val>
+      <val lang="zh_CN">Log in</val>
     </key>
     <!-- END Login Dialog -->
     <!-- END DIALOGS -->
@@ -336,6 +370,7 @@
         <val lang="fr_FR">Annuler l'extraction</val>
         <val lang="ja_JP">チェックアウトをキャンセルする</val>
         <val lang="nl_NL">Uitchecken negeren</val>
+      <val lang="zh_CN">Cancel check out</val>
     </key>
     <key value="CMIS_CHECK_IN">
         <comment>Title of the action.</comment>
@@ -344,6 +379,7 @@
         <val lang="fr_FR">Enregistrement</val>
         <val lang="ja_JP">チェックイン</val>
         <val lang="nl_NL">Inchecken</val>
+      <val lang="zh_CN">Check in</val>
     </key>
     <key value="CMIS_CHECK_OUT">
         <comment>Title of the action.</comment>
@@ -352,6 +388,7 @@
         <val lang="fr_FR">Extraction</val>
         <val lang="ja_JP">チェックアウト</val>
         <val lang="nl_NL">Uitchecken</val>
+      <val lang="zh_CN">Check out</val>
     </key>
     <key value="COPY_DOCUMENT_ACTION_TITLE">
         <comment>Title of the action.</comment>
@@ -361,6 +398,7 @@
         <val lang="fr_FR">Copier</val>
         <val lang="ja_JP">コピー</val>
         <val lang="nl_NL">Kopieer</val>
+      <val lang="zh_CN">Copy</val>
     </key>
     <key value="CREATE_DOCUMENT_ACTION_TITLE">
         <comment>Title of the action.</comment>
@@ -369,6 +407,7 @@
         <val lang="fr_FR">Créer un document</val>
         <val lang="ja_JP">ドキュメントを作成する</val>
         <val lang="nl_NL">Document maken</val>
+      <val lang="zh_CN">Create document</val>
     </key>
     <!-- Folder action -->
     <key value="CREATE_FOLDER_ACTION_TITLE">
@@ -378,6 +417,7 @@
         <val lang="fr_FR">Créer un dossier</val>
         <val lang="ja_JP">フォルダーを作成する</val>
         <val lang="nl_NL">Map maken</val>
+      <val lang="zh_CN">Create Folder</val>
     </key>
     <key value="DEFAULT_NAME_FOLDER">
         <comment>Default name of the folder.</comment>
@@ -386,6 +426,7 @@
         <val lang="fr_FR">mondossier</val>
         <val lang="ja_JP">マイフォルダー</val>
         <val lang="nl_NL">mijnmap</val>
+      <val lang="zh_CN">myfolder</val>
     </key>
     <!-- END Folder action -->
 
@@ -396,6 +437,7 @@
         <val lang="fr_FR">Supprimer</val>
         <val lang="ja_JP">削除</val>
         <val lang="nl_NL">Wis</val>
+      <val lang="zh_CN">Delete</val>
     </key>
     <key value="OPEN_DOCUMENT_ACTION_TITLE">
         <comment>Action title.</comment>
@@ -404,6 +446,7 @@
         <val lang="fr_FR">Ouvrir un document</val>
         <val lang="ja_JP">ドキュメントを開く</val>
         <val lang="nl_NL">Document openen</val>
+      <val lang="zh_CN">Open document</val>
     </key>
     <key value="PASTE_DOCUMENT_TITLE">
         <comment>Action title.</comment>
@@ -412,6 +455,7 @@
         <val lang="fr_FR">Coller un document</val>
         <val lang="ja_JP">ドキュメントを貼り付ける</val>
         <val lang="nl_NL">Document plakken</val>
+      <val lang="zh_CN">Paste document</val>
     </key>
     <!-- Rename Document Action -->
     <key value="ENTER_A_NAME">
@@ -421,6 +465,7 @@
         <val lang="fr_FR">Entrez un nom</val>
         <val lang="ja_JP">名前を入力する</val>
         <val lang="nl_NL">Een naam invoeren</val>
+      <val lang="zh_CN">Enter a name</val>
     </key>
     <!-- END Rename Document Action -->
     <key value="RENAME_ACTION_TITLE">
@@ -430,6 +475,7 @@
         <val lang="fr_FR">Renommer</val>
         <val lang="ja_JP">名前変更</val>
         <val lang="nl_NL">Hernoem</val>
+      <val lang="zh_CN">Rename</val>
     </key>
     <!-- END Rename Folder Action -->
     <!-- END Actions -->
@@ -443,6 +489,7 @@
         <val lang="fr_FR">Exception</val>
         <val lang="ja_JP">例外</val>
         <val lang="nl_NL">Uitzondering</val>
+      <val lang="zh_CN">Exception</val>
     </key>
     <key value="INVALID_URL_EXCEPTION">
         <comment>Title of the exception.</comment>
@@ -451,6 +498,7 @@
         <val lang="fr_FR">Exception</val>
         <val lang="ja_JP">例外</val>
         <val lang="nl_NL">Uitzondering</val>
+      <val lang="zh_CN">Exception</val>
     </key>
     <key value="DOCUMENT_ALREADY_EXISTS_EXCEPTION">
         <comment>Title of the exception.</comment>
@@ -459,6 +507,7 @@
         <val lang="fr_FR">Le document existe déjà</val>
         <val lang="ja_JP">文書は既に存在します</val>
         <val lang="nl_NL">Document bestaat al</val>
+      <val lang="zh_CN">Document already exists</val>
     </key>
     <key value="UNSUPPORTED_ENCODING_EXCEPTION">
         <comment>Title of the exception.</comment>
@@ -467,6 +516,7 @@
         <val lang="fr_FR">Encodage non supporté</val>
         <val lang="ja_JP">サポートされていないエンコーディング</val>
         <val lang="nl_NL">Niet-ondersteunde codering</val>
+      <val lang="zh_CN">Unsupported encoding</val>
     </key>
     <!-- END Exceptions -->
     <!-- END CMIS Explorer Access -->
