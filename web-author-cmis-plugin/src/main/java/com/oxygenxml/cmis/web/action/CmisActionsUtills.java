@@ -10,13 +10,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.web.CmisStreamHandler;
 
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
-import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
-import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 
@@ -78,10 +75,6 @@ public class CmisActionsUtills {
 		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
 		SessionStore sessionStore = workspace.getSessionStore();
 		String contextId = url.getUserInfo();
-    String sessionId = CmisStreamHandler.contextIdToSessionIdMap.getIfPresent(contextId);
-    if (sessionId == null) {
-      throw new IllegalArgumentException("Invalid session.");
-    }
 		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
 		
 		logger.info("Getting connection!");
