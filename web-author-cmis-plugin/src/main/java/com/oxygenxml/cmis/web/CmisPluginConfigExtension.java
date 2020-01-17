@@ -41,34 +41,6 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 		  setOption(ENFORCED_NAME, defaultName);
 		}
 		setDefaultOptions(defaultOptions);
-
-    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
-    if (pluginWorkspace instanceof StandalonePluginWorkspace) {
-      ((StandalonePluginWorkspace) pluginWorkspace).addTrustedHostsProvider(
-          new TrustedHostsProvider(null) {
-            @Override
-            public Response isTrusted(String hostName) {
-              String trustedHost = null;
-
-              String enforcedUrl = getOption(ENFORCED_URL, "");
-              if (enforcedUrl != null && !enforcedUrl.isEmpty()) {
-                try {
-                  URL url = new URL(enforcedUrl);
-                  trustedHost = url.getHost() + ":" + (url.getPort() != -1 ? url.getPort() : url.getDefaultPort());
-                } catch (MalformedURLException e) {
-                  // Consider it as unknown.
-                }
-              }
-
-              if (hostName.equals(trustedHost)) {
-                return TrustedHostsProvider.TRUSTED;
-              } else {
-                return TrustedHostsProvider.UNKNOWN;
-              }
-            }
-          }
-        );
-    }
 	}
 
 	@Override
