@@ -9,6 +9,6 @@
     "gulp-concat": "2.6.0",
     "gulp-iife": "0.3.0",
     "gulp-uglify": "3.0.1",
-    "sync-i18n": "0.0.x"
+    "sync-i18n": "0.0.13"
   }
 }
