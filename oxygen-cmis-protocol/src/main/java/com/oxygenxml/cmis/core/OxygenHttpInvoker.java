@@ -1,8 +1,10 @@
 package com.oxygenxml.cmis.core;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -12,6 +14,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.log4j.Logger;
 
 import ro.sync.net.protocol.http.HttpExceptionWithDetails;
 
@@ -22,6 +25,10 @@ import ro.sync.net.protocol.http.HttpExceptionWithDetails;
  * @author cristi_talau
  */
 public class OxygenHttpInvoker implements HttpInvoker {
+  /**
+   * Logging support.
+   */
+  private static Logger logger = Logger.getLogger(OxygenHttpInvoker.class);
   
   /**
    * The original invoker.
@@ -78,9 +85,15 @@ public class OxygenHttpInvoker implements HttpInvoker {
   public Response invokePUT(UrlBuilder url, String contentType, Map<String, String> headers, Output writer,
       BindingSession session) {
     try {
-      return defaultInvoker.invokePUT(url, contentType, headers, writer, session);
+      Response response = defaultInvoker.invokePUT(url, contentType, headers, writer, session);
+      return new MaterializedResponse(response);
     } catch (CmisConnectionException e) {
       return handleConnectionException(e);
+    } catch (IOException e) {
+      logger.debug("Error when materializing CMIS PUT response", e);
+      return new Response(500, e.getMessage(), Collections.emptyMap(), 
+          new ByteArrayInputStream(new byte[0]), 
+          new ByteArrayInputStream(new byte[0]));
     }
   }
 
