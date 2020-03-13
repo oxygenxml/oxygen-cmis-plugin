@@ -9,7 +9,8 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
@@ -20,7 +21,7 @@ public class FolderImpl implements IFolder {
   /**
    * Logger for logging.
    */
-  private static Logger logger = Logger.getLogger(FolderImpl.class.getName());
+  private static Logger logger = LogManager.getLogger(FolderImpl.class.getName());
   /**
    * Wrapped CMIS folder.
    */

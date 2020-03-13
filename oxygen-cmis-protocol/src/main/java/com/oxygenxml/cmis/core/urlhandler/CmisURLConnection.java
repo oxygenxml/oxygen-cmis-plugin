@@ -24,7 +24,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.CmisURL;
@@ -37,7 +38,7 @@ public class CmisURLConnection extends URLConnection {
   /**
    * Logging support.
    */
-  private static Logger logger = Logger.getLogger(CmisURLConnection.class);
+  private static Logger logger = LogManager.getLogger(CmisURLConnection.class);
 
   /**
    * CMISAcces Instance.

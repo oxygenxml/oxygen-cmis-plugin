@@ -13,7 +13,8 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.Action;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
@@ -27,7 +28,7 @@ public class DocumentImpl implements IDocument {
   /**
    * Logging.
    */
-  private static final Logger logger = Logger.getLogger(DocumentImpl.class);
+  private static final Logger logger = LogManager.getLogger(DocumentImpl.class);
   /**
    * Wrapped CMIS document.
    */

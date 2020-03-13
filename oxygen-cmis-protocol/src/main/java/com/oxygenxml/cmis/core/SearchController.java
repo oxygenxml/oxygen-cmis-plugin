@@ -12,7 +12,8 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
@@ -23,7 +24,7 @@ public class SearchController {
   /**
    * Logging.
    */
-  private static final Logger logger = Logger.getLogger(SearchController.class);
+  private static final Logger logger = LogManager.getLogger(SearchController.class);
   private static final String FOLDER_TYPE = "cmis:folder";
   private static final String DOCUMENT_TYPE = "cmis:document";
   public static final int SEARCH_IN_DOCUMENT = 1;

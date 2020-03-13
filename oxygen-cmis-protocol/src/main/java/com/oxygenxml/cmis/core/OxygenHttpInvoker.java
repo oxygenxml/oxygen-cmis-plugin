@@ -14,7 +14,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ro.sync.net.protocol.http.HttpExceptionWithDetails;
 
@@ -28,7 +29,7 @@ public class OxygenHttpInvoker implements HttpInvoker {
   /**
    * Logging support.
    */
-  private static Logger logger = Logger.getLogger(OxygenHttpInvoker.class);
+  private static Logger logger = LogManager.getLogger(OxygenHttpInvoker.class);
   
   /**
    * The original invoker.
