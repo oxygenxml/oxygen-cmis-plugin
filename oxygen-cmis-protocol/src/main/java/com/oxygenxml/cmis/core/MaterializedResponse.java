@@ -41,11 +41,31 @@ public class MaterializedResponse extends Response {
         delegate.getResponseMessage(), 
         Collections.emptyMap(), 
         getMaterializedInputStream(delegate), 
-        new ByteArrayInputStream(delegate.getErrorContent().getBytes(StandardCharsets.UTF_8)));
+        getMaterialzedErrorStream(delegate));
     this.delegate = delegate;
   }
 
+  /**
+   * Force the error stream into memory.
+   * @param delegate The delegate response.
+   * @return the error stream.
+   * @throws IOException If reading the error stream fails.
+   */
+  private static ByteArrayInputStream getMaterialzedErrorStream(Response delegate) {
+    String errorContent = delegate.getErrorContent();
+    if (errorContent == null) {
+      errorContent = "";
+    }
+    byte[] errorContentBytes = errorContent.getBytes(StandardCharsets.UTF_8);
+    return new ByteArrayInputStream(errorContentBytes);
+  }
 
+  /**
+   * Force the input stream into memory.
+   * @param delegate The delegate response.
+   * @return the input stream.
+   * @throws IOException If reading the input stream fails.
+   */
   private static ByteArrayInputStream getMaterializedInputStream(Response delegate) throws IOException {
     try (InputStream stream = delegate.getStream()) {
       return new ByteArrayInputStream(IOUtil.readBytes(stream));
