@@ -254,7 +254,7 @@
     <comment>Version</comment>
     <val lang="en_US">Version</val>
     <val lang="de_DE">Version</val>
-    <val lang="fr_FR">Version</val>
+    <val lang="fr_FR" skipTranslation="true">Version</val>
     <val lang="ja_JP">バージョン</val>
     <val lang="nl_NL">Versie</val>
     <val lang="zh_CN">Version</val>

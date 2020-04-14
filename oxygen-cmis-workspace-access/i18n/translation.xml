@@ -61,7 +61,7 @@
         <comment>Name of the frame.</comment>
         <val lang="en_US">Options CMIS</val>
         <val lang="de_DE">CMIS-Optionen</val>
-        <val lang="fr_FR">Options CMIS</val>
+        <val lang="fr_FR" skipTranslation="true">Options CMIS</val>
         <val lang="ja_JP">オプションCMIS</val>
         <val lang="nl_NL">CMIS-opties</val>
       <val lang="zh_CN">选项CMIS</val>
@@ -250,7 +250,7 @@
         <comment>Version label.</comment>
         <val lang="en_US">Version</val>
         <val lang="de_DE">Version</val>
-        <val lang="fr_FR">Version</val>
+        <val lang="fr_FR" skipTranslation="true">Version</val>
         <val lang="ja_JP">バージョン</val>
         <val lang="nl_NL">Versie</val>
       <val lang="zh_CN">版本</val>
@@ -487,7 +487,7 @@
         <comment>Title of the exception.</comment>
         <val lang="en_US">Exception</val>
         <val lang="de_DE">Ausnahme</val>
-        <val lang="fr_FR">Exception</val>
+        <val lang="fr_FR" skipTranslation="true">Exception</val>
         <val lang="ja_JP">例外</val>
         <val lang="nl_NL">Uitzondering</val>
       <val lang="zh_CN">异常</val>
@@ -496,7 +496,7 @@
         <comment>Title of the exception.</comment>
         <val lang="en_US">Exception</val>
         <val lang="de_DE">Ausnahme</val>
-        <val lang="fr_FR">Exception</val>
+        <val lang="fr_FR" skipTranslation="true">Exception</val>
         <val lang="ja_JP">例外</val>
         <val lang="nl_NL">Uitzondering</val>
       <val lang="zh_CN">异常</val>
