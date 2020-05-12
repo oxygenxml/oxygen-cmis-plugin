@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><translation>
+<?xml version="1.0" encoding="UTF-8"?>
+<translation>
   <languageList>
     <language description="English" lang="en_US"/>
     <language description="German" lang="de_DE"/>
@@ -14,7 +15,7 @@
     <val lang="fr_FR">Les modifications doivent être sauvegardées avant de pouvoir enregistrer le document.</val>
     <val lang="ja_JP">ドキュメントをチェックインする前に、変更内容を保存する必要があります。</val>
     <val lang="nl_NL">Wijzigingen moeten worden opgeslagen voordat u het document kunt inchecken.</val>
-    <val lang="zh_CN">Changes need to be saved before you can check in the document.</val>
+    <val lang="zh_CN">在签入文档之前，需要保存更改。</val>
   </key>
   <key value="Autosave_interval" distribution="webauthor">
     <comment>Label for input for adjusting autosave interval.</comment>
@@ -23,7 +24,7 @@
     <val lang="fr_FR">Intervalle de sauvegarde automatique</val>
     <val lang="ja_JP">自動保存間隔</val>
     <val lang="nl_NL">Interval voor automatisch opslaan</val>
-    <val lang="zh_CN">Autosave interval</val>
+    <val lang="zh_CN">自动保存间隔</val>
   </key>
   <key value="Seconds">
     <comment>Message used in document checking option page.</comment>
@@ -32,7 +33,7 @@
     <val lang="fr_FR">secondes</val>
     <val lang="ja_JP">秒</val>
     <val lang="nl_NL">seconden</val>
-    <val lang="zh_CN">seconds</val>
+    <val lang="zh_CN">秒</val>
   </key>
   <key value="Server_URL">
     <comment>Open URL dialog. Input for the server URL.</comment>
@@ -41,7 +42,7 @@
     <val lang="fr_FR">URL du serveur</val>
     <val lang="ja_JP">サーバー URL</val>
     <val lang="nl_NL">Server-URL</val>
-    <val lang="zh_CN">Server URL</val>
+    <val lang="zh_CN">服务器URL</val>
   </key>
   <key value="Server_name" distribution="webauthor">
     <comment>Label for input Server Name</comment>
@@ -50,7 +51,7 @@
     <val lang="fr_FR">Nom du serveur</val>
     <val lang="ja_JP">サーバー名</val>
     <val lang="nl_NL">Servernaam</val>
-    <val lang="zh_CN">Server name</val>
+    <val lang="zh_CN">服务器名称</val>
   </key>
   <key value="Server_logo_URL" distribution="webauthor">
     <comment>Label of input used to set the URL for an image</comment>
@@ -59,7 +60,7 @@
     <val lang="fr_FR">URL du logo du serveur</val>
     <val lang="ja_JP">サーバーロゴURL</val>
     <val lang="nl_NL">Serverlogo-URL</val>
-    <val lang="zh_CN">Server logo URL</val>
+    <val lang="zh_CN">服务器徽标URL</val>
   </key>
   <key value="Cmis_server_note" distribution="webauthor">
     <comment>Warning for the 'Enforce server' setting.</comment>
@@ -68,7 +69,7 @@
     <val lang="fr_FR">Les utilisateurs ne pourront accéder aux fichiers qu'à partir l'URL de ce serveur.</val>
     <val lang="ja_JP">ユーザーは、このサーバーURLからのみファイルにアクセスできます。</val>
     <val lang="nl_NL">Gebruikers hebben alleen toegang tot bestanden via deze server-URL.</val>
-    <val lang="zh_CN">The users will only be able to access files from this server URL.</val>
+    <val lang="zh_CN">用户只能从此服务器URL访问文件。</val>
   </key>
   <key value="Example">
     <comment>Label from the svn merge wizard dialog</comment>
@@ -77,7 +78,7 @@
     <val lang="fr_FR">Exemple</val>
     <val lang="ja_JP">例</val>
     <val lang="nl_NL">Voorbeeld</val>
-    <val lang="zh_CN">Example</val>
+    <val lang="zh_CN">例子</val>
   </key>
   <key value="Current">
     <comment>Latest version of document label.</comment>
@@ -86,7 +87,7 @@
     <val lang="fr_FR">Actuelle</val>
     <val lang="ja_JP">現在</val>
     <val lang="nl_NL">Huidig</val>
-    <val lang="zh_CN">Current</val>
+    <val lang="zh_CN">当前</val>
   </key>
   <key value="Old_ver_warning" distribution="webauthor">
     <comment>Message if opened document is an old version of actual document.</comment>
@@ -95,7 +96,7 @@
     <val lang="fr_FR">Version antérieure du document</val>
     <val lang="ja_JP">ドキュメントの古いバージョン</val>
     <val lang="nl_NL">Oudere versie van document</val>
-    <val lang="zh_CN">Older version of document</val>
+    <val lang="zh_CN">文档的旧版本</val>
   </key>
   <key value="Checked_out_by" distribution="webauthor">
     <comment>Message shown if document is checked out by another user.</comment>
@@ -104,7 +105,7 @@
     <val lang="fr_FR">Extrait par {0}.</val>
     <val lang="ja_JP">{0}によりチェックアウトされました。</val>
     <val lang="nl_NL">Uitgecheckt door {0}.</val>
-    <val lang="zh_CN">Checked out by {0}.</val>
+    <val lang="zh_CN">已由{0}签出。</val>
   </key>
   <key value="Check_out_required" distribution="webauthor">
     <comment>Option to require check-out before editing document.</comment>
@@ -113,7 +114,7 @@
     <val lang="fr_FR">Extraction obligatoire</val>
     <val lang="ja_JP">チェックアウトが必要です</val>
     <val lang="nl_NL">Uitchecken vereist</val>
-    <val lang="zh_CN">Check out required</val>
+    <val lang="zh_CN">需要退房</val>
   </key>
   <key value="ALL_VERSIONS_" distribution="webauthor">
     <comment>Title for "All versions" button.</comment>
@@ -122,7 +123,7 @@
     <val lang="fr_FR">Afficher l'historique des versions</val>
     <val lang="ja_JP">バージョン履歴を表示する</val>
     <val lang="nl_NL">Versiegeschiedenis weergeven</val>
-    <val lang="zh_CN">Show Version History</val>
+    <val lang="zh_CN">显示版本历史记录</val>
   </key>
   <key value="CMIS_CHECK_OUT" distribution="webauthor">
     <comment>Title for "Check out" button.</comment>
@@ -131,7 +132,7 @@
     <val lang="fr_FR">Extraire</val>
     <val lang="ja_JP">チェックアウト</val>
     <val lang="nl_NL">Uitchecken</val>
-    <val lang="zh_CN">Check Out</val>
+    <val lang="zh_CN">退房</val>
   </key>
   <key value="CMIS_CANCEL_CHECK_OUT" distribution="webauthor">
     <comment>Caption for "Cancel check out" button.</comment>
@@ -140,7 +141,7 @@
     <val lang="fr_FR">Annuler l'extraction</val>
     <val lang="ja_JP">チェックアウトを破棄する</val>
     <val lang="nl_NL">Uitchecken negeren</val>
-    <val lang="zh_CN">Discard Check Out</val>
+    <val lang="zh_CN">放弃签出</val>
   </key>
   <key value="CMIS_CHECK_IN" distribution="webauthor">
     <comment>Title for "Check in" button.</comment>
@@ -149,7 +150,7 @@
     <val lang="fr_FR">Enregistrer</val>
     <val lang="ja_JP">チェックイン</val>
     <val lang="nl_NL">Inchecken</val>
-    <val lang="zh_CN">Check In</val>
+    <val lang="zh_CN">登记入住</val>
   </key>
   <key value="CHECK_IN_MESSAGE_" distribution="webauthor">
     <comment>Check in message.</comment>
@@ -158,7 +159,7 @@
     <val lang="fr_FR">Entrez le message de livraison:</val>
     <val lang="ja_JP">コミットメッセージを入力する：</val>
     <val lang="nl_NL">Typ het vastlegbericht:</val>
-    <val lang="zh_CN">Enter the commit message:</val>
+    <val lang="zh_CN">输入提交消息：</val>
   </key>
   <key value="COMMIT_MESS_" distribution="webauthor">
     <comment>Commit message</comment>
@@ -167,7 +168,7 @@
     <val lang="fr_FR">Message de livraison</val>
     <val lang="ja_JP">コミットメッセージ</val>
     <val lang="nl_NL">Incheckbericht</val>
-    <val lang="zh_CN">Commit message</val>
+    <val lang="zh_CN">提交消息</val>
   </key>
   <key value="MODIFIED_BY_" distribution="webauthor">
     <comment>Table header for column of authors which modified the document.</comment>
@@ -176,7 +177,7 @@
     <val lang="fr_FR">Modifié par</val>
     <val lang="ja_JP">変更者</val>
     <val lang="nl_NL">Gewijzigd door</val>
-    <val lang="zh_CN">Modified by</val>
+    <val lang="zh_CN">修改人</val>
   </key>
   <key value="SET_CMIS_API_URL_" distribution="webauthor">
     <comment>Set CMIS API URL in the Configuration Page</comment>
@@ -185,7 +186,7 @@
     <val lang="fr_FR">Une URL de connexion doit être définie dans la configuration du plugin dans la page d'administration.</val>
     <val lang="ja_JP">管理ページ内のプラグイン構成で接続URLを設定する必要があります。</val>
     <val lang="nl_NL">Er moet een verbindings-URL worden ingesteld in de plug-inconfiguratie op de beheerpagina.</val>
-    <val lang="zh_CN">A Connection URL must be set in the Plugin configuration within the Administration Page.</val>
+    <val lang="zh_CN">必须在管理页内的插件配置中设置连接URL。</val>
   </key>
   <key value="CMIS_LOSE_CHANGES_" distribution="webauthor">
     <comment>Cancel check out warning</comment>
@@ -194,7 +195,7 @@
     <val lang="fr_FR">Si vous annulez votre extraction, vous perdrez toutes les modifications apportées au document.</val>
     <val lang="ja_JP">チェックアウトを破棄した場合、ドキュメントに加えられたすべての変更が失われます。</val>
     <val lang="nl_NL">Als u het uitchecken negeert, gaan alle aangebrachte wijzigingen aan het document verloren.</val>
-    <val lang="zh_CN">If you discard your Check Out you will lose all changes made to the document.</val>
+    <val lang="zh_CN">如果放弃签出，则将丢失对文档所做的所有更改。</val>
   </key>
   <key value="CMIS_CANCEL_WARNING_" distribution="webauthor">
     <comment>Cancel check out warning</comment>
@@ -203,7 +204,7 @@
     <val lang="fr_FR">Êtes-vous sûr de vouloir annuler votre extraction?</val>
     <val lang="ja_JP">チェックアウトを破棄しますか？</val>
     <val lang="nl_NL">Weet u zeker dat u het uitchecken wilt negeren?</val>
-    <val lang="zh_CN">Are you sure you want to discard your Check Out?</val>
+    <val lang="zh_CN">是否确实要放弃签出？</val>
   </key>
   <key value="ERROR_WARN_" distribution="webauthor">
     <comment>Check-out error warning.</comment>
@@ -212,7 +213,7 @@
     <val lang="fr_FR">Extraction échouée. Réessayez ou contactez votre administrateur.</val>
     <val lang="ja_JP">チェックアウトに失敗しました。再試行するか、管理者に連絡してください。</val>
     <val lang="nl_NL">Uitchecken mislukt. Probeer het opnieuw of neem contact op met de beheerder.</val>
-    <val lang="zh_CN">Check out failed. Try again or contact your administrator.</val>
+    <val lang="zh_CN">签出失败。请重试或与管理员联系。</val>
   </key>
   <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
     <comment>Title of login dialog.</comment>
@@ -221,7 +222,7 @@
     <val lang="fr_FR">Authentification requise</val>
     <val lang="ja_JP">認証が必要です</val>
     <val lang="nl_NL">Verificatie vereist</val>
-    <val lang="zh_CN">Authentication required</val>
+    <val lang="zh_CN">需要身份验证</val>
   </key>
   <key value="NAME_">
     <comment>Like in "name and value"</comment>
@@ -230,7 +231,7 @@
     <val lang="fr_FR">Nom</val>
     <val lang="ja_JP">名前</val>
     <val lang="nl_NL">Naam</val>
-    <val lang="zh_CN">Name</val>
+    <val lang="zh_CN">姓名</val>
   </key>
   <key value="PASSWORD_">
     <comment>Open URL dialog. The password for the connection.</comment>
@@ -239,7 +240,7 @@
     <val lang="fr_FR">Mot de passe</val>
     <val lang="ja_JP">パスワード</val>
     <val lang="nl_NL">Wachtwoord</val>
-    <val lang="zh_CN">Password</val>
+    <val lang="zh_CN">密码</val>
   </key>
   <key value="ERROR_TITLE_" distribution="webauthor">
     <comment>Error dialog title.</comment>
@@ -248,7 +249,7 @@
     <val lang="fr_FR">Erreur</val>
     <val lang="ja_JP">エラー</val>
     <val lang="nl_NL">Fout</val>
-    <val lang="zh_CN">Error</val>
+    <val lang="zh_CN">错误</val>
   </key>
   <key value="VERSION_" distribution="webauthor">
     <comment>Version</comment>
@@ -257,7 +258,7 @@
     <val lang="fr_FR" skipTranslation="true">Version</val>
     <val lang="ja_JP">バージョン</val>
     <val lang="nl_NL">Versie</val>
-    <val lang="zh_CN">Version</val>
+    <val lang="zh_CN">版本</val>
   </key>
   <key value="MAJOR_VERSION_" distribution="webauthor">
     <comment>Major version</comment>
@@ -266,7 +267,7 @@
     <val lang="fr_FR">Version majeure</val>
     <val lang="ja_JP">メジャーバージョン</val>
     <val lang="nl_NL">Grote versie</val>
-    <val lang="zh_CN">Major version</val>
+    <val lang="zh_CN">主要版本</val>
   </key>
   <key value="MINOR_VERSION_" distribution="webauthor">
     <comment>Minor version</comment>
@@ -275,7 +276,7 @@
     <val lang="fr_FR">Version mineure</val>
     <val lang="ja_JP">マイナーバージョン</val>
     <val lang="nl_NL">Kleine versie</val>
-    <val lang="zh_CN">Minor version</val>
+    <val lang="zh_CN">次要版本</val>
   </key>
   <key value="Cancel">
     <comment>The cancel button text.</comment>
@@ -284,6 +285,6 @@
     <val lang="fr_FR">Annuler</val>
     <val lang="ja_JP">キャンセル</val>
     <val lang="nl_NL">Annuleer</val>
-    <val lang="zh_CN">Cancel</val>
+    <val lang="zh_CN">取消</val>
   </key>
 </translation>
