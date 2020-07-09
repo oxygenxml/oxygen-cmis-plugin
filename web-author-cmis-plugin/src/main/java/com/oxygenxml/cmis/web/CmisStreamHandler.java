@@ -12,12 +12,9 @@ import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
-import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
-import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
-import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class CmisStreamHandler extends URLStreamHandlerWithContext {
 
@@ -25,12 +22,8 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 
 	@Override
 	protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
-		// Accessing webapp to get credentials
-		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
-		SessionStore sessionStore = workspace.getSessionStore();
-
 		// Getting credentials and another information
-		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
+		UserCredentials credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
 		CMISAccess cmisAccess = new CMISAccess();
 		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
 		URL serverUrl = CmisURL.parseServerUrl(url.toExternalForm());

@@ -10,10 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.UserCredentials;
 
-import ro.sync.ecss.extensions.api.webapp.SessionStore;
-import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
-import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class CmisLoginServlet extends WebappServletPluginExtension {
 
@@ -39,16 +36,14 @@ public class CmisLoginServlet extends WebappServletPluginExtension {
 
 		logger.info("CmisLoginServlet.doPost() userId --->" + userId + " action ---> " + action);
 
-		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
-		SessionStore sessionStore = workspace.getSessionStore();
-
 		if ("logout".equals(action)) {
-			sessionStore.remove(userId, "wa-cmis-plugin-credentials");
+		  CredentialsManager.INSTANCE.forgetUserCredentials(userId);
 		} else {
 			String user = httpRequest.getParameter("user");
 			String passwd = httpRequest.getParameter("passwd");
 			
-			sessionStore.put(userId, "wa-cmis-plugin-credentials", new UserCredentials(user, passwd, true));
+			CredentialsManager.INSTANCE.setCredentials(userId, 
+			    new UserCredentials(user, passwd, true));
 		}
 	}
 }

@@ -2,24 +2,25 @@ package com.oxygenxml.cmis.web;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.text.MessageFormat;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.access.EditingSessionContext;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
-import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappEditingSessionLifecycleListener;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension;
@@ -66,9 +67,6 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	@VisibleForTesting
 	public void editingSessionStarted(WebappPluginWorkspace webappPluginWorkspace, AuthorDocumentModel documentModel) {
 		AuthorAccess authorAccess = documentModel.getAuthorAccess();
-		authorAccess.getWorkspaceAccess();
-
-		SessionStore sessionStore = webappPluginWorkspace.getSessionStore();
 
 		// Get URL and ContextID for CmisURLConnection
 		url = authorAccess.getEditorAccess().getEditorLocation();
@@ -80,7 +78,8 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		urlWithoutContextId = url.getProtocol() + "://" + url.getHost() + url.getPath();
 		
 		String contextId = url.getUserInfo();
-		credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
+		
+		credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
 		
 		connection = new CmisURLConnection(url, new CMISAccess(), credentials);
 

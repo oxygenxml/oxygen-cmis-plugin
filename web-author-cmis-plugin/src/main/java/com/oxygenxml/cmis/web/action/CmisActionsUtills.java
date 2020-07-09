@@ -10,11 +10,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.CredentialsManager;
 
-import ro.sync.ecss.extensions.api.webapp.SessionStore;
-import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
-import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 
 public class CmisActionsUtills {
@@ -72,10 +70,8 @@ public class CmisActionsUtills {
 	 * @return CmisURLConnetion for AuthorOperations.
 	 */
 	public static CmisURLConnection getCmisURLConnection(URL url)  {
-		WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
-		SessionStore sessionStore = workspace.getSessionStore();
 		String contextId = url.getUserInfo();
-		UserCredentials credentials = sessionStore.get(contextId, "wa-cmis-plugin-credentials");
+		UserCredentials credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
 		
 		logger.info("Getting connection!");
 		
