@@ -11,7 +11,6 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -30,9 +29,10 @@ import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
+import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 
 public class EditorListenerIT {
-  @Rule
+//  @Rule
   public CmisAccessProvider cmisAccessProvider = new CmisAccessProvider();
 	private ResourceController ctrl;
   private WebappPluginWorkspace webappPluginWorkspace;
@@ -55,6 +55,21 @@ public class EditorListenerIT {
 
 	@Test
 	public void testSessionStarted() throws Exception {
+	  String contextId = "some important info credentials";
+    assertNotNull(contextId);
+
+    SessionStore sessionStore = Mockito.mock(SessionStore.class);
+    UserCredentials credentials = new UserCredentials("admin", "");
+
+    assertNotNull(credentials);
+    assertEquals(credentials.getUsername(), "admin");
+
+    Mockito.when(webappPluginWorkspace.getSessionStore()).thenReturn(sessionStore);
+    Mockito.when(sessionStore.get(Mockito.eq(contextId), Mockito.anyString())).thenReturn(credentials);
+    
+    WSOptionsStorage optionsStorage = Mockito.mock(WSOptionsStorage.class);
+    Mockito.when(webappPluginWorkspace.getOptionsStorage()).thenReturn(optionsStorage);
+
 	  Document testDocument = null;
 		try {
       String filename = "docs33.xml";
@@ -67,12 +82,9 @@ public class EditorListenerIT {
 	    assertNotNull(testDocument);
 	    assertFalse(testDocument.isVersionable());
 			URL url = new URL(CmisURLConnection.generateURLObject(testDocument, ctrl, "/"));
-			String contextId = "some important info credentials";
 
 			assertNotNull(url);
-			assertNotNull(contextId);
-
-
+      
 			AuthorEditorAccess editorAccess = Mockito.mock(AuthorEditorAccess.class);
 			Mockito.when(editorAccess.getEditorLocation()).thenReturn(url);
 
@@ -81,15 +93,6 @@ public class EditorListenerIT {
 
 			AuthorDocumentModel documentModel = Mockito.mock(AuthorDocumentModel.class);
 			Mockito.when(documentModel.getAuthorAccess()).thenReturn(authorAccess);
-
-			SessionStore sessionStore = Mockito.mock(SessionStore.class);
-			UserCredentials credentials = new UserCredentials("admin", "");
-
-			assertNotNull(credentials);
-			assertEquals(credentials.getUsername(), "admin");
-
-			Mockito.when(webappPluginWorkspace.getSessionStore()).thenReturn(sessionStore);
-			Mockito.when(sessionStore.get(contextId, "credentials")).thenReturn(credentials);
 
 			AuthorDocumentController authorDocCtrl = Mockito.mock(AuthorDocumentController.class);
 			Mockito.when(documentModel.getAuthorDocumentController()).thenReturn(authorDocCtrl);

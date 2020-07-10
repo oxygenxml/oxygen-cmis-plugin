@@ -2,7 +2,6 @@ package com.oxygenxml.cmis.web;
 
 import java.util.Optional;
 
-import com.google.common.base.MoreObjects;
 import com.oxygenxml.cmis.core.UserCredentials;
 
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
@@ -61,13 +60,11 @@ public class CredentialsManager {
    */
   private Optional<UserCredentials> loadServiceAccount(PluginWorkspace pluginWorkspace) {
     WSOptionsStorage optionsStorage = pluginWorkspace.getOptionsStorage();
-    String cmisUser = MoreObjects.firstNonNull(
-        System.getProperty(CMIS_SERVICE_USER_PROP),
-        optionsStorage.getOption(CMIS_SERVICE_USER_PROP, null));
+    String cmisUser = Optional.ofNullable(System.getProperty(CMIS_SERVICE_USER_PROP))
+        .orElse(optionsStorage.getOption(CMIS_SERVICE_USER_PROP, null));
     
-    String cmisPassword = MoreObjects.firstNonNull(
-        System.getProperty(CMIS_SERVICE_PASSWORD_PROP),
-        optionsStorage.getOption(CMIS_SERVICE_PASSWORD_PROP, null));
+    String cmisPassword = Optional.ofNullable(System.getProperty(CMIS_SERVICE_PASSWORD_PROP))
+        .orElse(optionsStorage.getOption(CMIS_SERVICE_PASSWORD_PROP, null));
     
     if (cmisUser != null && cmisPassword != null) {
       return Optional.of(new UserCredentials(cmisUser, cmisPassword));
