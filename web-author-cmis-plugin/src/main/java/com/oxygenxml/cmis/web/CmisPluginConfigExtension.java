@@ -11,13 +11,14 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class CmisPluginConfigExtension extends PluginConfigExtension {
 
-	private static final String defaultAutoSaveInterval = "5";
+  private static final String defaultAutoSaveInterval = "5";
 
 	public static final String 	CHECKOUT_REQUIRED  = "cmis.checkout_required";
 	public static final String ENFORCED_URL 	   = "cmis.enforced_url";
 	private static final String ENFORCED_NAME      = "cmis.enforced_name";
 	private static final String ENFORCED_ICON      = "cmis.enforced_icon";
 	private static final String AUTOSAVE_INTERVAL  = "cmis.autosave_interval";
+  private static final String HAS_SERVICE_ACCOUNT = "cmis.has_service_account";
 
 	@Override
 	public void init() throws ServletException {
@@ -112,10 +113,12 @@ public class CmisPluginConfigExtension extends PluginConfigExtension {
 
 	@Override
 	public String getOptionsJson() {
+	  boolean hasServiceAccount = CredentialsManager.INSTANCE.hasServiceAccount();
 		return "{" + "\"" + AUTOSAVE_INTERVAL + "\":\"" + getOption(AUTOSAVE_INTERVAL, defaultAutoSaveInterval) + "\"," 
 				   + "\"" + ENFORCED_URL      + "\":\"" + getOption(ENFORCED_URL, "")   + "\"," 
 				   + "\"" + ENFORCED_NAME     + "\":\"" + getOption(ENFORCED_NAME, "")  + "\"," 
-				   + "\"" + ENFORCED_ICON     + "\":\"" + getOption(ENFORCED_ICON, "")  + "\"" + "}";
+				   + "\"" + ENFORCED_ICON     + "\":\"" + getOption(ENFORCED_ICON, "")  + "\"," 
+				   + "\"" + HAS_SERVICE_ACCOUNT     + "\":\"" + hasServiceAccount  + "\"}";
 	}
 
 }

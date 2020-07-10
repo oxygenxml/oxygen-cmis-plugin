@@ -9,6 +9,7 @@ import java.net.URL;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,16 +28,29 @@ import ro.sync.ecss.extensions.api.node.AuthorElement;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspace;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class EditorListenerIT {
   @Rule
   public CmisAccessProvider cmisAccessProvider = new CmisAccessProvider();
 	private ResourceController ctrl;
+  private WebappPluginWorkspace webappPluginWorkspace;
+  private PluginWorkspace oldPluginWorkspace;
 
 	@Before
 	public void setUp() throws Exception {
 	  CMISAccess cmisAccess = cmisAccessProvider.getCmisAccess();
 		ctrl = cmisAccess.createResourceController();
+		oldPluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
+		
+    webappPluginWorkspace = Mockito.mock(WebappPluginWorkspace.class);
+    PluginWorkspaceProvider.setPluginWorkspace(webappPluginWorkspace);
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+	  PluginWorkspaceProvider.setPluginWorkspace(oldPluginWorkspace);
 	}
 
 	@Test
@@ -58,7 +72,6 @@ public class EditorListenerIT {
 			assertNotNull(url);
 			assertNotNull(contextId);
 
-			WebappPluginWorkspace webappPluginWorkspace = Mockito.mock(WebappPluginWorkspace.class);
 
 			AuthorEditorAccess editorAccess = Mockito.mock(AuthorEditorAccess.class);
 			Mockito.when(editorAccess.getEditorLocation()).thenReturn(url);
