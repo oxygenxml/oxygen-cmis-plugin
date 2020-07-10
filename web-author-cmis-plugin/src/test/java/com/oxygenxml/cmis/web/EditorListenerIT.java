@@ -11,6 +11,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -32,7 +33,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 
 public class EditorListenerIT {
-//  @Rule
+  @Rule
   public CmisAccessProvider cmisAccessProvider = new CmisAccessProvider();
 	private ResourceController ctrl;
   private WebappPluginWorkspace webappPluginWorkspace;
