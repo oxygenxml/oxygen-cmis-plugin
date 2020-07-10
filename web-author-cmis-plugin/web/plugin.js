@@ -1,4 +1,6 @@
 // -------- Initialize the file browser information ------------
+  var hasServiceAccount = 'true' === sync.options.PluginsOptions.getClientOption('cmis.has_service_account');
+
   var cmisFileRepositoryDescriptor = {
     'id': 'cmis',
     'name': sync.options.PluginsOptions.getClientOption('cmis.enforced_name'),
@@ -38,6 +40,11 @@
 
     goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
       var toolbars = e.actionsConfiguration.toolbars;
+      
+      if (hasServiceAccount) {
+        // If a service account is configured, logout in the editor is useless.
+        e.actionsConfiguration.removeAction('cmis/Logout');
+      }
 
       if (!toolbars) {
         return;
