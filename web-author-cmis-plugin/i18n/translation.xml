@@ -156,7 +156,7 @@
     <comment>Check in message.</comment>
     <val lang="en_US">Enter the commit message:</val>
     <val lang="de_DE">Commit-Nachricht eingeben:</val>
-    <val lang="fr_FR">Entrez le message de livraison:</val>
+    <val lang="fr_FR">Entrez le message de commit:</val>
     <val lang="ja_JP">コミットメッセージを入力する：</val>
     <val lang="nl_NL">Typ het vastlegbericht:</val>
     <val lang="zh_CN">输入提交消息：</val>
@@ -165,7 +165,7 @@
     <comment>Commit message</comment>
     <val lang="en_US">Commit message</val>
     <val lang="de_DE">Eincheck-Nachricht</val>
-    <val lang="fr_FR">Message de livraison</val>
+    <val lang="fr_FR">Message de commit</val>
     <val lang="ja_JP">コミットメッセージ</val>
     <val lang="nl_NL">Incheckbericht</val>
     <val lang="zh_CN">提交消息</val>
