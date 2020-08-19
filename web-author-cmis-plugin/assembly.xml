@@ -47,6 +47,10 @@
       <source>target/plugin.js</source>
       <outputDirectory>web</outputDirectory>
     </file>
+    <file>
+      <source>../LICENSE</source>
+      <outputDirectory>/</outputDirectory>
+    </file>
   </files>
 
 </assembly>
