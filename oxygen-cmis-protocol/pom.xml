@@ -13,6 +13,16 @@
 
   <name>Oxygen CMIS Protocol Implementation</name>
 	<description>The core functionality. Offers an API for accessing documents and browsing. Contains an Oxygen Custom protocol implementation.</description>
+  
+    <developers>
+      <developer>
+        <name>Alex Jitianu</name>
+        <email>alex_jitianu@sync.ro</email>
+        <roles>
+          <role>manager</role>
+        </roles>
+      </developer>
+    </developers>
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.chemistry.opencmis/chemistry-opencmis-client-api -->

@@ -13,6 +13,16 @@
   <name>Oxygen CMIS Workspace Access Plugin</name>
 	<description>Installs the oxygen-cmis-protocol custom protocol. Contributes views for browsing the server and uses the oxygen-cmis-protocol to open them inside editors.</description>
 	
+    <developers>
+      <developer>
+        <name>Alex Jitianu</name>
+        <email>alex_jitianu@sync.ro</email>
+        <roles>
+          <role>manager</role>
+        </roles>
+      </developer>
+    </developers>
+
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.chemistry.opencmis/chemistry-opencmis-client-api -->
 		<dependency>
