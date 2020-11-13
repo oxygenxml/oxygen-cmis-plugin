@@ -6,7 +6,7 @@
 	
 	<groupId>com.oxygenxml.cmis</groupId>
 	<artifactId>cmis.plugins</artifactId>
-	<version>23.0-SNAPSHOT</version>
+	<version>23.1-SNAPSHOT</version>
 	<name>Oxygen CMIS Plugin</name>
 	<description>A set of Oxygen XML plugins for working with documents stored on a CMIS enabled server.</description>
   	<packaging>pom</packaging>
