@@ -514,7 +514,7 @@
         <comment>Title of the exception.</comment>
         <val lang="en_US">Unsupported encoding</val>
         <val lang="de_DE">Nicht-unterstützte Kodierung</val>
-        <val lang="fr_FR">Encodage non supporté</val>
+        <val lang="fr_FR">Encodage non pris en charge</val>
         <val lang="ja_JP">サポートされていないエンコーディング</val>
         <val lang="nl_NL">Niet-ondersteunde codering</val>
       <val lang="zh_CN">不支持的编码</val>
