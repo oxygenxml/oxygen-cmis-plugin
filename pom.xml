@@ -6,10 +6,15 @@
 	
 	<groupId>com.oxygenxml.cmis</groupId>
 	<artifactId>cmis.plugins</artifactId>
-	<version>23.1-SNAPSHOT</version>
 	<name>Oxygen CMIS Plugin</name>
 	<description>A set of Oxygen XML plugins for working with documents stored on a CMIS enabled server.</description>
-  	<packaging>pom</packaging>
+	<packaging>pom</packaging>
+  
+  <parent>
+    <groupId>com.oxygenxml</groupId>
+    <artifactId>oxygen-plugins-superpom</artifactId>
+    <version>23.1-SNAPSHOT</version>
+  </parent>
   
     <developers>
       <developer>
@@ -52,7 +57,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -69,6 +73,4 @@
 		<module>oxygen-cmis-workspace-access</module>
 		<module>web-author-cmis-plugin</module>
 	</modules>
-
-
 </project>
