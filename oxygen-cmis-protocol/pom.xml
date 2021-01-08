@@ -37,6 +37,7 @@
           <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
+          <!-- Exclude slf4j since it is provided by both SA and Web Author -->
           <groupId>org.slf4j</groupId>
           <artifactId>*</artifactId>
         </exclusion>
