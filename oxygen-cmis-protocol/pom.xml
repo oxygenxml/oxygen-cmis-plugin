@@ -36,11 +36,6 @@
           <groupId>org.apache.cxf</groupId>
           <artifactId>*</artifactId>
         </exclusion>
-        <exclusion>
-          <!-- Exclude slf4j since it is provided by both SA and Web Author -->
-          <groupId>org.slf4j</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
       </exclusions>
 		</dependency>
 
