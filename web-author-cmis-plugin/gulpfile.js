@@ -18,16 +18,17 @@ var i18nOptions = {
 };
 
 
-gulp.task('prepare-package', ['i18n'], function() {
+gulp.task('i18n', function () {
+  Synci18n(i18nOptions).generateTranslations();
+  return Promise.resolve();
+});
+
+gulp.task('prepare-package', gulp.series('i18n', function() {
   return gulp.src(['web/*.js'])
     .pipe(concat('plugin.js'))
     .pipe(iife({useStrict: false, prependSemicolon: true}))
     .pipe(uglify(uglifyOptions))
     .pipe(gulp.dest('target/'));
-});
+}));
 
-gulp.task('i18n', function () {
-  Synci18n(i18nOptions).generateTranslations();
-});
-
-gulp.task('default', ['i18n']);
+gulp.task('default', gulp.series('i18n'));
