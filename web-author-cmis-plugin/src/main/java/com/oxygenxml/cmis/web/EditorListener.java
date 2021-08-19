@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
@@ -151,15 +152,24 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	private void setVersionableOptions(AuthorDocumentModel documentModel) {
 		String versionSeriesCheckedOutBy = document.getVersionSeriesCheckedOutBy();
 
-		if (!credentials.getUsername().equals(versionSeriesCheckedOutBy)) {
-			documentModel.getAuthorAccess().getEditorAccess().setReadOnly(new ReadOnlyReason(
-					MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
-			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.LOCKED.getValue());
-		} else {
-			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue());
-		}
+    Boolean canEditDocument = document.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
+
+    if (canEditDocument) {
+      documentModel.getAuthorDocumentController()
+          .getAuthorDocumentNode()
+          .getRootElement()
+          .setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue());
+
+    } else {
+      documentModel.getAuthorAccess()
+          .getEditorAccess()
+          .setReadOnly(new ReadOnlyReason(
+              MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
+      documentModel.getAuthorDocumentController()
+          .getAuthorDocumentNode()
+          .getRootElement()
+          .setPseudoClass(EditorOption.LOCKED.getValue());
+    }
 	}
 
 	/**
