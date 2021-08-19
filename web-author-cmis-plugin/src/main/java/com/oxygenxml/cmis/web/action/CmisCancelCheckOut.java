@@ -98,22 +98,36 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
   }
 
 
+	public static Document getLatestVersion(Document document) {
+	  Document latest = null;
+    if (Boolean.TRUE.equals(document.isLatestVersion())) {
+      latest = document;
+  } else {
+      latest = document.getObjectOfLatestVersion(false); // major = false
+  }
+    return latest;
+	}
+	
   public static void cancelCheckOutDocument(Document document, Session session) {
 
-		if (!document.isVersionSeriesCheckedOut()) {
-			logger.info("Document isn't checked-out!");
-			
+   
+    Document latest = getLatestVersion(document);
+    
+		if (latest.isVersionSeriesCheckedOut()) {
+		  latest.cancelCheckOut();
+      /*String pwcId = document.getVersionSeriesCheckedOutId();
+
+      if (pwcId != null) {
+        Document pwc = (Document) session.getObject(pwcId);
+        pwc.cancelCheckOut();
+      }*/
+
+      latest.refresh();
+      logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		} else {
-			document = document.getObjectOfLatestVersion(false);
-			String pwcId = document.getVersionSeriesCheckedOutId();
-
-			if (pwcId != null) {
-				Document pwc = (Document) session.getObject(pwcId);
-				pwc.cancelCheckOut();
-			}
-
-			document.refresh();
-			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
+			
+		  logger.info("Document isn't checked-out!");
+			
 		}
 	}
 	

@@ -110,11 +110,14 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 
 		document = document.getObjectOfLatestVersion(false);		
 		List<Document> allVersions = document.getAllVersions();
+		System.out.println("allVersions" + allVersions);
+		
 		List<Map<String, String>> versions = new ArrayList<>();
 		
 		boolean isCheckedOut = document.isVersionSeriesCheckedOut();
 		for (int i = 0; i < allVersions.size(); i++) {
 			Document version = allVersions.get(i);
+			System.out.println(" >>>>>>>"+ version.getVersionLabel() + version.isVersionSeriesPrivateWorkingCopy());
 			// Check if server support Private Working Copies.
 			boolean isCurrentVersion = Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0; 
 			

@@ -17,6 +17,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -189,7 +190,9 @@ public class CmisURLConnection extends URLConnection {
     Boolean isVersionSeriesCheckedOut = document.isVersionSeriesCheckedOut();
     if (isVersionSeriesCheckedOut != null && isVersionSeriesCheckedOut) {
       String pwcId = document.getVersionSeriesCheckedOutId();
-      document = (Document) resourceController.getSession().getObject(pwcId);
+      System.out.println("pwcID>>>>>>" + pwcId);
+      System.out.println("document.getVersionSeriesId()>>>>>>" + document.getVersionSeriesId());
+      //document = (Document) resourceController.getSession().getObject(pwcId);
     } else if (document.isVersionable()) {
       document = document.getObjectOfLatestVersion(false);
     }
@@ -257,15 +260,15 @@ public class CmisURLConnection extends URLConnection {
           document.setContentStream(contentStream, true);
         } else {
           Document pwcDoc = null;
-          boolean wasChecked = false;
+          boolean alreadyCheckedOut = true;
           document = document.getObjectOfLatestVersion(false);
 
-          if (document.isVersionSeriesCheckedOut()) {
-            String pwcId = document.getVersionSeriesCheckedOutId();
-            pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
+          if (document.isVersionSeriesCheckedOut()) {           
+            pwcDoc = document;
           } else {
-            pwcDoc = (Document) resourceController.getSession().getObject(document.checkOut());
-            wasChecked = true;
+            ObjectId pwcID = document.checkOut();                       
+            pwcDoc = (Document) resourceController.getSession().getObject(pwcID);
+            alreadyCheckedOut = false;
           }
 
           pwcDoc.setContentStream(contentStream, true);
@@ -273,7 +276,10 @@ public class CmisURLConnection extends URLConnection {
           if (newDocument) {
             pwcDoc.checkIn(true, null, null, " ");
             deleteUselessVersion(document);
-          } else if (wasChecked) {
+          } 
+          // do not automatically check in documents that were not already checked out
+          // when saved
+          else if (!alreadyCheckedOut) {
             pwcDoc.checkIn(false, null, null, " ");
           }
         }

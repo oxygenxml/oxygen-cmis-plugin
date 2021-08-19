@@ -82,6 +82,10 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 		return CmisActionsUtills.returnErrorInfoJSON("no_error", null);
 	}
 	
+	
+	
+	
+	 
 	/**
 	 * Check in the obtained CMIS Document.
 	 * 
@@ -94,30 +98,26 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 	public static void checkInDocument(Document document, Session session, String actualState,
 			String commitMessage) throws Exception {
 
-		if (!document.isVersionSeriesCheckedOut()) {
-			logger.info("Document isn't checked-out!");
+    Document latest = CmisActionsUtills.getLatestVersion(document);
 
-		} else {
-			document = document.getObjectOfLatestVersion(false);
-			String pwc = document.getVersionSeriesCheckedOutId();
+    if (document.isVersionSeriesCheckedOut()) {
 
-			if (pwc != null) {
-				Document PWC = (Document) session.getObject(pwc);
-				
-				// If commit message is null or value is "null" - assign empty string.
-				if (commitMessage == null || commitMessage == "null") {
-					commitMessage = "";
-				}
+      // If commit message is null or value is "null" - assign empty string.
+      if (commitMessage == null || commitMessage == "null") {
+        commitMessage = "";
+      }
 
-				if (actualState.equals(CmisAction.MAJOR_STATE.getValue())) {
-					PWC.checkIn(true, null, null, commitMessage);
-				} else {
-					PWC.checkIn(false, null, null, commitMessage);
-				}
-			}
+      if (actualState.equals(CmisAction.MAJOR_STATE.getValue())) {
+        latest.checkIn(true, null, null, commitMessage);
+      } else {
+        latest.checkIn(false, null, null, commitMessage);
+      }
 
-			document.refresh();
-			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
-		}
+      latest.refresh();
+      logger.info(latest.getName() + " checked-out: " + latest.isVersionSeriesCheckedOut());
+    } else {
+      logger.info("Document isn't checked-out!");
+
+    }
 	}
 }
