@@ -155,8 +155,6 @@ public class CmisURLConnection extends URLConnection {
    * 
    * @throws MalformedURLException
    *           If the URL doesn't contain the expected syntax.
-   * @throws UnsupportedEncodingException
-   * @throws UserActionRequiredException
    * @throws CmisObjectNotFoundException If the URL doesn't point to an existing object.
    */
   public CmisObject getCMISObject(String url) throws MalformedURLException, CmisObjectNotFoundException {
@@ -187,16 +185,15 @@ public class CmisURLConnection extends URLConnection {
     Document initialDocument = (Document) getCMISObject(getURL().toExternalForm());
     Document document = initialDocument;
     
-    Boolean isVersionSeriesCheckedOut = document.isVersionSeriesCheckedOut();
-    if (isVersionSeriesCheckedOut != null && isVersionSeriesCheckedOut) {
-      String pwcId = document.getVersionSeriesCheckedOutId();
-      System.out.println("pwcID>>>>>>" + pwcId);
-      System.out.println("document.getVersionSeriesId()>>>>>>" + document.getVersionSeriesId());
-      //document = (Document) resourceController.getSession().getObject(pwcId);
-    } else if (document.isVersionable()) {
+    if (document.isVersionable()) {
       document = document.getObjectOfLatestVersion(false);
+      
+      if (document.isVersionSeriesCheckedOut()) {
+        document = getPwcDocument(initialDocument);
+      }
     }
     
+    System.out.println("pwcDOC getContentStream >>>>>"+ document);
     ContentStream contentStream = null;
     if (document != null) {
       contentStream = document.getContentStream();
@@ -215,6 +212,22 @@ public class CmisURLConnection extends URLConnection {
     }
   }
 
+  public Document getPwcDocument(Document document) {
+    Document pwcDoc = document;
+    if(!Boolean.TRUE.equals(document.isLatestVersion())) {
+      pwcDoc = document.getObjectOfLatestVersion(false);
+    }
+   
+    // If the CMS provides an ID for the PWC object we fetch it (Alfresco implementation)
+    // otherwise we consider the latest version to be the PWC (SharePoint implementation)
+    if (document.getVersionSeriesCheckedOutId() != null) {
+        String pwcId = document.getVersionSeriesCheckedOutId();
+        pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
+    }
+    return pwcDoc;
+  }
+
+  
   @Override
   public OutputStream getOutputStream() throws IOException {
     return new ByteArrayOutputStream() {
@@ -259,27 +272,24 @@ public class CmisURLConnection extends URLConnection {
         if (!document.isVersionable()) {
           document.setContentStream(contentStream, true);
         } else {
+          // we get a working document either by getting the already checked out one
+          // or by checking it out
           Document pwcDoc = null;
           boolean alreadyCheckedOut = true;
-          document = document.getObjectOfLatestVersion(false);
-
-          if (document.isVersionSeriesCheckedOut()) {           
-            pwcDoc = document;
+          if (document.isVersionSeriesCheckedOut()) {
+            pwcDoc = getPwcDocument(document);
           } else {
             ObjectId pwcID = document.checkOut();                       
             pwcDoc = (Document) resourceController.getSession().getObject(pwcID);
             alreadyCheckedOut = false;
           }
-
+          
           pwcDoc.setContentStream(contentStream, true);
 
           if (newDocument) {
             pwcDoc.checkIn(true, null, null, " ");
             deleteUselessVersion(document);
-          } 
-          // do not automatically check in documents that were not already checked out
-          // when saved
-          else if (!alreadyCheckedOut) {
+          } else if (!alreadyCheckedOut) {
             pwcDoc.checkIn(false, null, null, " ");
           }
         }
@@ -302,14 +312,8 @@ public class CmisURLConnection extends URLConnection {
   /**
    * Create new document as versionable and generate URL if doesn't exist.
    * 
-   * @param byteArray
-   * @param typeOfDocument
-   * 
-   * @param document
-   * @return
-   * @throws UnsupportedEncodingException
+   * @return the generated URL
    * @throws MalformedURLException
-   * @throws IOException
    */
   public String createDocument() throws MalformedURLException {
     CmisURL cmisUrl = CmisURL.parse(url.toExternalForm());
@@ -334,8 +338,6 @@ public class CmisURLConnection extends URLConnection {
    * @param connectionUrl
    * @return ResourceController
    * @throws MalformedURLException
-   * @throws UnsupportedEncodingException
-   * @throws UserActionRequiredException
    */
   public ResourceController getResourceController(String connectionUrl) throws MalformedURLException {
     getCMISObject(connectionUrl);

@@ -299,6 +299,6 @@ public class ListOldVersionsActionIT {
     CmisCheckOut.checkOutDocument(document);
     
     document = document.getObjectOfLatestVersion(false); // is this needed?
-    CmisCheckIn.checkInDocument(document, ctrl.getSession(), versionType, commitMessage);
+    CmisCheckIn.checkInDocument(document, versionType, commitMessage);
   }
 }

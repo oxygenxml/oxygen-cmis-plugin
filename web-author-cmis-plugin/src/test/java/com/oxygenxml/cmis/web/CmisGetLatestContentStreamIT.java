@@ -58,7 +58,7 @@ public class CmisGetLatestContentStreamIT {
 				document.refresh();
 				assertTrue(document.isVersionSeriesCheckedOut());
 				
-				CmisCheckIn.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "minor", "some minor version");
+				CmisCheckIn.checkInDocument(document, "minor", "some minor version");
 				document = document.getObjectOfLatestVersion(false);
 				assertFalse(document.isVersionSeriesCheckedOut());
 				

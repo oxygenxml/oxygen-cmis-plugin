@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
@@ -63,8 +62,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 					.getPluginWorkspace()).getResourceBundle();
 			
 			try {
-				Session session = connection.getCMISAccess().getSession();
-				cancelCheckOutDocument(document, session);
+				cancelCheckOutDocument(document);
 				reloadDocument(authorAccess);
 				
 				if (EditorListener.isCheckOutRequired()) {
@@ -73,6 +71,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 				}
 				
 			} catch (Exception e) {
+			  logger.error("Could not cancel check out for document:" + document, e);
 				return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
 			}
 		}
@@ -96,36 +95,15 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
     ArgumentsMap argMap = new ActionIdArgumentsMap();
     reloadAction.doOperation(authorAccess, argMap);
   }
-
-
-	public static Document getLatestVersion(Document document) {
-	  Document latest = null;
-    if (Boolean.TRUE.equals(document.isLatestVersion())) {
-      latest = document;
-  } else {
-      latest = document.getObjectOfLatestVersion(false); // major = false
-  }
-    return latest;
-	}
 	
-  public static void cancelCheckOutDocument(Document document, Session session) {
-
-   
-    Document latest = getLatestVersion(document);
+  public static void cancelCheckOutDocument(Document document) {
+    Document latest = document.getObjectOfLatestVersion(false);
     
 		if (latest.isVersionSeriesCheckedOut()) {
 		  latest.cancelCheckOut();
-      /*String pwcId = document.getVersionSeriesCheckedOutId();
 
-      if (pwcId != null) {
-        Document pwc = (Document) session.getObject(pwcId);
-        pwc.cancelCheckOut();
-      }*/
-
-      latest.refresh();
       logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		} else {
-			
 		  logger.info("Document isn't checked-out!");
 			
 		}
