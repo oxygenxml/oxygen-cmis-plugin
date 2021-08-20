@@ -116,7 +116,6 @@ public class CMISAccess {
 		conParameters.put(SessionParameter.REPOSITORY_ID, repositoryID);
 		
 		session = factory.createSession(conParameters);
-		System.out.println(session);
 	}
 	
 	/**

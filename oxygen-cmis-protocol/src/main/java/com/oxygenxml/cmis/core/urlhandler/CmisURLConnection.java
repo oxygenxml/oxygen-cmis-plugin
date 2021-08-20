@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,8 +31,6 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
-
-import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 
 public class CmisURLConnection extends URLConnection {
   /**
@@ -75,7 +72,6 @@ public class CmisURLConnection extends URLConnection {
    * @param ctrl The resource controller.
    * @return The path to the parent folder.
    * 
-   * @throws UnsupportedEncodingException
    */
   public static String generateURLObject(CmisObject object, ResourceController ctrl, String parentPath) {
     // Get and encode server URL
@@ -111,7 +107,7 @@ public class CmisURLConnection extends URLConnection {
    * 
    * @param object
    * @param ctrl
-   * @return
+   * @return the generated Url
    */
   public static String generateURLObject(CmisObject object, ResourceController ctrl) {
     if (logger.isDebugEnabled()) {
@@ -193,7 +189,6 @@ public class CmisURLConnection extends URLConnection {
       }
     }
     
-    System.out.println("pwcDOC getContentStream >>>>>"+ document);
     ContentStream contentStream = null;
     if (document != null) {
       contentStream = document.getContentStream();

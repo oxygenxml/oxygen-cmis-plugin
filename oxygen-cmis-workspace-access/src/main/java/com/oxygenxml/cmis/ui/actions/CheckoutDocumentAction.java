@@ -50,7 +50,6 @@ public class CheckoutDocumentAction extends AbstractAction {
     
     super(TranslationResourceController.getMessage(Tags.CMIS_CHECK_OUT));
 
-    System.out.println("<<<<<<<<<<<<<<<<<<<<<<<< action"+ resource);
     
     // Set logger level
 
@@ -75,7 +74,6 @@ public class CheckoutDocumentAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
 
-    System.out.println("Chceckout action"+ e);
     // The private copy of the document
     Document res = null;
 

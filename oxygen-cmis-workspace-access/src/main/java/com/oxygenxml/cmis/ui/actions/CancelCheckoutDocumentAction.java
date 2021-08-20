@@ -61,8 +61,6 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     boolean hasPwc = false;
     boolean canUserCancelCheckout = false;
 
-    System.out.println("doc.isCheckedOut" + doc.isCheckedOut());
-    System.out.println("doc.isPrivateWorkingCopy()" + doc.isPrivateWorkingCopy());
     // Check if the doc is checked-out and get the PWC id
     if (doc.isCheckedOut() && !doc.isPrivateWorkingCopy()) {
       pwcId = doc.getVersionSeriesCheckedOutId();
