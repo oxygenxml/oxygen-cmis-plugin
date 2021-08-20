@@ -110,6 +110,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 
 		document = document.getObjectOfLatestVersion(false);		
 		List<Document> allVersions = document.getAllVersions();
+		
 		List<Map<String, String>> versions = new ArrayList<>();
 		
 		boolean isCheckedOut = document.isVersionSeriesCheckedOut();

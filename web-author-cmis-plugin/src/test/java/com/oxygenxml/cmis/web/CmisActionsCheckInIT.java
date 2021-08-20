@@ -43,7 +43,7 @@ public class CmisActionsCheckInIT {
 			document = document.getObjectOfLatestVersion(false);
 			assertTrue(document.isVersionSeriesCheckedOut());
 
-			CmisCheckIn.checkInDocument(document, cmisAccessProvider.getCmisAccess().getSession(), "minor", commitMessage);
+			CmisCheckIn.checkInDocument(document, "minor", commitMessage);
 
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());

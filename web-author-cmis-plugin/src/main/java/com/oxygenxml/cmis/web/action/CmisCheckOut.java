@@ -70,16 +70,14 @@ public class CmisCheckOut extends AuthorOperationWithResult {
 	/**
 	 * Check out the obtained CMIS Document.
 	 * 
-	 * @param document
-	 * @throws Exception
+	 * @param document the document to check out
 	 */
-	public static void checkOutDocument(Document document) throws Exception{
+	public static void checkOutDocument(Document document) {
 
 		document = document.getObjectOfLatestVersion(false);
 
 		if (document.isVersionSeriesCheckedOut()) {
 			logger.info("Document was checked-out!");
-
 		} else {
 			document.checkOut();
 			document.refresh();

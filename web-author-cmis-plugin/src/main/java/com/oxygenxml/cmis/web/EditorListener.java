@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
@@ -151,8 +152,16 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	 */
 	private void setVersionableOptions(AuthorDocumentModel documentModel) {
 		String versionSeriesCheckedOutBy = document.getVersionSeriesCheckedOutBy();
+		
+    ResourceController resourceController = connection.getCMISAccess().createResourceController();
 
-    Boolean canEditDocument = document.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
+    Document pwcDoc = document;
+    if (document.getVersionSeriesCheckedOutId() != null) {
+      String pwcId = document.getVersionSeriesCheckedOutId();
+      pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
+    }
+
+    Boolean canEditDocument = pwcDoc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
 
     if (canEditDocument) {
       documentModel.getAuthorDocumentController()

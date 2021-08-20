@@ -47,8 +47,11 @@ public class CheckoutDocumentAction extends AbstractAction {
    * @see com.oxygenxml.cmis.core.model.IResource
    */
   public CheckoutDocumentAction(IResource resource, IResource currentParent, ResourcesBrowser itemsPresenter) {
+    
     super(TranslationResourceController.getMessage(Tags.CMIS_CHECK_OUT));
 
+    System.out.println("<<<<<<<<<<<<<<<<<<<<<<<< action"+ resource);
+    
     // Set logger level
 
     this.resource = resource;
@@ -72,6 +75,7 @@ public class CheckoutDocumentAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
 
+    System.out.println("Chceckout action"+ e);
     // The private copy of the document
     Document res = null;
 
