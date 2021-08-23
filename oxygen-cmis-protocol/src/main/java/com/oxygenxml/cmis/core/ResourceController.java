@@ -19,6 +19,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -170,9 +171,12 @@ public class ResourceController {
     if (!DEFAULT_OBJ_TYPE.equals(objectType)) {
       try {
         session.getTypeDefinition(objectType);
-      } catch (CmisObjectNotFoundException e) {
+      } catch (CmisObjectNotFoundException | CmisInvalidArgumentException e) {
+        // We catch CmisInvalidArgumentException to work around SharePoint missing type. 
+        // VersionableType is unknown to SP and  the operation getTypeDefinition&typeId=VersionableType returns
+        // HTTP error code 400 - "One or more of the input parameters to the service method is missing or invalid." 
         typeExists = false;
-      }
+      } 
     }
     return typeExists;
   }
