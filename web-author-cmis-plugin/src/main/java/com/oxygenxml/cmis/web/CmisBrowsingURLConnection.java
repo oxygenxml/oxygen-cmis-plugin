@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CmisURL;
+import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisAction;
 
@@ -83,9 +85,9 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * of this document selected by id.
 	 * 
 	 * @return InputStream of older version document.
-	 * @throws MalformedURLException
+	 * @throws IOException 
 	 */
-	private InputStream getOlderVersionInputStream() throws MalformedURLException {
+	private InputStream getOlderVersionInputStream() throws IOException {
 		HashMap<String, String> queryPart = new HashMap<>();
 
 		for (String pair : url.getQuery().split("&")) {
@@ -101,9 +103,36 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		Document document = (Document) connection
 				.getResourceController(connectionUrl).getCmisObj(objectId);
 
-		return document.getContentStream().getStream();
+		return getVersionInputStream(document, objectId);
 	}
 	
+	/**
+	 * Returns the InputStream of the document. If the response comes from a SharePoint server
+	 * the URL is modified to point the correct object ID. Some SP implementations point
+	 * to the latest version o the document instead of requested version
+	 * 
+	 * @param document the document
+	 * @param objectId the id of the document
+	 * @return the input stream to read the document
+	 * @throws IOException
+	 */
+	private InputStream getVersionInputStream(Document document, String objectId) throws IOException {
+	  String contentUrl = document.getContentUrl();
+	  if(contentUrl.contains("objectID=")) {
+      contentUrl = contentUrl.replaceAll("objectID=.*", "objectID=" + objectId);
+      URL conn = new URL(contentUrl);
+     
+      UserCredentials credentials = this.connection.getUserCredentials();
+      
+      URLConnection uc = conn.openConnection();
+      String userpass = credentials.getUsername() + ":" + credentials.getPassword();
+      String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
+      uc.setRequestProperty ("Authorization", basicAuth);
+      return uc.getInputStream();
+    }
+    
+    return document.getContentStream().getStream();
+	}
 	
 	/**
 	 * Get OutputStream of document.
@@ -228,6 +257,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 						connection.getUserCredentials());
 
 		for (Repository repos : reposList) {
+		  repos.getCmisVersion();
+		  repos.getDescription();
 			String reposUrl = getRepositoryUrl(repos);
 			list.add(new FolderEntryDescriptor(reposUrl));
 		}
