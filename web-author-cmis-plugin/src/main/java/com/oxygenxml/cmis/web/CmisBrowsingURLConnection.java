@@ -108,7 +108,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	
 	/**
 	 * Returns the InputStream of the document. If the response comes from a SharePoint server
-	 * the URL is modified to point the correct object ID. Some SP implementations point
+	 * the URL is modified to point to the correct object ID. Some SP implementations point
 	 * to the latest version o the document instead of requested version
 	 * 
 	 * @param document the document
@@ -118,8 +118,11 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 */
 	private InputStream getVersionInputStream(Document document, String objectId) throws IOException {
 	  String contentUrl = document.getContentUrl();
-	  if(contentUrl.contains("objectID=")) {
-      contentUrl = contentUrl.replaceAll("objectID=.*", "objectID=" + objectId);
+
+	  String productName = connection.getCMISAccess().getSession().getRepositoryInfo().getProductName();
+	  if(productName != null && productName.toLowerCase().contains("sharepoint") && contentUrl.contains("objectID=")) {
+	    contentUrl =  contentUrl.replaceAll("objectID=[^&]+", "objectID="+ objectId);
+	    
       URL conn = new URL(contentUrl);
      
       UserCredentials credentials = this.connection.getUserCredentials();
