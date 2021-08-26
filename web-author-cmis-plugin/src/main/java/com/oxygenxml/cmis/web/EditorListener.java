@@ -9,12 +9,14 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
@@ -150,16 +152,33 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	 */
 	private void setVersionableOptions(AuthorDocumentModel documentModel) {
 		String versionSeriesCheckedOutBy = document.getVersionSeriesCheckedOutBy();
+		
+    ResourceController resourceController = connection.getCMISAccess().createResourceController();
 
-		if (!credentials.getUsername().equals(versionSeriesCheckedOutBy)) {
-			documentModel.getAuthorAccess().getEditorAccess().setReadOnly(new ReadOnlyReason(
-					MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
-			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.LOCKED.getValue());
-		} else {
-			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue());
-		}
+    Document pwcDoc = document;
+    if (document.getVersionSeriesCheckedOutId() != null) {
+      String pwcId = document.getVersionSeriesCheckedOutId();
+      pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
+    }
+
+    Boolean canEditDocument = pwcDoc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
+
+    if (canEditDocument) {
+      documentModel.getAuthorDocumentController()
+          .getAuthorDocumentNode()
+          .getRootElement()
+          .setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue());
+
+    } else {
+      documentModel.getAuthorAccess()
+          .getEditorAccess()
+          .setReadOnly(new ReadOnlyReason(
+              MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
+      documentModel.getAuthorDocumentController()
+          .getAuthorDocumentNode()
+          .getRootElement()
+          .setPseudoClass(EditorOption.LOCKED.getValue());
+    }
 	}
 
 	/**

@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
@@ -29,22 +28,23 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 	
 	private static final Logger logger = Logger.getLogger(CmisCheckIn.class.getName());
 
-	private CmisURLConnection connection;
+	
 	private Document document;
 	
 	/**
 	 * Do CMIS Check in operation.
+	 * 
 	 */
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
-			throws IllegalArgumentException, AuthorOperationException {
+			throws AuthorOperationException {
 
 		AuthorAccess authorAccess = model.getAuthorAccess();
 		authorAccess.getWorkspaceAccess();
 		
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
 
-		connection = CmisActionsUtills.getCmisURLConnection(url);
+		CmisURLConnection connection = CmisActionsUtills.getCmisURLConnection(url);
 		
 		// Get Session Store
 		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextId(url);
@@ -65,8 +65,7 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 						.getPluginWorkspace()).getResourceBundle();
 			
 			try {
-				Session session = connection.getCMISAccess().getSession();
-				checkInDocument(document, session, actualState, commitMessage);
+				checkInDocument(document, actualState, commitMessage);
 				
 				if (EditorListener.isCheckOutRequired()) {
 					authorAccess.getEditorAccess()
@@ -81,43 +80,37 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 		
 		return CmisActionsUtills.returnErrorInfoJSON("no_error", null);
 	}
-	
+	 
 	/**
 	 * Check in the obtained CMIS Document.
 	 * 
 	 * @param document
-	 * @param session
 	 * @param actualState
 	 * @param commitMessage
-	 * @throws Exception
 	 */
-	public static void checkInDocument(Document document, Session session, String actualState,
-			String commitMessage) throws Exception {
+	public static void checkInDocument(Document document, String actualState,
+			String commitMessage) {
 
-		if (!document.isVersionSeriesCheckedOut()) {
-			logger.info("Document isn't checked-out!");
+    Document latest = CmisActionsUtills.getLatestVersion(document);
 
-		} else {
-			document = document.getObjectOfLatestVersion(false);
-			String pwc = document.getVersionSeriesCheckedOutId();
+    if (document.isVersionSeriesCheckedOut()) {
 
-			if (pwc != null) {
-				Document PWC = (Document) session.getObject(pwc);
-				
-				// If commit message is null or value is "null" - assign empty string.
-				if (commitMessage == null || commitMessage == "null") {
-					commitMessage = "";
-				}
+      // If commit message is null or value is "null" - assign empty string.
+      if (commitMessage == null || commitMessage == "null") {
+        commitMessage = "";
+      }
 
-				if (actualState.equals(CmisAction.MAJOR_STATE.getValue())) {
-					PWC.checkIn(true, null, null, commitMessage);
-				} else {
-					PWC.checkIn(false, null, null, commitMessage);
-				}
-			}
+      if (actualState.equals(CmisAction.MAJOR_STATE.getValue())) {
+        latest.checkIn(true, null, null, commitMessage);
+      } else {
+        latest.checkIn(false, null, null, commitMessage);
+      }
 
-			document.refresh();
-			logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
-		}
+      latest.refresh();
+      logger.info(latest.getName() + " checked-out: " + latest.isVersionSeriesCheckedOut());
+    } else {
+      logger.info("Document isn't checked-out!");
+
+    }
 	}
 }

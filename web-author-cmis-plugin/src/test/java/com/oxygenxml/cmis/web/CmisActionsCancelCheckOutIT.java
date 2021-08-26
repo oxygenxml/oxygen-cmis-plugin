@@ -45,7 +45,7 @@ public class CmisActionsCancelCheckOutIT {
 			document = document.getObjectOfLatestVersion(false);
 			assertTrue(document.isVersionSeriesCheckedOut());
 
-			CmisCancelCheckOut.cancelCheckOutDocument(document, cmisAccessProvider.getCmisAccess().getSession());
+			CmisCancelCheckOut.cancelCheckOutDocument(document);
 
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());

@@ -80,6 +80,10 @@ public class CMISAccess {
 		parameters.put(SessionParameter.CONNECT_TIMEOUT, "5000");
     parameters.put(SessionParameter.READ_TIMEOUT, "5000");
     
+    parameters.put(SessionParameter.LATEST_VERSION_WITH_VERSION_SERIES_ID, "true");
+    parameters.put(SessionParameter.ADD_NAME_ON_CHECK_IN, "true");
+    parameters.put(SessionParameter.OMIT_CHANGE_TOKENS, "true");
+    
 		parameters.put(SessionParameter.HTTP_INVOKER_CLASS,
 		    OxygenHttpInvoker.class.getName());
 	}

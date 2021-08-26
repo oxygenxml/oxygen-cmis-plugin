@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -93,5 +94,13 @@ public class CmisActionsUtills {
 		}
 		
 		return urlWithoutContextId;
+  }
+	
+  public static Document getLatestVersion(Document document) {
+    Document latest = document;
+    if (!Boolean.TRUE.equals(document.isLatestVersion())) {
+      latest = document.getObjectOfLatestVersion(false);
+    }
+    return latest;
   }
 }
