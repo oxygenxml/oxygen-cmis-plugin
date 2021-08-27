@@ -82,14 +82,6 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     setEnabled(canCancel);
   }
   
-/*  public DocumentImpl getPwcDocument(DocumentImpl doc) {
-    
-    // Check if the doc is checked-out and get the PWC id
-    if (doc.isCheckedOut() && !doc.isPrivateWorkingCopy()) {
-      
-    }
-  }*/
-
   /**
    * When the event was triggered cast the resource to custom interface for
    * processing the document
@@ -101,8 +93,6 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-
-    System.out.println("pwcDOc" + pwcDoc);
     // Try to do the cancel checkout
     try {
 
