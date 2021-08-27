@@ -189,8 +189,6 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * 
 	 * @return List<FolderEntryDescriptor> list.
 	 * @throws MalformedURLException
-	 * @throws UnsupportedEncodingException
-	 * @throws UserActionRequiredException
 	 */
 	@VisibleForTesting
 	public List<FolderEntryDescriptor> getFolderEntriesDescriptiors() throws MalformedURLException {
@@ -247,9 +245,6 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * Get repositories URLs and put it in list.
 	 * 
 	 * @return List<FolderEntryDescriptor> list.
-	 * @throws MalformedURLException
-	 * @throws UnsupportedEncodingException
-	 * @throws UserActionRequiredException
 	 */
 	@VisibleForTesting
 	public List<FolderEntryDescriptor> getRootFolderEntriesDescriptiors() {
@@ -260,8 +255,6 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 						connection.getUserCredentials());
 
 		for (Repository repos : reposList) {
-		  repos.getCmisVersion();
-		  repos.getDescription();
 			String reposUrl = getRepositoryUrl(repos);
 			list.add(new FolderEntryDescriptor(reposUrl));
 		}

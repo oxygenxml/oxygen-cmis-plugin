@@ -59,11 +59,6 @@ class ToTransferHandler extends TransferHandler {
       return;
     }
     System.out.println("Export done");
-    // System.out.println("Index=" + oldIndex);
-    // System.out.println("Element=" + from.getElementAt(oldIndex));
-    // from.removeElementAt(oldIndex);
-    // System.out.println("Index=" + oldIndex);
-    // System.out.println("Element=" + from.getElementAt(oldIndex));
   }
 
   // Check when we can import
