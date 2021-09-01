@@ -158,7 +158,7 @@ public class CmisURLConnection extends URLConnection {
     CmisURL cmisUrl = CmisURL.parse(url);
 
     // Get repository ID from custom URL for connection
-    String repoID = cmisUrl.getRepository();
+    String repoID = cmisUrl.getRepositoryId();
 
     // Accessing the server using params which we gets
     cmisAccess.connectToRepo(cmisUrl.getServerHttpUrl(), repoID, credentials);

@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CmisURL;
+import com.oxygenxml.cmis.core.RepositoryInfo;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisAction;
@@ -279,7 +280,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 				.getCMISAccess().getSession().getSessionParameters()
 				.get(SessionParameter.ATOMPUB_URL);
 	    try {
-	        return CmisURL.ofRepo(new URL(atomPubUrlStr), repo.getId()).toExternalForm();
+	      return CmisURL.ofRepoWithName(new URL(atomPubUrlStr), new RepositoryInfo(repo.getId(), repo.getName())).toExternalForm();
+	      
 	      } catch (MalformedURLException e) {
 	        // Cannot happen - the URL was already used by to retrieve data from the server.
 	        throw new RuntimeException(e);

@@ -16,6 +16,7 @@ import ro.sync.basic.util.URLUtil;
  *
  */
 public class CmisURL {
+  
   /**
    * The scheme used by the CMIS protocol. 
    */
@@ -31,6 +32,7 @@ public class CmisURL {
    */
   private static final String SLASH_SYMBOL = "/";
 
+  
 
   /**
    * The HTTP URL of the CMIS server. 
@@ -40,16 +42,25 @@ public class CmisURL {
   /**
    * The name of the repository.
    */
-  private final String repsitory;
+  //private final String repsitory;
 
   /**
    * The path to the file.
    */
   private final String path;
+  
+  /** the name of the repository */
+  //private final String repositoryName;
+  
+  private final RepositoryInfo repositoryInfo; 
 
-  private CmisURL(URL serverHttpUrl, String repsitory, String path) {
+  private CmisURL(URL serverHttpUrl, String repoId, String path) {
+    this(serverHttpUrl, new RepositoryInfo(repoId, ""), path);
+  }
+  
+  private CmisURL(URL serverHttpUrl, RepositoryInfo repoInfo, String path) {
     this.serverHttpUrl = serverHttpUrl;
-    this.repsitory = repsitory;
+    this.repositoryInfo = repoInfo;
     this.path = path;
   }
 
@@ -92,7 +103,6 @@ public class CmisURL {
    * @throws MalformedURLException if the URL does not have the required format.
    */
   public static CmisURL parse(String cmisUrl) throws MalformedURLException {
-    String invalidMsg = "Invalid CMIS URL. ";
     String encodedServerHttpUrl = parseEncodedServerUrl(cmisUrl);
     String decodedHttpServerUrl = URLUtil.decodeURIComponent(encodedServerHttpUrl);
     URL serverHttpUrl = new URL(decodedHttpServerUrl);
@@ -101,19 +111,22 @@ public class CmisURL {
     int serverUrlEnd = PREFIX.length() + encodedServerHttpUrl.length(); 
     int repositoryEnd = cmisUrl.indexOf(SLASH_SYMBOL, serverUrlEnd + 1);
     if (repositoryEnd == -1) {
-      throw new MalformedURLException(invalidMsg + "Missing repository: " + cmisUrl);
+      throw new MalformedURLException( "Invalid CMIS URL. Missing repository: " + cmisUrl);
     }
     String repository = URLUtil.decodeURIComponent(cmisUrl.substring(
         serverUrlEnd + 1, 
         repositoryEnd));
-    
-    
-    // cmis://[CMIS_SERVER_HOST]/REPOSITORY/[PATH]
+   
+ // cmis://[CMIS_SERVER_HOST]/REPOSITORY/[PATH]
     String path = URLUtil.decodeURIComponent(cmisUrl.substring(repositoryEnd));
     
-    return new CmisURL(serverHttpUrl, repository, path);
+    // the repository part can contain the name of the repository and id in 
+    // the format: REPOSITORY_NAME [REPOSITORY_ID]
+    RepositoryInfo repositoryInfo = RepositoryInfo.fromURLPart(repository);
+    
+    return new CmisURL(serverHttpUrl, repositoryInfo, path);
   }
-
+  
   /**
    * Create the CMIS URL of the given repository.
    * 
@@ -127,21 +140,32 @@ public class CmisURL {
   }
   
   /**
-   * Returns an URL that has the same details as the current instance, but a different path.
+   * Creates the CMIS URL of the given repository.
    * 
-   * @param pathEntries The path (not encoded).
+   * @param serverHttpUrl The URL of the server.
+   * @param repoInfo the repository info
+   * 
+   * @return The CMIS URL.
+   */
+  public static CmisURL ofRepoWithName(URL serverHttpUrl, RepositoryInfo repoInfo) {
+    return new CmisURL(serverHttpUrl, repoInfo, "");
+  }
+  
+  /**
+   * Returns an URL that has the same details as the current instance, but a different path.
+   * @param path the path to set
    * 
    * @return The CMIS URL object with the given path.
    */
   public CmisURL setPath(String path) {
-    return new CmisURL(serverHttpUrl, repsitory, path);
+    return new CmisURL(serverHttpUrl, repositoryInfo.getId(), path);
   }
   
   /**
    * @return The repository ID.
    */
-  public String getRepository() {
-    return repsitory;
+  public String getRepositoryId() {
+    return repositoryInfo.getId();
   }
 
   /**
@@ -162,7 +186,6 @@ public class CmisURL {
    * @return The name of the file represented by this URL.
    */
   public String getFileName() {
-    String path = this.getPath();
     return path.substring(path.lastIndexOf(SLASH_SYMBOL) + 1, path.length());
   }
   
@@ -170,10 +193,13 @@ public class CmisURL {
    * @return The name of the folder that contains the file represented by this URL.
    */
   public String getFolderPath() {
-    String path = this.getPath();
     return path.substring(0, path.lastIndexOf(SLASH_SYMBOL) + 1);
   }
 
+  public RepositoryInfo getRepositoryInfo() {
+    return repositoryInfo;
+  }
+  
   /**
    * @return The extension of the file represented by this URL.
    */
@@ -196,7 +222,7 @@ public class CmisURL {
       .append("://")
       .append(URLUtil.encodeURIComponent(serverHttpUrl.toExternalForm()))
       .append(SLASH_SYMBOL)
-      .append(URLUtil.encodeURIComponent(repsitory))
+      .append(URLUtil.encodeURIComponent(repositoryInfo.toUrlPart()))
       .append(SLASH_SYMBOL);
 
     
