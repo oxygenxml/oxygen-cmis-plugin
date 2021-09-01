@@ -81,7 +81,7 @@ public class CancelCheckoutDocumentAction extends AbstractAction {
     boolean canCancel = canUserCancelCheckout && doc.isCheckedOut() && hasPwc;
     setEnabled(canCancel);
   }
-  
+
   /**
    * When the event was triggered cast the resource to custom interface for
    * processing the document
