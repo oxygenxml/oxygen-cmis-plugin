@@ -26,7 +26,7 @@ CmisCheckOutAction.prototype.getSmallIcon = function() {
 
 /** @override */
 CmisCheckOutAction.prototype.isEnabled = function() {
-  return !this.status_.isCheckedout() && !this.status_.isLocked();
+  return !this.status_.isCheckedout() && !this.status_.isLocked() && !this.status_.isOldVersion();
 };
 
 /** @override */

@@ -9,6 +9,7 @@ CmisStatus = function(root) {
   this.checkedout_ = root.getAttribute('data-pseudoclass-checkedout') === 'true';
   this.locked_ = root.getAttribute('data-pseudoclass-locked') === 'true';
   this.supportsCommitMessage_ = root.getAttribute('data-pseudoclass-supports-commit-message') === 'true';
+  this.oldVersion_ = root.getAttribute('data-pseudoclass-oldversion') === 'true';
 };
 
 /**
@@ -20,6 +21,10 @@ CmisStatus.prototype.setCheckedout = function(checkedout) {
   this.checkedout_ = checkedout;
 };
 
+/** returns true if the version of the document is not the latest */
+CmisStatus.prototype.isOldVersion = function() {
+	return this.oldVersion_;
+}
 
 /**
  * Getter for the current document status.
