@@ -40,18 +40,10 @@ public class CmisURL {
   private final URL serverHttpUrl;
 
   /**
-   * The name of the repository.
-   */
-  //private final String repsitory;
-
-  /**
    * The path to the file.
    */
   private final String path;
-  
-  /** the name of the repository */
-  //private final String repositoryName;
-  
+    
   private final RepositoryInfo repositoryInfo; 
 
   private CmisURL(URL serverHttpUrl, String repoId, String path) {
@@ -67,7 +59,7 @@ public class CmisURL {
   /**
    * Parses the server URL of the 
    * @param serverRootUrl
-   * @return
+   * @return the server URL
    * @throws MalformedURLException
    */
   public static URL parseServerUrl(String serverRootUrl) throws MalformedURLException {
