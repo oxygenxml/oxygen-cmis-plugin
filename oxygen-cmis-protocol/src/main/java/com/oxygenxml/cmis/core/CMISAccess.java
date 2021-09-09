@@ -132,4 +132,12 @@ public class CMISAccess {
 		return session;
 	}
 
+	public String getCMSProductName() {
+	  return session.getRepositoryInfo().getProductName();
+	}
+	
+	public boolean isSharePoint() {
+	  String productName = getCMSProductName();
+	  return productName != null && productName.toLowerCase().contains("sharepoint");
+	}
 }

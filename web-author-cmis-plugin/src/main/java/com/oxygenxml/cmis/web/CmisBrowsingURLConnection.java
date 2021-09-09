@@ -120,8 +120,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	private InputStream getVersionInputStream(Document document, String objectId) throws IOException {
 	  String contentUrl = document.getContentUrl();
 
-	  String productName = connection.getCMISAccess().getSession().getRepositoryInfo().getProductName();
-	  if(productName != null && productName.toLowerCase().contains("sharepoint") && contentUrl.contains("objectID=")) {
+	  boolean isSharePoint = connection.getCMISAccess().isSharePoint();
+	  if(isSharePoint && contentUrl.contains("objectID=")) {
 	    contentUrl =  contentUrl.replaceAll("objectID=[^&]+", "objectID="+ objectId);
 	    
       URL conn = new URL(contentUrl);
