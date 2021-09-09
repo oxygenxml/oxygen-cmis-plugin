@@ -42,8 +42,12 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	private URL url;
 
 	private String urlWithoutContextId;
-	private UserCredentials credentials;
-	private CmisURLConnection connection;
+	
+	@VisibleForTesting
+	UserCredentials credentials;
+	
+	@VisibleForTesting
+	CmisURLConnection connection;
 
 	private Document document;
 	
@@ -161,7 +165,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
       pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
     }
 
-    Boolean canEditDocument = pwcDoc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
+    boolean canEditDocument = canEditDocument(pwcDoc);
 
     if (canEditDocument) {
       documentModel.getAuthorDocumentController()
@@ -181,6 +185,20 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
     }
 	}
 
+	@VisibleForTesting
+	boolean canEditDocument(Document doc) {
+	  Boolean canSetContentStream = doc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
+	  boolean isSharePoint = connection.getCMISAccess().isSharePoint();
+	  
+	  String versionSeriesCheckedOutBy = doc.getVersionSeriesCheckedOutBy();
+
+	  // With SharePoint the value of the versionSeriesCheckedOutBy attribute is the display name
+	  // of the user and not the login name. Therefore when connected to SharePoint we check
+	  // if the logged in user can set content stream for the document
+	  // For other CMSes we verify that the user who checked out the document is the logged in user 
+	  return (canSetContentStream && isSharePoint) || credentials.getUsername().equals(versionSeriesCheckedOutBy);
+	}
+	
 	/**
 	 * Set Web Author's editor to older version 
 	 * of document options.
