@@ -65,6 +65,7 @@
 	font-size: 100%;
 	white-space: nowrap;
 	overflow: hidden;
+	line-height: 2em;
 }
 
 #cmis-user {
@@ -98,6 +99,11 @@
 
 .cmis-login-dialog label, .cmis-version-label {
   display: block;
+  line-height: 2em;
+}
+
+.cmis-error-content {
+  line-height: 2em;
 }
 
 #cmis-name, #cmis-passwd {
