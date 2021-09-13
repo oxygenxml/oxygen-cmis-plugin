@@ -36,11 +36,11 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
         {key: 'cancel', caption: tr(msgs.CANCEL_)}
       ]);
 
-      goog.dom.append(dialog.getElement(),
+      goog.dom.append(dialog.getElement(), goog.dom.createDom('div', 'cmis-error-content',
         tr(msgs.CMIS_LOSE_CHANGES_),
         goog.dom.createDom('br'),
         tr(msgs.CMIS_CANCEL_WARNING_)
-      );
+      ));
       this.dialog_ = dialog;
   }
 
