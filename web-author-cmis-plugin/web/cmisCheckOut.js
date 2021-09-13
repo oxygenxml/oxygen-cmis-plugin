@@ -26,7 +26,7 @@ CmisCheckOutAction.prototype.getSmallIcon = function() {
 
 /** @override */
 CmisCheckOutAction.prototype.isEnabled = function() {
-  return !this.status_.isCheckedout() && !this.status_.isLocked() && !this.status_.isOldVersion();
+  return !this.status_.isCheckedout() && !this.status_.isOldVersion();
 };
 
 /** @override */
@@ -57,25 +57,55 @@ CmisCheckOutAction.prototype.handleOperationResult_ = function(callback, err, da
   if (cause.error === 'denied') {
     this.status_.setCheckedout(false);
 
-    if (!this.dialog_) {
-      this.dialog_ = workspace.createDialog();
-      this.dialog_.setTitle(tr(msgs.ERROR_TITLE_));
-      this.dialog_.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
-      this.dialog_.setPreferredSize(350, 300);
-    }
-
-    var errorMessage = err ? err.message : cause.message;
-
-    var dialogContent = this.dialog_.getElement();
-    goog.dom.removeChildren(dialogContent);
-    goog.dom.append(dialogContent,
-      goog.dom.createDom('div', 'warningdiv', tr(msgs.ERROR_WARN_)),
-      goog.dom.createDom('hr', {id: 'cmis-warnhr'}),
-      goog.dom.createDom('div', {id: 'cmis-messdiv'}, errorMessage)
-    );
-
+    this.createErrorDialog_(350, 300);
+    this.appendErrorMessageWithWarning_(err, cause);
     this.dialog_.show();
+  } else if(cause.error === "checked_out_by"){
+    this.status_.setCheckedout(false);
+    
+    this.createErrorDialog_(350, 200);  
+	this.appendErrorMessage_(err, cause);
+	this.dialog_.show();
   } else {
     this.status_.setCheckedout(true);
   }
 };
+
+/**
+ * Creates an error dialog
+ *
+ * @param {number} width the width of the dialog
+ * @param {number} height the height of the dialog
+ *
+ * @private
+ */
+CmisCheckOutAction.prototype.createErrorDialog_ = function(width, height) {
+  if (!this.dialog_) {
+    this.dialog_ = workspace.createDialog();
+    this.dialog_.setTitle(tr(msgs.ERROR_TITLE_));
+    this.dialog_.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.OK);
+    this.dialog_.setPreferredSize(width, height);
+  } else {
+    goog.dom.removeChildren(this.dialog_.getElement());
+  }
+};
+
+CmisCheckOutAction.prototype.appendErrorMessageWithWarning_ = function(err, cause) {
+  this.appendWarning_();
+  this.appendErrorMessage_(err, cause);
+}
+
+CmisCheckOutAction.prototype.appendErrorMessage_ = function(err, cause) {
+  var errorMessage = err ? err.message : cause.message;
+  goog.dom.append(this.dialog_.getElement(), 
+    goog.dom.createDom('div', {id : 'cmis-messdiv'	}, errorMessage)
+  );
+}
+
+CmisCheckOutAction.prototype.appendWarning_ = function() {
+  goog.dom.append(this.dialog_.getElement(), 
+    goog.dom.createDom('div','warningdiv', tr(msgs.ERROR_WARN_)), 
+	goog.dom.createDom('hr', {id : 'cmis-warnhr'})
+  );
+};
+
