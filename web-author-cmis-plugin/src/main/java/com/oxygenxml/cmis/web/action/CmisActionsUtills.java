@@ -50,7 +50,7 @@ public class CmisActionsUtills {
 	 * 
 	 * @param errorType
 	 * @param errorMessage
-	 * @return
+	 * @return the JSON string 
 	 */
 	public static String returnErrorInfoJSON(String errorType, String errorMessage) {
 		String errorInfoJSON = null;

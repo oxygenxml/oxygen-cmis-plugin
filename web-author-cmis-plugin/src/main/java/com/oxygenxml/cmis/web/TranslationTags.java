@@ -77,4 +77,12 @@ public interface TranslationTags {
 	 * en: Current
 	 */
 	String CURRENT = "Current";
+	
+	/**
+   * Message when cannot check out because the document is checked out by another user.
+   * 
+   * en: Cannot check out. {0} is checked out by {1}
+   */
+  String CANNOT_CHECK_OUT_CHECKED_OUT_BY = "Cannot_check_out_checked_out_by";
+
 }
