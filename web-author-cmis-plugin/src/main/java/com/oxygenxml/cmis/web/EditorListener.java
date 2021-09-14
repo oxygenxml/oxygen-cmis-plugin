@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
@@ -43,11 +42,9 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 	private String urlWithoutContextId;
 	
-	@VisibleForTesting
-	UserCredentials credentials;
+	private UserCredentials credentials;
 	
-	@VisibleForTesting
-	CmisURLConnection connection;
+	private CmisURLConnection connection;
 
 	private Document document;
 	
@@ -165,7 +162,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
       pwcDoc = (Document) resourceController.getSession().getObject(pwcId);
     }
 
-    boolean canEditDocument = canEditDocument(pwcDoc);
+    boolean canEditDocument = connection.canCheckoutDocument(pwcDoc);
 
     if (canEditDocument) {
       documentModel.getAuthorDocumentController()
@@ -183,20 +180,6 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
           .getRootElement()
           .setPseudoClass(EditorOption.LOCKED.getValue());
     }
-	}
-
-	@VisibleForTesting
-	boolean canEditDocument(Document doc) {
-	  Boolean canSetContentStream = doc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
-	  boolean isSharePoint = connection.getCMISAccess().isSharePoint();
-	  
-	  String versionSeriesCheckedOutBy = doc.getVersionSeriesCheckedOutBy();
-
-	  // With SharePoint the value of the versionSeriesCheckedOutBy attribute is the display name
-	  // of the user and not the login name. Therefore when connected to SharePoint we check
-	  // if the logged in user can set content stream for the document
-	  // For other CMSes we verify that the user who checked out the document is the logged in user 
-	  return (canSetContentStream && isSharePoint) || credentials.getUsername().equals(versionSeriesCheckedOutBy);
 	}
 	
 	/**

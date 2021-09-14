@@ -5,12 +5,10 @@ import java.net.URL;
 import java.text.MessageFormat;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.log4j.Logger;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.TranslationTags;
 
@@ -31,7 +29,6 @@ public class CmisCheckOut extends AuthorOperationWithResult {
 
   private static final Logger logger = Logger.getLogger(CmisCheckOut.class.getName());
 
-  private CmisURLConnection connection;
   private Document document;
 
   /**
@@ -46,7 +43,7 @@ public class CmisCheckOut extends AuthorOperationWithResult {
     URL url = authorAccess.getEditorAccess()
         .getEditorLocation();
 
-    connection = CmisActionsUtills.getCmisURLConnection(url);
+    CmisURLConnection connection = CmisActionsUtills.getCmisURLConnection(url);
 
     // Get Session Store
     String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextId(url);
@@ -61,7 +58,9 @@ public class CmisCheckOut extends AuthorOperationWithResult {
 
     if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CHECK_OUT.getValue())) {
       try {
-        if (canCheckoutDocument()) {
+        document = document.getObjectOfLatestVersion(false);
+        boolean canCheckoutDocument = connection.canCheckoutDocument(document);        
+        if (canCheckoutDocument) {
           checkOutDocument(document);
           authorAccess.getEditorAccess().setEditable(true);
 
@@ -83,6 +82,7 @@ public class CmisCheckOut extends AuthorOperationWithResult {
         }
 
       } catch (Exception e) {
+        logger.info(connection.getUserCredentials().getUsername() + " CANNOT checkout " + document.getName() + " " + e.getMessage());
         return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
       }
     }
@@ -90,35 +90,9 @@ public class CmisCheckOut extends AuthorOperationWithResult {
     return CmisActionsUtills.returnErrorInfoJSON("no_error", null);
   }
 
-  @VisibleForTesting
-  boolean canCheckoutDocument() {
-    Document doc = document.getObjectOfLatestVersion(false);
-    Boolean canSetContentStream = doc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
-    boolean isSharePoint = connection.getCMISAccess()
-        .isSharePoint();
-
-    String versionSeriesCheckedOutBy = doc.getVersionSeriesCheckedOutBy();
-
-    return (canSetContentStream && isSharePoint) || versionSeriesCheckedOutBy == null 
-        || connection.getUserCredentials().getUsername().equals(versionSeriesCheckedOutBy);
-  }
-
-  /**
-   * Reload the document after cancel check out to discard changes.
-   * 
-   * @param authorAccess
-   * @throws AuthorOperationException
-   */
-  private void reloadDocument(AuthorAccess authorAccess) throws AuthorOperationException {
-    ReloadContentOperation reloadAction = new ReloadContentOperation();
-    class ActionIdArgumentsMap implements ArgumentsMap {
-      @Override
-      public Object getArgumentValue(String argumentName) {
-        return argumentName.equals("markAsNotModified") ? true : "";
-      }
-    }
-    ArgumentsMap argMap = new ActionIdArgumentsMap();
-    reloadAction.doOperation(authorAccess, argMap);
+  void reloadDocument(AuthorAccess authorAccess) throws AuthorOperationException {
+    new ReloadContentOperation().doOperation(authorAccess, argumentName ->
+    "markAsNotModified".equals(argumentName) ? "true" : "");
   }
 
   /**
@@ -127,16 +101,8 @@ public class CmisCheckOut extends AuthorOperationWithResult {
    * @param document the document to check out
    */
   public static void checkOutDocument(Document document) {
-
-    document = document.getObjectOfLatestVersion(false);
-
-    if (document.isVersionSeriesCheckedOut()) {
-      logger.info("Document was checked-out!");
-    } else {
       document.checkOut();
       document.refresh();
-      logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
-    }
   }
 
 }
