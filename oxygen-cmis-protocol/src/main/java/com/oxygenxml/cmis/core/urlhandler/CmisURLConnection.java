@@ -19,6 +19,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -328,6 +329,20 @@ public class CmisURLConnection extends URLConnection {
     return generateURLObject(document, resourceController, folderPath);
   }
 
+  public boolean canCheckoutDocument(Document doc) {
+    Boolean canSetContentStream = doc.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
+    boolean isSharePoint = getCMISAccess().isSharePoint();
+
+    String versionSeriesCheckedOutBy = doc.getVersionSeriesCheckedOutBy();
+
+    // With SharePoint the value of the versionSeriesCheckedOutBy attribute is the display name
+    // of the user and not the login name. Therefore when connected to SharePoint we check
+    // if the logged in user can set content stream for the document
+    // For other CMSes we verify that the user who checked out the document is the logged in user 
+    return (canSetContentStream && isSharePoint) || versionSeriesCheckedOutBy == null 
+        || getUserCredentials().getUsername().equals(versionSeriesCheckedOutBy);
+  }
+  
   /**
    * 
    * @param connectionUrl

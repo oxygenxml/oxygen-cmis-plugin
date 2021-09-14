@@ -1,4 +1,4 @@
-package com.oxygenxml.cmis.web;
+package com.oxygenxml.cmis.core.urlhandler;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,58 +16,55 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
-public class EditorListenerTest {
+public class CmisURLConnectionTest {
 
   private CMISAccess mockCmisAccess;
-  private EditorListener editorListener;
+  private CmisURLConnection cmisConnection;
   private Document document;
   
   @Before
   public void setup() throws Exception {
     UserCredentials credentials = new UserCredentials("userLogin", "pass");
-    editorListener = new EditorListener();
     mockCmisAccess = mock(CMISAccess.class);
    
-    CmisURLConnection cmisConnection  = new CmisURLConnection(new URL("http://server/path"), mockCmisAccess, credentials); 
-    editorListener.connection = cmisConnection;
-    editorListener.credentials = credentials;
+    cmisConnection  = new CmisURLConnection(new URL("http://server/path"), mockCmisAccess, credentials); 
     
     document = mock(Document.class);
   }
   
   
   @Test
-  public void testCanEditIfSharepointAndCanSetContentStream() throws Exception {
+  public void testCanCheckoutIfSharepointAndCanSetContentStream() throws Exception {
     when(mockCmisAccess.isSharePoint()).thenReturn(true);
     when(document.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM)).thenReturn(true);
     
-    assertTrue(editorListener.canEditDocument(document));
+    assertTrue(cmisConnection.canCheckoutDocument(document));
   }
   
   @Test
-  public void testCanNOTEditIfSharepointAndNoSetContentStreamAllowableAction() throws Exception {
+  public void testCanNOTCheckoutIfSharepointAndNoSetContentStreamAllowableAction() throws Exception {
     when(mockCmisAccess.isSharePoint()).thenReturn(true);
     when(document.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM)).thenReturn(false);
     when(document.getVersionSeriesCheckedOutBy()).thenReturn("other user");
     
-    assertFalse(editorListener.canEditDocument(document));
+    assertFalse(cmisConnection.canCheckoutDocument(document));
   }
   
   @Test
-  public void testCanEditIfNotSharepointAndLoggedUserIsCheckedOutBy() throws Exception {
+  public void testCanCheckoutIfNotSharepointAndLoggedUserIsCheckedOutBy() throws Exception {
     when(mockCmisAccess.isSharePoint()).thenReturn(false);
     when(document.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM)).thenReturn(true);
     when(document.getVersionSeriesCheckedOutBy()).thenReturn("userLogin");
     
-    assertTrue(editorListener.canEditDocument(document));
+    assertTrue(cmisConnection.canCheckoutDocument(document));
   }
   
   @Test
-  public void testCanNOTEditIfNotSharepointAndLoggedUserIsNOTCheckedOutBy() throws Exception {
+  public void testCanNOTCheckoutIfNotSharepointAndLoggedUserIsNOTCheckedOutBy() throws Exception {
     when(mockCmisAccess.isSharePoint()).thenReturn(false);
     when(document.hasAllowableAction(Action.CAN_SET_CONTENT_STREAM)).thenReturn(true);
     when(document.getVersionSeriesCheckedOutBy()).thenReturn("other user");
     
-    assertFalse(editorListener.canEditDocument(document));
+    assertFalse(cmisConnection.canCheckoutDocument(document));
   }
 }
