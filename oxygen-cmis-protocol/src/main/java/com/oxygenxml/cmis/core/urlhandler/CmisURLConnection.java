@@ -265,6 +265,7 @@ public class CmisURLConnection extends URLConnection {
          * template content stream from client-side.
          * 
          */
+        try {
         if (!document.isVersionable()) {
           document.setContentStream(contentStream, true);
         } else {
@@ -288,6 +289,9 @@ public class CmisURLConnection extends URLConnection {
           } else if (!alreadyCheckedOut) {
             pwcDoc.checkIn(false, null, null, " ");
           }
+        }
+        } catch (Exception e) {
+          throw new IOException("cannot save document" + e.getMessage());
         }
       }
     };

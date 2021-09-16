@@ -28,9 +28,6 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 	
 	private static final Logger logger = Logger.getLogger(CmisCheckIn.class.getName());
 
-	
-	private Document document;
-	
 	/**
 	 * Do CMIS Check in operation.
 	 * 
@@ -48,11 +45,12 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 		
 		// Get Session Store
 		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextId(url);
-		
+		Document document = null;
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
-			logger.debug(e.getStackTrace());
+		  logger.debug("Error getting CMIS document " + urlWithoutContextId);
+			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
 		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());

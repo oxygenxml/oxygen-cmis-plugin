@@ -35,8 +35,6 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	
 	private static final Logger logger = Logger.getLogger(CmisOldVersions.class.getName());
 	
-	private Document document;
-	
 	/**
 	 * Do CMIS Old Versions operation.
 	 */
@@ -60,10 +58,12 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		// Get Session Store
 		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextId(url);
 		
+		Document document = null;
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
-			logger.debug(e.getStackTrace());
+			logger.debug("Error getting CMIS document " + urlWithoutContextId);
+			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
 		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
@@ -95,7 +95,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * @param document
 	 * @param url
 	 * @param currentVersion 
-	 * @return
+	 * @return the JSON string containing the list of versions
 	 * @throws IOException 
 	 * @throws JsonMappingException 
 	 * @throws JsonGenerationException 
