@@ -265,33 +265,37 @@ public class CmisURLConnection extends URLConnection {
          * template content stream from client-side.
          * 
          */
-        try {
-        if (!document.isVersionable()) {
-          document.setContentStream(contentStream, true);
-        } else {
-          // we get a working document either by getting the already checked out one
-          // or by checking it out
-          Document pwcDoc = null;
-          boolean alreadyCheckedOut = true;
-          if (document.isVersionSeriesCheckedOut()) {
-            pwcDoc = getPwcDocument(document);
-          } else {
-            ObjectId pwcID = document.checkOut();                       
-            pwcDoc = (Document) resourceController.getSession().getObject(pwcID);
-            alreadyCheckedOut = false;
-          }
-          
-          pwcDoc.setContentStream(contentStream, true);
+        trySave(document, newDocument, contentStream);
+      }
 
-          if (newDocument) {
-            pwcDoc.checkIn(true, null, null, " ");
-            deleteUselessVersion(document);
-          } else if (!alreadyCheckedOut) {
-            pwcDoc.checkIn(false, null, null, " ");
+      private void trySave(Document document, boolean newDocument, ContentStreamImpl contentStream) throws IOException {
+        try {
+          if (!document.isVersionable()) {
+            document.setContentStream(contentStream, true);
+          } else {
+            // we get a working document either by getting the already checked out one
+            // or by checking it out
+            Document pwcDoc = null;
+            boolean alreadyCheckedOut = true;
+            if (document.isVersionSeriesCheckedOut()) {
+              pwcDoc = getPwcDocument(document);
+            } else {
+              ObjectId pwcID = document.checkOut();
+              pwcDoc = (Document) resourceController.getSession().getObject(pwcID);
+              alreadyCheckedOut = false;
+            }
+
+            pwcDoc.setContentStream(contentStream, true);
+
+            if (newDocument) {
+              pwcDoc.checkIn(true, null, null, " ");
+              deleteUselessVersion(document);
+            } else if (!alreadyCheckedOut) {
+              pwcDoc.checkIn(false, null, null, " ");
+            }
           }
-        }
         } catch (Exception e) {
-          throw new IOException("cannot save document" + e.getMessage());
+          throw new IOException(e.getMessage(), e);
         }
       }
     };
