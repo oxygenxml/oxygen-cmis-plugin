@@ -12,7 +12,7 @@
     <comment>Message when cannot check out because the document is checked out by another user</comment>
     <val lang="en_US">Cannot check out. {0} is checked out by {1}</val>
     <val lang="de_DE">Cannot check out. {0} is checked out by {1}</val>
-    <val lang="fr_FR">Cannot check out. {0} is checked out by {1}</val>
+    <val lang="fr_FR">Extraction impossible. {0} est extrait par {1}</val>
     <val lang="ja_JP">Cannot check out. {0} is checked out by {1}</val>
     <val lang="nl_NL">Cannot check out. {0} is checked out by {1}</val>
     <val lang="zh_CN">Cannot check out. {0} is checked out by {1}</val>
