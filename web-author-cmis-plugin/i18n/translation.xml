@@ -10,12 +10,12 @@
   </languageList>
   <key value="Cannot_check_out_checked_out_by" distribution="webauthor">
     <comment>Message when cannot check out because the document is checked out by another user</comment>
-    <val lang="en_US">Cannot check out. {0} is checked out by {1}</val>
-    <val lang="de_DE">Cannot check out. {0} is checked out by {1}</val>
-    <val lang="fr_FR">Cannot check out. {0} is checked out by {1}</val>
-    <val lang="ja_JP">Cannot check out. {0} is checked out by {1}</val>
-    <val lang="nl_NL">Cannot check out. {0} is checked out by {1}</val>
-    <val lang="zh_CN">Cannot check out. {0} is checked out by {1}</val>
+    <val lang="en_US">Cannot check out "{0}" because it is already checked out by "{1}".</val>
+    <val lang="de_DE">Cannot check out "{0}" because it is already checked out by "{1}".</val>
+    <val lang="fr_FR">Cannot check out "{0}" because it is already checked out by "{1}".</val>
+    <val lang="ja_JP">Cannot check out "{0}" because it is already checked out by "{1}".</val>
+    <val lang="nl_NL">Cannot check out "{0}" because it is already checked out by "{1}".</val>
+    <val lang="zh_CN">Cannot check out "{0}" because it is already checked out by "{1}".</val>
   </key>
   <key value="SAVE_CHANGES_BEFORE_CHECK_IN_" distribution="webauthor">
     <comment>Warning shown when attempting to check in a document with unsaved changes.</comment>
