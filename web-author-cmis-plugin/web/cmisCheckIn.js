@@ -66,10 +66,8 @@ CmisCheckInAction.prototype.getDialog_ = function(supportsCommitMessage) {
 
   if (supportsCommitMessage) {
     goog.dom.append(dialogElement, this.createCommitMessageElements_());
-    dialog.setPreferredSize(300, 350);
-  } else {
-    dialog.setPreferredSize(250, 180);
   }
+  dialog.setContentPreferredSize(253, null);
   dialogElement.appendChild(this.createVersionForm_());
 
   return dialog;
