@@ -15,7 +15,7 @@
     <val lang="fr_FR">Cannot check out "{0}" because it is already checked out by "{1}".</val>
     <val lang="ja_JP">チェックアウトをできません。{0} は {1} よってチェックアウトされました</val>
     <val lang="nl_NL">Uitchecken is niet mogelijk. "{0}" is uitgecheckt door "{1}"</val>
-    <val lang="zh_CN">Cannot check out "{0}" because it is already checked out by "{1}".</val>
+    <val lang="zh_CN">检出失败. {0} 被{1}检出</val>
   </key>
   <key value="SAVE_CHANGES_BEFORE_CHECK_IN_" distribution="webauthor">
     <comment>Warning shown when attempting to check in a document with unsaved changes.</comment>
