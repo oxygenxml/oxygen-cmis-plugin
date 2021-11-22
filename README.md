@@ -29,14 +29,14 @@ To install the plugin in Oxygen XML Web Author, you can use the Administration P
 The plugin is packed as an Oxygen add-on. To install it, follow these instructions:
 
 1. Go to **Help > Install new add-ons...** to open an add-on selection dialog box.
-2. Enter or paste `https://raw.githubusercontent.com/oxygenxml/oxygen-cmis-plugin/BRANCH_OXYGEN_RELEASE_21_1_1/oxygen-cmis-workspace-access/addon/addon.xml` in the **Show add-ons from** field.
+2. Enter or paste `https://raw.githubusercontent.com/oxygenxml/oxygen-cmis-plugin/BRANCH_OXYGEN_RELEASE_24_0/oxygen-cmis-workspace-access/addon/addon.xml` in the **Show add-ons from** field.
 3. Select the **Oxygen CMIS plugin** add-on and click **Next**.
 4. Read the end-user license agreement. Then select the **I accept all terms of the end-user license agreement** option and click **Finish**.
 5. Restart the application.
 
 ## Offline Installation
 To install the add-on offline, follow these instructions:
-1. Go to the [Releases page](https://github.com/oxygenxml/oxygen-cmis-plugin/releases/latestt) and download `oxygen-cmis-workspace-access-1.0-SNAPSHOT-plugin.zip`
+1. Go to the [Releases page](https://github.com/oxygenxml/oxygen-cmis-plugin/releases/latest) and download `oxygen-cmis-workspace-access-1.0-SNAPSHOT-plugin.zip`
 2. Unzip it inside `{oXygenInstallDir}/plugins`. Make sure you don't create any any intermediate folders. After unzipping the archive, the file system should look like this: `{oXygenInstallDir}/plugins/oxygen-cmis-workspace-access-1.0-SNAPSHOT-plugin`, and inside this folder there should be a `plugin.xml`file.
 
 
