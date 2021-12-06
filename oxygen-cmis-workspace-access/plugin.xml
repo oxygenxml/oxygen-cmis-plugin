@@ -7,7 +7,7 @@
  name="CMIS Support"
  description="Browing support for CMIS resources."
  version="${project.nosnapshot.version}"
- vendor="SyncRO"
+ vendor="Syncro Soft"
  class="com.oxygenxml.cmis.plugin.CMISPlugin"
  classLoaderType="preferReferencedResources">
  
