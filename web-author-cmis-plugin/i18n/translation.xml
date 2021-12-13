@@ -12,7 +12,7 @@
     <comment>Message when cannot check out because the document is checked out by another user</comment>
     <val lang="en_US">Cannot check out "{0}" because it is already checked out by "{1}".</val>
     <val lang="de_DE">Auschecken nicht möglich. "{0}" ist ausgecheckt von {1}</val>
-    <val lang="fr_FR">Cannot check out "{0}" because it is already checked out by "{1}".</val>
+    <val lang="fr_FR">Impossible d''extraire "{0}" car il est déjà extrait par "{1}".</val>
     <val lang="ja_JP">チェックアウトをできません。{0} は {1} よってチェックアウトされました</val>
     <val lang="nl_NL">Uitchecken is niet mogelijk. "{0}" is uitgecheckt door "{1}"</val>
     <val lang="zh_CN">检出失败. {0} 被{1}检出</val>
