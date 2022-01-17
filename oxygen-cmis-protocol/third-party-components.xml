@@ -1264,9 +1264,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             <url>http://www.opensource.org/licenses/bsd-license.php</url>
         </license>
     </component>
-    <component id="org.slf4j:slf4j-api:1.7.21" draft="false" product="webapp">
+    <component id="org.slf4j:slf4j-api:1.7.32" draft="false" product="webapp">
         <name>SLF4J API Module</name>
-        <version>1.7.21</version>
+        <version>1.7.32</version>
         <project-info>
             <about>The slf4j API</about>
             <licensor>QOS.ch</licensor>
