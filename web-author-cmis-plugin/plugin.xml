@@ -6,7 +6,7 @@
 
 	id="web-author-cmis-plugin" name="CMIS Plugin"
 	description="Plugin that adds support for CMIS servers including browsing for files, check out, edit, save, check in."
-	version="${project.nosnapshot.version}" vendor="Syncro Soft SRL">
+	version="${project.nosnapshot.version}" vendor="Syncro Soft">
 
 	<runtime>
 		<librariesFolder name="lib" />
