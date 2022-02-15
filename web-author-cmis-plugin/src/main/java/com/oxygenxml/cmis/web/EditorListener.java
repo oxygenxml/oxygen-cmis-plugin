@@ -11,7 +11,6 @@ import java.util.Locale;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
-import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -19,6 +18,7 @@ import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.access.EditingSessionContext;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
@@ -32,9 +32,8 @@ import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 
 
+@Slf4j
 public class EditorListener implements WorkspaceAccessPluginExtension {
-
-	private static final Logger logger = Logger.getLogger(EditorListener.class.getName());
 
 	private PluginResourceBundle rb;
 
@@ -89,7 +88,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		rb = webappPluginWorkspace.getResourceBundle();
 
 		try {
-			logger.info("EditorListener was loaded!");
+			log.info("EditorListener was loaded!");
 
 			if (url.getQuery() != null && url.getQuery().contains(EditorOption.OLD_VERSION.getValue())) {
 				
@@ -109,7 +108,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			}
 
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e1) {
-			logger.info(e1.getMessage());
+			log.info(e1.getMessage());
 		}
 	}
 

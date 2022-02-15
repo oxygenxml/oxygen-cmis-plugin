@@ -6,12 +6,12 @@ import java.net.URL;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
-import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.EditorListener;
 import com.oxygenxml.cmis.web.TranslationTags;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
@@ -25,10 +25,8 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 @WebappRestSafe
+@Slf4j
 public class CmisCancelCheckOut extends AuthorOperationWithResult {
-	
-	private static final Logger logger = Logger.getLogger(CmisCancelCheckOut.class.getName());
-	
 	
 	@Override
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
@@ -50,7 +48,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
-			logger.debug(e.getStackTrace());
+			log.debug(e.getStackTrace());
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
@@ -71,7 +69,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 				}
 				
 			} catch (Exception e) {
-			  logger.error("Could not cancel check out for document:" + document, e);
+			  log.error("Could not cancel check out for document:" + document, e);
 				return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
 			}
 		}
@@ -102,9 +100,9 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 		if (latest.isVersionSeriesCheckedOut()) {
 		  latest.cancelCheckOut();
 
-      logger.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
+      log.info(document.getName() + " checked-out: " + document.isVersionSeriesCheckedOut());
 		} else {
-		  logger.info("Document isn't checked-out!");
+		  log.info("Document isn't checked-out!");
 			
 		}
 	}

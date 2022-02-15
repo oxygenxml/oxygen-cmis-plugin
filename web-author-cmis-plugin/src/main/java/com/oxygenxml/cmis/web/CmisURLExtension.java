@@ -2,22 +2,17 @@ package com.oxygenxml.cmis.web;
 
 import java.net.URLStreamHandler;
 
-import org.apache.log4j.Logger;
-
 import com.oxygenxml.cmis.core.CmisURL;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension;
 
+@Slf4j
 public class CmisURLExtension implements URLStreamHandlerPluginExtension {
 
-	private static final Logger logger = Logger.getLogger(CmisURLExtension.class.getName());
-
-	/**
-	 * 
-	 */
-	@Override
+  @Override
 	public URLStreamHandler getURLStreamHandler(String protocol) {
-		logger.info("CmisURLExtension.getURLStreamHandler() ---> " + protocol);
+		log.info("CmisURLExtension.getURLStreamHandler() ---> " + protocol);
 		if (protocol.startsWith(CmisURL.CMIS_PROTOCOL)) {
 			return new CmisStreamHandler();
 		}

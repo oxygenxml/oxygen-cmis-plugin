@@ -6,12 +6,12 @@ import java.net.URL;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
-import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.EditorListener;
 import com.oxygenxml.cmis.web.TranslationTags;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
@@ -24,9 +24,8 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 @WebappRestSafe
+@Slf4j
 public class CmisCheckIn extends AuthorOperationWithResult{
-	
-	private static final Logger logger = Logger.getLogger(CmisCheckIn.class.getName());
 
 	/**
 	 * Do CMIS Check in operation.
@@ -49,7 +48,7 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
-		  logger.debug("Error getting CMIS document " + urlWithoutContextId);
+		  log.debug("Error getting CMIS document " + urlWithoutContextId);
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
@@ -105,9 +104,9 @@ public class CmisCheckIn extends AuthorOperationWithResult{
       }
 
       latest.refresh();
-      logger.info(latest.getName() + " checked-out: " + latest.isVersionSeriesCheckedOut());
+      log.info(latest.getName() + " checked-out: " + latest.isVersionSeriesCheckedOut());
     } else {
-      logger.info("Document isn't checked-out!");
+      log.info("Document isn't checked-out!");
 
     }
 	}

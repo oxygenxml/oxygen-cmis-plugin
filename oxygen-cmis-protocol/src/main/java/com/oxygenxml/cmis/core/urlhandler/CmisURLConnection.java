@@ -25,19 +25,16 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CmisURLConnection extends URLConnection {
-  /**
-   * Logging support.
-   */
-  private static Logger logger = LogManager.getLogger(CmisURLConnection.class);
 
   /**
    * CMISAcces Instance.
@@ -111,8 +108,8 @@ public class CmisURLConnection extends URLConnection {
    * @return the generated Url
    */
   public static String generateURLObject(CmisObject object, ResourceController ctrl) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Generate URL for: " + object.getName());
+    if (log.isDebugEnabled()) {
+      log.debug("Generate URL for: " + object.getName());
     }
 
     // Get and encode server URL
@@ -130,8 +127,8 @@ public class CmisURLConnection extends URLConnection {
 
     // Get and apend to URL path of Cmis Object
     List<String> objectPaths = ((FileableCmisObject) object).getPaths();
-    if (logger.isDebugEnabled()) {
-      logger.debug("Paths: " + objectPaths);
+    if (log.isDebugEnabled()) {
+      log.debug("Paths: " + objectPaths);
     }
     CmisURL objCmisUrl;
     if (!objectPaths.isEmpty()) {

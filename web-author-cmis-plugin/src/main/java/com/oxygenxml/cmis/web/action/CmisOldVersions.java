@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
-import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -19,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.TranslationTags;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
@@ -31,9 +31,8 @@ import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 @WebappRestSafe
+@Slf4j
 public class CmisOldVersions extends AuthorOperationWithResult {
-	
-	private static final Logger logger = Logger.getLogger(CmisOldVersions.class.getName());
 	
 	/**
 	 * Do CMIS Old Versions operation.
@@ -62,7 +61,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
-			logger.debug("Error getting CMIS document " + urlWithoutContextId);
+			log.debug("Error getting CMIS document " + urlWithoutContextId);
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		

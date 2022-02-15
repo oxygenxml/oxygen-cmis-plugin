@@ -6,15 +6,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import com.oxygenxml.cmis.core.UserCredentials;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 
+@Slf4j
 public class CmisLoginServlet extends WebappServletPluginExtension {
-
-	private static final Logger logger = Logger.getLogger(CmisLoginServlet.class.getName());
 
 	@Override
 	public String getPath() {
@@ -34,7 +32,7 @@ public class CmisLoginServlet extends WebappServletPluginExtension {
 		String userId = httpRequest.getSession().getId();
 		String action = httpRequest.getParameter("action");
 
-		logger.info("CmisLoginServlet.doPost() userId --->" + userId + " action ---> " + action);
+		log.info("CmisLoginServlet.doPost() userId --->" + userId + " action ---> " + action);
 
 		if ("logout".equals(action)) {
 		  CredentialsManager.INSTANCE.forgetUserCredentials(userId);

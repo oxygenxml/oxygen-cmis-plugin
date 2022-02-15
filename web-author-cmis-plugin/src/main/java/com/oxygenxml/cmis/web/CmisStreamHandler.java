@@ -1,24 +1,24 @@
 package com.oxygenxml.cmis.web;
 
+
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-
-import org.apache.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 
+@Slf4j
 public class CmisStreamHandler extends URLStreamHandlerWithContext {
 
-	private static final Logger logger = Logger.getLogger(CmisStreamHandler.class.getName());
 
 	@Override
 	protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
@@ -28,7 +28,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
 		URL serverUrl = CmisURL.parseServerUrl(url.toExternalForm());
 
-		logger.info("Server URL: " + serverUrl.toExternalForm());
+		log.info("Server URL: " + serverUrl.toExternalForm());
 
 		boolean isUserValid = true;
 		if (credentials != null && !credentials.isEmpty()) {
@@ -36,7 +36,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 				cmisAccess.pureConnectToServer(serverUrl, credentials);
 			} catch (Exception e) {
 			  // may be CmisUnauthorizedException
-			  logger.error(e, e);
+			  log.error(e, e);
 			  isUserValid = false;
 			}
 		} else {

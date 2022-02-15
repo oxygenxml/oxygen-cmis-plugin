@@ -13,22 +13,20 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.Action;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * CMIS document implementation.
  */
+@Slf4j
 public class DocumentImpl implements IDocument {
-  /**
-   * Logging.
-   */
-  private static final Logger logger = LogManager.getLogger(DocumentImpl.class);
+  
   /**
    * Wrapped CMIS document.
    */
@@ -244,10 +242,10 @@ public class DocumentImpl implements IDocument {
   public boolean isCheckedOut() {
     // A property needed to be set on creation of the document in order to get
     // this property
-    if (logger.isDebugEnabled()) {
+    if (log.isDebugEnabled()) {
       Property<Object> property = doc.getProperty("cmis:isVersionSeriesCheckedOut");
       if (property != null) {
-        logger.debug(getDisplayName() + " is checked out=" + property.getValuesAsString());
+        log.debug(getDisplayName() + " is checked out=" + property.getValuesAsString());
       }
     }
     Boolean versionSeriesCheckedOut = doc.isVersionSeriesCheckedOut();
@@ -263,10 +261,10 @@ public class DocumentImpl implements IDocument {
    */
   @Override
   public boolean isPrivateWorkingCopy() {
-    if (logger.isDebugEnabled()) {
+    if (log.isDebugEnabled()) {
       Property<Object> property = doc.getProperty("cmis:isPrivateWorkingCopy");
       if (property != null) {
-        logger.debug("CPWC=" + property.getValuesAsString());
+        log.debug("CPWC=" + property.getValuesAsString());
       }
     }
     
@@ -286,9 +284,9 @@ public class DocumentImpl implements IDocument {
 
       ObjectId pwcId = doc.checkOut();
       Document pwc = (Document) cmisAccess.getSession().getObject(pwcId);
-      if (logger.isDebugEnabled()) {
-        logger.debug("PWC ID=" + pwcId);
-        logger.debug("PWC name=" + pwc.getName());
+      if (log.isDebugEnabled()) {
+        log.debug("PWC ID=" + pwcId);
+        log.debug("PWC name=" + pwc.getName());
       }
 
       return pwc;

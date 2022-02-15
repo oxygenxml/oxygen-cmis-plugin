@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.HashMap;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.cmis.core.CMISAccess;
@@ -13,12 +12,11 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.CredentialsManager;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
 
-
+@Slf4j
 public class CmisActionsUtills {
-	
-	private static final Logger logger = Logger.getLogger(CmisActionsUtills.class.getName());
 
 	/**
 	 * Not meant to be instantiated.
@@ -58,7 +56,7 @@ public class CmisActionsUtills {
 		try {
 			errorInfoJSON = CmisActionsUtills.getErrorInfoJSON(errorType, errorMessage);
 		} catch (IOException e) {
-			logger.debug(e.getMessage());
+			log.debug(e.getMessage());
 		}
 		
 		return errorInfoJSON;
@@ -74,7 +72,7 @@ public class CmisActionsUtills {
 		String contextId = url.getUserInfo();
 		UserCredentials credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
 		
-		logger.info("Getting connection!");
+		log.info("Getting connection!");
 		
 		return new CmisURLConnection(url, new CMISAccess(), credentials);
 	}

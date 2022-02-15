@@ -12,19 +12,17 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.model.IDocument;
 import com.oxygenxml.cmis.core.model.IResource;
 import com.oxygenxml.cmis.core.model.impl.DocumentImpl;
 import com.oxygenxml.cmis.core.model.impl.FolderImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SearchController {
-  /**
-   * Logging.
-   */
-  private static final Logger logger = LogManager.getLogger(SearchController.class);
+
   private static final String FOLDER_TYPE = "cmis:folder";
   private static final String DOCUMENT_TYPE = "cmis:document";
   public static final int SEARCH_IN_DOCUMENT = 1;
@@ -284,8 +282,8 @@ public class SearchController {
 
     String where = strBuild.toString();
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Where statement : " + where);
+    if (log.isDebugEnabled()) {
+      log.debug("Where statement : " + where);
     }
 
     // The results after the search.
@@ -458,7 +456,7 @@ public class SearchController {
           return scanLines(searchKeys, STRING_LIMIT, documentContent);
         }
       } catch (Exception e) {
-        logger.debug("Exception", e);
+        log.debug("Exception", e);
       }
 
     }
@@ -480,7 +478,7 @@ public class SearchController {
         // If line contains the key
         if (line.contains(key)) {
 
-          logger.debug("Content found=" + line);
+          log.debug("Content found=" + line);
           scanner.close();
           return limitStringResult(line, key, STRING_LIMIT);
         }

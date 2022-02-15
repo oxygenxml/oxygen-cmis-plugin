@@ -21,11 +21,12 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ResourceController {
   /**
    * Default object type.
@@ -36,11 +37,6 @@ public class ResourceController {
    * Type of the versionable objects.
    */
   public static final String VERSIONABLE_OBJ_TYPE = "VersionableType";
-  
-  /**
-   * Logging.
-   */
-  private static final Logger logger = LogManager.getLogger(ResourceController.class);
 
   /**
    * The CMIS session.
@@ -311,7 +307,7 @@ public class ResourceController {
       try {
         document = (Document) session.getObject(docID);
       } catch (CmisObjectNotFoundException e) {
-        logger.warn("No object found for: " + docID);
+        log.warn("No object found for: " + docID);
       }
       
       if (document != null) {

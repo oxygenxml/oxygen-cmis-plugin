@@ -14,9 +14,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.net.protocol.http.HttpExceptionWithDetails;
 
 /**
@@ -25,11 +24,8 @@ import ro.sync.net.protocol.http.HttpExceptionWithDetails;
  * 
  * @author cristi_talau
  */
+@Slf4j
 public class OxygenHttpInvoker implements HttpInvoker {
-  /**
-   * Logging support.
-   */
-  private static Logger logger = LogManager.getLogger(OxygenHttpInvoker.class);
   
   /**
    * The original invoker.
@@ -91,7 +87,7 @@ public class OxygenHttpInvoker implements HttpInvoker {
     } catch (CmisConnectionException e) {
       return handleConnectionException(e);
     } catch (IOException e) {
-      logger.debug("Error when materializing CMIS PUT response", e);
+      log.debug("Error when materializing CMIS PUT response", e);
       return new Response(500, e.getMessage(), Collections.emptyMap(), 
           new ByteArrayInputStream(new byte[0]), 
           new ByteArrayInputStream(new byte[0]));

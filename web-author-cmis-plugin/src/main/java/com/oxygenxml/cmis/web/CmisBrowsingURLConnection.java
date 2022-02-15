@@ -21,7 +21,6 @@ import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
-import org.apache.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CmisURL;
@@ -30,13 +29,14 @@ import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisAction;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.net.protocol.FolderEntryDescriptor;
 
+@Slf4j
 public class CmisBrowsingURLConnection extends FilterURLConnection {
-	private static final Logger logger = Logger.getLogger(CmisBrowsingURLConnection.class.getName());
 
 	private static final String ERROR_MESSAGE = "Invalid username or password!";
 	private static final String ERROR_CODE = "401";
@@ -64,7 +64,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			String cmisQuery = this.url.getQuery();
 			
 			if (cmisQuery != null && cmisQuery.contains(CmisAction.OLD_VERSION.getValue())) {
-				logger.debug("Old ver. InputStream.");
+				log.debug("Old ver. InputStream.");
 				return getOlderVersionInputStream();
 			}
 

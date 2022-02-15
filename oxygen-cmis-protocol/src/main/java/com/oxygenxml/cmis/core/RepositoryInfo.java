@@ -4,8 +4,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The CMIS URLs have a repository part which contains the id and the name of the
@@ -16,9 +15,8 @@ import org.apache.logging.log4j.Logger;
  * @author bogdan_paulon
  *
  */
+@Slf4j
 public class RepositoryInfo {
-
-  private static Logger logger = LogManager.getLogger(RepositoryInfo.class);
 
   /**
    * The pattern to extract the repository ID from an URL. The repository part of
@@ -53,7 +51,7 @@ public class RepositoryInfo {
     if (m.matches()) {
       String name = m.group(1);
       String id = m.group(2);
-      logger.debug("Repo name:{} - id: {}", name, id);
+      log.debug("Repo name:{} - id: {}", name, id);
       return new RepositoryInfo(id, name);
     }
     return new RepositoryInfo(urlPart, "");

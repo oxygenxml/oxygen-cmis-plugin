@@ -9,19 +9,16 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.model.IFolder;
 import com.oxygenxml.cmis.core.model.IResource;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FolderImpl implements IFolder {
 
-  /**
-   * Logger for logging.
-   */
-  private static Logger logger = LogManager.getLogger(FolderImpl.class.getName());
   /**
    * Wrapped CMIS folder.
    */
@@ -61,7 +58,7 @@ public class FolderImpl implements IFolder {
       } else if (next instanceof Folder) {
         return new FolderImpl((Folder) next);
       } else {
-        logger.error("Unhandled type " + next.getClass());
+        log.error("Unhandled type " + next.getClass());
         return new OtherResource(next);
       }
     }
