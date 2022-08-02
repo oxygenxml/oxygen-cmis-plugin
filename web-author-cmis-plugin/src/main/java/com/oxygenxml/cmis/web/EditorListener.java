@@ -35,6 +35,11 @@ import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 @Slf4j
 public class EditorListener implements WorkspaceAccessPluginExtension {
 
+  /**
+   * System property that can be used to always to the checkin comment textfield.
+   */
+  private static final String CMIS_SERVICE_SUPPORTS_CHECKIN_COMMENT = "cmis.service.supports_checkin_comment";
+
 	private PluginResourceBundle rb;
 
 	private URL url;
@@ -97,9 +102,8 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			} else {
 				document = (Document) connection.getCMISObject(urlWithoutContextId);
 
-				// If server doesn't support private working copy and check in comments features
-				// we disable this actions in editor.
-				if(document.getCheckinComment() != null) {
+				boolean isCheckinCommentSupported = isCheckinCommentSupported();
+        if(isCheckinCommentSupported) {
 					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
 					.setPseudoClass(EditorOption.SUPPORTS_COMMIT_MESSAGE.getValue());
 				}
@@ -111,6 +115,11 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 			log.info(e1.getMessage());
 		}
 	}
+
+  private boolean isCheckinCommentSupported() {
+    return document.getCheckinComment() != null
+        || "true".equals(System.getProperty(CMIS_SERVICE_SUPPORTS_CHECKIN_COMMENT));
+  }
 
 	/**
 	 * If Server or repository doesn't support versionable features
