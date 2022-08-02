@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -36,7 +37,7 @@ import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 public class EditorListener implements WorkspaceAccessPluginExtension {
 
   /**
-   * System property that can be used to always to the checkin comment textfield.
+   * System property or option that can be used to always to the checkin comment textfield.
    */
   private static final String CMIS_SERVICE_SUPPORTS_CHECKIN_COMMENT = "cmis.service.supports_checkin_comment";
 
@@ -117,8 +118,11 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 	}
 
   private boolean isCheckinCommentSupported() {
+    WSOptionsStorage optionsStorage = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage();
+    String isSupportingCommentConfig = Optional.ofNullable(System.getProperty(CMIS_SERVICE_SUPPORTS_CHECKIN_COMMENT))
+      .orElse(optionsStorage.getOption(CMIS_SERVICE_SUPPORTS_CHECKIN_COMMENT, null));
     return document.getCheckinComment() != null
-        || "true".equals(System.getProperty(CMIS_SERVICE_SUPPORTS_CHECKIN_COMMENT));
+        || "true".equals(isSupportingCommentConfig);
   }
 
 	/**
