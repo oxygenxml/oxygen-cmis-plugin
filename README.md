@@ -51,6 +51,9 @@ mvn clean install
 
 The plugin for Oxygen XML Editor/Author can be found in ` oxygen-cmis-workspace-access/target/oxygen-cmis-workspace-access-*-plugin.zip`.
 
+## Development
+
+To explore various objects in a CMIS repository, a good tool is the OpenCMIS Workbench: https://chemistry.apache.org/java/developing/tools/dev-tools-workbench.html .
 
 # Copyright and License
 
