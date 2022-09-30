@@ -1,10 +1,12 @@
 package com.oxygenxml.cmis.web;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -270,6 +272,45 @@ public class ListOldVersionsActionIT {
     }
   }
 	
+  /**
+   * Test that the author or each revision is correct.
+   * @throws Exception
+   */
+  @Test
+  public void testAuthorIsCorrectlyDisplayed() throws Exception {
+    Document document = null;
+    try {
+      document = createEmptyVersionedDocument("multi-user-history.xml");
+      createNewMajorVersionAsUser(document, "admin");
+      createNewMajorVersionAsUser(document, "other-user");
+      createNewMajorVersionAsUser(document, "admin");
+      
+      String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+      
+      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      
+      List<String> authors = versions.stream().map(version -> version.get("author")).collect(toList());
+      assertEquals(Arrays.asList("admin", "other-user", "admin", "admin"), authors);
+    } finally {
+      if (document != null) {
+        ctrl.deleteAllVersionsDocument(document);
+      }
+    }
+  }
+
+  /**
+   * Create a new version of the document, as another user.
+   * @param document The document.
+   * @param otherUserName The other user name.
+   * @throws Exception If it fails.
+   */
+  private void createNewMajorVersionAsUser(Document document, String otherUserName) throws Exception {
+    CMISAccess accessForOtherUser = cmisAccessProvider.createCmisAccessForUserName(otherUserName);
+    ResourceController controllerForOtherUser = accessForOtherUser.createResourceController();
+    Document documentForOtherUser = controllerForOtherUser.getDocument(document.getId());
+    createNewVersion(documentForOtherUser, MAJOR_VERSION_TYPE, "other commit message");
+  }
+  
 	/**
 	 * Create a new empty versioned file.
 	 * @param fileName

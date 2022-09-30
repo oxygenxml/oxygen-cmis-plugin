@@ -1,6 +1,7 @@
 package com.oxygenxml.cmis.web;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -43,10 +44,7 @@ public class CmisAccessProvider extends ExternalResource{
 
   @Override
   protected void before() throws Throwable {
-    serverUrl = new URL("http://localhost:8080/B/atom11");
-
-    cmisAccess = new CMISAccess();
-    cmisAccess.connectToRepo(serverUrl, "A1", new UserCredentials("admin", ""));
+    cmisAccess = createCmisAccessForUserName("admin");
     setter = new URLStreamHandlerFactorySetter();
     OxygenURLStreamHandlerFactory oxygenFactory = new OxygenURLStreamHandlerFactory();
     setter.setFactory(protocol -> {
@@ -62,6 +60,14 @@ public class CmisAccessProvider extends ExternalResource{
        }
      });
 
+  }
+
+  public CMISAccess createCmisAccessForUserName(String userName) throws MalformedURLException {
+    serverUrl = new URL("http://localhost:8080/B/atom11");
+
+    CMISAccess cmisAccess = new CMISAccess();
+    cmisAccess.connectToRepo(serverUrl, "A1", new UserCredentials(userName, ""));
+    return cmisAccess;
   }
   
   @Override
