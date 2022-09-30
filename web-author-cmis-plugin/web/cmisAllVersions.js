@@ -89,7 +89,7 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
 
   // Commit message column might not be available on some servers.
   var versionHeader = this.createHeaderCell_(tr(msgs.VERSION_));
-  var userHeader = this.createHeaderCell_(tr(msgs.MODIFIED_BY_));
+  var userHeader = this.createHeaderCell_(tr(msgs.CREATOR_));
   var commitHeader = supportsCommitMessage ? this.createHeaderCell_(tr(msgs.COMMIT_MESS_)) : '';
 
   goog.dom.removeNode(container.querySelector("#cmis-loader"));

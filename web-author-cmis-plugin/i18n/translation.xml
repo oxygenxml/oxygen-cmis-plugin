@@ -179,14 +179,14 @@
     <val lang="nl_NL">Incheckbericht</val>
     <val lang="zh_CN">提交消息</val>
   </key>
-  <key value="MODIFIED_BY_" distribution="webauthor">
-    <comment>Table header for column of authors which modified the document.</comment>
-    <val lang="en_US">Modified by</val>
-    <val lang="de_DE">Bearbeitet von</val>
-    <val lang="fr_FR">Modifié par</val>
-    <val lang="ja_JP">変更者</val>
-    <val lang="nl_NL">Gewijzigd door</val>
-    <val lang="zh_CN">修改人</val>
+  <key value="CREATOR_" distribution="webauthor">
+      <comment>Author of a version</comment>
+      <val lang="en_US">Creator</val>
+      <val lang="de_DE">Creator</val>
+      <val lang="fr_FR">Creator</val>
+      <val lang="ja_JP">Creator</val>
+      <val lang="nl_NL">Creator</val>
+      <val lang="zh_CN">Creator</val>
   </key>
   <key value="SET_CMIS_API_URL_" distribution="webauthor">
     <comment>Set CMIS API URL in the Configuration Page</comment>

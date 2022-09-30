@@ -124,7 +124,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			  urlParam += "?oldversion=" + version.getId();
 			}
 			String commitMessage = version.getCheckinComment() != null ? version.getCheckinComment() : "";
-			String authorName = version.getLastModifiedBy();
+			String authorName = version.getCreatedBy();
 			
 			versions.add(createProps(label, urlParam, commitMessage, authorName));
 		}
