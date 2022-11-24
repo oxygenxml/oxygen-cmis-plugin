@@ -123,8 +123,8 @@ CmisCheckInAction.prototype.actionPerformed = function(callback) {
 CmisCheckInAction.prototype.createVersionForm_ = function() {
   var createDom = goog.dom.createDom;
   var majorVersionRadio = createDom('input', { type: 'radio', name: 'state', value: 'major' });
-  majorVersionRadio.setAttribute('checked', '');
   var minorVersionRadio = createDom('input', { type: 'radio', name: 'state', value: 'minor' });
+  minorVersionRadio.setAttribute('checked', '');
 
   return createDom('form', '',
     createDom('label', 'cmis-version-label',
