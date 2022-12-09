@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.RepositoryInfo;
+import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisAction;
@@ -201,6 +202,10 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		parent = (FileableCmisObject) connection
 				.getCMISObject(url.toExternalForm());
 
+		String parentPath = CmisURL.parse(this.getURL().toExternalForm()).getFolderPath();
+		String externalForm = url.toExternalForm();
+		ResourceController resourceController = connection.getResourceController(externalForm);
+
 		for (CmisObject obj : ((Folder) parent).getChildren()) {
 			if (obj instanceof Document) {
 				Document doc = (Document) obj;
@@ -215,10 +220,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 				}
 			}
 
-			String parentPath = CmisURL.parse(this.getURL().toExternalForm()).getFolderPath();
-			String entryUrl = CmisURLConnection.generateURLObject(obj,
-					connection.getResourceController(url.toExternalForm()), parentPath);
-
+			String entryUrl = CmisURLConnection.generateURLObject(obj, resourceController, parentPath);
 			if (obj instanceof Folder) {
 				entryUrl = entryUrl.concat("/");
 			}
