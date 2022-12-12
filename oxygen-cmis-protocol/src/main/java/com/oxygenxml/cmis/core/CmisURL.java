@@ -132,6 +132,19 @@ public class CmisURL {
   }
   
   /**
+   * Create the CMIS URL of the given repository.
+   * 
+   * @param serverHttpUrl The URL of the server.
+   * @param repoId The ID of the repository.
+   * @param path The path.
+   * 
+   * @return The CMIS URL.
+   */
+  public static CmisURL ofRepo(URL serverHttpUrl, String repoId, String path) {
+    return new CmisURL(serverHttpUrl, repoId, path);
+  }
+  
+  /**
    * Creates the CMIS URL of the given repository.
    * 
    * @param serverHttpUrl The URL of the server.
@@ -141,16 +154,6 @@ public class CmisURL {
    */
   public static CmisURL ofRepoWithName(URL serverHttpUrl, RepositoryInfo repoInfo) {
     return new CmisURL(serverHttpUrl, repoInfo, "");
-  }
-  
-  /**
-   * Returns an URL that has the same details as the current instance, but a different path.
-   * @param path the path to set
-   * 
-   * @return The CMIS URL object with the given path.
-   */
-  public CmisURL setPath(String path) {
-    return new CmisURL(serverHttpUrl, repositoryInfo.getId(), path);
   }
   
   /**

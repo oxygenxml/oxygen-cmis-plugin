@@ -75,15 +75,12 @@ public class CmisURLConnection extends URLConnection {
     String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
     String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
 
-    CmisURL repoCmisURL; 
     try {
-      repoCmisURL = CmisURL.ofRepo(new URL(originalProtocol), repository);
+      CmisURL objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, parentPath + object.getName());
+      return objCmisUrl.toExternalForm();
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     }
-    
-    CmisURL objCmisUrl = repoCmisURL.setPath(parentPath + object.getName());
-    return objCmisUrl.toExternalForm();
   }
 
   /**
@@ -102,27 +99,23 @@ public class CmisURLConnection extends URLConnection {
     String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
     String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
 
-    // Generate first part of custom URL
-    CmisURL repoCmisURL; 
-    try {
-      repoCmisURL = CmisURL.ofRepo(new URL(originalProtocol), repository);
-    } catch (MalformedURLException e) {
-      // Canot happen.
-      throw new RuntimeException(e);
-    }
-
     // Get and apend to URL path of Cmis Object
     List<String> objectPaths = ((FileableCmisObject) object).getPaths();
     if (log.isDebugEnabled()) {
       log.debug("Paths: " + objectPaths);
     }
-    CmisURL objCmisUrl;
-    if (!objectPaths.isEmpty()) {
-      objCmisUrl = repoCmisURL.setPath(objectPaths.get(0));
-    } else {
-      objCmisUrl = repoCmisURL;
+
+    try {
+      CmisURL objCmisUrl;
+      if (objectPaths.isEmpty()) {
+        objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository);
+      } else {
+        objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, objectPaths.get(0));
+      }
+      return objCmisUrl.toExternalForm();
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
     }
-    return objCmisUrl.toExternalForm();
   }
 
   /**
