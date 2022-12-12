@@ -82,7 +82,7 @@ public class EditorListenerIT {
 
 	    assertNotNull(testDocument);
 	    assertFalse(testDocument.isVersionable());
-			URL url = new URL(CmisURLConnection.generateURLObject(testDocument, ctrl, "/"));
+			URL url = new URL(CmisURLConnection.generateURLObject(ctrl.getRootFolder(), testDocument, ctrl));
 
 			assertNotNull(url);
       

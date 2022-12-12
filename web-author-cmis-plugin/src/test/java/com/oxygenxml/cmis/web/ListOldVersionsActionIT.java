@@ -51,7 +51,7 @@ public class ListOldVersionsActionIT {
 		try {
 			document = createEmptyVersionedDocument("oneVersion");
 			
-			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			
       ArrayList<HashMap<String, String>> versions = getVersions(document, url);
       
@@ -76,7 +76,7 @@ public class ListOldVersionsActionIT {
 			document = createEmptyVersionedDocument("checkedOutMajor");
 			createNewVersion(document, "major", "some commit");
 
-			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			ArrayList<HashMap<String, String>> versions = getVersions(document, url);
 			
       HashMap<String, String> latestVersion = versions.get(0);
@@ -103,7 +103,7 @@ public class ListOldVersionsActionIT {
 			  createNewVersion(document, (i % 2 == 0) ? MAJOR_VERSION_TYPE : MINOR_VERSION_TYPE, "some commit");
 			}
 			
-			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			ArrayList<HashMap<String, String>> versions = getVersions(document, url);
 			
 			HashMap<String, String> latestVersion = versions.get(0);
@@ -143,7 +143,7 @@ public class ListOldVersionsActionIT {
 			
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());
-			String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			
       ArrayList<HashMap<String, String>> versions = getVersions(document, url);
 			
@@ -204,7 +204,7 @@ public class ListOldVersionsActionIT {
       document = createEmptyVersionedDocument("checkedOutMajor");
       createNewVersion(document, "minor", "some commit");
 
-      String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+      String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       ArrayList<HashMap<String, String>> versions = getVersions(document, url);
       
       HashMap<String, String> latestVersion = versions.get(0);
@@ -244,7 +244,7 @@ public class ListOldVersionsActionIT {
       document = createEmptyVersionedDocument("checkedOutMajor");
       createNewVersion(document, "major", "some commit");
 
-      String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+      String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       
       ArrayList<HashMap<String, String>> versions = getVersions(document, url);
       
@@ -285,7 +285,7 @@ public class ListOldVersionsActionIT {
       createNewMajorVersionAsUser(document, "other-user");
       createNewMajorVersionAsUser(document, "admin");
       
-      String url = CmisURLConnection.generateURLObject(document, ctrl, "/");
+      String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       
       ArrayList<HashMap<String, String>> versions = getVersions(document, url);
       

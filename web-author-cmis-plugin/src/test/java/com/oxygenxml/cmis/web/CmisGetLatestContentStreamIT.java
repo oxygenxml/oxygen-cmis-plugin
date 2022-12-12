@@ -52,7 +52,7 @@ public class CmisGetLatestContentStreamIT {
 				    ResourceController.VERSIONABLE_OBJ_TYPE, 
 				    VersioningState.MINOR);
 		
-				URL url = new URL(CmisURLConnection.generateURLObject(document, ctrl));
+				URL url = new URL(CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl));
 				
 				CmisCheckOut.checkOutDocument(document);
 				document.refresh();

@@ -66,17 +66,17 @@ public class CmisURLConnection extends URLConnection {
   /**
    * Generates a CMIS URL for an object.
    * 
-   * @param object The object
+   * @param folder The folder.
    * @param ctrl The resource controller.
    * @return The path to the parent folder.
    * 
    */
-  public static String generateURLObject(CmisObject object, ResourceController ctrl, String parentPath) {
+  public static String generateURLObject(Folder folder, CmisObject object, ResourceController ctrl) {
     String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
     String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
 
     try {
-      CmisURL objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, parentPath + object.getName());
+      CmisURL objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, folder.getPath() + object.getName());
       return objCmisUrl.toExternalForm();
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);
@@ -86,13 +86,13 @@ public class CmisURLConnection extends URLConnection {
   /**
    * Overload the one with parent path.
    * 
-   * @param object
+   * @param folder
    * @param ctrl
    * @return the generated Url
    */
-  public static String generateURLObject(CmisObject object, ResourceController ctrl) {
+  public static String generateURLObject(Folder folder, ResourceController ctrl) {
     if (log.isDebugEnabled()) {
-      log.debug("Generate URL for: " + object.getName());
+      log.debug("Generate URL for: " + folder.getName());
     }
 
     // Get and encode server URL
@@ -100,7 +100,7 @@ public class CmisURLConnection extends URLConnection {
     String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
 
     // Get and apend to URL path of Cmis Object
-    List<String> objectPaths = ((FileableCmisObject) object).getPaths();
+    List<String> objectPaths = folder.getPaths();
     if (log.isDebugEnabled()) {
       log.debug("Paths: " + objectPaths);
     }
@@ -310,7 +310,7 @@ public class CmisURLConnection extends URLConnection {
     Document document = resourceController.createEmptyVersionedDocument(
         rootFolder, fileName, mimeType, VersioningState.MINOR);
 
-    return generateURLObject(document, resourceController, folderPath);
+    return generateURLObject(rootFolder, document, resourceController);
   }
 
   public boolean canCheckoutDocument(Document doc) {

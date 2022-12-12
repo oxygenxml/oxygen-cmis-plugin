@@ -206,7 +206,8 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		String externalForm = url.toExternalForm();
 		ResourceController resourceController = connection.getResourceController(externalForm);
 
-		for (CmisObject obj : ((Folder) parent).getChildren()) {
+		Folder folder = (Folder) parent;
+    for (CmisObject obj : folder.getChildren()) {
 			if (obj instanceof Document) {
 				Document doc = (Document) obj;
 				Boolean isPrivateWorkingCopy = doc.isPrivateWorkingCopy();
@@ -220,7 +221,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 				}
 			}
 
-			String entryUrl = CmisURLConnection.generateURLObject(obj, resourceController, parentPath);
+			String entryUrl = CmisURLConnection.generateURLObject(folder, obj, resourceController);
 			if (obj instanceof Folder) {
 				entryUrl = entryUrl.concat("/");
 			}
