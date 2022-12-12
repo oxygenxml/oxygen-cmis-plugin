@@ -48,7 +48,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
-			log.debug(e.getStackTrace());
+			log.debug(e.getMessage(), e);
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		

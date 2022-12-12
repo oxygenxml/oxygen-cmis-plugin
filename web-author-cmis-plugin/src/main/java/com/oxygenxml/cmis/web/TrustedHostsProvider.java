@@ -49,7 +49,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
         URL url = new URL(enforcedUrl);
         this.enforcedHost = url.getHost() + ":" + (url.getPort() != -1 ? url.getPort() : url.getDefaultPort());
       } catch (MalformedURLException e) {
-        log.warn(e, e);
+        log.warn(e.getMessage(), e);
       }
     }
   }
