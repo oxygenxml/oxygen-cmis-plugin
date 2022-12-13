@@ -78,6 +78,9 @@ public class CmisURLConnection extends URLConnection {
 
     try {
       String folderPath = folder.getPath();
+      if (!folderPath.endsWith("/")) {
+        folderPath = folderPath + "/";
+      }
       CmisURL objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, folderPath + object.getName());
       String url = objCmisUrl.toExternalForm();
       if (object instanceof Folder) {
