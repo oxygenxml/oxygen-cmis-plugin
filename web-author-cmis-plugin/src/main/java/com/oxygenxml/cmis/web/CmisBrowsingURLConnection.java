@@ -202,7 +202,6 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		parent = (FileableCmisObject) connection
 				.getCMISObject(url.toExternalForm());
 
-		String parentPath = CmisURL.parse(this.getURL().toExternalForm()).getFolderPath();
 		String externalForm = url.toExternalForm();
 		ResourceController resourceController = connection.getResourceController(externalForm);
 
@@ -222,9 +221,6 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			}
 
 			String entryUrl = CmisURLConnection.generateURLObject(folder, obj, resourceController);
-			if (obj instanceof Folder) {
-				entryUrl = entryUrl.concat("/");
-			}
 
 			list.add(new FolderEntryDescriptor(entryUrl));
 		}

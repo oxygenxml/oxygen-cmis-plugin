@@ -67,6 +67,7 @@ public class CmisURLConnection extends URLConnection {
    * Generates a CMIS URL for an object.
    * 
    * @param folder The folder.
+   * @param object The object within.
    * @param ctrl The resource controller.
    * @return The path to the parent folder.
    * 
@@ -76,8 +77,13 @@ public class CmisURLConnection extends URLConnection {
     String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
 
     try {
-      CmisURL objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, folder.getPath() + object.getName());
-      return objCmisUrl.toExternalForm();
+      String folderPath = folder.getPath();
+      CmisURL objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, folderPath + object.getName());
+      String url = objCmisUrl.toExternalForm();
+      if (object instanceof Folder) {
+        url = url.concat("/");
+      }
+      return url;
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     }
