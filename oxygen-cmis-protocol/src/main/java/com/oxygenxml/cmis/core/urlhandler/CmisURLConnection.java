@@ -90,41 +90,6 @@ public class CmisURLConnection extends URLConnection {
   }
 
   /**
-   * Overload the one with parent path.
-   * 
-   * @param folder
-   * @param ctrl
-   * @return the generated Url
-   */
-  public static String generateURLObject(Folder folder, ResourceController ctrl) {
-    if (log.isDebugEnabled()) {
-      log.debug("Generate URL for: " + folder.getName());
-    }
-
-    // Get and encode server URL
-    String originalProtocol = ctrl.getSession().getSessionParameters().get(SessionParameter.ATOMPUB_URL);
-    String repository = ctrl.getSession().getSessionParameters().get(SessionParameter.REPOSITORY_ID);
-
-    // Get and apend to URL path of Cmis Object
-    List<String> objectPaths = folder.getPaths();
-    if (log.isDebugEnabled()) {
-      log.debug("Paths: " + objectPaths);
-    }
-
-    try {
-      CmisURL objCmisUrl;
-      if (objectPaths.isEmpty()) {
-        objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository);
-      } else {
-        objCmisUrl = CmisURL.ofRepo(new URL(originalProtocol), repository, objectPaths.get(0));
-      }
-      return objCmisUrl.toExternalForm();
-    } catch (MalformedURLException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
    * Gets the CmisObject identified by the given URL.
    * 
    * @param url

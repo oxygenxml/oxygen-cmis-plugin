@@ -7,14 +7,17 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CmisAccessTestSingleton;
+import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.ConnectionTestBase;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
@@ -78,15 +81,8 @@ public class CustomProtocolIT extends ConnectionTestBase {
 
 	@Test
 	public void testGetFolderFromURL() throws IOException {
-		Folder folder = (Folder) ctrl.getSession().getObjectByPath("/My_Folder-0-1/My_Folder-1-0");
-		String url = CmisURLConnection.generateURLObject(folder, ctrl);
-		
-		assertNotNull("Folder is null", folder);
-		assertNotNull("URL is null", url);
-		assertEquals("Invalid URL", "cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-1/My_Folder-1-0", url);
-		
+		String url = "cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/My_Folder-0-1/My_Folder-1-0";
 		Folder foldURL = (Folder) getObjectFromURL(url, serverUrl, new UserCredentials("admin", "admin"));
-
 		assertNotNull("Null folder", foldURL);
 	}
 
