@@ -159,7 +159,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       logger.error("Error ", e1);
     } catch (CmisRuntimeException e) {
       // Unexpected exception
-      logger.debug(e, e);
+      logger.debug(e.getMessage(), e);
       
       PluginWorkspaceProvider.getPluginWorkspace().showErrorMessage("Unable to retrieve repositories because of: " + e.getMessage(), e);
     } 
@@ -217,7 +217,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
       } catch (CmisUnauthorizedException e) {
         // Will try again.
         if (logger.isDebugEnabled()) {
-          logger.debug(e, e);
+          logger.debug(e.getMessage(), e);
         }
       }
 
@@ -486,7 +486,7 @@ public class ItemListView extends JPanel implements ResourcesBrowser, SearchList
         }
       }
     } catch (IOException e) {
-      logger.error(e, e);
+      logger.error(e.getMessage(), e);
     }
   }
 

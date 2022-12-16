@@ -22,13 +22,11 @@ listOldVersionsAction.prototype.getSmallIcon = function() {
   return sync.util.computeHdpiIcon('../plugin-resources/cmis/icons/ShowVersionHistory16.png');
 };
 
-
 /** @override */
 listOldVersionsAction.prototype.actionPerformed = function(callback) {
   // Check if the server supports Commit Message.
-  // todo: (WA-2472/WA-2709) disabled the commit message column until the table is reworked.
-  var supportsCommitMessage = false/*this.status_.supportsCommitMessage()*/;
-
+  let supportsCommitMessage = this.status_.supportsCommitMessage();
+ 
   var allVerDialog = this.getDialog_(supportsCommitMessage);
   allVerDialog.show();
 
@@ -86,29 +84,12 @@ listOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
 listOldVersionsAction.prototype.handleOperationResult_ = function(container, supportsCommitMessage, err, data) {
   // remove selection from document.
   document.activeElement.blur();
-
-  // Commit message column might not be available on some servers.
-  var versionHeader = this.createHeaderCell_(tr(msgs.VERSION_));
-  var userHeader = this.createHeaderCell_(tr(msgs.CREATOR_));
-  var commitHeader = supportsCommitMessage ? this.createHeaderCell_(tr(msgs.COMMIT_MESS_)) : '';
-
   goog.dom.removeNode(container.querySelector("#cmis-loader"));
 
   var versions = JSON.parse(data);
-  goog.dom.append(container,
-    goog.dom.createDom('div', { id: 'cmis-head' },
-      versionHeader,
-      userHeader,
-      commitHeader
-    ),
-    this.createTable_(versions, supportsCommitMessage)
-  );
+  goog.dom.append(container, this.createTable_(versions, supportsCommitMessage));
 
-  this.resizeHeaderWidth_(versionHeader, 'version');
-  this.resizeHeaderWidth_(userHeader, 'user');
-  this.resizeHeaderWidth_(commitHeader, 'commit');
-
-  // In case of older version, scroll it into view.
+    // In case of older version, scroll it into view.
   var oldVersionSelected = document.querySelector('.current-version:not(:first-child)');
   if (oldVersionSelected) {
     oldVersionSelected.scrollIntoView(false);
@@ -128,6 +109,16 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
   var table = goog.dom.createDom('table', { id: 'cmis-all-versions-table'});
   var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
+  let headerRow = goog.dom.createDom('tr', {class: 'table-header-row'},
+      [goog.dom.createDom('td', {class: 'td-header'}, "Version"),
+      goog.dom.createDom('td', {class: 'td-header'}, "Creator")]);
+  if(supportsCommitMessage) {
+    let headerCommitMessage = goog.dom.createDom('td', {class: 'td-header'}, 'Commit message');
+    headerRow.appendChild(headerCommitMessage);
+  }
+  let headerTitles = goog.dom.createDom('thead', {class: 'table-header'}, headerRow);
+  table.appendChild(headerTitles);
+
   for(var i = 0; i < versions.length; i++) {
     var version = versions[i];
     if (version.version === 'filename') {
@@ -146,35 +137,22 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
         target: '_blank'
       }, version.version);
 
+    
+    
     var versionTd = this.createTableCell_('version', versionLink);
     var userTd = this.createTableCell_('user', version.author);
+
     // If file is not versionable, do not create the commit cell.
     var commitTd = supportsCommitMessage ? this.createTableCell_('commit', version.commitMessage) : '';
-
-    // Fill the dialog with only version/user columns.
-    if (!supportsCommitMessage) {
-      versionTd.style.width = '150px';
-      userTd.style.width = '60%';
-    }
-
     table.appendChild(goog.dom.createDom('tr', {className: isThisCurrentVersion ? 'current-version' : ''},
       versionTd,
       userTd,
       commitTd
     ));
   }
-  return table;
-};
 
-/**
- * Creates a table header cell.
- *
- * @param text the cells text content.
- * @return {*} the header cell element.
- * @private
- */
-listOldVersionsAction.prototype.createHeaderCell_ = function(text) {
-  return goog.dom.createDom('div', 'headtitle', text);
+  
+  return table;
 };
 
 /**
@@ -190,26 +168,4 @@ listOldVersionsAction.prototype.createTableCell_ = function(customAttribute, tex
   // Set some data attributes to set the column header widths later.
   goog.dom.dataset.set(cell, customAttribute, customAttribute);
   return cell;
-};
-
-/**
- * Resize the header cell accordingly to it's cells.
- *
- * @param header the header cell
- * @param attr the cell type.
- * @private
- */
-listOldVersionsAction.prototype.resizeHeaderWidth_ = function(header, attr) {
-  if (header) {
-    var tableCell = document.querySelector('[data-' + attr + '="' + attr + '"]');
-    var headerSectionWidth;
-    if(tableCell) {
-      headerSectionWidth = tableCell.offsetWidth;
-    } else {
-      // no entries in table.
-      var headerContainer = header.parentElement;
-      headerSectionWidth = headerContainer.offsetWidth / headerContainer.children.length;
-    }
-    header.style.width = headerSectionWidth + 'px';
-  }
 };

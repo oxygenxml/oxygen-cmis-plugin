@@ -1,17 +1,31 @@
-#cmis-all-versions-table, .td {
-	text-align: left;
-	border: 1px solid lightgray;
+.td-header {
+	padding: 10px;
+	border-right: 1px solid lightgray;
+	box-shadow: inset 0 1px 0 lightgray, inset 0 -1px 0 lightgray;
+	line-height: 1.2;
+	
 }
 
-#cmis-all-versions-table {
-	border-collapse: collapse;
-	display: block;
+.table-header-row {
+	text-align: center;
+	position: sticky;
+	top: 0;
+	background-color: white;
+	font-family: robotolight, Arial, Helvetica, sans-serif;
+	font-weight: bolder;
+	
+}
+
+td[data-version=version] {
+	width: auto;
+}
+
+td[data-user=user] {
+	width: auto;
+}
+
+td[data-commit=commit] {
 	width: 100%;
-    margin-top: 40px;
-    overflow: auto;
-    height: calc(100% - 40px);
-    box-sizing: border-box;
-    line-height: 1.2;
 }
 
 .td {
@@ -46,6 +60,19 @@
 	font-size: 18px;
 }
 
+#cmis-all-versions-table, .td {
+	border: 1px solid lightgray;
+}
+
+#cmis-all-versions-table {
+	border-collapse: collapse;
+	border-top: 0;
+	width: 100%;
+    box-sizing: border-box;
+    line-height: 1.2;
+}
+
+
 #cmis-messdiv {
 	text-align: center;
 	font-family: robotolight, Arial, Helvetica, sans-serif;
@@ -57,15 +84,6 @@
     height: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-#cmis-head {
-	width: 100%;
-	position: absolute;
-	font-size: 100%;
-	white-space: nowrap;
-	overflow: hidden;
-	line-height: 2em;
 }
 
 #cmis-user {
