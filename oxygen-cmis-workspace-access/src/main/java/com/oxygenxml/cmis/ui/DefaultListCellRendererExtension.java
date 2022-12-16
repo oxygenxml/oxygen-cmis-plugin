@@ -87,7 +87,7 @@ class DefaultListCellRendererExtension extends DefaultListCellRenderer {
           // If it's an instance of custom type of Folder.
           // Set the native icon to the component.
           comLabel.setIcon(UIManager.getIcon("FileView.fileIcon"));
-          logger.error(e, e);
+          logger.error(e.getMessage(), e);
 
         }
         // ---------

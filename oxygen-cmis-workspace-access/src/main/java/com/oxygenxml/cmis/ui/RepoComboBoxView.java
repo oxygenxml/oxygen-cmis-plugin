@@ -164,7 +164,7 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
         } catch (CmisUnauthorizedException e) {
           // Will try again.
           if (logger.isDebugEnabled()) {
-            logger.debug(e, e);
+            logger.debug(e.getMessage(), e);
           }
         }
       } while (!connected);
@@ -186,11 +186,11 @@ public class RepoComboBoxView extends JPanel implements RepositoriesPresenter {
       }
     } catch (UserCanceledException e) {
       if (logger.isDebugEnabled()) {
-        logger.debug(e, e);
+        logger.debug(e.getMessage(), e);
       }
     } catch (CmisRuntimeException e) {
       // Unexpected exception
-      logger.debug(e, e);
+      logger.debug(e.getMessage(), e);
       
       PluginWorkspaceProvider.getPluginWorkspace().showErrorMessage("Unable to retrieve repositories because of: " + e.getMessage(), e);
     } 

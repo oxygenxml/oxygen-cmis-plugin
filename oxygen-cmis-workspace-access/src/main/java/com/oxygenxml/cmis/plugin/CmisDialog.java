@@ -83,7 +83,7 @@ public class CmisDialog extends OKCancelDialog {
       }
       
     } catch (MalformedURLException e) {
-      logger.error(e, e);
+      logger.error(e.getMessage(), e);
     }
 
     super.doOK();
