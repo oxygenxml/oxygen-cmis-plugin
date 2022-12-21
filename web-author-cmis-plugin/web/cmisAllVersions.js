@@ -106,18 +106,17 @@ ListOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
  * @private
  */
 ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
-  var table = goog.dom.createDom('table', { id: 'cmis-all-versions-table'});
+  var table = goog.dom.createDom('table', 'cmis-history-table');
   var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
-  let headerRow = goog.dom.createDom('tr', {class: 'table-header-row'},
-      [goog.dom.createDom('td', {class: 'td-header'}, "Version"),
-      goog.dom.createDom('td', {class: 'td-header'}, "Creator")]);
+  let headerRow = goog.dom.createDom('tr', 'table-header-row',
+      [goog.dom.createDom('th', null, "Version"),
+      goog.dom.createDom('th', null, "Creator")]);
   if(supportsCommitMessage) {
-    let headerCommitMessage = goog.dom.createDom('td', {class: 'td-header'}, 'Check-in Message');
+    let headerCommitMessage = goog.dom.createDom('th', null, 'Check-in Message');
     headerRow.appendChild(headerCommitMessage);
   }
-  let headerTitles = goog.dom.createDom('thead', {class: 'table-header'}, headerRow);
-  table.appendChild(headerTitles);
+  table.appendChild(goog.dom.createDom('thead', null, headerRow));
 
   for(var i = 0; i < versions.length; i++) {
     var version = versions[i];
@@ -132,46 +131,29 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
 
     var href = window.location.origin + window.location.pathname + versionUrl;
     var versionLink = goog.dom.createDom('a', {
-        className: 'oldlink',
+        className: 'cmis-old-version-link',
         href: isThisCurrentVersion ? '#' : href,
         target: '_blank'
       }, version.version);
 
-    
-    
-    var versionTd = this.createTableCell_('version', versionLink);
-    var userTd = this.createTableCell_('user', version.author);
-    
-    // Make tooltip multi-line
-    var processedCommitMessage = version.commitMessage.replace("/\n", "&#10;");
-    
+    var versionTd = goog.dom.createDom('td', 'cmis-version', versionLink);
+    var userTd = goog.dom.createDom('td', 'cmis-user', version.author);
 
-    // If file is not versionable, do not create the commit cell.
-    var commitTd = supportsCommitMessage ? this.createTableCell_('commit') : '';
-    var divCommitMessage = goog.dom.createDom('span', {title: processedCommitMessage}, version.commitMessage);
-    commitTd.appendChild(divCommitMessage);
-    table.appendChild(goog.dom.createDom('tr', {className: isThisCurrentVersion ? 'current-version' : '', title: isThisCurrentVersion ? 'Opened document version' : ''},
-      versionTd,
-      userTd,
-      commitTd
-    ));
+    var tr = goog.dom.createDom('tr', {
+          className: isThisCurrentVersion ? 'current-version' : '',
+          title: isThisCurrentVersion ? 'Opened document version' : ''
+        },
+        versionTd, userTd)
+    if (supportsCommitMessage) {
+      var processedCommitMessage = version.commitMessage.replace("/\n", "&#10;");
+      var checkinMessageTd = goog.dom.createDom('td', 'cmis-checkin-message',
+          goog.dom.createDom('span', {title: processedCommitMessage}, version.commitMessage));
+      tr.appendChild(checkinMessageTd);
+    }
+
+    table.appendChild(tr);
   }
 
   
   return table;
-};
-
-/**
- * Create cell element.
- *
- * @param customAttribute custom attribute.
- * @param textContent the cells text content.
- * @return {*} the cell.
- * @private
- */
-ListOldVersionsAction.prototype.createTableCell_ = function(customAttribute, textContent) {
-  var cell = goog.dom.createDom('td', 'td', textContent ? textContent : '');
-  // Set some data attributes to set the column header widths later.
-  goog.dom.dataset.set(cell, customAttribute, customAttribute);
-  return cell;
 };

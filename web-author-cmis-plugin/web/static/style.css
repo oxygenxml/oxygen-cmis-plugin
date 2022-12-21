@@ -1,34 +1,23 @@
-.td-header {
+.cmis-history-table th {
 	background-color: white;
 	padding: 11px;
 	box-shadow: inset 0 1px 0 lightgray, inset 0 -1px 0 lightgray;
 	line-height: 1.2;
-	
-	
 }
 
-.table-header-row {
+.cmis-history-table thead tr {
 	text-align: center;
 	position: sticky;
 	top: 0;
 	z-index: 100;
 	font-weight: bolder;
-	
 }
 
-td[data-version=version] {
-	width: auto;
-}
-
-td[data-user=user] {
-	width: auto;
-}
-
-td[data-commit=commit] {
+.cmis-history-table .cmis-checkin-message {
 	width: 100%;
 }
 
-td[data-commit=commit]>span {
+.cmis-history-table .cmis-checkin-message > span {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -43,13 +32,11 @@ td[data-commit=commit]>span {
 	-webkit-box-orient: vertical;
 }
 
-.td {
+.cmis-history-table td, .cmis-history-table th {
 	padding: 10px;
-	display: table-cell;
-    vertical-align: inherit;
 }
 
-.oldlink {
+.cmis-history-table .cmis-old-version-link {
 	text-align: center;
 	color: #323233;
 }
@@ -68,25 +55,12 @@ td[data-commit=commit]>span {
 	font-size: 18px;
 }
 
-
-#cmis-all-versions-table table {
-    width: 100%;
-}
-
-#cmis-all-versions-table td {
-    position: relative;
-}
-
-#cmis-all-versions-table td[data-commit] {
-  width: 100%;
-}
-
-
-#cmis-all-versions-table, .td {
+.cmis-history-table td, .cmis-history-table th {
 	border: 1px solid lightgray;
+	position: relative;
 }
 
-#cmis-all-versions-table {
+.cmis-history-table {
 	border-collapse: collapse;
 	border-top: 0;
 	width: 100%;
@@ -105,15 +79,6 @@ td[data-commit=commit]>span {
     height: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-#cmis-user {
-	width: 15%;
-	min-width: 80px;
-}
-
-#cmis-commit {
-	width: 100%;
 }
 
 #cmis-loader {
@@ -150,11 +115,10 @@ td[data-commit=commit]>span {
   width: 100%;
 }
 
-.current-version {
+.cmis-history-table .current-version {
 	font-weight: bold;
 }
-
-.current-version .oldlink {
+.cmis-history-table .current-version .cmis-old-version-link {
 	cursor: default;
 	text-decoration: none;
 }
