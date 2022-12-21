@@ -8,6 +8,15 @@
     <language description="Dutch" lang="nl_NL"/>
     <language description="Chinese" lang="zh_CN"/>
   </languageList>
+  <key value="VERSION_HISTORY" distribution="webauthor">
+    <comment>Dialog title "Version History".</comment>
+    <val lang="en_US">Version History</val>
+    <val lang="de_DE">Version History</val>
+    <val lang="fr_FR">Version History</val>
+    <val lang="ja_JP">Version History</val>
+    <val lang="nl_NL">Version History</val>
+    <val lang="zh_CN">Version History</val>
+  </key>
   <key value="Cannot_check_out_checked_out_by" distribution="webauthor">
     <comment>Message when cannot check out because the document is checked out by another user</comment>
     <val lang="en_US">Cannot check out "{0}" because it is already checked out by "{1}".</val>

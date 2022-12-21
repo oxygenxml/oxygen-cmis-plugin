@@ -51,8 +51,8 @@ listOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
   var allVerDialog = this.dialog_;
   if(!allVerDialog) {
     allVerDialog = workspace.createDialog();
-    allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));
-    allVerDialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+    allVerDialog.setTitle(tr(msgs.VERSION_HISTORY));
+    allVerDialog.setButtonConfiguration([{key: 'close', caption: tr(msgs.CLOSE_)}]);
     this.dialog_ = allVerDialog;
   } else {
     // Clear the dialog element to render the new versions table.
@@ -113,7 +113,7 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
       [goog.dom.createDom('td', {class: 'td-header'}, "Version"),
       goog.dom.createDom('td', {class: 'td-header'}, "Creator")]);
   if(supportsCommitMessage) {
-    let headerCommitMessage = goog.dom.createDom('td', {class: 'td-header'}, 'Commit message');
+    let headerCommitMessage = goog.dom.createDom('td', {class: 'td-header'}, 'Check-in Message');
     headerRow.appendChild(headerCommitMessage);
   }
   let headerTitles = goog.dom.createDom('thead', {class: 'table-header'}, headerRow);
@@ -141,10 +141,16 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
     
     var versionTd = this.createTableCell_('version', versionLink);
     var userTd = this.createTableCell_('user', version.author);
+    
+    // Make tooltip multi-line
+    var processedCommitMessage = version.commitMessage.replace("/\n", "&#10;");
+    
 
     // If file is not versionable, do not create the commit cell.
-    var commitTd = supportsCommitMessage ? this.createTableCell_('commit', version.commitMessage) : '';
-    table.appendChild(goog.dom.createDom('tr', {className: isThisCurrentVersion ? 'current-version' : ''},
+    var commitTd = supportsCommitMessage ? this.createTableCell_('commit') : '';
+    var divCommitMessage = goog.dom.createDom('span', {title: processedCommitMessage}, version.commitMessage);
+    commitTd.appendChild(divCommitMessage);
+    table.appendChild(goog.dom.createDom('tr', {className: isThisCurrentVersion ? 'current-version' : '', title: isThisCurrentVersion ? 'Opened document version' : ''},
       versionTd,
       userTd,
       commitTd
