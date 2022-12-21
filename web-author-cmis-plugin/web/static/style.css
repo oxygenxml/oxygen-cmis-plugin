@@ -48,6 +48,13 @@
 	text-decoration: none;
 }
 
+.cmis-history-table .cmis-user {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 15em;
+}
+
 .cmis-history-table .cmis-checkin-message {
 	width: 100%;
 	position: relative;

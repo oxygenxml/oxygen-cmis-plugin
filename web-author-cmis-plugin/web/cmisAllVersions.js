@@ -137,7 +137,7 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
       }, version.version);
 
     var versionTd = goog.dom.createDom('td', 'cmis-version', versionLink);
-    var userTd = goog.dom.createDom('td', 'cmis-user', version.author);
+    var userTd = goog.dom.createDom('td', {class: 'cmis-user', title: version.author}, version.author);
 
     var tr = goog.dom.createDom('tr', {
           className: isThisCurrentVersion ? 'current-version' : '',
