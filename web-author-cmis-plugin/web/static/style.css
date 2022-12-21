@@ -23,7 +23,7 @@
 	right: 0;
 	line-height: 2.5em;
 	padding: 0 10px;
-	white-space: pre;
+	white-space: pre-line;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
