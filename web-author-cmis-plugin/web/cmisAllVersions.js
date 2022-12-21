@@ -4,26 +4,26 @@
  * @param editor the current editor.
  * @param {CmisStatus} status the document status.
  */
-var listOldVersionsAction = function(editor, status) {
+var ListOldVersionsAction = function(editor, status) {
   sync.actions.AbstractAction.call(this, '');
   this.editor_ = editor;
   this.status_ = status;
   this.dialog_ = null;
 };
-goog.inherits(listOldVersionsAction, sync.actions.AbstractAction);
+goog.inherits(ListOldVersionsAction, sync.actions.AbstractAction);
 
 /** @override */
-listOldVersionsAction.prototype.getDisplayName = function() {
+ListOldVersionsAction.prototype.getDisplayName = function() {
   return tr(msgs.ALL_VERSIONS_);
 };
 
 /** @override */
-listOldVersionsAction.prototype.getSmallIcon = function() {
+ListOldVersionsAction.prototype.getSmallIcon = function() {
   return sync.util.computeHdpiIcon('../plugin-resources/cmis/icons/ShowVersionHistory16.png');
 };
 
 /** @override */
-listOldVersionsAction.prototype.actionPerformed = function(callback) {
+ListOldVersionsAction.prototype.actionPerformed = function(callback) {
   // Check if the server supports Commit Message.
   let supportsCommitMessage = this.status_.supportsCommitMessage();
  
@@ -47,7 +47,7 @@ listOldVersionsAction.prototype.actionPerformed = function(callback) {
  * @return the versions display dialog.
  * @private
  */
-listOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
+ListOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
   var allVerDialog = this.dialog_;
   if(!allVerDialog) {
     allVerDialog = workspace.createDialog();
@@ -81,7 +81,7 @@ listOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
  * @param data the data.
  * @private
  */
-listOldVersionsAction.prototype.handleOperationResult_ = function(container, supportsCommitMessage, err, data) {
+ListOldVersionsAction.prototype.handleOperationResult_ = function(container, supportsCommitMessage, err, data) {
   // remove selection from document.
   document.activeElement.blur();
   goog.dom.removeNode(container.querySelector("#cmis-loader"));
@@ -105,7 +105,7 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
  * @return {*} the HTML table.
  * @private
  */
-listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
+ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
   var table = goog.dom.createDom('table', { id: 'cmis-all-versions-table'});
   var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
@@ -169,7 +169,7 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
  * @return {*} the cell.
  * @private
  */
-listOldVersionsAction.prototype.createTableCell_ = function(customAttribute, textContent) {
+ListOldVersionsAction.prototype.createTableCell_ = function(customAttribute, textContent) {
   var cell = goog.dom.createDom('td', 'td', textContent ? textContent : '');
   // Set some data attributes to set the column header widths later.
   goog.dom.dataset.set(cell, customAttribute, customAttribute);
