@@ -1,7 +1,6 @@
 .td-header {
 	background-color: white;
 	padding: 11px;
-	display: table-cell;
 	box-shadow: inset 0 1px 0 lightgray, inset 0 -1px 0 lightgray;
 	line-height: 1.2;
 	
@@ -31,17 +30,17 @@ td[data-commit=commit] {
 
 td[data-commit=commit]>span {
 	position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+	top: 0;
+	left: 0;
+	right: 0;
 	line-height: 2.5em;
 	padding: 0 10px;
-    white-space: pre;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
 }
 
 .td {
