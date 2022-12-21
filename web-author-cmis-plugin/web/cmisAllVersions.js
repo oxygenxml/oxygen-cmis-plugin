@@ -4,26 +4,26 @@
  * @param editor the current editor.
  * @param {CmisStatus} status the document status.
  */
-var listOldVersionsAction = function(editor, status) {
+var ListOldVersionsAction = function(editor, status) {
   sync.actions.AbstractAction.call(this, '');
   this.editor_ = editor;
   this.status_ = status;
   this.dialog_ = null;
 };
-goog.inherits(listOldVersionsAction, sync.actions.AbstractAction);
+goog.inherits(ListOldVersionsAction, sync.actions.AbstractAction);
 
 /** @override */
-listOldVersionsAction.prototype.getDisplayName = function() {
+ListOldVersionsAction.prototype.getDisplayName = function() {
   return tr(msgs.ALL_VERSIONS_);
 };
 
 /** @override */
-listOldVersionsAction.prototype.getSmallIcon = function() {
+ListOldVersionsAction.prototype.getSmallIcon = function() {
   return sync.util.computeHdpiIcon('../plugin-resources/cmis/icons/ShowVersionHistory16.png');
 };
 
 /** @override */
-listOldVersionsAction.prototype.actionPerformed = function(callback) {
+ListOldVersionsAction.prototype.actionPerformed = function(callback) {
   // Check if the server supports Commit Message.
   let supportsCommitMessage = this.status_.supportsCommitMessage();
  
@@ -47,12 +47,12 @@ listOldVersionsAction.prototype.actionPerformed = function(callback) {
  * @return the versions display dialog.
  * @private
  */
-listOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
+ListOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
   var allVerDialog = this.dialog_;
   if(!allVerDialog) {
     allVerDialog = workspace.createDialog();
-    allVerDialog.setTitle(tr(msgs.ALL_VERSIONS_));
-    allVerDialog.setButtonConfiguration(sync.api.Dialog.ButtonConfiguration.CANCEL);
+    allVerDialog.setTitle(tr(msgs.VERSION_HISTORY));
+    allVerDialog.setButtonConfiguration([{key: 'close', caption: tr(msgs.CLOSE_)}]);
     this.dialog_ = allVerDialog;
   } else {
     // Clear the dialog element to render the new versions table.
@@ -81,7 +81,7 @@ listOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
  * @param data the data.
  * @private
  */
-listOldVersionsAction.prototype.handleOperationResult_ = function(container, supportsCommitMessage, err, data) {
+ListOldVersionsAction.prototype.handleOperationResult_ = function(container, supportsCommitMessage, err, data) {
   // remove selection from document.
   document.activeElement.blur();
   goog.dom.removeNode(container.querySelector("#cmis-loader"));
@@ -105,7 +105,7 @@ listOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
  * @return {*} the HTML table.
  * @private
  */
-listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
+ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
   var table = goog.dom.createDom('table', { id: 'cmis-all-versions-table'});
   var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
@@ -113,7 +113,7 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
       [goog.dom.createDom('td', {class: 'td-header'}, "Version"),
       goog.dom.createDom('td', {class: 'td-header'}, "Creator")]);
   if(supportsCommitMessage) {
-    let headerCommitMessage = goog.dom.createDom('td', {class: 'td-header'}, 'Commit message');
+    let headerCommitMessage = goog.dom.createDom('td', {class: 'td-header'}, 'Check-in Message');
     headerRow.appendChild(headerCommitMessage);
   }
   let headerTitles = goog.dom.createDom('thead', {class: 'table-header'}, headerRow);
@@ -141,10 +141,16 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
     
     var versionTd = this.createTableCell_('version', versionLink);
     var userTd = this.createTableCell_('user', version.author);
+    
+    // Make tooltip multi-line
+    var processedCommitMessage = version.commitMessage.replace("/\n", "&#10;");
+    
 
     // If file is not versionable, do not create the commit cell.
-    var commitTd = supportsCommitMessage ? this.createTableCell_('commit', version.commitMessage) : '';
-    table.appendChild(goog.dom.createDom('tr', {className: isThisCurrentVersion ? 'current-version' : ''},
+    var commitTd = supportsCommitMessage ? this.createTableCell_('commit') : '';
+    var divCommitMessage = goog.dom.createDom('span', {title: processedCommitMessage}, version.commitMessage);
+    commitTd.appendChild(divCommitMessage);
+    table.appendChild(goog.dom.createDom('tr', {className: isThisCurrentVersion ? 'current-version' : '', title: isThisCurrentVersion ? 'Opened document version' : ''},
       versionTd,
       userTd,
       commitTd
@@ -163,7 +169,7 @@ listOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
  * @return {*} the cell.
  * @private
  */
-listOldVersionsAction.prototype.createTableCell_ = function(customAttribute, textContent) {
+ListOldVersionsAction.prototype.createTableCell_ = function(customAttribute, textContent) {
   var cell = goog.dom.createDom('td', 'td', textContent ? textContent : '');
   // Set some data attributes to set the column header widths later.
   goog.dom.dataset.set(cell, customAttribute, customAttribute);

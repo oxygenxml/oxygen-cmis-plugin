@@ -36,7 +36,7 @@
     actionsManager.registerAction('cmisCheckOut.link', new CmisCheckOutAction(editor, status));
     actionsManager.registerAction('cancelCmisCheckOut.link', new cancelCmisCheckOutAction(editor, status));
     actionsManager.registerAction('cmisCheckIn.link', new CmisCheckInAction(editor, status));
-    actionsManager.registerAction('listOldVersion.link', new listOldVersionsAction(editor, status));
+    actionsManager.registerAction('listOldVersion.link', new ListOldVersionsAction(editor, status));
 
     goog.events.listen(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
       var toolbars = e.actionsConfiguration.toolbars;

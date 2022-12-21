@@ -1,8 +1,9 @@
 .td-header {
-	padding: 10px;
-	border-right: 1px solid lightgray;
+	background-color: white;
+	padding: 11px;
 	box-shadow: inset 0 1px 0 lightgray, inset 0 -1px 0 lightgray;
 	line-height: 1.2;
+	
 	
 }
 
@@ -10,8 +11,7 @@
 	text-align: center;
 	position: sticky;
 	top: 0;
-	background-color: white;
-	font-family: robotolight, Arial, Helvetica, sans-serif;
+	z-index: 100;
 	font-weight: bolder;
 	
 }
@@ -28,6 +28,21 @@ td[data-commit=commit] {
 	width: 100%;
 }
 
+td[data-commit=commit]>span {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	line-height: 2.5em;
+	padding: 0 10px;
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+}
+
 .td {
 	padding: 10px;
 	display: table-cell;
@@ -36,14 +51,7 @@ td[data-commit=commit] {
 
 .oldlink {
 	text-align: center;
-	margin-right: 25px;
 	color: #323233;
-}
-
-.oldlink:hover {
-	text-decoration: none;
-	color: #485461;
-	font-weight: 400;
 }
 
 .headtitle {	
@@ -60,6 +68,20 @@ td[data-commit=commit] {
 	font-size: 18px;
 }
 
+
+#cmis-all-versions-table table {
+    width: 100%;
+}
+
+#cmis-all-versions-table td {
+    position: relative;
+}
+
+#cmis-all-versions-table td[data-commit] {
+  width: 100%;
+}
+
+
 #cmis-all-versions-table, .td {
 	border: 1px solid lightgray;
 }
@@ -71,7 +93,6 @@ td[data-commit=commit] {
     box-sizing: border-box;
     line-height: 1.2;
 }
-
 
 #cmis-messdiv {
 	text-align: center;
@@ -130,7 +151,7 @@ td[data-commit=commit] {
 }
 
 .current-version {
-	background-color: #ededed;
+	font-weight: bold;
 }
 
 .current-version .oldlink {
