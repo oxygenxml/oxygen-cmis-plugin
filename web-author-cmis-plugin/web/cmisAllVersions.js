@@ -90,7 +90,7 @@ ListOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
   goog.dom.append(container, this.createTable_(versions, supportsCommitMessage));
 
     // In case of older version, scroll it into view.
-  var oldVersionSelected = document.querySelector('.current-version:not(:first-child)');
+  var oldVersionSelected = document.querySelector('.current-version');
   if (oldVersionSelected) {
     oldVersionSelected.scrollIntoView(false);
   }
