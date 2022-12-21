@@ -118,8 +118,7 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
   }
   table.appendChild(goog.dom.createDom('thead', null, headerRow));
 
-  for(var i = 0; i < versions.length; i++) {
-    var version = versions[i];
+  for(let version of versions.length) {
     if (version.version === 'filename') {
       continue;
     }
