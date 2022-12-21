@@ -29,10 +29,7 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
  
   var allVerDialog = this.getDialog_(supportsCommitMessage);
   allVerDialog.show();
-
-  allVerDialog.onSelect(function(e) {
-    callback();
-  });
+  allVerDialog.onSelect(callback);
 
   this.editor_.getActionsManager().invokeOperation(
     'com.oxygenxml.cmis.web.action.CmisOldVersions', {
