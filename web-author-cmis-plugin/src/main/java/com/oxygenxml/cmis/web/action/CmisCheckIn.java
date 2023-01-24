@@ -97,12 +97,8 @@ public class CmisCheckIn extends AuthorOperationWithResult{
         commitMessage = "";
       }
 
-      if (actualState.equals(CmisAction.MAJOR_STATE.getValue())) {
-        latest.checkIn(true, null, null, commitMessage);
-      } else {
-        latest.checkIn(false, null, null, commitMessage);
-      }
-
+      latest.checkIn(isMajorVersion(actualState), null, null, commitMessage);
+      
       latest.refresh();
       log.info(latest.getName() + " checked-out: " + latest.isVersionSeriesCheckedOut());
     } else {
@@ -110,4 +106,8 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 
     }
 	}
+
+  private static boolean isMajorVersion(String actualState) {
+    return actualState.equals(CmisAction.MAJOR_STATE.getValue());
+  }
 }
