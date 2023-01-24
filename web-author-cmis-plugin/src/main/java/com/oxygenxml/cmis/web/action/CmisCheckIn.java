@@ -97,7 +97,7 @@ public class CmisCheckIn extends AuthorOperationWithResult{
         commitMessage = "";
       }
 
-      latest.checkIn(isMajorVersion(actualState), null, null, commitMessage);
+      latest.checkIn(isMajorVersion(actualState), null, latest.getContentStream(), commitMessage);
       
       latest.refresh();
       log.info(latest.getName() + " checked-out: " + latest.isVersionSeriesCheckedOut());
