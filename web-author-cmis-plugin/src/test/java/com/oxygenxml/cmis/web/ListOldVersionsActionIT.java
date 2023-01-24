@@ -281,9 +281,15 @@ public class ListOldVersionsActionIT {
     Document document = null;
     try {
       document = createEmptyVersionedDocument("multi-user-history.xml");
+      
       createNewMajorVersionAsUser(document, "admin");
+      assertEquals("admin", getLastModifiedBy(document));
+      
       createNewMajorVersionAsUser(document, "other-user");
+      assertEquals("other-user", getLastModifiedBy(document));
+      
       createNewMajorVersionAsUser(document, "admin");
+      assertEquals("admin", getLastModifiedBy(document));
       
       String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       
@@ -296,6 +302,10 @@ public class ListOldVersionsActionIT {
         ctrl.deleteAllVersionsDocument(document);
       }
     }
+  }
+
+  private String getLastModifiedBy(Document document) {
+    return document.getObjectOfLatestVersion(true).getLastModifiedBy();
   }
 
   /**
