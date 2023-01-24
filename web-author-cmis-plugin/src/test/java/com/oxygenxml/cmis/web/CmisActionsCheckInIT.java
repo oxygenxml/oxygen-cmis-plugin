@@ -49,7 +49,7 @@ public class CmisActionsCheckInIT {
 			assertFalse(document.isVersionSeriesCheckedOut());
 			
 			assertEquals(commitMessage, document.getCheckinComment());
-			
+			assertEquals("admin", document.getLastModifiedBy());
 		} finally {
 		  if (document != null) {
 		    ctrl.deleteAllVersionsDocument(document);
