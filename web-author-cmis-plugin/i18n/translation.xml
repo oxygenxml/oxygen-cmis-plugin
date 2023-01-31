@@ -12,7 +12,7 @@
     <comment>Dialog title "Version History".</comment>
     <val lang="en_US">Version History</val>
     <val lang="de_DE">Version History</val>
-    <val lang="fr_FR">Version History</val>
+    <val lang="fr_FR">Historique des versions</val>
     <val lang="ja_JP">Version History</val>
     <val lang="nl_NL">Version History</val>
     <val lang="zh_CN">Version History</val>
@@ -192,7 +192,7 @@
       <comment>Author of a version</comment>
       <val lang="en_US">Creator</val>
       <val lang="de_DE">Creator</val>
-      <val lang="fr_FR">Creator</val>
+      <val lang="fr_FR">Auteur</val>
       <val lang="ja_JP">Creator</val>
       <val lang="nl_NL">Creator</val>
       <val lang="zh_CN">Creator</val>
