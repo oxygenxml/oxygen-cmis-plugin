@@ -37,7 +37,13 @@
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
-		</dependency>
+    </dependency>
+    <!-- WA-6234: Fix CVE-2022-40152 in chemistry-opencmis-client-impl's transitive dependency. -->
+    <dependency>
+      <groupId>com.fasterxml.woodstox</groupId>
+      <artifactId>woodstox-core</artifactId>
+      <version>6.5.0</version>
+    </dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
