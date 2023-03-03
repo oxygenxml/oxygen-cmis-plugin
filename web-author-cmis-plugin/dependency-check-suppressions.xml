@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+      <notes>WA-6234: Product false positive because DTD support is disabled for WstxInputFactory, see https://github.com/apache/chemistry-opencmis/blob/9e49c685af9044a64cde0ab111792d74e914f4f2/chemistry-opencmis-commons/chemistry-opencmis-commons-impl/src/main/java/org/apache/chemistry/opencmis/commons/impl/XMLUtils.java#L82</notes>
+      <filePath regex="true">.*[/\\]stax2-api-4.2.1.jar</filePath>
+      <cve>CVE-2022-40152</cve>
+    </suppress>
+</suppressions>
