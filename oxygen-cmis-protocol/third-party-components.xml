@@ -1442,45 +1442,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             <url>http://www.opensource.org/licenses/bsd-license.php</url>
         </license>
     </component>
-    <component id="org.codehaus.woodstox:woodstox-core-asl:4.4.1" product="webapp">
-        <name>Woodstox</name>
-        <version>4.4.1</version>
-        <project-info>
-            <about>Woodstox is a high-performance XML processor that
-implements Stax (JSR-173) and SAX2 APIs</about>
-            <licensor>Codehaus</licensor>
-            <start-year></start-year>
-            <project-url>http://woodstox.codehaus.org</project-url>
-        </project-info>
-        <license>
-            <type>The Apache Software License, Version 2.0</type>
-            <content>This copy of Woodstox XML processor is licensed under the
-Apache (Software) License, version 2.0 ("the License").
-See the License for details about distribution rights, and the
-specific rights regarding derivate works.
-
-You may obtain a copy of the License at:
-
-http://www.apache.org/licenses/
-
-A copy is also included with both the the downloadable source code package
-and jar that contains class bytecodes, as file "ASL 2.0". In both cases,
-that file should be located next to this file: in source distribution
-the location should be "release-notes/asl"; and in jar "META-INF/"
-===================================================================
-NOTICE:
-This product currently only contains code developed by authors
-of specific components, as identified by the source code files.
-
-Since product implements StAX API, it has dependencies to StAX API
-classes.
-
-For additional credits (generally to people who reported problems)
-see CREDITS file.
-</content>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </component>
     <component id="org.slf4j:slf4j-api:1.7.32" draft="false" product="webapp">
         <name>SLF4J API Module</name>
         <version>1.7.32</version>
