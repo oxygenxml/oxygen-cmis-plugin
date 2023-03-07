@@ -2,8 +2,12 @@ package com.oxygenxml.cmis.web.action;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 
@@ -12,6 +16,7 @@ import com.oxygenxml.cmis.web.EditorListener;
 import com.oxygenxml.cmis.web.TranslationTags;
 
 import lombok.extern.slf4j.Slf4j;
+import ro.sync.basic.io.IOUtil;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
@@ -87,17 +92,15 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 	 */
 	public static void checkInDocument(Document document, String actualState,
 			String commitMessage) {
-
     Document latest = CmisActionsUtills.getLatestVersion(document);
-
     if (document.isVersionSeriesCheckedOut()) {
-
       // If commit message is null or value is "null" - assign empty string.
       if (commitMessage == null || commitMessage == "null") {
         commitMessage = "";
       }
-
-      latest.checkIn(isMajorVersion(actualState), null, latest.getContentStream(), commitMessage);
+      
+      ContentStream currentVersionStream = getCurrentVersionContentStream(document);
+      latest.checkIn(isMajorVersion(actualState), null, currentVersionStream, commitMessage);
       
       latest.refresh();
       log.info(latest.getName() + " checked-out: " + latest.isVersionSeriesCheckedOut());
@@ -105,6 +108,24 @@ public class CmisCheckIn extends AuthorOperationWithResult{
       log.info("Document isn't checked-out!");
 
     }
+	}
+	
+	/**
+	 * Get the content stream of the document current version.
+	 * 
+	 * @param document The document.
+	 * @return The content stream.
+	 */
+	private static ContentStream getCurrentVersionContentStream(Document document) {
+	  ContentStream currentVersionStream = null;
+
+	  Document objOflatestVersion = document.getObjectOfLatestVersion(false); 
+	  List<Document> allVersions = objOflatestVersion.getAllVersions();
+	  if (!allVersions.isEmpty()) {
+	    currentVersionStream = allVersions.get(0).getContentStream();
+	  }
+
+	  return currentVersionStream;
 	}
 
   private static boolean isMajorVersion(String actualState) {
