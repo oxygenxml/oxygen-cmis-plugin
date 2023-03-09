@@ -11,10 +11,10 @@
   <key value="VERSION_HISTORY" distribution="webauthor">
     <comment>Dialog title "Version History".</comment>
     <val lang="en_US">Version History</val>
-    <val lang="de_DE">Version History</val>
+    <val lang="de_DE">Versionshistorie</val>
     <val lang="fr_FR">Historique des versions</val>
-    <val lang="ja_JP">Version History</val>
-    <val lang="nl_NL">Version History</val>
+    <val lang="ja_JP">バージョン履歴</val>
+    <val lang="nl_NL">Versiegeschiedenis</val>
     <val lang="zh_CN">Version History</val>
   </key>
   <key value="Cannot_check_out_checked_out_by" distribution="webauthor">
@@ -191,10 +191,10 @@
   <key value="CREATOR_" distribution="webauthor">
       <comment>Author of a version</comment>
       <val lang="en_US">Creator</val>
-      <val lang="de_DE">Creator</val>
+      <val lang="de_DE">Ersteller</val>
       <val lang="fr_FR">Auteur</val>
-      <val lang="ja_JP">Creator</val>
-      <val lang="nl_NL">Creator</val>
+      <val lang="ja_JP">作成者</val>
+      <val lang="nl_NL">Maker</val>
       <val lang="zh_CN">Creator</val>
   </key>
   <key value="SET_CMIS_API_URL_" distribution="webauthor">
