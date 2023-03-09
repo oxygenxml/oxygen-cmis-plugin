@@ -104,7 +104,6 @@ ListOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
  */
 ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
   var table = goog.dom.createDom('table', 'cmis-history-table');
-  var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
 
   let headerRow = goog.dom.createDom('tr', 'table-header-row',
       [goog.dom.createDom('th', null, "Version"),
@@ -121,9 +120,7 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
     }
     var versionUrl = version.url;
 
-    var isThisVersionOpenedNow = window.location.search.indexOf(versionUrl) !== -1;
-    var isThisVersionOld = versionUrl.indexOf('oldversion') !== -1;
-    var isThisCurrentVersion = (isThisVersionOpenedNow && isThisVersionOld) || (isLatestVersionOpenedNow && !isThisVersionOld);
+    var isThisCurrentVersion= this.isCurrentVersion(versionUrl);
 
     var href = window.location.origin + window.location.pathname + versionUrl;
     var versionLink = goog.dom.createDom('a', {
@@ -153,3 +150,14 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
   
   return table;
 };
+
+/**
+ * @param {string} versionUrl A CMIS OXY-URL.
+ * @return {boolean} True if the given URL is currently opened.
+ */
+ListOldVersionsAction.prototype.isCurrentVersion = function(versionUrl) {
+  var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
+  var isThisVersionOpenedNow = window.location.search.indexOf(versionUrl) !== -1;
+  var isThisVersionOld = versionUrl.indexOf('oldversion') !== -1;
+  return (isThisVersionOpenedNow && isThisVersionOld) || (isLatestVersionOpenedNow && !isThisVersionOld);
+}
