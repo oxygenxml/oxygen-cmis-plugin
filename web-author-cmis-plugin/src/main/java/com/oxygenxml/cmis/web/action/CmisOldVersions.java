@@ -41,9 +41,6 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	public String doOperation(AuthorDocumentModel model, ArgumentsMap args)
 			throws AuthorOperationException {
 
-	  /**
-	   * JSON String result of operation. 
-	   */
 	  String oldVersionJSON;
 	  CmisURLConnection connection;
 	  
@@ -70,10 +67,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
 			
 			try {
-				PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
-				String currentVersion = rb.getMessage(TranslationTags.CURRENT);
-				
-				oldVersionJSON = listOldVersions(document, urlWithoutContextId, currentVersion);
+				oldVersionJSON = listOldVersions(document, urlWithoutContextId);
 				
 				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
 					return oldVersionJSON;
@@ -93,14 +87,15 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * 
 	 * @param document
 	 * @param url
-	 * @param currentVersion 
+	 * 
 	 * @return the JSON string containing the list of versions
 	 * @throws IOException 
 	 * @throws JsonMappingException 
 	 * @throws JsonGenerationException 
 	 */
-	public static String listOldVersions(Document document, String url, String currentVersion) throws IOException {
-		
+	public static String listOldVersions(Document document, String url) throws IOException {
+	  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
+
 		// Removing query part of URL, in this way
 		// we escape duplicates of queries.
 		if (url.contains(CmisAction.OLD_VERSION.getValue())) {
@@ -118,7 +113,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			// Check if server support Private Working Copies.
 			boolean isCurrentVersion = Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0; 
 			
-			String label = isCurrentVersion && isCheckedOut ? currentVersion : "v" + version.getVersionLabel();
+			String label = isCurrentVersion && isCheckedOut ? rb.getMessage(TranslationTags.CURRENT) : "v" + version.getVersionLabel();
 			String urlParam = "?url=" + URLUtil.encodeURIComponent(url);
 			if (!isCurrentVersion) {
 			  urlParam += "?oldversion=" + version.getId();

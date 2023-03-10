@@ -34,7 +34,6 @@ public class ListOldVersionsActionIT {
 
 	private ResourceController ctrl;
 	
-	private static final String CURRENT_VERSION_LABEL = "current";
 	private final static String MINOR_VERSION_TYPE = "minor";
 	private final static String MAJOR_VERSION_TYPE = "major";
 
@@ -187,7 +186,7 @@ public class ListOldVersionsActionIT {
 	 */
   private ArrayList<HashMap<String, String>> getVersions(Document document, String url)
       throws IOException, JsonParseException, JsonMappingException {
-    String test = CmisOldVersions.listOldVersions(document, url, CURRENT_VERSION_LABEL);
+    String test = CmisOldVersions.listOldVersions(document, url);
     ArrayList<HashMap<String, String>> versions = new ObjectMapper().readValue(test, new TypeReference<ArrayList<HashMap<String, String>>>() {});
     return versions;
   }
