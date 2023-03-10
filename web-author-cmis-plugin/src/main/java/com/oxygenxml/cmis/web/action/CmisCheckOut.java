@@ -43,7 +43,7 @@ public class CmisCheckOut extends AuthorOperationWithResult {
     CmisURLConnection connection = CmisActionsUtills.getCmisURLConnection(url);
 
     // Get Session Store
-    String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextId(url);
+    String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url);
     
     Document document = null;
     try {

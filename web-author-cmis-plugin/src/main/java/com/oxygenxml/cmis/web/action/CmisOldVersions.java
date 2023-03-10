@@ -52,13 +52,13 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		connection = CmisActionsUtills.getCmisURLConnection(url);
 		
 		// Get Session Store
-		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextId(url);
+		String urlWithoutContextIdAndVersion = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url);
 		
 		Document document = null;
 		try {
-			document = (Document) connection.getCMISObject(urlWithoutContextId);
+			document = (Document) connection.getCMISObject(urlWithoutContextIdAndVersion);
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
-			log.debug("Error getting CMIS document " + urlWithoutContextId);
+			log.debug("Error getting CMIS document " + urlWithoutContextIdAndVersion);
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
@@ -67,7 +67,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
 			
 			try {
-				oldVersionJSON = listOldVersions(document, urlWithoutContextId);
+				oldVersionJSON = listOldVersions(document, urlWithoutContextIdAndVersion);
 				
 				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
 					return oldVersionJSON;

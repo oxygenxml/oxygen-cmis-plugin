@@ -3,6 +3,7 @@ package com.oxygenxml.cmis.web.action;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 
@@ -77,6 +78,16 @@ public class CmisActionsUtills {
 		return new CmisURLConnection(url, new CMISAccess(), credentials);
 	}
 	
+	 /**
+   * Removing Context Id from URL and version.
+   * 
+   * @param url The OXY URL.
+   * @return URL as String without Context Id and without version (oldversion query param).
+   */
+  public static String getUrlWithoutContextIdAndVersion(URL url) {
+    return stripVersion(getUrlWithoutContextId(url));
+  }
+	
 	/**
 	 * Removing Context Id from URL.
 	 * 
@@ -84,14 +95,15 @@ public class CmisActionsUtills {
 	 * @return URL as String without Context Id.
 	 */
 	public static String getUrlWithoutContextId(URL url) {
-   
 		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
-	
-		if (urlWithoutContextId.contains(CmisAction.OLD_VERSION.getValue()) || urlWithoutContextId.contains("?")) {
-			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf('?'));
-		}
-		
 		return urlWithoutContextId;
+  }
+
+  private static String stripVersion(String url) {
+    if (url.contains(CmisAction.OLD_VERSION.getValue()) || url.contains("?")) {
+      url = url.substring(0, url.indexOf('?'));
+    }
+    return url;
   }
 	
   public static Document getLatestVersion(Document document) {
