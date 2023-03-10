@@ -95,12 +95,6 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	    throws IOException {
 	  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
 
-		// Removing query part of URL, in this way
-		// we escape duplicates of queries.
-		if (url.contains(CmisAction.OLD_VERSION.getValue())) {
-			url = url.substring(0, url.indexOf('?'));
-		}
-
 		document = document.getObjectOfLatestVersion(false);		
 		List<Document> allVersions = document.getAllVersions();
 		
