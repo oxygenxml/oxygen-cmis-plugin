@@ -12,8 +12,6 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.TranslationTags;
@@ -67,7 +65,8 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
 			
 			try {
-				oldVersionJSON = listOldVersions(document, urlWithoutContextIdAndVersion);
+				List<Map<String, String>> allVersions = listOldVersions(document, urlWithoutContextIdAndVersion);
+				oldVersionJSON = new ObjectMapper().writeValueAsString(allVersions);
 				
 				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
 					return oldVersionJSON;
@@ -85,15 +84,15 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * Create JSON String with old versions of document.
 	 * Put in JSON the URL to this older documents.
 	 * 
-	 * @param document
-	 * @param url
+	 * @param document The CMIS document.
+	 * @param url The OXY URL.
 	 * 
-	 * @return the JSON string containing the list of versions
+	 * @return the list of versions
 	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonGenerationException 
 	 */
-	public static String listOldVersions(Document document, String url) throws IOException {
+	public static List<Map<String, String>> listOldVersions(
+	    Document document, String url)
+	    throws IOException {
 	  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
 
 		// Removing query part of URL, in this way
@@ -123,7 +122,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			
 			versions.add(createProps(label, urlParam, commitMessage, authorName));
 		}
-		return new ObjectMapper().writeValueAsString(versions);
+		return versions;
 	}
 	
 	/**

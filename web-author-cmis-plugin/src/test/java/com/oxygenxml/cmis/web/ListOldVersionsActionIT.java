@@ -5,10 +5,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -17,11 +17,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisCheckIn;
 import com.oxygenxml.cmis.web.action.CmisCheckOut;
@@ -52,9 +51,9 @@ public class ListOldVersionsActionIT {
 			
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			
-      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      List<Map<String, String>> versions = getVersions(document, url);
       
-      HashMap<String, String> latestVersion = versions.get(0);
+      Map<String, String> latestVersion = versions.get(0);
       assertEquals("v0.1", latestVersion.get("version"));
       assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FoneVersion",
           latestVersion.get("url"));
@@ -76,9 +75,9 @@ public class ListOldVersionsActionIT {
 			createNewVersion(document, "major", "some commit");
 
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
-			ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+			List<Map<String, String>> versions = getVersions(document, url);
 			
-      HashMap<String, String> latestVersion = versions.get(0);
+      Map<String, String> latestVersion = versions.get(0);
       assertEquals("v1.0", latestVersion.get("version"));
       assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
           latestVersion.get("url"));
@@ -103,9 +102,9 @@ public class ListOldVersionsActionIT {
 			}
 			
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
-			ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+			List<Map<String, String>> versions = getVersions(document, url);
 			
-			HashMap<String, String> latestVersion = versions.get(0);
+			Map<String, String> latestVersion = versions.get(0);
 			assertEquals("v3.0", latestVersion.get("version"));
 		  assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajorWithVersions",
 		      latestVersion.get("url"));
@@ -144,9 +143,9 @@ public class ListOldVersionsActionIT {
 			assertFalse(document.isVersionSeriesCheckedOut());
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			
-      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      List<Map<String, String>> versions = getVersions(document, url);
 			
-			HashMap<String, String> latestVersion = versions.get(0);
+			Map<String, String> latestVersion = versions.get(0);
 			assertEquals("v5.0", latestVersion.get("version"));
 			assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck", latestVersion.get("url"));
 			
@@ -161,7 +160,7 @@ public class ListOldVersionsActionIT {
 			
 			String firstVerID = getFirstVersionID(document);
 
-			HashMap<String, String> firstVersion = versions.get(versions.size() - 1);
+			Map<String, String> firstVersion = versions.get(versions.size() - 1);
       assertEquals("v0.1", firstVersion.get("version"));
       assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck?oldversion="+ firstVerID, 
           firstVersion.get("url"));
@@ -184,11 +183,9 @@ public class ListOldVersionsActionIT {
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 */
-  private ArrayList<HashMap<String, String>> getVersions(Document document, String url)
+  private List<Map<String, String>> getVersions(Document document, String url)
       throws IOException, JsonParseException, JsonMappingException {
-    String test = CmisOldVersions.listOldVersions(document, url);
-    ArrayList<HashMap<String, String>> versions = new ObjectMapper().readValue(test, new TypeReference<ArrayList<HashMap<String, String>>>() {});
-    return versions;
+    return CmisOldVersions.listOldVersions(document, url);
   }
 	
 	/**
@@ -204,9 +201,9 @@ public class ListOldVersionsActionIT {
       createNewVersion(document, "minor", "some commit");
 
       String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
-      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      List<Map<String, String>> versions = getVersions(document, url);
       
-      HashMap<String, String> latestVersion = versions.get(0);
+      Map<String, String> latestVersion = versions.get(0);
       assertEquals("v0.2", latestVersion.get("version"));
       assertEquals("some commit", latestVersion.get("commitMessage"));
       assertEquals("admin", latestVersion.get("author"));
@@ -245,9 +242,9 @@ public class ListOldVersionsActionIT {
 
       String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       
-      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      List<Map<String, String>> versions = getVersions(document, url);
       
-      HashMap<String, String> latestVersion = versions.get(0);
+      Map<String, String> latestVersion = versions.get(0);
       assertEquals("v1.0", latestVersion.get("version"));
       assertEquals("some commit", latestVersion.get("commitMessage"));
       assertEquals("admin", latestVersion.get("author"));
@@ -292,7 +289,7 @@ public class ListOldVersionsActionIT {
       
       String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       
-      ArrayList<HashMap<String, String>> versions = getVersions(document, url);
+      List<Map<String, String>> versions = getVersions(document, url);
       
       List<String> authors = versions.stream().map(version -> version.get("author")).collect(toList());
       assertEquals(Arrays.asList("admin", "other-user", "admin", "admin"), authors);
