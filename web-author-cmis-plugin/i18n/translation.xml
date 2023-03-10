@@ -15,7 +15,7 @@
     <val lang="fr_FR">Historique des versions</val>
     <val lang="ja_JP">バージョン履歴</val>
     <val lang="nl_NL">Versiegeschiedenis</val>
-    <val lang="zh_CN">Version History</val>
+    <val lang="zh_CN">版本历史</val>
   </key>
   <key value="Cannot_check_out_checked_out_by" distribution="webauthor">
     <comment>Message when cannot check out because the document is checked out by another user</comment>
@@ -195,7 +195,7 @@
       <val lang="fr_FR">Auteur</val>
       <val lang="ja_JP">作成者</val>
       <val lang="nl_NL">Maker</val>
-      <val lang="zh_CN">Creator</val>
+      <val lang="zh_CN">创建人</val>
   </key>
   <key value="SET_CMIS_API_URL_" distribution="webauthor">
     <comment>Set CMIS API URL in the Configuration Page</comment>
