@@ -106,6 +106,21 @@ public class CmisActionsUtills {
     return url;
   }
 	
+  public static Optional<String> getVersionId(URL url) {
+    Optional<String> toReturn = Optional.empty();
+    String query = url.getQuery();
+    if (query != null) {
+      HashMap<String, String> queryPart = new HashMap<>();
+      for (String pair : url.getQuery().split("&")) {
+        int index = pair.indexOf('=');
+        queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+      }
+      String objectId = queryPart.get(CmisAction.OLD_VERSION.getValue());
+      toReturn = Optional.ofNullable(objectId);
+    }
+    return toReturn;
+  }
+
   public static Document getLatestVersion(Document document) {
     Document latest = document;
     if (!Boolean.TRUE.equals(document.isLatestVersion())) {

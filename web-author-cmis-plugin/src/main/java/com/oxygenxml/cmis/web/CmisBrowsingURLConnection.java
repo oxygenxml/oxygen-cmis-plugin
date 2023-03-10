@@ -10,8 +10,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -28,7 +28,7 @@ import com.oxygenxml.cmis.core.RepositoryInfo;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.web.action.CmisAction;
+import com.oxygenxml.cmis.web.action.CmisActionsUtills;
 
 import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
@@ -62,11 +62,10 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	@Override
 	public InputStream getInputStream() throws IOException {
 		try {
-			String cmisQuery = this.url.getQuery();
-			
-			if (cmisQuery != null && cmisQuery.contains(CmisAction.OLD_VERSION.getValue())) {
+			Optional<String> objectIdOpt = CmisActionsUtills.getVersionId(url);
+			if (objectIdOpt.isPresent()) {
 				log.debug("Old ver. InputStream.");
-				return getOlderVersionInputStream();
+				return getOlderVersionInputStream(objectIdOpt.get());
 			}
 
 			return super.getInputStream();
@@ -89,15 +88,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	 * @return InputStream of older version document.
 	 * @throws IOException 
 	 */
-	private InputStream getOlderVersionInputStream() throws IOException {
-		HashMap<String, String> queryPart = new HashMap<>();
-
-		for (String pair : url.getQuery().split("&")) {
-			int index = pair.indexOf('=');
-			queryPart.put(pair.substring(0, index), pair.substring(index + 1));
-		}
-
-		String objectId = queryPart.get(CmisAction.OLD_VERSION.getValue());
+	private InputStream getOlderVersionInputStream(String objectId) throws IOException {
 		String connectionUrl = this.url.toExternalForm()
 				.replace(this.url.getQuery(), "");
 
