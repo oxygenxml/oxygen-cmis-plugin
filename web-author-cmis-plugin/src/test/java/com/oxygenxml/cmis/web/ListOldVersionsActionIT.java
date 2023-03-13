@@ -339,6 +339,50 @@ public class ListOldVersionsActionIT {
     }
   }
 
+  /**
+   * Test that current version is marked correctly when it differs than the PWC.
+   * @throws Exception If it fails.
+   */
+  @Test
+  public void testCurrentVersionNotPWC() throws Exception {
+    Document document = null;
+    try {
+      document = createEmptyVersionedDocument("multi-user-history.xml");
+      createNewMajorVersionAsUser(document, "admin");
+      createNewMajorVersionAsUser(document, "admin");
+      createNewMajorVersionAsUser(document, "admin");
+      CmisCheckOut.checkOutDocument(document);
+
+      List<Document> allVersions = document.getAllVersions();
+      String baseUrl = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
+      List<Map<String, String>> history = getVersions(document, baseUrl + "?oldversion=" + allVersions.get(3).getId());
+
+      assertEquals("PWC", history.get(0).get("version"));
+      assertEquals("false", history.get(0).get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/multi-user-history.xml",
+          history.get(0).get("url"));
+
+      assertEquals("3.0", history.get(1).get("version"));
+      assertEquals("false", history.get(1).get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/multi-user-history.xml?oldversion=" + allVersions.get(1).getId(),
+          history.get(1).get("url"));
+      
+      assertEquals("2.0", history.get(2).get("version"));
+      assertEquals("false", history.get(2).get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/multi-user-history.xml?oldversion=" + allVersions.get(2).getId(),
+          history.get(2).get("url"));
+      
+      assertEquals("1.0", history.get(3).get("version"));
+      assertEquals("true", history.get(3).get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/multi-user-history.xml?oldversion=" + allVersions.get(3).getId(),
+          history.get(3).get("url"));
+    } finally {
+      if (document != null) {
+        ctrl.deleteAllVersionsDocument(document);
+      }
+    }
+  }
+
   private String getLastModifiedBy(Document document) {
     return document.getObjectOfLatestVersion(true).getLastModifiedBy();
   }
