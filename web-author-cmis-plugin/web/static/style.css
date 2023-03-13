@@ -43,11 +43,6 @@
 	font-weight: bold;
 }
 
-.cmis-history-table .current-version .cmis-old-version-link {
-	cursor: default;
-	text-decoration: none;
-}
-
 .cmis-history-table .cmis-user {
 	text-overflow: ellipsis;
 	white-space: nowrap;
