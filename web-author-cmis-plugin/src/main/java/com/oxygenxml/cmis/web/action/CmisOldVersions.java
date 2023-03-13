@@ -53,12 +53,12 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		connection = CmisActionsUtills.getCmisURLConnection(url);
 		
 		// Get Session Store
-		String urlWithoutContextIdAndVersion = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url);
-		Optional<String> currentDocVersion = CmisActionsUtills.getVersionId(url);
+		URL urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextId(url);
+		URL urlWithoutContextIdAndVersion = CmisActionsUtills.stripVersion(urlWithoutContextId);
 		
 		Document document = null;
 		try {
-			document = (Document) connection.getCMISObject(urlWithoutContextIdAndVersion);
+			document = (Document) connection.getCMISObject(urlWithoutContextIdAndVersion.toExternalForm());
 		} catch (CmisUnauthorizedException | CmisObjectNotFoundException | MalformedURLException e) {
 			log.debug("Error getting CMIS document " + urlWithoutContextIdAndVersion);
 			throw(new AuthorOperationException(e.getMessage()));
@@ -69,7 +69,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
 			
 			try {
-				List<Map<String, String>> allVersions = listOldVersions(document, urlWithoutContextIdAndVersion, currentUser, currentDocVersion);
+				List<Map<String, String>> allVersions = listOldVersions(document, urlWithoutContextId, currentUser);
 				oldVersionJSON = new ObjectMapper().writeValueAsString(allVersions);
 				
 				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
@@ -89,18 +89,20 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * Put in JSON the URL to this older documents.
 	 * 
 	 * @param document The CMIS document.
-	 * @param url The OXY URL.
+	 * @param currentDocUrl The current OXY URL without credentials.
+	 * @param currentUser The current user.
 	 * 
 	 * @return the list of versions
-	 * @throws IOException 
+	 * @throws IOException If it fails.
 	 */
 	public static List<Map<String, String>> listOldVersions(
-	    Document document, String url, UserCredentials currentUser, Optional<String> currentDocVersion)
+	    Document document, URL currentDocUrl, UserCredentials currentUser)
 	    throws IOException {
 	  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
 
-		document = document.getObjectOfLatestVersion(false);		
-		List<Document> allVersions = document.getAllVersions();
+	  Optional<String> currentDocVersion = CmisActionsUtills.getVersionId(currentDocUrl);
+	  String docUrlWithoutVersion = CmisActionsUtills.stripVersion(currentDocUrl).toExternalForm();
+		List<Document> allVersions = document.getObjectOfLatestVersion(false).getAllVersions();
 		
 		List<Map<String, String>> versions = new ArrayList<>();
 		
@@ -110,7 +112,12 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 
 			boolean isPwcVersion = Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || Boolean.TRUE.equals(version.isVersionSeriesPrivateWorkingCopy());
 			boolean isCheckedOutByMe = currentUser.getUsername().equals(document.getVersionSeriesCheckedOutBy());
-			boolean isCurrentVersion = isPwcVersion && isCheckedOutByMe || version.getId().equals(currentDocVersion.orElse(null));
+			boolean isCurrentVersion;
+			if (currentDocVersion.isPresent()) {
+				isCurrentVersion = version.getId().equals(currentDocVersion.get());
+			} else {
+				isCurrentVersion = isPwcVersion && isCheckedOutByMe;
+			}
 			
 			String label;
 			if (isPwcVersion) {
@@ -118,11 +125,11 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			} else {
 				label = version.getVersionLabel();
 			}
-			String urlParam = url;
+			String urlParam;
 			if (isPwcVersion) {
-				urlParam = url;
+				urlParam = docUrlWithoutVersion;
 			} else {
-				urlParam = url + "?oldversion=" + versionId;
+				urlParam = docUrlWithoutVersion + "?oldversion=" + versionId;
 			}
 			String commitMessage = version.getCheckinComment() != null ? version.getCheckinComment() : "";
 			String authorName = version.getLastModifiedBy();

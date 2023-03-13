@@ -1,6 +1,8 @@
 package com.oxygenxml.cmis.web.action;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Optional;
@@ -84,26 +86,35 @@ public class CmisActionsUtills {
    * @param url The OXY URL.
    * @return URL as String without Context Id and without version (oldversion query param).
    */
-  public static String getUrlWithoutContextIdAndVersion(URL url) {
+  public static URL getUrlWithoutContextIdAndVersion(URL url) {
     return stripVersion(getUrlWithoutContextId(url));
   }
 	
 	/**
 	 * Removing Context Id from URL.
 	 * 
-	 * @param url
+	 * @param url The url.
 	 * @return URL as String without Context Id.
 	 */
-	public static String getUrlWithoutContextId(URL url) {
-		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
-		return urlWithoutContextId;
+  public static URL getUrlWithoutContextId(URL url) {
+    String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
+    try {
+      return new URL(urlWithoutContextId);
+    } catch (MalformedURLException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
-  private static String stripVersion(String url) {
-    if (url.contains(CmisAction.OLD_VERSION.getValue()) || url.contains("?")) {
-      url = url.substring(0, url.indexOf('?'));
+  static URL stripVersion(URL url) {
+    String urlStr = url.toExternalForm();
+    if (urlStr.contains(CmisAction.OLD_VERSION.getValue()) || urlStr.contains("?")) {
+      urlStr = urlStr.substring(0, urlStr.indexOf('?'));
     }
-    return url;
+    try {
+      return new URL(urlStr);
+    } catch (MalformedURLException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 	
   public static Optional<String> getVersionId(URL url) {

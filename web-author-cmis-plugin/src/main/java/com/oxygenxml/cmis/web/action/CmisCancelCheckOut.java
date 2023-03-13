@@ -43,7 +43,7 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 		connection = CmisActionsUtills.getCmisURLConnection(url);
 		
 		// Get Session Store
-		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url);
+		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url).toExternalForm();
 		
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);

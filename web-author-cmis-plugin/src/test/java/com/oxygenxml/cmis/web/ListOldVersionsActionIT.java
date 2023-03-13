@@ -3,8 +3,13 @@ package com.oxygenxml.cmis.web;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +17,13 @@ import java.util.Optional;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -25,6 +34,10 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisCheckIn;
 import com.oxygenxml.cmis.web.action.CmisCheckOut;
 import com.oxygenxml.cmis.web.action.CmisOldVersions;
+
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
+import ro.sync.exml.workspace.api.PluginResourceBundle;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 public class ListOldVersionsActionIT {
 
@@ -40,6 +53,22 @@ public class ListOldVersionsActionIT {
 	public void setUp() throws Exception {
 	  CMISAccess cmisAccess = cmisAccessProvider.getCmisAccess();
 		ctrl = cmisAccess.createResourceController();
+		WebappPluginWorkspace webappPluginWorkspace = Mockito.mock(WebappPluginWorkspace.class);
+		PluginWorkspaceProvider.setPluginWorkspace(webappPluginWorkspace);
+
+		PluginResourceBundle rb = Mockito.mock(PluginResourceBundle.class);
+		when(webappPluginWorkspace.getResourceBundle()).thenReturn(rb);
+		doAnswer(new Answer<String>() {
+			@Override
+			public String answer(InvocationOnMock invocation) throws Throwable {
+				return invocation.getArguments()[0].toString();
+			}
+		}).when(rb).getMessage(anyString());
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		PluginWorkspaceProvider.setPluginWorkspace(null);
 	}
 	
 	@Test
@@ -48,14 +77,14 @@ public class ListOldVersionsActionIT {
 		
 		try {
 			document = createEmptyVersionedDocument("oneVersion");
-			
+			List<Document> allVersions = document.getObjectOfLatestVersion(false).getAllVersions();
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			
       List<Map<String, String>> versions = getVersions(document, url);
       
       Map<String, String> latestVersion = versions.get(0);
-      assertEquals("v0.1", latestVersion.get("version"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FoneVersion",
+      assertEquals("0.1", latestVersion.get("version"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/oneVersion?oldversion=" + allVersions.get(0).getId(),
           latestVersion.get("url"));
       assertEquals("admin", latestVersion.get("author"));
 		} finally {
@@ -73,13 +102,13 @@ public class ListOldVersionsActionIT {
 		try {
 			document = createEmptyVersionedDocument("checkedOutMajor");
 			createNewVersion(document, "major", "some commit");
-
+			List<Document> allVersions = document.getObjectOfLatestVersion(false).getAllVersions();
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			List<Map<String, String>> versions = getVersions(document, url);
 			
       Map<String, String> latestVersion = versions.get(0);
-      assertEquals("v1.0", latestVersion.get("version"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+      assertEquals("1.0", latestVersion.get("version"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/checkedOutMajor?oldversion=" + allVersions.get(0).getId(),
           latestVersion.get("url"));
       assertEquals("some commit", latestVersion.get("commitMessage"));
       assertEquals("admin", latestVersion.get("author"));
@@ -101,21 +130,22 @@ public class ListOldVersionsActionIT {
 			  createNewVersion(document, (i % 2 == 0) ? MAJOR_VERSION_TYPE : MINOR_VERSION_TYPE, "some commit");
 			}
 			
+			List<Document> allVersions = document.getObjectOfLatestVersion(false).getAllVersions();
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			List<Map<String, String>> versions = getVersions(document, url);
 			
 			Map<String, String> latestVersion = versions.get(0);
-			assertEquals("v3.0", latestVersion.get("version"));
-		  assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajorWithVersions",
+			assertEquals("3.0", latestVersion.get("version"));
+		  assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/checkedOutMajorWithVersions?oldversion=" + allVersions.get(0).getId(),
 		      latestVersion.get("url"));
       assertEquals("some commit", latestVersion.get("commitMessage"));
       assertEquals("admin", latestVersion.get("author"));
 			
-      assertEquals("v2.1", versions.get(1).get("version"));
-      assertEquals("v2.0", versions.get(2).get("version"));
-      assertEquals("v1.1", versions.get(3).get("version"));
-      assertEquals("v1.0", versions.get(4).get("version"));
-      assertEquals("v0.1", versions.get(5).get("version"));
+      assertEquals("2.1", versions.get(1).get("version"));
+      assertEquals("2.0", versions.get(2).get("version"));
+      assertEquals("1.1", versions.get(3).get("version"));
+      assertEquals("1.0", versions.get(4).get("version"));
+      assertEquals("0.1", versions.get(5).get("version"));
 		} finally {
 			if (document != null) {
 				ctrl.deleteAllVersionsDocument(document);
@@ -140,14 +170,17 @@ public class ListOldVersionsActionIT {
 			}
 			
 			document = document.getObjectOfLatestVersion(false);
+			List<Document> allVersions = document.getObjectOfLatestVersion(false).getAllVersions();
+
 			assertFalse(document.isVersionSeriesCheckedOut());
 			String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
 			
       List<Map<String, String>> versions = getVersions(document, url);
 			
 			Map<String, String> latestVersion = versions.get(0);
-			assertEquals("v5.0", latestVersion.get("version"));
-			assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck", latestVersion.get("url"));
+			assertEquals("5.0", latestVersion.get("version"));
+			assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/check?oldversion=" + allVersions.get(0).getId(),
+			    latestVersion.get("url"));
 			
 			// checkout document to create current version.
 			CmisCheckOut.checkOutDocument(document);
@@ -155,14 +188,14 @@ public class ListOldVersionsActionIT {
 			
 			document = document.getObjectOfLatestVersion(false);
       latestVersion = versions.get(0);
-      assertEquals("current", latestVersion.get("version"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck", latestVersion.get("url"));
+      assertEquals("Current", latestVersion.get("version"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/check", latestVersion.get("url"));
 			
 			String firstVerID = getFirstVersionID(document);
 
 			Map<String, String> firstVersion = versions.get(versions.size() - 1);
-      assertEquals("v0.1", firstVersion.get("version"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2Fcheck?oldversion="+ firstVerID, 
+      assertEquals("0.1", firstVersion.get("version"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/check?oldversion="+ firstVerID, 
           firstVersion.get("url"));
 		} finally {
 		  if (document != null) {
@@ -185,9 +218,8 @@ public class ListOldVersionsActionIT {
 	 */
   private List<Map<String, String>> getVersions(Document document, String url)
       throws IOException, JsonParseException, JsonMappingException {
-    UserCredentials currentUser = new UserCredentials("some-mocked-user", null);
-    Optional<String> currentDocVersion = Optional.empty();
-    return CmisOldVersions.listOldVersions(document, url, currentUser, currentDocVersion);
+    UserCredentials testUser = new UserCredentials("admin", null);
+    return CmisOldVersions.listOldVersions(document, new URL(url), testUser);
   }
 	
 	/**
@@ -197,19 +229,20 @@ public class ListOldVersionsActionIT {
   @Test
   public void testLatestVersionCheckOutOnMinorVersion() throws Exception {
     Document document = null;
-    
     try {
       document = createEmptyVersionedDocument("checkedOutMajor");
       createNewVersion(document, "minor", "some commit");
+      List<Document> allVersions = document.getObjectOfLatestVersion(false).getAllVersions();
 
       String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       List<Map<String, String>> versions = getVersions(document, url);
       
       Map<String, String> latestVersion = versions.get(0);
-      assertEquals("v0.2", latestVersion.get("version"));
+      assertEquals("0.2", latestVersion.get("version"));
       assertEquals("some commit", latestVersion.get("commitMessage"));
       assertEquals("admin", latestVersion.get("author"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+      assertEquals("false", latestVersion.get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/checkedOutMajor?oldversion=" + allVersions.get(0).getId(),
           latestVersion.get("url"));
       
       CmisCheckOut.checkOutDocument(document);
@@ -218,9 +251,10 @@ public class ListOldVersionsActionIT {
       versions = getVersions(document, url);
       latestVersion = versions.get(0);
       
-      assertEquals("current", latestVersion.get("version"));
+      assertEquals("Current", latestVersion.get("version"));
       assertEquals("admin", latestVersion.get("author"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+      assertEquals("true", latestVersion.get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/checkedOutMajor",
           latestVersion.get("url"));
     } finally {
       if (document != null) {
@@ -241,16 +275,18 @@ public class ListOldVersionsActionIT {
     try {
       document = createEmptyVersionedDocument("checkedOutMajor");
       createNewVersion(document, "major", "some commit");
+      List<Document> allVersions = document.getObjectOfLatestVersion(false).getAllVersions();
 
       String url = CmisURLConnection.generateURLObject(ctrl.getRootFolder(), document, ctrl);
       
       List<Map<String, String>> versions = getVersions(document, url);
       
       Map<String, String> latestVersion = versions.get(0);
-      assertEquals("v1.0", latestVersion.get("version"));
+      assertEquals("1.0", latestVersion.get("version"));
       assertEquals("some commit", latestVersion.get("commitMessage"));
       assertEquals("admin", latestVersion.get("author"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+      assertEquals("false", latestVersion.get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/checkedOutMajor?oldversion=" + allVersions.get(0).getId(),
           latestVersion.get("url"));
       
       CmisCheckOut.checkOutDocument(document);
@@ -259,9 +295,10 @@ public class ListOldVersionsActionIT {
       versions = getVersions(document, url);
       latestVersion = versions.get(0);
       
-      assertEquals("current", latestVersion.get("version"));
+      assertEquals("Current", latestVersion.get("version"));
       assertEquals("admin", latestVersion.get("author"));
-      assertEquals("?url=cmis%3A%2F%2Fhttp%253A%252F%252Flocalhost%253A8080%252FB%252Fatom11%2FA1%2FcheckedOutMajor",
+      assertEquals("true", latestVersion.get("isCurrentVersion"));
+      assertEquals("cmis://http%3A%2F%2Flocalhost%3A8080%2FB%2Fatom11/A1/checkedOutMajor",
           latestVersion.get("url"));
     } finally {
       if (document != null) {

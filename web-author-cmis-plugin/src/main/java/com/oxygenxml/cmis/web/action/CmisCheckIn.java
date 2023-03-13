@@ -48,7 +48,7 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 		CmisURLConnection connection = CmisActionsUtills.getCmisURLConnection(url);
 		
 		// Get Session Store
-		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url);
+		String urlWithoutContextId = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url).toExternalForm();
 		Document document = null;
 		try {
 			document = (Document) connection.getCMISObject(urlWithoutContextId);
