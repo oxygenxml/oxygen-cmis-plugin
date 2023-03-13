@@ -89,6 +89,7 @@ ListOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
     allVerDialog = workspace.createDialog();
     allVerDialog.setTitle(tr(msgs.VERSION_HISTORY));
     allVerDialog.setButtonConfiguration([{key: 'diff', caption: tr(msgs.Diff)}, {key: 'close', caption: tr(msgs.CLOSE_)}]);
+    allVerDialog.setResizable(true);
     this.dialog_ = allVerDialog;
   } else {
     // Clear the dialog element to render the new versions table.
@@ -97,7 +98,6 @@ ListOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
 
   if (supportsCommitMessage) {
     allVerDialog.setPreferredSize(750, 550);
-    allVerDialog.setResizable(true);
   } else {
     allVerDialog.setPreferredSize(430, 500);
   }
