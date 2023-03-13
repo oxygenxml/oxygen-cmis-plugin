@@ -114,15 +114,17 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
   }
   table.appendChild(goog.dom.createDom('thead', null, headerRow));
 
-  for(let version of versions) {
+
+  for(let i = 0; i < versions.length; i++) {
+    let version = versions[i];
     if (version.version === 'filename') {
       continue;
     }
     var versionUrl = version.url;
 
-    var isThisCurrentVersion= this.isCurrentVersion(versionUrl);
+    var isThisCurrentVersion= version.isCurrentVersion === "true";
 
-    var href = window.location.origin + window.location.pathname + versionUrl;
+    var href = window.location.origin + window.location.pathname + "?url=" + encodeURIComponent(versionUrl);
     var versionLink = goog.dom.createDom('a', {
         className: 'cmis-old-version-link',
         href: isThisCurrentVersion ? '#' : href,
@@ -147,17 +149,5 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
     table.appendChild(tr);
   }
 
-  
   return table;
 };
-
-/**
- * @param {string} versionUrl A CMIS OXY-URL.
- * @return {boolean} True if the given URL is currently opened.
- */
-ListOldVersionsAction.prototype.isCurrentVersion = function(versionUrl) {
-  var isLatestVersionOpenedNow = location.href.indexOf('oldversion') === -1;
-  var isThisVersionOpenedNow = window.location.search.indexOf(versionUrl) !== -1;
-  var isThisVersionOld = versionUrl.indexOf('oldversion') !== -1;
-  return (isThisVersionOpenedNow && isThisVersionOld) || (isLatestVersionOpenedNow && !isThisVersionOld);
-}

@@ -7,17 +7,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.CredentialsManager;
 import com.oxygenxml.cmis.web.TranslationTags;
 
 import lombok.extern.slf4j.Slf4j;
-import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
@@ -46,11 +48,13 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		authorAccess.getWorkspaceAccess();
 
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
+		UserCredentials currentUser = CredentialsManager.INSTANCE.getCredentials(url.getUserInfo());
 
 		connection = CmisActionsUtills.getCmisURLConnection(url);
 		
 		// Get Session Store
 		String urlWithoutContextIdAndVersion = CmisActionsUtills.getUrlWithoutContextIdAndVersion(url);
+		Optional<String> currentDocVersion = CmisActionsUtills.getVersionId(url);
 		
 		Document document = null;
 		try {
@@ -65,7 +69,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
 			
 			try {
-				List<Map<String, String>> allVersions = listOldVersions(document, urlWithoutContextIdAndVersion);
+				List<Map<String, String>> allVersions = listOldVersions(document, urlWithoutContextIdAndVersion, currentUser, currentDocVersion);
 				oldVersionJSON = new ObjectMapper().writeValueAsString(allVersions);
 				
 				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
@@ -91,7 +95,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * @throws IOException 
 	 */
 	public static List<Map<String, String>> listOldVersions(
-	    Document document, String url)
+	    Document document, String url, UserCredentials currentUser, Optional<String> currentDocVersion)
 	    throws IOException {
 	  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
 
@@ -100,21 +104,29 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		
 		List<Map<String, String>> versions = new ArrayList<>();
 		
-		boolean isCheckedOut = document.isVersionSeriesCheckedOut();
 		for (int i = 0; i < allVersions.size(); i++) {
 			Document version = allVersions.get(i);
-			// Check if server support Private Working Copies.
-			boolean isCurrentVersion = Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || i == 0; 
+			String versionId = version.getId();
+
+			boolean isPwcVersion = Boolean.TRUE.equals(version.isPrivateWorkingCopy()) || Boolean.TRUE.equals(version.isVersionSeriesPrivateWorkingCopy());
+			boolean isCheckedOutByMe = currentUser.getUsername().equals(document.getVersionSeriesCheckedOutBy());
+			boolean isCurrentVersion = isPwcVersion && isCheckedOutByMe || version.getId().equals(currentDocVersion.orElse(null));
 			
-			String label = isCurrentVersion && isCheckedOut ? rb.getMessage(TranslationTags.CURRENT) : "v" + version.getVersionLabel();
-			String urlParam = "?url=" + URLUtil.encodeURIComponent(url);
-			if (!isCurrentVersion) {
-			  urlParam += "?oldversion=" + version.getId();
+			String label;
+			if (isPwcVersion) {
+				label = isCurrentVersion ? rb.getMessage(TranslationTags.CURRENT) : "PWC";
+			} else {
+				label = version.getVersionLabel();
+			}
+			String urlParam = url;
+			if (isPwcVersion) {
+				urlParam = url;
+			} else {
+				urlParam = url + "?oldversion=" + versionId;
 			}
 			String commitMessage = version.getCheckinComment() != null ? version.getCheckinComment() : "";
 			String authorName = version.getLastModifiedBy();
-			
-			versions.add(createProps(label, urlParam, commitMessage, authorName));
+			versions.add(createProps(label, urlParam, commitMessage, authorName, isCurrentVersion));
 		}
 		return versions;
 	}
@@ -128,7 +140,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * @param authorName
 	 * @return
 	 */
-	private static Map<String, String> createProps(String label, String urlParam, String commitMessage, String authorName) {
+	private static Map<String, String> createProps(String label, String urlParam, String commitMessage, String authorName, boolean isCurrentVersion) {
 	  Map<String, String> props = new HashMap<>(3);
 	  props.put("version", label);
 	  props.put("url", urlParam);
@@ -136,6 +148,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	  if(commitMessage != null) {
 	    props.put("commitMessage", commitMessage);
 	  }
+	  props.put("isCurrentVersion", String.valueOf(isCurrentVersion));
 	  
     return props;
 	}

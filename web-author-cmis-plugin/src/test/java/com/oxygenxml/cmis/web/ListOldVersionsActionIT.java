@@ -185,7 +185,9 @@ public class ListOldVersionsActionIT {
 	 */
   private List<Map<String, String>> getVersions(Document document, String url)
       throws IOException, JsonParseException, JsonMappingException {
-    return CmisOldVersions.listOldVersions(document, url);
+    UserCredentials currentUser = new UserCredentials("some-mocked-user", null);
+    Optional<String> currentDocVersion = Optional.empty();
+    return CmisOldVersions.listOldVersions(document, url, currentUser, currentDocVersion);
   }
 	
 	/**
