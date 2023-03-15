@@ -161,9 +161,6 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
   let rightDiffIndex = Math.min(leftDiffIndex + 1, versions.length - 1);
   for(let i = 0; i < versions.length; i++) {
     let version = versions[i];
-    if (version.version === 'filename') {
-      continue;
-    }
     var versionUrl = version.url;
 
     var isThisCurrentVersion= version.isCurrentVersion === "true";
