@@ -26,8 +26,11 @@ ListOldVersionsAction.prototype.getSmallIcon = function() {
 ListOldVersionsAction.prototype.actionPerformed = function(callback) {
   // Check if the server supports Commit Message.
   let supportsCommitMessage = this.status_.supportsCommitMessage();
- 
-  var allVerDialog = this.getDialog_(supportsCommitMessage);
+
+  // True if web-auhtor-diff-plugin is installed.
+  let canPerformDiff = sync && sync.diff && typeof sync.diff.DiffApi === 'function';
+
+  var allVerDialog = this.getDialog_(supportsCommitMessage, canPerformDiff);
   allVerDialog.show();
   allVerDialog.onSelect((option, e) => {
     if (option === "diff") {
@@ -73,22 +76,27 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
   this.editor_.getActionsManager().invokeOperation(
     'com.oxygenxml.cmis.web.action.CmisOldVersions', {
       action: 'listOldVersions'
-    }, goog.bind(this.handleOperationResult_, this, allVerDialog.getElement(), supportsCommitMessage));
+    }, goog.bind(this.handleOperationResult_, this, allVerDialog.getElement(), supportsCommitMessage, canPerformDiff));
 };
 
 /**
  * Creates the versions display dialog.
  *
- * @param supportsCommitMessage if the server supports Private Working Copy and commit messages.
+ * @param {boolean} supportsCommitMessage if the server supports Private Working Copy and commit messages.
+ * @param {boolean} canPerformDiff True if can perform diff.
  * @return the versions display dialog.
  * @private
  */
-ListOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
+ListOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage, canPerformDiff) {
   var allVerDialog = this.dialog_;
   if(!allVerDialog) {
     allVerDialog = workspace.createDialog();
     allVerDialog.setTitle(tr(msgs.VERSION_HISTORY));
-    allVerDialog.setButtonConfiguration([{key: 'diff', caption: tr(msgs.Diff)}, {key: 'close', caption: tr(msgs.CLOSE_)}]);
+    if (canPerformDiff) {
+      allVerDialog.setButtonConfiguration([{key: 'diff', caption: tr(msgs.Diff)}, {key: 'close', caption: tr(msgs.CLOSE_)}]);
+    } else {
+      allVerDialog.setButtonConfiguration([{key: 'close', caption: tr(msgs.CLOSE_)}]);
+    }
     allVerDialog.setResizable(true);
     this.dialog_ = allVerDialog;
   } else {
@@ -111,19 +119,23 @@ ListOldVersionsAction.prototype.getDialog_ = function(supportsCommitMessage) {
 /**
  * Handles the version information received from the operation.
  *
- * @param container the container in which to display the versions.
- * @param supportsCommitMessage whether the server supports private working copies.
+ * @param {HTMLElement} container the container in which to display the versions.
+ * @param {boolean} supportsCommitMessage whether the server supports private working copies.
+ * @param {boolean} canPerformDiff True if can perform diff.
  * @param err errors that appeared.
  * @param data the data.
  * @private
  */
-ListOldVersionsAction.prototype.handleOperationResult_ = function(container, supportsCommitMessage, err, data) {
+ListOldVersionsAction.prototype.handleOperationResult_ = function(container, supportsCommitMessage, canPerformDiff, err, data) {
   // remove selection from document.
   document.activeElement.blur();
   goog.dom.removeNode(container.querySelector("#cmis-loader"));
 
+  /**
+   * @type {[{version: string, isCurrentVersion: boolean, url: string, commitMessage: string}]}
+   */
   var versions = JSON.parse(data);
-  goog.dom.append(container, this.createTable_(versions, supportsCommitMessage));
+  goog.dom.append(container, this.createTable_(versions, supportsCommitMessage, canPerformDiff));
 
     // In case of older version, scroll it into view.
   var oldVersionSelected = document.querySelector('.current-version');
@@ -135,21 +147,24 @@ ListOldVersionsAction.prototype.handleOperationResult_ = function(container, sup
 /**
  * Creates the versions table.
  *
- * @param versions the versions list.
- * @param supportsCommitMessage whether the server supports commit messages.
+ * @param {[{version: string, isCurrentVersion: boolean, url: string, commitMessage: string}]} versions The versions list.
+ * @param {boolean} supportsCommitMessage whether the server supports commit messages.
+ * @param {boolean} canPerformDiff True if can perform diff.
  *
- * @return {*} the HTML table.
+ * @return {HTMLTableElement} the HTML table.
  * @private
  */
-ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage) {
+ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommitMessage, canPerformDiff) {
   var table = goog.dom.createDom('table', 'cmis-history-table');
 
   let headerRow = goog.dom.createDom('tr', 'table-header-row',
       [
-        goog.dom.createDom('th', {colspan: 2, style: "width:1%"}, "Diff"),
         goog.dom.createDom('th', null, "Version"),
         goog.dom.createDom('th', null, "Creator")
       ]);
+  if (canPerformDiff) {
+    headerRow.insertBefore(goog.dom.createDom('th', {colspan: 2, style: "width:1%"}, "Diff"), headerRow.firstChild);
+  }
   if(supportsCommitMessage) {
     let headerCommitMessage = goog.dom.createDom('th', null, 'Check-in Message');
     headerRow.appendChild(headerCommitMessage);
@@ -172,18 +187,23 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
         target: '_blank'
       }, version.version);
 
-    var diffLeftTd = goog.dom.createDom('td', 'cmis-diff-left', goog.dom.createDom('input',
-      {type: "radio", name: "cmis-diff-left", value: versionUrl, title: tr(msgs.LEFT_DIFF_DOC), checked: leftDiffIndex === i, "data-version": version.version, "data-currentversion": version.isCurrentVersion}));
-    var diffRightTd = goog.dom.createDom('td', 'cmis-diff-right', goog.dom.createDom('input',
-      {type: "radio", name: "cmis-diff-right", value: versionUrl, title: tr(msgs.RIGHT_DIFF_DOC), checked: rightDiffIndex === i, "data-version": version.version, "data-currentversion": version.isCurrentVersion}));
     var versionTd = goog.dom.createDom('td', 'cmis-version', versionLink);
     var userTd = goog.dom.createDom('td', {class: 'cmis-user', title: version.author}, version.author);
 
     var trEl = goog.dom.createDom('tr', {
           className: isThisCurrentVersion ? 'current-version' : '',
           title: isThisCurrentVersion ? 'Opened document version' : ''
-        },
-        diffLeftTd, diffRightTd, versionTd, userTd)
+        }, versionTd, userTd);
+
+    if (canPerformDiff) {
+      var diffLeftTd = goog.dom.createDom('td', 'cmis-diff-left', goog.dom.createDom('input',
+        {type: "radio", name: "cmis-diff-left", value: versionUrl, title: tr(msgs.LEFT_DIFF_DOC), checked: leftDiffIndex === i, "data-version": version.version, "data-currentversion": version.isCurrentVersion}));
+      var diffRightTd = goog.dom.createDom('td', 'cmis-diff-right', goog.dom.createDom('input',
+        {type: "radio", name: "cmis-diff-right", value: versionUrl, title: tr(msgs.RIGHT_DIFF_DOC), checked: rightDiffIndex === i, "data-version": version.version, "data-currentversion": version.isCurrentVersion}));
+      trEl.insertBefore(diffRightTd, trEl.firstChild);
+      trEl.insertBefore(diffLeftTd, diffRightTd);
+    }
+
     if (supportsCommitMessage) {
       var processedCommitMessage = version.commitMessage.replace("/\n", "&#10;");
       var checkinMessageTd = goog.dom.createDom('td', 'cmis-checkin-message',
