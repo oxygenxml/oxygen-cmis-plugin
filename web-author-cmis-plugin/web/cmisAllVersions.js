@@ -53,28 +53,42 @@ ListOldVersionsAction.prototype.showDiff_ = function(versionHistoryDialogElement
   if (diffDocsModel.isLeftCurrentVersion) {
     workspace.serviceLoader.loadServices(sync.internal_api.DiffApi)
       .then(([DiffApi]) => {
-        let diffApi = new DiffApi(this.editor_).withRightLabel(diffDocsModel.rightDocVersion);
-        let promise = diffApi.canMerge() ? diffApi.mergeWith(diffDocsModel.rightDocUrl) : diffApi.compareWith(diffDocsModel.rightDocUrl);
-        promise.catch(err => {
-          window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
-        });
+        this.showDiffForCurrentEditor_(diffDocsModel, DiffApi);
       });
   } else {
     workspace.serviceLoader.loadServices(sync.internal_api.DiffTool)
       .then(([DiffTool]) => {
-        let dialog = workspace.createDialog(tr(msgs.Diff));
-        dialog.show();
-        dialog.setPreferredSize(9000, 9000);
-
-        let diffParams = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", diffDocsModel.leftDocUrl);
-        diffParams.rightUrl = diffDocsModel.rightDocUrl;
-        diffParams.leftEditorLabel = diffDocsModel.leftDocVersion;
-        diffParams.rightEditorLabel = diffDocsModel.rightDocVersion;
-
-        let diffTool = new DiffTool(dialog.getElement());
-        diffTool.showDiffEditor(diffParams, {})
+        this.showDiff_(diffDocsModel, DiffTool);
       });
   }
+}
+
+ListOldVersionsAction.prototype.showDiffForCurrentEditor_ = function(diffDocsModel, diffApiConstructor) {
+  let diffApi = new diffApiConstructor(this.editor_).withRightLabel(diffDocsModel.rightDocVersion);
+  let promise = diffApi.canMerge() ? diffApi.mergeWith(diffDocsModel.rightDocUrl) : diffApi.compareWith(diffDocsModel.rightDocUrl);
+  promise.catch(err => {
+    window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
+  });
+}
+
+/**
+ * Shows diff.
+ * @param {{isLeftCurrentVersion: boolean, rightDocUrl: *, leftDocUrl: *, leftDocVersion: string, rightDocVersion: string}} diffDocsModel
+ * @param {sync.internal_api.DiffTool} diffToolConstructor
+ * @private
+ */
+ListOldVersionsAction.prototype.showDiff_ = function(diffDocsModel, diffToolConstructor) {
+  let dialog = workspace.createDialog(tr(msgs.Diff));
+  dialog.show();
+  dialog.setPreferredSize(9000, 9000);
+
+  let diffParams = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", diffDocsModel.leftDocUrl);
+  diffParams.rightUrl = diffDocsModel.rightDocUrl;
+  diffParams.leftEditorLabel = diffDocsModel.leftDocVersion;
+  diffParams.rightEditorLabel = diffDocsModel.rightDocVersion;
+
+  let diffTool = new diffToolConstructor(dialog.getElement());
+  diffTool.showDiffEditor(diffParams, {})
 }
 
 /**
