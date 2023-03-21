@@ -36,38 +36,7 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
     if (option === "diff") {
       // keep the Version History dialog open when choosing "Diff".
       e.preventDefault();
-
-      let leftDocInput = allVerDialog.getElement().querySelector("input[name='cmis-diff-left']:checked");
-      let rightDocInput = allVerDialog.getElement().querySelector("input[name='cmis-diff-right']:checked");
-      let leftDocUrl = leftDocInput.value;
-      let leftDocVersion = leftDocInput.getAttribute("data-version");
-      let isLeftCurrentVersion = leftDocInput.getAttribute("data-currentversion") === "true";
-
-      let rightDocUrl = rightDocInput.value;
-      let rightDocVersion = rightDocInput.getAttribute("data-version");
-
-      if (isLeftCurrentVersion) {
-        let diffApi = new sync.diff.DiffApi(this.editor_).withRightLabel(rightDocVersion);
-        let promise = diffApi.canMerge() ? diffApi.mergeWith(rightDocUrl) : diffApi.compareWith(rightDocUrl);
-        promise.catch(err => {
-          window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
-        });
-      } else {
-        let params = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", leftDocUrl);
-        params.rightUrl = rightDocUrl;
-        params.leftEditorLabel = leftDocVersion;
-        params.rightEditorLabel = rightDocVersion;
-
-        let dialog = new sync.diff.CompareWithDialog(false);
-        dialog.show();
-        dialog.showDiff(params, {})
-          .then(() => {
-            let resolver = sync.util.promise.createResolver();
-            dialog.onSelect(() => resolver.resolve());
-            return resolver.promise;
-          })
-          .finally(() => dialog.dispose());
-      }
+      this.showDiff_(allVerDialog.getElement());
     } else {
       callback();
     }
@@ -78,6 +47,40 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
       action: 'listOldVersions'
     }, goog.bind(this.handleOperationResult_, this, allVerDialog.getElement(), supportsCommitMessage, canPerformDiff));
 };
+
+ListOldVersionsAction.prototype.showDiff_ = function(versionHistoryDialogElement) {
+  let leftDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-left']:checked");
+  let rightDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-right']:checked");
+  let leftDocUrl = leftDocInput.value;
+  let leftDocVersion = leftDocInput.getAttribute("data-version");
+  let isLeftCurrentVersion = leftDocInput.getAttribute("data-currentversion") === "true";
+
+  let rightDocUrl = rightDocInput.value;
+  let rightDocVersion = rightDocInput.getAttribute("data-version");
+
+  if (isLeftCurrentVersion) {
+    let diffApi = new sync.diff.DiffApi(this.editor_).withRightLabel(rightDocVersion);
+    let promise = diffApi.canMerge() ? diffApi.mergeWith(rightDocUrl) : diffApi.compareWith(rightDocUrl);
+    promise.catch(err => {
+      window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
+    });
+  } else {
+    let params = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", leftDocUrl);
+    params.rightUrl = rightDocUrl;
+    params.leftEditorLabel = leftDocVersion;
+    params.rightEditorLabel = rightDocVersion;
+
+    let dialog = new sync.diff.CompareWithDialog(false);
+    dialog.show();
+    dialog.showDiff(params, {})
+      .then(() => {
+        let resolver = sync.util.promise.createResolver();
+        dialog.onSelect(() => resolver.resolve());
+        return resolver.promise;
+      })
+      .finally(() => dialog.dispose());
+  }
+}
 
 /**
  * Creates the versions display dialog.
