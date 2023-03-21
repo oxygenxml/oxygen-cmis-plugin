@@ -24,6 +24,10 @@ ListOldVersionsAction.prototype.getSmallIcon = function() {
 
 /** @override */
 ListOldVersionsAction.prototype.actionPerformed = function(callback) {
+  this.showVersionHistory_();
+};
+
+ListOldVersionsAction.prototype.showVersionHistory_ = function(callback) {
   // Check if the server supports Commit Message.
   let supportsCommitMessage = this.status_.supportsCommitMessage();
 
@@ -46,7 +50,8 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
     'com.oxygenxml.cmis.web.action.CmisOldVersions', {
       action: 'listOldVersions'
     }, goog.bind(this.handleOperationResult_, this, allVerDialog.getElement(), supportsCommitMessage, canPerformDiff));
-};
+}
+
 
 ListOldVersionsAction.prototype.showDiff_ = function(versionHistoryDialogElement) {
   let diffDocsModel = this.getSelectedDiffDocModel_(versionHistoryDialogElement);
