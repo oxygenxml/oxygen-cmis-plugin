@@ -49,39 +49,53 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
 };
 
 ListOldVersionsAction.prototype.showDiff_ = function(versionHistoryDialogElement) {
-  let leftDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-left']:checked");
-  let rightDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-right']:checked");
-  let isLeftCurrentVersion = leftDocInput.getAttribute("data-currentversion") === "true";
-
-  let rightDocUrl = rightDocInput.value;
-  let rightDocVersion = rightDocInput.getAttribute("data-version");
-
-  if (isLeftCurrentVersion) {
+  let diffDocsModel = this.getSelectedDiffDocModel_(versionHistoryDialogElement);
+  if (diffDocsModel.isLeftCurrentVersion) {
     workspace.serviceLoader.loadServices(sync.internal_api.DiffApi)
       .then(([DiffApi]) => {
-        let diffApi = new DiffApi(this.editor_).withRightLabel(rightDocVersion);
-        let promise = diffApi.canMerge() ? diffApi.mergeWith(rightDocUrl) : diffApi.compareWith(rightDocUrl);
+        let diffApi = new DiffApi(this.editor_).withRightLabel(diffDocsModel.rightDocVersion);
+        let promise = diffApi.canMerge() ? diffApi.mergeWith(diffDocsModel.rightDocUrl) : diffApi.compareWith(diffDocsModel.rightDocUrl);
         promise.catch(err => {
           window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
         });
       });
   } else {
-    let leftDocUrl = leftDocInput.value;
-    let leftDocVersion = leftDocInput.getAttribute("data-version");
     workspace.serviceLoader.loadServices(sync.internal_api.DiffTool)
       .then(([DiffTool]) => {
         let dialog = workspace.createDialog(tr(msgs.Diff));
         dialog.show();
         dialog.setPreferredSize(9000, 9000);
 
-        let diffParams = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", leftDocUrl);
-        diffParams.rightUrl = rightDocUrl;
-        diffParams.leftEditorLabel = leftDocVersion;
-        diffParams.rightEditorLabel = rightDocVersion;
+        let diffParams = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", diffDocsModel.leftDocUrl);
+        diffParams.rightUrl = diffDocsModel.rightDocUrl;
+        diffParams.leftEditorLabel = diffDocsModel.leftDocVersion;
+        diffParams.rightEditorLabel = diffDocsModel.rightDocVersion;
 
         let diffTool = new DiffTool(dialog.getElement());
         diffTool.showDiffEditor(diffParams, {})
       });
+  }
+}
+
+/**
+ * @param {HTMLElement} versionHistoryDialogElement
+ * @return {{isLeftCurrentVersion: boolean, rightDocUrl: *, leftDocUrl: *, leftDocVersion: string, rightDocVersion: string}} The model of the selected diff docs from the Version History dialog.
+ * @private
+ */
+ListOldVersionsAction.prototype.getSelectedDiffDocModel_ = function(versionHistoryDialogElement) {
+  let leftDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-left']:checked");
+  let rightDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-right']:checked");
+  let isLeftCurrentVersion = leftDocInput.getAttribute("data-currentversion") === "true";
+  let leftDocUrl = leftDocInput.value;
+  let leftDocVersion = leftDocInput.getAttribute("data-version");
+  let rightDocUrl = rightDocInput.value;
+  let rightDocVersion = rightDocInput.getAttribute("data-version");
+  return {
+    isLeftCurrentVersion: isLeftCurrentVersion,
+    leftDocUrl: leftDocUrl,
+    leftDocVersion: leftDocVersion,
+    rightDocUrl: rightDocUrl,
+    rightDocVersion: rightDocVersion
   }
 }
 
