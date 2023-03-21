@@ -24,15 +24,18 @@ ListOldVersionsAction.prototype.getSmallIcon = function() {
 
 /** @override */
 ListOldVersionsAction.prototype.actionPerformed = function(callback) {
-  this.showVersionHistory_();
+  this.showVersionHistory_(callback).finally(callback);
 };
 
-ListOldVersionsAction.prototype.showVersionHistory_ = function(callback) {
+ListOldVersionsAction.prototype.showVersionHistory_ = async function() {
   // Check if the server supports Commit Message.
   let supportsCommitMessage = this.status_.supportsCommitMessage();
 
+  let diffApiConstructor = await workspace.serviceLoader.loadServices(sync.internal_api.DiffApi).then(([DiffApi]) => DiffApi);
+  let diffToolConstructor = await workspace.serviceLoader.loadServices(sync.internal_api.DiffTool).then(([DiffTool]) => DiffTool);
+
   // True if web-auhtor-diff-plugin is installed.
-  let canPerformDiff = sync && sync.diff && typeof sync.diff.DiffApi === 'function';
+  let canPerformDiff = diffApiConstructor && diffToolConstructor;
 
   var allVerDialog = this.getDialog_(supportsCommitMessage, canPerformDiff);
   allVerDialog.show();
@@ -40,9 +43,13 @@ ListOldVersionsAction.prototype.showVersionHistory_ = function(callback) {
     if (option === "diff") {
       // keep the Version History dialog open when choosing "Diff".
       e.preventDefault();
-      this.showDiff_(allVerDialog.getElement());
+      let diffDocsModel = this.getSelectedDiffDocModel_(allVerDialog.getElement());
+      if (diffDocsModel.isLeftCurrentVersion) {
+        this.showDiffForCurrentEditor_(diffDocsModel, diffApiConstructor);
+      } else {
+        this.showDiff_(diffDocsModel, diffToolConstructor);
+      }
     } else {
-      callback();
     }
   });
 
@@ -52,26 +59,15 @@ ListOldVersionsAction.prototype.showVersionHistory_ = function(callback) {
     }, goog.bind(this.handleOperationResult_, this, allVerDialog.getElement(), supportsCommitMessage, canPerformDiff));
 }
 
-
-ListOldVersionsAction.prototype.showDiff_ = function(versionHistoryDialogElement) {
-  let diffDocsModel = this.getSelectedDiffDocModel_(versionHistoryDialogElement);
-  if (diffDocsModel.isLeftCurrentVersion) {
-    workspace.serviceLoader.loadServices(sync.internal_api.DiffApi)
-      .then(([DiffApi]) => {
-        this.showDiffForCurrentEditor_(diffDocsModel, DiffApi);
-      });
-  } else {
-    workspace.serviceLoader.loadServices(sync.internal_api.DiffTool)
-      .then(([DiffTool]) => {
-        this.showDiff_(diffDocsModel, DiffTool);
-      });
-  }
-}
-
+/**
+ * @param {{isLeftCurrentVersion: boolean, rightDocUrl: *, leftDocUrl: *, leftDocVersion: string, rightDocVersion: string}} diffDocsModel
+ * @param {sync.internal_api.DiffApi} diffApiConstructor
+ * @private
+ */
 ListOldVersionsAction.prototype.showDiffForCurrentEditor_ = function(diffDocsModel, diffApiConstructor) {
   let diffApi = new diffApiConstructor(this.editor_).withRightLabel(diffDocsModel.rightDocVersion);
   let promise = diffApi.canMerge() ? diffApi.mergeWith(diffDocsModel.rightDocUrl) : diffApi.compareWith(diffDocsModel.rightDocUrl);
-  promise.catch(err => {
+  return promise.catch(err => {
     window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
   });
 }
