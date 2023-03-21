@@ -51,34 +51,37 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
 ListOldVersionsAction.prototype.showDiff_ = function(versionHistoryDialogElement) {
   let leftDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-left']:checked");
   let rightDocInput = versionHistoryDialogElement.querySelector("input[name='cmis-diff-right']:checked");
-  let leftDocUrl = leftDocInput.value;
-  let leftDocVersion = leftDocInput.getAttribute("data-version");
   let isLeftCurrentVersion = leftDocInput.getAttribute("data-currentversion") === "true";
 
   let rightDocUrl = rightDocInput.value;
   let rightDocVersion = rightDocInput.getAttribute("data-version");
 
   if (isLeftCurrentVersion) {
-    let diffApi = new sync.diff.DiffApi(this.editor_).withRightLabel(rightDocVersion);
-    let promise = diffApi.canMerge() ? diffApi.mergeWith(rightDocUrl) : diffApi.compareWith(rightDocUrl);
-    promise.catch(err => {
-      window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
-    });
+    workspace.serviceLoader.loadServices(sync.internal_api.DiffApi)
+      .then(([DiffApi]) => {
+        let diffApi = new DiffApi(this.editor_).withRightLabel(rightDocVersion);
+        let promise = diffApi.canMerge() ? diffApi.mergeWith(rightDocUrl) : diffApi.compareWith(rightDocUrl);
+        promise.catch(err => {
+          window.workspace.getNotificationManager().showError("Cannot store changes. " + JSON.stringify(err));
+        });
+      });
   } else {
-    let params = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", leftDocUrl);
-    params.rightUrl = rightDocUrl;
-    params.leftEditorLabel = leftDocVersion;
-    params.rightEditorLabel = rightDocVersion;
+    let leftDocUrl = leftDocInput.value;
+    let leftDocVersion = leftDocInput.getAttribute("data-version");
+    workspace.serviceLoader.loadServices(sync.internal_api.DiffTool)
+      .then(([DiffTool]) => {
+        let dialog = workspace.createDialog(tr(msgs.Diff));
+        dialog.show();
+        dialog.setPreferredSize(9000, 9000);
 
-    let dialog = new sync.diff.CompareWithDialog(false);
-    dialog.show();
-    dialog.showDiff(params, {})
-      .then(() => {
-        let resolver = sync.util.promise.createResolver();
-        dialog.onSelect(() => resolver.resolve());
-        return resolver.promise;
-      })
-      .finally(() => dialog.dispose());
+        let diffParams = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", leftDocUrl);
+        diffParams.rightUrl = rightDocUrl;
+        diffParams.leftEditorLabel = leftDocVersion;
+        diffParams.rightEditorLabel = rightDocVersion;
+
+        let diffTool = new DiffTool(dialog.getElement());
+        diffTool.showDiffEditor(diffParams, {})
+      });
   }
 }
 
