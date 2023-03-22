@@ -30,7 +30,7 @@ ListOldVersionsAction.prototype.actionPerformed = async function(callback) {
   let diffApiConstructor = await workspace.serviceLoader.loadServices(sync.internal_api.DiffApi).then(([DiffApi]) => DiffApi);
   let diffToolConstructor = await workspace.serviceLoader.loadServices(sync.internal_api.DiffTool).then(([DiffTool]) => DiffTool);
 
-  // True if web-auhtor-diff-plugin is installed.
+  // True if web-author-diff-plugin is installed.
   let canPerformDiff = diffApiConstructor && diffToolConstructor;
 
   var allVerDialog = this.getDialog_(supportsCommitMessage, canPerformDiff);
