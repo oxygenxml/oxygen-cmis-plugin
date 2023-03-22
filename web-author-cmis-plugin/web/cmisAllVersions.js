@@ -23,11 +23,7 @@ ListOldVersionsAction.prototype.getSmallIcon = function() {
 };
 
 /** @override */
-ListOldVersionsAction.prototype.actionPerformed = function(callback) {
-  this.showVersionHistory_(callback).finally(callback);
-};
-
-ListOldVersionsAction.prototype.showVersionHistory_ = async function() {
+ListOldVersionsAction.prototype.actionPerformed = async function(callback) {
   // Check if the server supports Commit Message.
   let supportsCommitMessage = this.status_.supportsCommitMessage();
 
@@ -50,6 +46,7 @@ ListOldVersionsAction.prototype.showVersionHistory_ = async function() {
         this.showDiff_(diffDocsModel, diffToolConstructor);
       }
     } else {
+      callback();
     }
   });
 
