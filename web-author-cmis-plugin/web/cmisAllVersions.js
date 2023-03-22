@@ -76,8 +76,9 @@ ListOldVersionsAction.prototype.showDiffForCurrentEditor_ = function(diffDocsMod
  * @private
  */
 ListOldVersionsAction.prototype.showDiff_ = function(diffDocsModel, diffToolConstructor) {
-  let dialog = workspace.createDialog(tr(msgs.Diff));
+  let dialog = workspace.createDialog();
   dialog.show();
+  dialog.setTitle(tr(msgs.Diff));
   dialog.setPreferredSize(9000, 9000);
 
   let diffParams = new sync.internal_api.DiffParams(sync.internal_api.DiffType.DIFF, "", diffDocsModel.leftDocUrl);
@@ -195,7 +196,7 @@ ListOldVersionsAction.prototype.createTable_ = function(versions, supportsCommit
         goog.dom.createDom('th', null, "Creator")
       ]);
   if (canPerformDiff) {
-    headerRow.insertBefore(goog.dom.createDom('th', {colspan: 2, style: "width:1%"}, "Diff"), headerRow.firstChild);
+    headerRow.insertBefore(goog.dom.createDom('th', {colspan: 2, style: "width:1%"}, tr(msgs.Diff)), headerRow.firstChild);
   }
   if(supportsCommitMessage) {
     let headerCommitMessage = goog.dom.createDom('th', null, 'Check-in Message');
