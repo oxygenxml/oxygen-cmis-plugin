@@ -16,7 +16,6 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.CredentialsManager;
 
 import lombok.extern.slf4j.Slf4j;
-import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
 
 @Slf4j
@@ -119,7 +118,18 @@ public class CmisActionsUtills {
   }
 	
   public static Optional<String> getVersionId(URL url) {
-    return Optional.ofNullable(URLUtil.getURLParameterValue(url, CmisAction.OLD_VERSION.getValue()));
+    Optional<String> toReturn = Optional.empty();
+    String query = url.getQuery();
+    if (query != null) {
+      HashMap<String, String> queryPart = new HashMap<>();
+      for (String pair : url.getQuery().split("&")) {
+        int index = pair.indexOf('=');
+        queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+      }
+      String objectId = queryPart.get(CmisAction.OLD_VERSION.getValue());
+      toReturn = Optional.ofNullable(objectId);
+    }
+    return toReturn;
   }
 
   public static Document getLatestVersion(Document document) {
