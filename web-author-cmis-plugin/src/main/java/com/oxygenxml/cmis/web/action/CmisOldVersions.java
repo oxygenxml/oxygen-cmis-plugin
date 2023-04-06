@@ -64,21 +64,16 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
-		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
-		
-		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
+		try {
+			List<Map<String, String>> allVersions = listOldVersions(document, urlWithoutContextId, currentUser);
+			oldVersionJSON = new ObjectMapper().writeValueAsString(allVersions);
 			
-			try {
-				List<Map<String, String>> allVersions = listOldVersions(document, urlWithoutContextId, currentUser);
-				oldVersionJSON = new ObjectMapper().writeValueAsString(allVersions);
-				
-				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
-					return oldVersionJSON;
-				}
-				
-			} catch (Exception e) {
-				return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
+			if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
+				return oldVersionJSON;
 			}
+			
+		} catch (Exception e) {
+			return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
 		}
 		 
 		return CmisActionsUtills.returnErrorInfoJSON("no_error", null);

@@ -32,9 +32,9 @@ CmisCheckOutAction.prototype.isEnabled = function() {
 /** @override */
 CmisCheckOutAction.prototype.actionPerformed = function(callback) {
   this.editor_.getActionsManager().invokeOperation(
-      'com.oxygenxml.cmis.web.action.CmisCheckOut', {
-          action: 'cmisCheckout'
-      }, goog.bind(this.handleOperationResult_, this, callback));
+      'com.oxygenxml.cmis.web.action.CmisCheckOut',
+      {},
+      goog.bind(this.handleOperationResult_, this, callback));
 };
 
 /**

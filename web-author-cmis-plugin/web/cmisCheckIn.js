@@ -93,7 +93,6 @@ CmisCheckInAction.prototype.handleDialogSelect_ = function(callback, key, e) {
     var selectedVersionRadio = dialogElement.querySelector('.cmis-version-label input[type="radio"]:checked');
     this.editor_.getActionsManager().invokeOperation(
       'com.oxygenxml.cmis.web.action.CmisCheckIn', {
-        action: 'cmisCheckin',
         commit: commitMessage,
         state: selectedVersionRadio ? selectedVersionRadio.value : ''
       }, callback);

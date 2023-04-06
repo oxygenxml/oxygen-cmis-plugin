@@ -14,6 +14,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.CredentialsManager;
+import com.oxygenxml.cmis.web.EditorOption;
 
 import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
@@ -107,7 +108,7 @@ public class CmisActionsUtills {
 
   static URL stripVersion(URL url) {
     String urlStr = url.toExternalForm();
-    if (urlStr.contains(CmisAction.OLD_VERSION.getValue()) || urlStr.contains("?")) {
+    if (urlStr.contains(EditorOption.OLD_VERSION.getValue()) || urlStr.contains("?")) {
       urlStr = urlStr.substring(0, urlStr.indexOf('?'));
     }
     try {
@@ -126,7 +127,7 @@ public class CmisActionsUtills {
         int index = pair.indexOf('=');
         queryPart.put(pair.substring(0, index), pair.substring(index + 1));
       }
-      String objectId = queryPart.get(CmisAction.OLD_VERSION.getValue());
+      String objectId = queryPart.get(EditorOption.OLD_VERSION.getValue());
       toReturn = Optional.ofNullable(objectId);
     }
     return toReturn;
