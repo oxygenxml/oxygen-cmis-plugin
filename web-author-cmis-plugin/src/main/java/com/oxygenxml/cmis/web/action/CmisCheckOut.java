@@ -53,37 +53,33 @@ public class CmisCheckOut extends AuthorOperationWithResult {
       throw(new AuthorOperationException(e.getMessage()));
     }
 
-    String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
+    try {
+      document = document.getObjectOfLatestVersion(false);
+      boolean canCheckoutDocument = connection.canCheckoutDocument(document);        
+      if (canCheckoutDocument) {
+        checkOutDocument(document);
+        authorAccess.getEditorAccess().setEditable(true);
 
-    if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CHECK_OUT.getValue())) {
-      try {
-        document = document.getObjectOfLatestVersion(false);
-        boolean canCheckoutDocument = connection.canCheckoutDocument(document);        
-        if (canCheckoutDocument) {
-          checkOutDocument(document);
-          authorAccess.getEditorAccess().setEditable(true);
+        reloadDocument(authorAccess);
+      } else {
+        WebappPluginWorkspace pluginWorkspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
 
-          reloadDocument(authorAccess);
-        } else {
-          WebappPluginWorkspace pluginWorkspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
+        PluginResourceBundle rb = pluginWorkspace.getResourceBundle();
+        String checkedOutBy = document.getVersionSeriesCheckedOutBy();
+        model.getAuthorAccess()
+            .getEditorAccess()
+            .setReadOnly(new ReadOnlyReason(
+                MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), checkedOutBy)));
 
-          PluginResourceBundle rb = pluginWorkspace.getResourceBundle();
-          String checkedOutBy = document.getVersionSeriesCheckedOutBy();
-          model.getAuthorAccess()
-              .getEditorAccess()
-              .setReadOnly(new ReadOnlyReason(
-                  MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), checkedOutBy)));
+        reloadDocument(authorAccess);
 
-          reloadDocument(authorAccess);
-
-          return CmisActionsUtills.returnErrorInfoJSON("checked_out_by",  
-              MessageFormat.format(rb.getMessage(TranslationTags.CANNOT_CHECK_OUT_CHECKED_OUT_BY), document.getName(), checkedOutBy));
-        }
-
-      } catch (Exception e) {
-        log.info(connection.getUserCredentials().getUsername() + " CANNOT checkout " + document.getName() + " " + e.getMessage());
-        return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
+        return CmisActionsUtills.returnErrorInfoJSON("checked_out_by",  
+            MessageFormat.format(rb.getMessage(TranslationTags.CANNOT_CHECK_OUT_CHECKED_OUT_BY), document.getName(), checkedOutBy));
       }
+
+    } catch (Exception e) {
+      log.info(connection.getUserCredentials().getUsername() + " CANNOT checkout " + document.getName() + " " + e.getMessage());
+      return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
     }
 
     return CmisActionsUtills.returnErrorInfoJSON("success", null);

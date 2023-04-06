@@ -47,10 +47,10 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   this.dialog_.show();
   this.dialog_.onSelect(goog.bind(function(key, e) {
       if (key === 'discard') {
-          this.editor_.getActionsManager().invokeOperation(
-              'com.oxygenxml.cmis.web.action.CmisCancelCheckOut', {
-                  action: 'cancelCmisCheckout'
-              }, callback);
+        this.editor_.getActionsManager().invokeOperation(
+          'com.oxygenxml.cmis.web.action.CmisCancelCheckOut',
+          {},
+          callback);
         this.status_.setCheckedout(false);
       } else {
         goog.isFunction(callback) && callback();

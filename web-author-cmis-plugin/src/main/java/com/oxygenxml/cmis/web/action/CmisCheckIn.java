@@ -2,9 +2,7 @@ package com.oxygenxml.cmis.web.action;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -16,7 +14,6 @@ import com.oxygenxml.cmis.web.EditorListener;
 import com.oxygenxml.cmis.web.TranslationTags;
 
 import lombok.extern.slf4j.Slf4j;
-import ro.sync.basic.io.IOUtil;
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
@@ -30,7 +27,7 @@ import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 @WebappRestSafe
 @Slf4j
-public class CmisCheckIn extends AuthorOperationWithResult{
+public class CmisCheckIn extends AuthorOperationWithResult {
 
 	/**
 	 * Do CMIS Check in operation.
@@ -57,27 +54,22 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
-		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
-		String commitMessage = (String) args.getArgumentValue(CmisAction.COMMIT_MESSAGE.getValue());
-		String actualState = (String) args.getArgumentValue(CmisAction.STATE.getValue());
+		String commitMessage = (String) args.getArgumentValue("commit");
+		String actualState = (String) args.getArgumentValue("state");
 		
-		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CHECK_IN.getValue())) {
+		PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider
+					.getPluginWorkspace()).getResourceBundle();
+		
+		try {
+			checkInDocument(document, actualState, commitMessage);
 			
-			PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider
-						.getPluginWorkspace()).getResourceBundle();
-			
-			try {
-				checkInDocument(document, actualState, commitMessage);
-				
-				if (EditorListener.isCheckOutRequired()) {
-					authorAccess.getEditorAccess()
-							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
-				}
-				
-			} catch (Exception e) {
-				return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
+			if (EditorListener.isCheckOutRequired()) {
+				authorAccess.getEditorAccess()
+						.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
 			}
 			
+		} catch (Exception e) {
+			return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
 		}
 		
 		return CmisActionsUtills.returnErrorInfoJSON("no_error", null);
@@ -129,6 +121,6 @@ public class CmisCheckIn extends AuthorOperationWithResult{
 	}
 
   private static boolean isMajorVersion(String actualState) {
-    return actualState.equals(CmisAction.MAJOR_STATE.getValue());
+    return actualState.equals("major");
   }
 }

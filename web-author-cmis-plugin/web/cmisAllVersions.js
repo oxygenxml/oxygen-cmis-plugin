@@ -32,9 +32,9 @@ ListOldVersionsAction.prototype.actionPerformed = function(callback) {
   allVerDialog.onSelect(callback);
 
   this.editor_.getActionsManager().invokeOperation(
-    'com.oxygenxml.cmis.web.action.CmisOldVersions', {
-      action: 'listOldVersions'
-    }, goog.bind(this.handleOperationResult_, this, allVerDialog.getElement(), supportsCommitMessage));
+    'com.oxygenxml.cmis.web.action.CmisOldVersions',
+    {},
+    goog.bind(this.handleOperationResult_, this, allVerDialog.getElement(), supportsCommitMessage));
 };
 
 /**

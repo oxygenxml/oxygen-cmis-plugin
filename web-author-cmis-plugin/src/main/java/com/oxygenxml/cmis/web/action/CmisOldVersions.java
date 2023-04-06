@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.EditorOption;
 import com.oxygenxml.cmis.web.TranslationTags;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,23 +66,18 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
-		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
-		
-		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.LIST_VERSIONS.getValue())) {
+		try {
+			PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
+			String currentVersion = rb.getMessage(TranslationTags.CURRENT);
 			
-			try {
-				PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
-				String currentVersion = rb.getMessage(TranslationTags.CURRENT);
-				
-				oldVersionJSON = listOldVersions(document, urlWithoutContextId, currentVersion);
-				
-				if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
-					return oldVersionJSON;
-				}
-				
-			} catch (Exception e) {
-				return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
+			oldVersionJSON = listOldVersions(document, urlWithoutContextId, currentVersion);
+			
+			if(oldVersionJSON != null && !oldVersionJSON.isEmpty()) {
+				return oldVersionJSON;
 			}
+			
+		} catch (Exception e) {
+			return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
 		}
 		 
 		return CmisActionsUtills.returnErrorInfoJSON("no_error", null);
@@ -103,7 +99,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		
 		// Removing query part of URL, in this way
 		// we escape duplicates of queries.
-		if (url.contains(CmisAction.OLD_VERSION.getValue())) {
+		if (url.contains(EditorOption.OLD_VERSION.getValue())) {
 			url = url.substring(0, url.indexOf('?'));
 		}
 

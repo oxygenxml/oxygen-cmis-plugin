@@ -52,26 +52,21 @@ public class CmisCancelCheckOut extends AuthorOperationWithResult {
 			throw(new AuthorOperationException(e.getMessage()));
 		}
 		
-		String actualAction = (String) args.getArgumentValue(CmisAction.ACTION.getValue());
+		PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider
+				.getPluginWorkspace()).getResourceBundle();
 		
-		if (!actualAction.isEmpty() && actualAction.equals(CmisAction.CANCEL_CHECK_OUT.getValue())) {
+		try {
+			cancelCheckOutDocument(document);
+			reloadDocument(authorAccess);
 			
-			PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider
-					.getPluginWorkspace()).getResourceBundle();
-			
-			try {
-				cancelCheckOutDocument(document);
-				reloadDocument(authorAccess);
-				
-				if (EditorListener.isCheckOutRequired()) {
-					authorAccess.getEditorAccess()
-							.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
-				}
-				
-			} catch (Exception e) {
-			  log.error("Could not cancel check out for document:" + document, e);
-				return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
+			if (EditorListener.isCheckOutRequired()) {
+				authorAccess.getEditorAccess()
+						.setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
 			}
+			
+		} catch (Exception e) {
+		  log.error("Could not cancel check out for document:" + document, e);
+			return CmisActionsUtills.returnErrorInfoJSON("denied", e.getMessage());
 		}
 
 		return CmisActionsUtills.returnErrorInfoJSON("no_error", null);

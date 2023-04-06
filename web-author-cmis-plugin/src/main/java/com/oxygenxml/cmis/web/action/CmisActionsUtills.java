@@ -1,8 +1,11 @@
 package com.oxygenxml.cmis.web.action;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 
@@ -11,6 +14,7 @@ import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.CredentialsManager;
+import com.oxygenxml.cmis.web.EditorOption;
 
 import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContextUtil;
@@ -87,11 +91,38 @@ public class CmisActionsUtills {
    
 		String urlWithoutContextId = URLStreamHandlerWithContextUtil.getInstance().toStrippedExternalForm(url);
 	
-		if (urlWithoutContextId.contains(CmisAction.OLD_VERSION.getValue()) || urlWithoutContextId.contains("?")) {
+		if (urlWithoutContextId.contains(EditorOption.OLD_VERSION.getValue()) || urlWithoutContextId.contains("?")) {
 			urlWithoutContextId = urlWithoutContextId.substring(0, urlWithoutContextId.indexOf('?'));
 		}
 		
 		return urlWithoutContextId;
+	}
+
+  static URL stripVersion(URL url) {
+    String urlStr = url.toExternalForm();
+    if (urlStr.contains(EditorOption.OLD_VERSION.getValue()) || urlStr.contains("?")) {
+      urlStr = urlStr.substring(0, urlStr.indexOf('?'));
+    }
+    try {
+      return new URL(urlStr);
+    } catch (MalformedURLException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+	
+  public static Optional<String> getVersionId(URL url) {
+    Optional<String> toReturn = Optional.empty();
+    String query = url.getQuery();
+    if (query != null) {
+      HashMap<String, String> queryPart = new HashMap<>();
+      for (String pair : url.getQuery().split("&")) {
+        int index = pair.indexOf('=');
+        queryPart.put(pair.substring(0, index), pair.substring(index + 1));
+      }
+      String objectId = queryPart.get(EditorOption.OLD_VERSION.getValue());
+      toReturn = Optional.ofNullable(objectId);
+    }
+    return toReturn;
   }
 	
   public static Document getLatestVersion(Document document) {
