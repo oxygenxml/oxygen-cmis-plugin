@@ -47,13 +47,29 @@ cancelCmisCheckOutAction.prototype.actionPerformed = function(callback) {
   this.dialog_.show();
   this.dialog_.onSelect(goog.bind(function(key, e) {
       if (key === 'discard') {
-        this.editor_.getActionsManager().invokeOperation(
-          'com.oxygenxml.cmis.web.action.CmisCancelCheckOut',
-          {},
-          callback);
-        this.status_.setCheckedout(false);
+        this.revertDocument_()
+          .then(() => this.save_())
+          .then(() => this.discardPwc_())
+          .thenAlways(callback);
       } else {
         goog.isFunction(callback) && callback();
       }
   }, this));
 };
+
+cancelCmisCheckOutAction.prototype.revertDocument_ = function() {
+  let actionsManager = this.editor_.getActionsManager();
+  return sync.util.promise.promisify(actionsManager.invokeOperation, actionsManager)
+    ('com.oxygenxml.cmis.web.action.RevertDocumentOpereation', {});
+}
+
+cancelCmisCheckOutAction.prototype.save_ = function() {
+  return sync.util.promise.promisify(this.editor_.triggerSave, this.editor_)();
+}
+
+cancelCmisCheckOutAction.prototype.discardPwc_ = function() {
+  this.status_.setCheckedout(false);
+  let actionsManager = this.editor_.getActionsManager();
+  return sync.util.promise.promisify(actionsManager.invokeOperation, actionsManager)
+    ('com.oxygenxml.cmis.web.action.DiscardCheckOutOperation', {});
+}

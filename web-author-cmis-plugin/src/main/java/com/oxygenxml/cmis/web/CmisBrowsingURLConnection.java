@@ -28,7 +28,6 @@ import com.oxygenxml.cmis.core.RepositoryInfo;
 import com.oxygenxml.cmis.core.ResourceController;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
-import com.oxygenxml.cmis.web.action.CmisAction;
 
 import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
@@ -64,7 +63,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 		try {
 			String cmisQuery = this.url.getQuery();
 			
-			if (cmisQuery != null && cmisQuery.contains(CmisAction.OLD_VERSION.getValue())) {
+			if (cmisQuery != null && cmisQuery.contains(EditorOption.OLD_VERSION.getValue())) {
 				log.debug("Old ver. InputStream.");
 				return getOlderVersionInputStream();
 			}
@@ -97,7 +96,7 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 			queryPart.put(pair.substring(0, index), pair.substring(index + 1));
 		}
 
-		String objectId = queryPart.get(CmisAction.OLD_VERSION.getValue());
+		String objectId = queryPart.get(EditorOption.OLD_VERSION.getValue());
 		String connectionUrl = this.url.toExternalForm()
 				.replace(this.url.getQuery(), "");
 
