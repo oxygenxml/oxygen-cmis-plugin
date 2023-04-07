@@ -12,8 +12,8 @@ import org.junit.Test;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.web.action.CmisCancelCheckOut;
 import com.oxygenxml.cmis.web.action.CmisCheckOut;
+import com.oxygenxml.cmis.web.action.DiscardCheckOutOperation;
 
 public class CmisActionsCancelCheckOutIT {
   
@@ -45,7 +45,7 @@ public class CmisActionsCancelCheckOutIT {
 			document = document.getObjectOfLatestVersion(false);
 			assertTrue(document.isVersionSeriesCheckedOut());
 
-			CmisCancelCheckOut.cancelCheckOutDocument(document);
+			new DiscardCheckOutOperation().discardPwc(document);
 
 			document = document.getObjectOfLatestVersion(false);
 			assertFalse(document.isVersionSeriesCheckedOut());
