@@ -4,7 +4,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -30,7 +29,7 @@ public class RevertDocumentOpereation extends AuthorOperationWithResult {
      try {
       this.doOperationInternal(model);
     } catch (MalformedURLException e) {
-      e.printStackTrace();
+      throw new AuthorOperationException(e.getMessage(), e);
     }
      return null;
   }
