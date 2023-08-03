@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress>
       <notes>WA-6234: Product false positive because DTD support is disabled for WstxInputFactory, see https://github.com/apache/chemistry-opencmis/blob/9e49c685af9044a64cde0ab111792d74e914f4f2/chemistry-opencmis-commons/chemistry-opencmis-commons-impl/src/main/java/org/apache/chemistry/opencmis/commons/impl/XMLUtils.java#L82</notes>
       <filePath regex="true">.*[/\\]stax2-api-4.2.1.jar</filePath>
       <cve>CVE-2022-40152</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[WA-6570: Suppress detection false positive reported about a Rust library.]]></notes>
+        <filePath regex="true">.*woodstox-core-6.5.0.jar.*</filePath>
+        <cve>CVE-2023-34411</cve>
     </suppress>
 </suppressions>
