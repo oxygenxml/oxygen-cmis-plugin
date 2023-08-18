@@ -59,7 +59,8 @@ CmisFileServer.prototype.login = function(serverUrl, authenticated) {
         goog.Uri.QueryData.createFromMap(new goog.structs.Map({
           user: user,
           passwd: passwd
-        })).toString()
+        })).toString(),
+        {'X-Requested-With': 'g'}
       );
     }
   });
@@ -135,7 +136,9 @@ CmisFileServer.prototype.logout = function(logoutCallback) {
       }
       logoutCallback();
     }, this),
-    'POST');
+    'POST',
+    '',
+    {'X-Requested-With': 'g'});
 };
 
 CmisFileServer.prototype.createRootUrlComponent = function(rootUrlParam, rootURLChangedCallback, readOnly) {
