@@ -13,7 +13,7 @@
       <comment>Tooltip for a radio button that selects the document for the left-side-diff document.</comment>
       <val lang="en_US">Left-side diff document</val>
       <val lang="de_DE">Left-side diff document</val>
-      <val lang="fr_FR">Left-side diff document</val>
+      <val lang="fr_FR">Document de gauche à comparer</val>
       <val lang="ja_JP">Left-side diff document</val>
       <val lang="nl_NL">Left-side diff document</val>
       <val lang="zh_CN">Left-side diff document</val>
@@ -22,7 +22,7 @@
       <comment>Tooltip for a radio button that selects the document for the right-side-diff document.</comment>
       <val lang="en_US">Right-side diff document</val>
       <val lang="de_DE">Right-side diff document</val>
-      <val lang="fr_FR">Right-side diff document</val>
+      <val lang="fr_FR">Document de droite à comparer</val>
       <val lang="ja_JP">Right-side diff document</val>
       <val lang="nl_NL">Right-side diff document</val>
       <val lang="zh_CN">Right-side diff document</val>
