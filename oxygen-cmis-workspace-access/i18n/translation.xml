@@ -87,7 +87,7 @@
         <comment>Property of the resource.</comment>
         <val lang="en_US">Time created:</val>
         <val lang="de_DE">Erstellungszeitpunkt:</val>
-        <val lang="fr_FR">Crée le:</val>
+        <val lang="fr_FR">Crée le :</val>
         <val lang="ja_JP">作成された時刻：</val>
         <val lang="nl_NL">Gemaakt om:</val>
       <val lang="zh_CN">创建时间：</val>
@@ -120,7 +120,7 @@
         <comment>Default result.</comment>
         <val lang="en_US">By:</val>
         <val lang="de_DE">Von:</val>
-        <val lang="fr_FR">Par:</val>
+        <val lang="fr_FR">Par :</val>
         <val lang="ja_JP">以下による：</val>
         <val lang="nl_NL">Door:</val>
       <val lang="zh_CN">签字人：</val>
@@ -229,7 +229,7 @@
         <comment>Short message for the commit label.</comment>
         <val lang="en_US">Commit message:</val>
         <val lang="de_DE">Commit-Nachricht:</val>
-        <val lang="fr_FR">Message de commit:</val>
+        <val lang="fr_FR">Message de commit :</val>
         <val lang="ja_JP">コミットメッセージ：</val>
         <val lang="nl_NL">Vastlegbericht:</val>
       <val lang="zh_CN">提交消息：</val>
@@ -325,7 +325,7 @@
         <comment>Main message to be displayed to user.</comment>
         <val lang="en_US">Are sure you want to delete the selected item/s from the repository?</val>
         <val lang="de_DE">Sind Sie sicher, dass Sie die gewählten Elemente aus dem Repository löschen möchten?</val>
-        <val lang="fr_FR">Êtes-vous sûr de vouloir supprimer le(s) élément(s) sélectionné(s) du dépôt?</val>
+        <val lang="fr_FR">Êtes-vous sûr de vouloir supprimer le(s) élément(s) sélectionné(s) du dépôt ?</val>
         <val lang="ja_JP">選択した項目をリポジトリから削除しますか？</val>
         <val lang="nl_NL">Weet u zeker dat u de geselecteerde items wilt verwijderen uit de opslagplaats?</val>
       <val lang="zh_CN">确定要从存储库中删除选定的项吗？</val>

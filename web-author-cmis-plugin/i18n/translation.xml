@@ -202,7 +202,7 @@
     <comment>Check in message.</comment>
     <val lang="en_US">Enter the commit message:</val>
     <val lang="de_DE">Commit-Nachricht eingeben:</val>
-    <val lang="fr_FR">Entrez le message de commit:</val>
+    <val lang="fr_FR">Entrez le message de commit :</val>
     <val lang="ja_JP">コミットメッセージを入力する：</val>
     <val lang="nl_NL">Typ het vastlegbericht:</val>
     <val lang="zh_CN">输入提交消息：</val>
@@ -247,7 +247,7 @@
     <comment>Cancel check out warning</comment>
     <val lang="en_US">Are you sure you want to discard your Check Out?</val>
     <val lang="de_DE">Sind Sie sicher, dass Sie den Check-Out abbrechen möchten?</val>
-    <val lang="fr_FR">Êtes-vous sûr de vouloir annuler votre extraction?</val>
+    <val lang="fr_FR">Êtes-vous sûr de vouloir annuler votre extraction ?</val>
     <val lang="ja_JP">チェックアウトを破棄しますか？</val>
     <val lang="nl_NL">Weet u zeker dat u het uitchecken wilt negeren?</val>
     <val lang="zh_CN">是否确实要放弃签出？</val>
