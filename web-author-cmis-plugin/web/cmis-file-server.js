@@ -109,7 +109,7 @@ CmisFileServer.prototype.getLoginDialog_ = function() {
         )
       )
     );
-    loginDialog.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
+    loginDialog.setTitle(tr(msgs.CONNECT_));
     loginDialog.setPreferredSize(300, null);
     this.loginDialog_ = loginDialog;
   }

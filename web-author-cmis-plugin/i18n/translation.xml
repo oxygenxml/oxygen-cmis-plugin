@@ -9,6 +9,15 @@
     <language description="Chinese" lang="zh_CN"/>
   </languageList>
 
+  <key value="CONNECT_" distribution="webauthor">
+    <comment>Title of the connect dialog.</comment>
+    <val lang="en_US">Connect</val>
+    <val lang="de_DE">Connect</val>
+    <val lang="fr_FR">Connect</val>
+    <val lang="ja_JP">Connect</val>
+    <val lang="nl_NL">Connect</val>
+    <val lang="zh_CN">Connect</val>
+  </key>
   <key value="LEFT_DIFF_DOC" distribution="webauthor">
       <comment>Tooltip for a radio button that selects the document for the left-side-diff document.</comment>
       <val lang="en_US">Left-side diff document</val>
@@ -260,15 +269,6 @@
     <val lang="ja_JP">チェックアウトに失敗しました。再試行するか、管理者に連絡してください。</val>
     <val lang="nl_NL">Uitchecken mislukt. Probeer het opnieuw of neem contact op met de beheerder.</val>
     <val lang="zh_CN">签出失败。请重试或与管理员联系。</val>
-  </key>
-  <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
-    <comment>Title of login dialog.</comment>
-    <val lang="en_US">Authentication required</val>
-    <val lang="de_DE">Authentifikation erforderlich</val>
-    <val lang="fr_FR">Authentification requise</val>
-    <val lang="ja_JP">認証が必要です</val>
-    <val lang="nl_NL">Verificatie vereist</val>
-    <val lang="zh_CN">需要身份验证</val>
   </key>
   <key value="NAME_">
     <comment>Like in "name and value"</comment>
