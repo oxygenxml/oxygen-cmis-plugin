@@ -10,13 +10,13 @@
   </languageList>
 
   <key value="CONNECT_" distribution="webauthor">
-    <comment>Title of the connect dialog.</comment>
-    <val lang="en_US">Connect</val>
-    <val lang="de_DE">Connect</val>
-    <val lang="fr_FR">Connexion</val>
-    <val lang="ja_JP">Connect</val>
-    <val lang="nl_NL">Connect</val>
-    <val lang="zh_CN">Connect</val>
+      <comment>Title of the connect dialog.</comment>
+      <val lang="en_US">Connect</val>
+      <val lang="de_DE">Verbinden</val>
+      <val lang="fr_FR">Connexion</val>
+      <val lang="ja_JP">接続</val>
+      <val lang="nl_NL">Verbinden</val>
+      <val lang="zh_CN">连接</val>
   </key>
   <key value="LEFT_DIFF_DOC" distribution="webauthor">
       <comment>Tooltip for a radio button that selects the document for the left-side-diff document.</comment>
