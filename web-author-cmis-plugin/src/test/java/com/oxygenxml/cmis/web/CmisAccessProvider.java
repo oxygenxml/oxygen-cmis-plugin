@@ -6,8 +6,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
-import org.apache.log4j.Logger;
 import org.junit.rules.ExternalResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.oxygenxml.cmis.core.CMISAccess;
 import com.oxygenxml.cmis.core.UserCredentials;
@@ -22,7 +23,7 @@ import ro.sync.net.protocol.OxygenURLStreamHandlerFactory;
  * @author cristi_talau
  */
 public class CmisAccessProvider extends ExternalResource{
-  private static final Logger logger = Logger.getLogger(CmisAccessProvider.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(CmisAccessProvider.class.getName());
 
   static {
     // Logging environment.
