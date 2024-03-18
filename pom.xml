@@ -36,7 +36,7 @@
 		<repository>
 			<id>oxygen.sdk.maven.repos</id>
 			<name>oXygen public artifacts</name>
-			<url>http://www.oxygenxml.com/maven</url>
+			<url>https://www.oxygenxml.com/maven</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
