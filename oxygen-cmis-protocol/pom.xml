@@ -40,6 +40,11 @@
           <groupId>org.codehaus.woodstox</groupId>
           <artifactId>woodstox-core-asl</artifactId>
         </exclusion>
+        <!-- We already have a patched version of this library in Oxygen. -->
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- WA-6234: Fix CVE-2022-40152 in chemistry-opencmis-client-impl's transitive dependency. -->
