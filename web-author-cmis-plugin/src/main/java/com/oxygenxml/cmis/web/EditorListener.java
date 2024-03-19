@@ -21,7 +21,9 @@ import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import lombok.extern.slf4j.Slf4j;
 import ro.sync.ecss.extensions.api.AuthorAccess;
+import ro.sync.ecss.extensions.api.AuthorDocumentController;
 import ro.sync.ecss.extensions.api.access.EditingSessionContext;
+import ro.sync.ecss.extensions.api.node.AuthorElement;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.access.WebappEditingSessionLifecycleListener;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
@@ -105,8 +107,9 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 				boolean isCheckinCommentSupported = isCheckinCommentSupported();
         if(isCheckinCommentSupported) {
-					documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.SUPPORTS_COMMIT_MESSAGE.getValue());
+					AuthorDocumentController controller = documentModel.getAuthorDocumentController();
+					AuthorElement rootElement = controller.getAuthorDocumentNode().getRootElement();
+					controller.setPseudoClass(EditorOption.SUPPORTS_COMMIT_MESSAGE.getValue(), rootElement);
 				}
 				
 				setEditorsOptions(documentModel);
@@ -136,8 +139,9 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		// If server doesn't support version control system
 		// we disable this feature in editor.
 		if (!document.isVersionable()) {
-			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-					.setPseudoClass(EditorOption.NON_VERSIONABLE.getValue());
+			AuthorDocumentController controller = documentModel.getAuthorDocumentController();
+			AuthorElement rootElement = controller.getAuthorDocumentNode().getRootElement();
+			controller.setPseudoClass(EditorOption.NON_VERSIONABLE.getValue(), rootElement);
 		} else if (document.isVersionSeriesCheckedOut()) {
 			//
 			setVersionableOptions(documentModel);
@@ -176,21 +180,16 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
     boolean canEditDocument = connection.canCheckoutDocument(pwcDoc);
 
+    AuthorDocumentController controller = documentModel.getAuthorDocumentController();
+    AuthorElement rootElement = controller.getAuthorDocumentNode().getRootElement();
     if (canEditDocument) {
-      documentModel.getAuthorDocumentController()
-          .getAuthorDocumentNode()
-          .getRootElement()
-          .setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue());
-
+      controller.setPseudoClass(EditorOption.IS_CHECKED_OUT.getValue(), rootElement);
     } else {
       documentModel.getAuthorAccess()
           .getEditorAccess()
           .setReadOnly(new ReadOnlyReason(
               MessageFormat.format(rb.getMessage(TranslationTags.CHECKED_OUT_BY), versionSeriesCheckedOutBy)));
-      documentModel.getAuthorDocumentController()
-          .getAuthorDocumentNode()
-          .getRootElement()
-          .setPseudoClass(EditorOption.LOCKED.getValue());
+      controller.setPseudoClass(EditorOption.LOCKED.getValue(), rootElement);
     }
 	}
 	
@@ -220,12 +219,12 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 		
 		documentModel.getAuthorAccess().getEditorAccess().setReadOnly(
 				new ReadOnlyReason(rb.getMessage(TranslationTags.OLD_VER_WARNING) + " : " + df.format(lastMod)));
-		documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-				.setPseudoClass(EditorOption.OLD_VERSION.getValue());
+		AuthorDocumentController controller = documentModel.getAuthorDocumentController();
+		AuthorElement rootElement = controller.getAuthorDocumentNode().getRootElement();
+		controller.setPseudoClass(EditorOption.OLD_VERSION.getValue(), rootElement);
 		
 		if(oldDoc.getCheckinComment() != null) {
-			documentModel.getAuthorDocumentController().getAuthorDocumentNode().getRootElement()
-			.setPseudoClass(EditorOption.SUPPORTS_COMMIT_MESSAGE.getValue());
+		  controller.setPseudoClass(EditorOption.SUPPORTS_COMMIT_MESSAGE.getValue(), rootElement);
 		}
 	}
 	
