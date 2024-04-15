@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisCredentials;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
@@ -23,7 +24,7 @@ public class CmisStreamHandler extends URLStreamHandlerWithContext {
 	@Override
 	protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
 		// Getting credentials and another information
-		UserCredentials credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
+		CmisCredentials credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
 		CMISAccess cmisAccess = new CMISAccess();
 		CmisURLConnection cuc = new CmisURLConnection(url, cmisAccess, credentials);
 		URL serverUrl = CmisURL.parseServerUrl(url.toExternalForm());

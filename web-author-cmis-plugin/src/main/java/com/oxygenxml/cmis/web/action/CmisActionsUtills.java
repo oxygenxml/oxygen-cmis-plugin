@@ -11,7 +11,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.cmis.core.CMISAccess;
-import com.oxygenxml.cmis.core.UserCredentials;
+import com.oxygenxml.cmis.core.CmisCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.CredentialsManager;
 import com.oxygenxml.cmis.web.EditorOption;
@@ -74,7 +74,7 @@ public class CmisActionsUtills {
 	 */
 	public static CmisURLConnection getCmisURLConnection(URL url)  {
 		String contextId = url.getUserInfo();
-		UserCredentials credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
+		CmisCredentials credentials = CredentialsManager.INSTANCE.getCredentials(contextId);
 		
 		log.info("Getting connection!");
 		

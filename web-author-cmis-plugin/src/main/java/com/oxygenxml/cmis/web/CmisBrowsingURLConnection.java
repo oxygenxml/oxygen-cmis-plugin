@@ -23,9 +23,11 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.oxygenxml.cmis.core.CmisCredentials;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.RepositoryInfo;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.TokenCredentials;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.action.CmisActionsUtills;
@@ -118,12 +120,19 @@ public class CmisBrowsingURLConnection extends FilterURLConnection {
 	    
       URL conn = new URL(contentUrl);
      
-      UserCredentials credentials = this.connection.getUserCredentials();
-      
+      CmisCredentials credentials = this.connection.getUserCredentials();
       URLConnection uc = conn.openConnection();
-      String userpass = credentials.getUsername() + ":" + credentials.getPassword();
-      String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
-      uc.setRequestProperty ("Authorization", basicAuth);
+      if (credentials instanceof UserCredentials) {
+        UserCredentials userCredentials = (UserCredentials) credentials;
+        String userpass = userCredentials.getUsername() + ":" + userCredentials.getPassword();
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
+        uc.setRequestProperty ("Authorization", basicAuth);
+      } else {
+        TokenCredentials tokenCredentials = (TokenCredentials) credentials;
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(tokenCredentials.getToken().getBytes()));
+        uc.setRequestProperty ("Authorization", basicAuth);
+      }
+      
       return uc.getInputStream();
     }
     

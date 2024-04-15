@@ -14,6 +14,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oxygenxml.cmis.core.CmisCredentials;
 import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 import com.oxygenxml.cmis.web.CredentialsManager;
@@ -48,7 +49,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 		authorAccess.getWorkspaceAccess();
 
 		URL url = authorAccess.getEditorAccess().getEditorLocation();
-		UserCredentials currentUser = CredentialsManager.INSTANCE.getCredentials(url.getUserInfo());
+		CmisCredentials currentUser = CredentialsManager.INSTANCE.getCredentials(url.getUserInfo());
 
 		connection = CmisActionsUtills.getCmisURLConnection(url);
 		
@@ -91,7 +92,7 @@ public class CmisOldVersions extends AuthorOperationWithResult {
 	 * @throws IOException If it fails.
 	 */
 	public static List<Map<String, String>> listOldVersions(
-	    Document document, URL currentDocUrl, UserCredentials currentUser)
+	    Document document, URL currentDocUrl, CmisCredentials currentUser)
 	    throws IOException {
 	  PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
 

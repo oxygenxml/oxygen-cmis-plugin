@@ -2,6 +2,7 @@ package com.oxygenxml.cmis.web;
 
 import java.util.Optional;
 
+import com.oxygenxml.cmis.core.CmisCredentials;
 import com.oxygenxml.cmis.core.UserCredentials;
 
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
@@ -40,7 +41,7 @@ public class CredentialsManager {
   /**
    * The service account.
    */
-  private final Optional<UserCredentials> serviceAccount;
+  private final Optional<CmisCredentials> serviceAccount;
   
   /**
    * Constructor.
@@ -58,7 +59,7 @@ public class CredentialsManager {
    * 
    * @return The service account credentials.
    */
-  private Optional<UserCredentials> loadServiceAccount(PluginWorkspace pluginWorkspace) {
+  private Optional<CmisCredentials> loadServiceAccount(PluginWorkspace pluginWorkspace) {
     WSOptionsStorage optionsStorage = pluginWorkspace.getOptionsStorage();
     String cmisUser = Optional.ofNullable(System.getProperty(CMIS_SERVICE_USER_PROP))
         .orElse(optionsStorage.getOption(CMIS_SERVICE_USER_PROP, null));
@@ -78,7 +79,7 @@ public class CredentialsManager {
    * @param sessionId the ID of the session.
    * @return The user credentials.
    */
-  public UserCredentials getCredentials(String sessionId) {
+  public CmisCredentials getCredentials(String sessionId) {
     return serviceAccount
         .orElseGet(() -> sessionStore.get(sessionId, WA_CMIS_PLUGIN_CREDENTIALS_KEY));
   }
@@ -88,7 +89,7 @@ public class CredentialsManager {
    * @param sessionId The ID of the session.
    * @param creds The credentials.
    */
-  public void setCredentials(String sessionId, UserCredentials creds) {
+  public void setCredentials(String sessionId, CmisCredentials creds) {
     sessionStore.put(sessionId, WA_CMIS_PLUGIN_CREDENTIALS_KEY, creds);
   }
   

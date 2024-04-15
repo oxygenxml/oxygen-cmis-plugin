@@ -57,7 +57,7 @@ public class CMISAccess {
 	 *            
 	 * @exception CmisUnauthorizedException Bad credentials.
 	 */
-	public void connectToRepo(URL connectionInfo, String repositoryID, UserCredentials uc)
+	public void connectToRepo(URL connectionInfo, String repositoryID, CmisCredentials uc)
 			throws CmisUnauthorizedException {
 		parameters = new HashMap<>();
 
@@ -68,11 +68,20 @@ public class CMISAccess {
 		session = factory.createSession(parameters);
 	}
 
-	private void populateParameters(URL connectionInfo, Map<String, String> parameters, UserCredentials uc) {
-		if (uc != null) {
-			parameters.put(SessionParameter.USER, uc.getUsername());
-			parameters.put(SessionParameter.PASSWORD, String.valueOf(uc.getPassword()));
-		}
+  private void populateParameters(URL connectionInfo, Map<String, String> parameters, CmisCredentials uc) {
+    if (uc != null) {
+      if (uc instanceof UserCredentials) {
+        UserCredentials creds = (UserCredentials) uc;
+        parameters.put(SessionParameter.USER, creds.getUsername());
+        parameters.put(SessionParameter.PASSWORD, String.valueOf(creds.getPassword()));  
+      } else if (uc instanceof TokenCredentials) {
+        TokenCredentials creds = (TokenCredentials) uc;
+        String token = creds.getToken();
+        parameters.put(SessionParameter.USER, "ROLE_TICKET");
+        parameters.put(SessionParameter.PASSWORD, token);
+      }
+    }
+    
 
 		// connection settings
 		parameters.put(SessionParameter.ATOMPUB_URL, connectionInfo.toString());
@@ -96,7 +105,7 @@ public class CMISAccess {
 	 * 
 	 * @throws CmisUnauthorizedException bad credentials.
 	 */
-	public List<Repository> connectToServerGetRepositories(URL connectionInfo, UserCredentials uc) throws CmisUnauthorizedException {
+	public List<Repository> connectToServerGetRepositories(URL connectionInfo, CmisCredentials uc) throws CmisUnauthorizedException {
 		HashMap<String, String> conParameters = new HashMap<>();
 		populateParameters(connectionInfo, conParameters, uc);
 
@@ -108,7 +117,7 @@ public class CMISAccess {
 	 * @param connectionInfo
 	 * @param uc
 	 */
-	public void pureConnectToServer(URL connectionInfo, UserCredentials uc) {
+	public void pureConnectToServer(URL connectionInfo, CmisCredentials uc) {
 		HashMap<String, String> conParameters = new HashMap<>();
 		populateParameters(connectionInfo, conParameters, uc);
 		

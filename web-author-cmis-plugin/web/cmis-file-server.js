@@ -47,21 +47,21 @@ CmisFileServer.prototype.login = function(serverUrl, authenticated) {
       userField.value = '';
       passwdField.value = '';
 
-      goog.net.XhrIo.send(
-        '../plugins-dispatcher/cmis-login',
-        function() {
-          localStorage.setItem('cmis.user', user);
-
-          authenticated && authenticated();
-        },
-        'POST',
-        // form params
-        goog.Uri.QueryData.createFromMap(new goog.structs.Map({
-          user: user,
-          passwd: passwd
-        })).toString(),
-        {'X-Requested-With': 'g'}
-      );
+      fetch('../plugins-dispatcher/cmis-login', {
+          body: "user=" + encodeURIComponent(user)
+            + "&passwd=" + encodeURIComponent(passwd)
+            + "&serverUrl=" + encodeURIComponent(sync.options.PluginsOptions.getClientOption("cmis.enforced_url")),
+          method: "POST",
+          headers: {'X-Requested-With': 'g', 'Content-Type': 'application/x-www-form-urlencoded'}
+      })
+      .then(response => response.json())
+      .then(responseJson => {
+        localStorage.setItem('cmis.user', responseJson.userName);
+        authenticated && authenticated();
+      })
+      .catch(e => {
+        console.warn(e);
+      });
     }
   });
 

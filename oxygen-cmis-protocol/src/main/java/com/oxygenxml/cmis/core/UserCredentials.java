@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 @XmlRootElement(name = "userCredentials")
-public class UserCredentials {
+public class UserCredentials implements CmisCredentials {
 
   private String username;
   private String password;
@@ -60,6 +60,7 @@ public class UserCredentials {
     return password;
   }
 
+  @Override
   public boolean isEmpty() {
     if (username.isEmpty() && password.isEmpty()) {
       return true;

@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Base64;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -27,8 +28,10 @@ import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisCredentials;
 import com.oxygenxml.cmis.core.CmisURL;
 import com.oxygenxml.cmis.core.ResourceController;
+import com.oxygenxml.cmis.core.TokenCredentials;
 import com.oxygenxml.cmis.core.UserCredentials;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,9 +50,9 @@ public class CmisURLConnection extends URLConnection {
   private ResourceController resourceController;
   
   /**
-   * UserCredentials Instance.
+   * CmisCredentials Instance.
    */
-  private UserCredentials credentials;
+  private CmisCredentials credentials;
 
   /**
    * CmisURLConnection constructor.
@@ -57,7 +60,7 @@ public class CmisURLConnection extends URLConnection {
    * @param cmisAccess
    * @param credentials
    */
-  public CmisURLConnection(URL url, CMISAccess cmisAccess, UserCredentials credentials) {
+  public CmisURLConnection(URL url, CMISAccess cmisAccess, CmisCredentials credentials) {
     super(url);
     this.cmisAccess = cmisAccess;
     this.credentials = credentials;
@@ -324,7 +327,7 @@ public class CmisURLConnection extends URLConnection {
    * 
    * @return UserCredentials
    */
-  public UserCredentials getUserCredentials() {
+  public CmisCredentials getUserCredentials() {
     return credentials;
   }
 }

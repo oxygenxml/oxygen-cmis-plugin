@@ -15,8 +15,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 
 import com.google.common.annotations.VisibleForTesting;
 import com.oxygenxml.cmis.core.CMISAccess;
+import com.oxygenxml.cmis.core.CmisCredentials;
 import com.oxygenxml.cmis.core.ResourceController;
-import com.oxygenxml.cmis.core.UserCredentials;
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +49,7 @@ public class EditorListener implements WorkspaceAccessPluginExtension {
 
 	private String urlWithoutContextId;
 	
-	private UserCredentials credentials;
+	private CmisCredentials credentials;
 	
 	private CmisURLConnection connection;
 
