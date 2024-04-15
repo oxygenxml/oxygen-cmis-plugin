@@ -38,36 +38,52 @@ CmisFileServer.prototype.login = function(serverUrl, authenticated) {
   let userField = loginDialog.getElement().querySelector('#cmis-name');
   let passwdField = loginDialog.getElement().querySelector('#cmis-passwd');
 
-  loginDialog.onSelect(function(key, event) {
-    if (key === 'ok') {
-      event.preventDefault();
-      if (this.isLoginInProgress_) {
-        return;
+  let urlParams = new URLSearchParams(window.location.search)
+  let alfrescoTicket = urlParams.get("alfrescoTicket");
+  if (alfrescoTicket) {
+    this.isLoginInProgress_ = true;
+    this.rootUrlComponent_?.classList.add("oxy-spinner");
+    this.authenticate_("ROLE_TICKET", alfrescoTicket)
+      .then(() => {
+        authenticated && authenticated();
+      })
+      .catch(e => {
+        loginDialog.show();
+      })
+      .finally(() => {
+        this.isLoginInProgress_ = false;
+        this.rootUrlComponent_?.classList.remove("oxy-spinner");
+      });
+  } else {
+    loginDialog.onSelect(function(key, event) {
+      if (key === 'ok') {
+        event.preventDefault();
+        if (this.isLoginInProgress_) {
+          return;
+        }
+
+        this.isLoginInProgress_ = true;
+        userField.setAttribute("disabled", true);
+        passwdField.setAttribute("disabled", true);
+        loginDialog.getElement().classList.add("oxy-spinner");
+        this.authenticate_(userField.value.trim(), passwdField.value)
+          .then(() => {
+            passwdField.value = '';
+            loginDialog.hide();
+            authenticated && authenticated();
+          })
+          .finally(() => {
+            this.isLoginInProgress_ = false;
+            loginDialog.getElement().classList.remove("oxy-spinner");
+            userField.removeAttribute("disabled");
+            passwdField.removeAttribute("disabled");
+          });
       }
+    }.bind(this));
 
-      this.isLoginInProgress_ = true;
-      userField.setAttribute("disabled", true);
-      passwdField.setAttribute("disabled", true);
-      loginDialog.getElement().classList.add("oxy-spinner");
-
-      this.authenticate_(userField.value.trim(), passwdField.value)
-        .then(() => {
-          passwdField.value = '';
-          loginDialog.hide();
-          authenticated && authenticated();
-        })
-        .finally(() => {
-          this.isLoginInProgress_ = false;
-          loginDialog.getElement().classList.remove("oxy-spinner");
-          userField.removeAttribute("disabled");
-          passwdField.removeAttribute("disabled");
-        });
-    }
-  }.bind(this));
-
-  loginDialog.show();
-
-  userField.select();
+    loginDialog.show();
+    userField.select();
+  }
 };
 
 CmisFileServer.prototype.authenticate_ = function(user, password) {
@@ -171,6 +187,9 @@ CmisFileServer.prototype.createRootUrlComponent = function(rootUrlParam, rootURL
   } else {
     div.textContent = tr(msgs.SET_CMIS_API_URL_); // TODO link to documentation.
   }
+
+  this.rootUrlComponent_ = div;
+
   return div;
 };
 
