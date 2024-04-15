@@ -34,44 +34,55 @@ CmisFileServer.PROTOCOL_PREFIX = 'cmis://';
  * @param {function} authenticated The callback when the user was authenticated - successfully or not.
  */
 CmisFileServer.prototype.login = function(serverUrl, authenticated) {
-  var loginDialog = this.getLoginDialog_();
+  let loginDialog = this.getLoginDialog_();
+  let userField = loginDialog.getElement().querySelector('#cmis-name');
+  let passwdField = loginDialog.getElement().querySelector('#cmis-passwd');
 
-  loginDialog.onSelect(function(key) {
+  loginDialog.onSelect(function(key, event) {
     if (key === 'ok') {
-      // Send the user and password to the login servlet which runs in the webapp.
-      var userField = document.getElementById('cmis-name');
-      var user = userField.value.trim();
-      var passwdField = document.getElementById('cmis-passwd');
-      var passwd = passwdField.value;
+      event.preventDefault();
+      if (this.isLoginInProgress_) {
+        return;
+      }
 
-      userField.value = '';
-      passwdField.value = '';
+      this.isLoginInProgress_ = true;
+      userField.setAttribute("disabled", true);
+      passwdField.setAttribute("disabled", true);
+      loginDialog.getElement().classList.add("oxy-spinner");
 
-      fetch('../plugins-dispatcher/cmis-login', {
-          body: "user=" + encodeURIComponent(user)
-            + "&passwd=" + encodeURIComponent(passwd)
-            + "&serverUrl=" + encodeURIComponent(sync.options.PluginsOptions.getClientOption("cmis.enforced_url")),
-          method: "POST",
-          headers: {'X-Requested-With': 'g', 'Content-Type': 'application/x-www-form-urlencoded'}
-      })
-      .then(response => response.json())
-      .then(responseJson => {
-        localStorage.setItem('cmis.user', responseJson.userName);
-        authenticated && authenticated();
-      })
-      .catch(e => {
-        console.warn(e);
-      });
+      this.authenticate_(userField.value.trim(), passwdField.value)
+        .then(() => {
+          passwdField.value = '';
+          loginDialog.hide();
+          authenticated && authenticated();
+        })
+        .finally(() => {
+          this.isLoginInProgress_ = false;
+          loginDialog.getElement().classList.remove("oxy-spinner");
+          userField.removeAttribute("disabled");
+          passwdField.removeAttribute("disabled");
+        });
     }
-  });
+  }.bind(this));
 
   loginDialog.show();
 
-  // autocomplete the last username.
-  var userInput = loginDialog.getElement().querySelector('#cmis-name');
-  userInput.value = this.getUserName() || '';
-  userInput.select();
+  userField.select();
 };
+
+CmisFileServer.prototype.authenticate_ = function(user, password) {
+  return fetch('../plugins-dispatcher/cmis-login', {
+    body: "user=" + encodeURIComponent(user)
+      + "&passwd=" + encodeURIComponent(password)
+      + "&serverUrl=" + encodeURIComponent(sync.options.PluginsOptions.getClientOption("cmis.enforced_url")),
+    method: "POST",
+    headers: {'X-Requested-With': 'g', 'Content-Type': 'application/x-www-form-urlencoded'}
+  })
+  .then(response => response.json())
+  .then(responseJson => {
+    localStorage.setItem('cmis.user', responseJson.userName);
+  });
+}
 
 /**
  * Create the CMIS login dialog.
@@ -90,6 +101,9 @@ CmisFileServer.prototype.getLoginDialog_ = function() {
     cmisNameInput.setAttribute('autocapitalize', 'none');
     cmisNameInput.setAttribute('autofocus', '');
     cmisNameInput.setAttribute('autocomplete', 'username');
+
+    // autocomplete the last username.
+    cmisNameInput.value = this.getUserName() || '';
 
     var cmisPasswordInput = cD('input', {
       id: 'cmis-passwd',
