@@ -31,9 +31,9 @@ CmisFileServer.PROTOCOL_PREFIX = 'cmis://';
  * Login the user and call this callback at the end.
  *
  * @param {string} serverUrl The server URL.
- * @param {function} authenticated The callback when the user was authenticated - successfully or not.
+ * @param {function} onLoginSuccessful The callback when the user successfully logs in.
  */
-CmisFileServer.prototype.login = function(serverUrl, authenticated) {
+CmisFileServer.prototype.login = function(serverUrl, onLoginSuccessful) {
   let loginDialog = this.getLoginDialog_();
   let userField = loginDialog.getElement().querySelector('#cmis-name');
   let passwdField = loginDialog.getElement().querySelector('#cmis-passwd');
@@ -43,9 +43,9 @@ CmisFileServer.prototype.login = function(serverUrl, authenticated) {
   if (alfrescoTicket) {
     this.isLoginInProgress_ = true;
     this.rootUrlComponent_?.classList.add("oxy-spinner");
-    this.authenticate_("ROLE_TICKET", alfrescoTicket)
+    this.login_("ROLE_TICKET", alfrescoTicket)
       .then(() => {
-        authenticated && authenticated();
+        onLoginSuccessful && onLoginSuccessful();
       })
       .catch(e => {
         loginDialog.show();
@@ -66,11 +66,11 @@ CmisFileServer.prototype.login = function(serverUrl, authenticated) {
         userField.setAttribute("disabled", true);
         passwdField.setAttribute("disabled", true);
         loginDialog.getElement().classList.add("oxy-spinner");
-        this.authenticate_(userField.value.trim(), passwdField.value)
+        this.login_(userField.value.trim(), passwdField.value)
           .then(() => {
             passwdField.value = '';
             loginDialog.hide();
-            authenticated && authenticated();
+            onLoginSuccessful && onLoginSuccessful();
           })
           .finally(() => {
             this.isLoginInProgress_ = false;
@@ -86,7 +86,7 @@ CmisFileServer.prototype.login = function(serverUrl, authenticated) {
   }
 };
 
-CmisFileServer.prototype.authenticate_ = function(user, password) {
+CmisFileServer.prototype.login_ = function(user, password) {
   return fetch('../plugins-dispatcher/cmis-login', {
     body: "user=" + encodeURIComponent(user)
       + "&passwd=" + encodeURIComponent(password)
