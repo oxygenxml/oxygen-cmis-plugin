@@ -82,6 +82,7 @@
 				<configuration>
 					<!-- Skip checking and uploading to Dependency Track -->
 					<!-- we only want results from the web-author-cmis-plugin module, should be enabled there -->
+					<use-existing-report>true</use-existing-report>
 					<skipUploadToDependencyTrack>true</skipUploadToDependencyTrack>
 				</configuration>
 			</plugin>
