@@ -338,8 +338,7 @@
           <artifactId>compliance-mvn-dependency-check-to-sbom</artifactId>
           <configuration>
             <!-- Enable compliance plugin, this is the relevant module that should not be skipped -->
-            <use-existing-report>false</use-existing-report>
-            <skipUploadToDependencyTrack>false</skipUploadToDependencyTrack>
+            <skip>false</skip>
           </configuration>
         </plugin>
       </plugins>
