@@ -73,4 +73,24 @@
 		<module>oxygen-cmis-workspace-access</module>
 		<module>web-author-cmis-plugin</module>
 	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>ro.sync.compliance</groupId>
+				<artifactId>compliance-mvn-dependency-check-to-sbom</artifactId>
+				<configuration>
+					<!-- Skip checking and uploading to Dependency Track -->
+					<!-- we only want results from the web-author-cmis-plugin module, should be enabled there -->
+					<use-existing-report>true</use-existing-report>
+					<skipUploadToDependencyTrack>true</skipUploadToDependencyTrack>
+					<scanSet>
+						<fileSet>
+							<directory>${project.build.directory}/generated-sbom</directory>
+						</fileSet>
+					</scanSet>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
