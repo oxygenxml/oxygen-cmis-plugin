@@ -84,11 +84,6 @@
 					<!-- we only want results from the web-author-cmis-plugin module, should be enabled there -->
 					<use-existing-report>true</use-existing-report>
 					<skipUploadToDependencyTrack>true</skipUploadToDependencyTrack>
-					<scanSet>
-						<fileSet>
-							<directory>${project.build.directory}/generated-sbom</directory>
-						</fileSet>
-					</scanSet>
 				</configuration>
 			</plugin>
 		</plugins>
