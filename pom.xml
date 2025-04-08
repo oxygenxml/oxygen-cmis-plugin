@@ -80,6 +80,7 @@
 				<groupId>ro.sync.compliance</groupId>
 				<artifactId>compliance-mvn-dependency-check-to-sbom</artifactId>
 				<configuration>
+					<tags>jira-wa</tags>
 					<!-- Skip checking and uploading to Dependency Track -->
 					<!-- we only want results from the web-author-cmis-plugin module, should be enabled there -->
 					<use-existing-report>true</use-existing-report>
