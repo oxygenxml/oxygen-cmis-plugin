@@ -8,6 +8,8 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 
 import com.oxygenxml.cmis.core.urlhandler.CmisURLConnection;
+import com.oxygenxml.cmis.web.EditorListener;
+import com.oxygenxml.cmis.web.TranslationTags;
 
 import ro.sync.ecss.extensions.api.ArgumentsMap;
 import ro.sync.ecss.extensions.api.AuthorAccess;
@@ -15,6 +17,10 @@ import ro.sync.ecss.extensions.api.AuthorOperationException;
 import ro.sync.ecss.extensions.api.webapp.AuthorDocumentModel;
 import ro.sync.ecss.extensions.api.webapp.AuthorOperationWithResult;
 import ro.sync.ecss.extensions.api.webapp.WebappRestSafe;
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
+import ro.sync.exml.workspace.api.PluginResourceBundle;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
+import ro.sync.exml.workspace.api.editor.ReadOnlyReason;
 
 /**
  * Discards the Check Out but without reloading the content.
@@ -28,7 +34,7 @@ public class DiscardCheckOutOperation extends AuthorOperationWithResult {
     this.doOperationInternal(model);
     return null;
   }
-  
+
   private void doOperationInternal(AuthorDocumentModel model) throws CmisObjectNotFoundException {
     AuthorAccess authorAccess = model.getAuthorAccess();
     URL url = authorAccess.getEditorAccess().getEditorLocation();
@@ -38,6 +44,13 @@ public class DiscardCheckOutOperation extends AuthorOperationWithResult {
       String urlString = urlWithoutContextId.toExternalForm();
       Document document = (Document) connection.getCMISObject(urlString);
       discardPwc(document);
+
+      if (EditorListener.isCheckOutRequired()) {
+        PluginResourceBundle rb = ((WebappPluginWorkspace) PluginWorkspaceProvider
+            .getPluginWorkspace()).getResourceBundle();
+        authorAccess.getEditorAccess()
+            .setReadOnly(new ReadOnlyReason(rb.getMessage(TranslationTags.CHECK_OUT_REQUIRED)));
+      }
     } catch (MalformedURLException e) {
       throw new UncheckedIOException(e);
     }
