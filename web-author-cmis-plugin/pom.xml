@@ -101,7 +101,7 @@
         <version>1.9.1</version>
         <configuration>
           <nodeVersion>v24.16.0</nodeVersion>
-          <npmVersion>10.7.0</npmVersion>
+          <npmVersion>v10.7.0</npmVersion>
           <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
           <npmDownloadRoot>${npm.download.root}</npmDownloadRoot>
           <installDirectory>target</installDirectory>
