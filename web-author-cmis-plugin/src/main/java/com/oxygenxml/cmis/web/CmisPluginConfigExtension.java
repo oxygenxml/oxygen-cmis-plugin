@@ -2,14 +2,13 @@ package com.oxygenxml.cmis.web;
 
 import java.util.HashMap;
 
-import javax.servlet.ServletException;
-
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
-import ro.sync.ecss.extensions.api.webapp.plugin.PluginConfigExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.ServletPluginConfigExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.ServletException;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
-public class CmisPluginConfigExtension extends PluginConfigExtension {
+public class CmisPluginConfigExtension extends ServletPluginConfigExtension {
 
   private static final String defaultAutoSaveInterval = "5";
 
